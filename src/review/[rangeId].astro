@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { db } from '../../lib/firebase.js';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getStaticPaths } from '../../utils/get-static-paths.js'; // getStaticPaths関数をインポート
+export { getStaticPaths }; // getStaticPathsをエクスポートする
+
+const { rangeId } = Astro.params;
+const { range } = Astro.props;
+---
+<BaseLayout>
+  <main class="container mx-auto p-4 md:p-6">
+    <a href={`/ranges/${range.id}`} class="text-green-700 font-semibold hover:underline">‹ 練習場詳細に戻る</a>
+
+    <div class="mt-8 bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <h2 id="review-form-title" class="text-3xl font-bold mb-2">
+        レビューを投稿する
+      </h2>
+      <p id="review-form-range-name" class="text-slate-500 mb-6 text-xl">
+        {range.name}
+      </p>
+      <form id="review-form" aria-labelledby="review-form-title">
+        <div class="space-y-6">
+          <div>
+            <label for="reviewer-name" class="block text-lg font-semibold mb-2">ニックネーム</label>
+            <input type="text" id="reviewer-name" required class="w-full p-3 border border-slate-300 rounded-md" placeholder="例：シガゴルファー" />
+          </div>
+          <div>
+            <p class="block text-lg font-semibold mb-2">総合評価</p>
+            <div class="star-rating flex flex-row-reverse justify-end">
+              <input type="radio" id="star5" name="rating" value="5" required aria-label="5つ星の評価" /><label for="star5">★</label>
+              <input type="radio" id="star4" name="rating" value="4" aria-label="4つ星の評価" /><label for="star4">★</label>
+              <input type="radio" id="star3" name="rating" value="3" aria-label="3つ星の評価" /><label for="star3">★</label>
+              <input type="radio" id="star2" name="rating" value="2" aria-label="2つ星の評価" /><label for="star2">★</label>
+              <input type="radio" id="star1" name="rating" value="1" aria-label="1つ星の評価" /><label for="star1">★</label>
+            </div>
+          </div>
+          <div>
+            <label for="review-title" class="block text-lg font-semibold mb-2">レビュータイトル</label>
+            <input type="text" id="review-title" required class="w-full p-3 border border-slate-300 rounded-md" placeholder="例：最高の練習環境でした！" />
+          </div>
+          <div>
+            <label for="review-body" class="block text-lg font-semibold mb-2">レビュー本文</label>
+            <textarea id="review-body" rows="6" required class="w-full p-3 border border-slate-300 rounded-md" placeholder="施設の良かった点、改善してほしい点などを具体的に教えてください。"></textarea>
+          </div>
+          <div class="text-right">
+            <button type="submit" id="submit-review-btn" class="submit-button bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition text-lg disabled:bg-slate-400 disabled:cursor-not-allowed">
+              投稿する
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </main>
+</BaseLayout>
+
+<script client:load>
+  import { db } from '../../lib/firebase.js';
+  import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+
+  // 変数を直接取得
+  const rangeId = "{{ Astro.params.rangeId }}";
+  const appId = "{{ import.meta.env.PUBLIC_VITE_APP_ID }}";
+  
+  const form = document.getElementById('review-form');
+  const submitBtn = document.getElementById('submit-review-btn');
+  
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = '投稿中...';
+      submitBtn.classList.add('loading');
+
+      try {
+        const author = document.getElementById('reviewer-name').value;
+        const ratingInput = document.querySelector('input[name="rating"]:checked');
+        const title = document.getElementById('review-title').value;
+        const body = document.getElementById('review-body').value;
+
+        if (!ratingInput) {
+          alert('総合評価を選択してください。');
+          submitBtn.disabled = false;
+          submitBtn.textContent = '投稿する';
+          submitBtn.classList.remove('loading');
+          return;
+        }
+        const rating = Number(ratingInput.value);
+
+        const reviewData = {
+          author,
+          rating,
+          title,
+          body,
+          createdAt: serverTimestamp()
+        };
+        
+        const reviewsRef = collection(db, 'artifacts', appId, 'public', 'data', 'practice_ranges', rangeId, 'reviews');
+        
+        await addDoc(reviewsRef, reviewData);
+        
+        alert('レビューが投稿されました！');
+        form.reset();
+        
+        // 投稿後は前のページに戻る
+        window.history.back();
+
+      } catch (error) {
+        console.error("レビューの投稿に失敗しました: ", error);
+        alert('レビューの投稿に失敗しました。');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '投稿する';
+        submitBtn.classList.remove('loading');
+      }
+    });
+  }
+</script>

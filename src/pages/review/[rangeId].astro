@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ReviewSection from '../../components/ReviewSection.astro';
+import { db } from '../../lib/firebase.js';
+import { collection, getDocs } from 'firebase/firestore';
+
+// どの練習場のレビューページを生成するかをAstroに教える
+export async function getStaticPaths() {
+  const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges');
+  const querySnapshot = await getDocs(rangesCollection);
+  const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+  return ranges.map(range => ({
+    params: { rangeId: range.id },
+    props: { range },
+  }));
+}
+
+const { range } = Astro.props;
+const pageTitle = `${range.name}のレビューを投稿 | シガゴル`;
+const description = `${range.name}のレビューを投稿しませんか？あなたのリアルな口コミが、次に練習場を選ぶゴルファーの道しるべになります。`;
+const noindex = true; // このページは検索結果に表示しない
+
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <main class="container mx-auto p-4 md:p-6">
+    <div class="mb-4">
+      <a href={`/ranges/${range.id}`} class="text-green-700 font-semibold hover:underline">‹ 詳細ページに戻る</a>
+    </div>
+    
+    <ReviewSection range={range} />
+
+  </main>
+</BaseLayout>

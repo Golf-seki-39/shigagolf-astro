@@ -1,0 +1,235 @@
+---
+import ReviewSection from '../../components/ReviewSection.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { db } from '../../lib/firebase.js';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+
+export async function getStaticPaths() {
+  const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges');
+  const querySnapshot = await getDocs(rangesCollection);
+  const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+  return ranges.map(range => ({
+    params: { rangeId: range.id },
+    props: { range },
+  }));
+}
+
+const { range } = Astro.props;
+const title = `${range.name}の口コミ・評判 | シガゴル`;
+const description = `${range.name}（${range.area}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${range.name}に関する詳細情報が満載です。`;
+
+// --- 特徴バッジを、既存のデータから自動生成するロジック ---
+const badges = [];
+if (range.isIndoor) badges.push("インドア");
+if (range.is_beginner_friendly) badges.push("初心者に優しい");
+if (range.hasTracer && range.tracer_brand === 'トップトレーサー') badges.push("全打席トップトレーサー");
+else if (range.hasTracer) badges.push("弾道測定器あり");
+if (range.tags && range.tags.includes("GP併設")) badges.push("GP併設");
+
+// --- データベースからレビューを取得 ---
+const reviewsCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges', range.id, 'reviews');
+const q = query(reviewsCollection, orderBy("createdAt", "desc"));
+const reviewsSnapshot = await getDocs(q);
+const reviews = reviewsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+// --- 「公式レビュー」を一番上にするための並べ替えロジック ---
+const adminReviews = reviews.filter(review => review.author === '関＠シガゴル管理人');
+const userReviews = reviews.filter(review => review.author !== '関＠シガゴル管理人');
+const sortedReviews = [...adminReviews, ...userReviews];
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="container mx-auto p-4 md:p-6">
+    <div class="mb-4">
+      <a href="/" class="text-green-700 font-semibold hover:underline">‹ 練習場一覧に戻る</a>
+    </div>
+
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      <header>
+        <img src={range.imageUrl} alt={`${range.name}の外観`} class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy">
+        <div>
+          <p class="text-lg text-green-600 font-semibold">{range.area}エリア</p>
+          <h1 class="text-4xl font-bold mt-1">{range.name}</h1>
+          
+          {badges.length > 0 && (
+            <div class="mt-4 flex flex-wrap gap-2">
+              {badges.map(badge => (
+                <span class="text-sm bg-blue-100 text-blue-800 font-semibold px-3 py-1 rounded-full">
+                  {badge}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        <div class="my-6 grid grid-cols-2 gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden text-center">
+          <div class="bg-white p-4">
+            <p class="text-sm text-slate-500">ヤード数</p>
+            <p class="text-2xl font-bold">
+              {range.isIndoor ? <span class="whitespace-nowrap">（インドア）</span> : (range.yardage ? `${range.yardage}yd` : '-')}
+            </p>
+          </div>
+          <div class="bg-white p-4">
+            <p class="text-sm text-slate-500">打席数</p>
+            <p class="text-2xl font-bold">{range.bays ? `${range.bays}打席` : '-'}</p>
+          </div>
+        </div>
+      </header>
+
+      <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
+        <section>
+          <h2 class="text-2xl font-bold">設備情報</h2>
+          <ul class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600">
+            <li>📡 弾道測定器: {range.hasTracer ? `あり (${range.tracer_brand})` : 'なし'}</li>
+            <li>⛳️ アプローチ: {range.hasApproach ? 'あり' : 'なし'}</li>
+            <li>🕳️ バンカー: {range.hasBunker ? 'あり' : 'なし'}</li>
+            <li>🏌️ パター: {range.hasPutter ? 'あり' : 'なし'}</li>
+            <li>💰 打ち放題: {range.hasUchihodai ? 'あり' : 'なし'}</li>
+          </ul>
+        </section>
+        <section>
+          <h2 class="text-2xl font-bold">料金情報</h2>
+          <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
+            <table class="min-w-full text-sm">
+              <tbody class="text-slate-600">
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap">球単価（平日）</th><td class="py-3 px-4" set:html={range.price_ball_weekday_str ? range.price_ball_weekday_str.replace(/\//g, '<br>').replace(/\(/g, '<br>(') : '情報なし'} /></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">球単価（土日祝）</th><td class="py-3 px-4" set:html={range.price_ball_weekend_str ? range.price_ball_weekend_str.replace(/\//g, '<br>').replace(/\(/g, '<br>(') : '情報なし'} /></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（平日）</th><td class="py-3 px-4" set:html={range.hasUchihodai ? (range.price_uchihodai_weekday_str ? range.price_uchihodai_weekday_str.replace(/\//g, '<br>').replace(/\(/g, '<br>(') : '情報なし') : '打放題なし'} /></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（土日祝）</th><td class="py-3 px-4" set:html={range.hasUchihodai ? (range.price_uchihodai_weekend_str ? range.price_uchihodai_weekend_str.replace(/\//g, '<br>').replace(/\(/g, '<br>(') : '情報なし') : '打放題なし'} /></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">アプローチ練習場</th><td class="py-3 px-4">{range.approach_fee_info || '情報なし'}</td></tr>
+                <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">バンカー練習場</th><td class="py-3 px-4">{range.bunker_fee_info || '情報なし'}</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="mt-4 space-y-2 text-slate-600 text-sm">
+            <li><strong>支払い方法:</strong> {range.payment_methods || '情報なし'}</li>
+            <li><strong>最低料金の目安:</strong> {range.initial_cost || '情報なし'}</li>
+          </ul>
+        </section>
+        <section>
+          <h2 class="text-2xl font-bold">基本情報</h2>
+          <ul class="mt-2 space-y-2 text-slate-600">
+            <li><strong>営業時間:</strong> {range.business_hours || '情報なし'}</li>
+            <li><strong>住所:</strong> <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(range.address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{range.address || '情報なし'}</a></li>
+            <li><strong>電話番号:</strong> <a href={`tel:${range.phone}`} class="text-green-700 hover:underline">{range.phone || '情報なし'}</a></li>
+            <li><strong>アクセス:</strong> {range.access || '情報なし'}</li>
+            <li><strong>駐車場:</strong> {range.parking_info || '情報なし'}</li>
+            <li><strong>レンタルクラブ:</strong> {range.rental_club_info || '情報なし'}</li>
+            <li><strong>左利き打席:</strong> {range.lefty_bays_info || '情報なし'}</li>
+            <li class="pt-2 mt-2 border-t border-slate-200">
+                <strong>関連リンク:</strong>
+                <div class="flex flex-col sm:flex-row sm:space-x-4 mt-1">
+                    <a href={range.website} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">公式サイトを見る</a>
+                    {range.noteUrl && <a href={range.noteUrl} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">私のnote記事を読む</a>}
+                    {range.medleyUrl && <a href={range.medleyUrl} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">ゴルフメドレー記事を読む</a>}
+                </div>
+            </li>
+          </ul>
+        </section>
+      </div>
+      
+      <div class="my-8 text-center">
+        <button id="show-review-form-btn" class="bg-amber-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-600 transition text-lg">
+          この練習場のレビューを書く
+        </button>
+      </div>
+
+      <section class="mt-8 pt-6 border-t border-slate-200">
+        <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
+        <div class="space-y-6">
+          {sortedReviews.length > 0 ? (
+            sortedReviews.map(review => {
+              const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+              const date = review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString('ja-JP') : '日付不明';
+              const isAdminReview = review.author === '関＠シガゴル管理人';
+              return (
+                <article class="border-b border-slate-200 pb-6">
+                  <div class="flex items-center gap-x-4">
+                    <div class="text-amber-500 text-xl" title={`${review.rating}つ星`}>{stars}</div>
+                    {isAdminReview && (<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">公式レビュー</span>)}
+                  </div>
+                  <h3 class="text-lg font-bold mt-2">{review.title}</h3>
+                  {isAdminReview && review.scores && (
+                    <div class="my-4 max-w-sm mx-auto">
+                      <canvas class="radar-chart-canvas" data-scores={JSON.stringify(review.scores)}></canvas>
+                    </div>
+                  )}
+                  <p class="text-slate-600 my-4 whitespace-pre-wrap">{review.body}</p>
+                  {review.imageUrls && review.imageUrls.length > 0 && (
+                    <div class="mt-4 flex flex-wrap gap-3">
+                      {review.imageUrls.map(url => (
+                        <a href={url} target="_blank" rel="noopener noreferrer" class="block">
+                          <img src={url} alt="レビュー写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  <p class="text-sm text-slate-400 text-right mt-4">投稿者: {review.author} / 投稿日: {date}</p>
+                </article>
+              )
+            })
+          ) : (
+            <p class="text-slate-500 text-center py-4">まだレビューはありません。最初のレビューを投稿しませんか？</p>
+          )}
+        </div>
+      </section>
+
+      <div id="review-form-wrapper" class="hidden">
+        <ReviewSection range={range} />
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const showButton = document.getElementById('show-review-form-btn');
+    const formWrapper = document.getElementById('review-form-wrapper');
+    if (!showButton || !formWrapper) { return; }
+    showButton.addEventListener('click', () => {
+      formWrapper.classList.remove('hidden');
+      showButton.style.display = 'none';
+      formWrapper.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const chartCanvases = document.querySelectorAll('.radar-chart-canvas');
+    chartCanvases.forEach(canvas => {
+      const scoresData = JSON.parse(canvas.dataset.scores);
+      const labels = Object.keys(scoresData);
+      const data = Object.values(scoresData);
+      new Chart(canvas, {
+        type: 'radar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '評価スコア',
+            data: data,
+            fill: true,
+            backgroundColor: 'rgba(34, 197, 94, 0.2)',
+            borderColor: 'rgb(22, 163, 74)',
+            pointBackgroundColor: 'rgb(22, 163, 74)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(22, 163, 74)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: { display: false },
+              suggestedMin: 0,
+              suggestedMax: 5,
+              pointLabels: { font: { size: 10 } }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    });
+  });
+</script>

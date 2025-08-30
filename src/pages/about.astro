@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// ブラウザのタブに表示するページのタイトルを設定します
+const pageTitle = "運営者紹介 | シガゴル";
+const description = "「シガゴル」の運営者、関（せき）のプロフィールと、このサイトに込めた想いをご紹介します。";
+
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <h1 class="text-3xl font-bold text-center my-8">運営者紹介</h1>
+<div id="about-view" class="view bg-white p-6 md:p-8 rounded-lg shadow-lg">
+            <a href="/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">‹ トップページに戻る</a>
+            <h2 class="text-3xl font-bold text-slate-800">
+                運営者紹介
+                <span class="block text-xl font-semibold text-green-700 mt-1">シガゴルに込めた想い</span>
+            </h2>
+            <div class="mt-6 text-slate-600 space-y-4 leading-relaxed">
+                <p class="text-lg font-semibold text-slate-700">はじめまして！<br>「シガゴル」管理人の 関（せき） と申します。</p>
+                <p>ゴルフ歴はまだ1年未満（2024年10月29日スタート）</p>
+                <p>そんな私が、なぜ滋賀県のゴルフ練習場に特化した、<br>こんな少しマニアックなサイトを立ち上げたのか。</p>
+                <p>少しだけ、このサイトに込めた私の想いと、<br>皆さんへのお約束をお話しさせてください。</p>
+                
+                <h3 class="text-2xl font-bold text-slate-800 pt-4">「もっと早く知りたかった…」<br>私の“遠回り”が、このサイトの原点です。</h3>
+                <p>私がゴルフを始めたきっかけは、自治会の集まりでご近所さんに誘われたことでした。「一緒にラウンド行こうや！」</p>
+                <p>ゴルフクラブも握ったことがないのに、初ラウンドはまさかの1ヶ月後。<br>そこから私の、手探りの猛練習が始まりました。</p>
+                <p>練習を続ける中で、何度も感じたこと。<br>それは<strong class="text-green-700">「ゴルフ練習場の情報って、ネットに少なくて分かりにくい…」</strong>という現実でした。</p>
+                <ul class="list-disc list-inside space-y-2 pl-4">
+                    <li>「初めて行くのに、いくら持っていけば安心なんだろう？」</li>
+                    <li>「続けるか分からないのに、数千円のプリペイドカードを買うのはちょっと…」</li>
+                    <li>「現金で気軽に練習できる場所が、すぐ近くにあったなんて！」</li>
+                </ul>
+                <p>そんな、かつての私のような “遠回り” や “小さな損” を、<br>これからゴルフを始める方や、自分に合った練習場を探している方に、絶対にしてほしくない。</p>
+                <p>仕事でゴルフメディアの記事を執筆するために多くの練習場を巡る中で得た知識と、一人の初心者ゴルファーとしてのリアルな失敗談。<br>そのすべてを注ぎ込み、滋賀のゴルファーにとっての「信頼できる相棒」のようなサイトを作りたい。</p>
+                <p>その想いが「シガゴル」の原点です。</p>
+            </div>
+            <div class="mt-10 bg-slate-50 border border-slate-200 rounded-xl p-6 md:p-8">
+                <h3 class="text-2xl font-bold mb-4 text-slate-800">運営者プロフィール</h3>
+                <p class="text-xl font-semibold">関（せき）＠初心者向けゴルフ施設レビュアー</p>
+                <p class="text-slate-600 mb-6 leading-relaxed">“初心者代表”として、忖度なしのリアルな情報をお届けします！<br>レビュー記事の執筆やサイトの細かい修正をする際は「シガゴル管理人」を名乗ることもあります。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    <div>
+                        <h4 class="font-semibold text-slate-800">ゴルフ歴</h4>
+                        <p class="text-slate-600">1年未満（2024年10月29日スタート）</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800">ベストスコア / ワーストスコア</h4>
+                        <p class="text-slate-600">114 / 178 （この数字が、私のリアルです笑）</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <h4 class="font-semibold text-slate-800">主な活動エリア</h4>
+                        <p class="text-slate-600">滋賀県（八日市～土山）、三重県（亀山）</p>
+                    </div>
+                    <div class="md:col-span-2">
+                         <h4 class="font-semibold text-slate-800">私の強み</h4>
+                         <p class="text-slate-600 leading-relaxed">ゴルフメディア『ゴルフメドレー』等で施設レビュー記事を執筆しています。仕事柄、他の人が行かないような練習場にも実際に足を運んで取材しているのが強みです。</p>
+                    </div>
+                </div>
+                <h4 class="font-semibold text-slate-800 mt-6">目的別！お気に入り練習場</h4>
+                <ul class="list-none text-slate-600 mt-2 space-y-2">
+                    <li><span class="mr-2">⛳️</span>パター＆アプローチ練習なら： リバーサイドジャンボゴルフ</li>
+                    <li><span class="mr-2">📡</span>普段使い＆弾道測定するなら： KSP彦根</li>
+                    <li><span class="mr-2">😊</span>友人と（特に女性と）行くなら： さくらゴルフ倶楽部</li>
+                    <li><span class="mr-2">🌳</span>ショートコースも楽しみたいなら： 365ゴルフクラブながはま</li>
+                </ul>
+            </div>
+            <div class="mt-10">
+                <h3 class="text-2xl font-bold mb-4 text-slate-800">シガゴルが、あなたに約束する３つのこと</h3>
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-xl font-semibold">1.【公平な視点】 みんなのリアルな口コミを大切にします</h4>
+                        <p class="text-slate-600 mt-1 leading-relaxed">私のレビューだけでは、どうしても視点は偏ってしまいます。だからこそ「シガゴル」では、あなたを含む多くのゴルファーからの“リアルな口コミ”を何よりも大切にします。たくさんの声が集まることで、このサイトはより公平で、価値のあるものになると信じています。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold">2.【最新の情報】 “行ってみてガッカリ”をなくします</h4>
+                        <p class="text-slate-600 mt-1 leading-relaxed">「公式サイトの情報が古くて、料金が違った…」そんな体験はありませんか？ シガゴルでは練習場とも連携を図りながら、常に情報のアップデートを目指します。あなたの練習場選びが、最高のものになるように。</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold">3.【生きた情報】 データだけでは分からない“雰囲気”も届けます</h4>
+                        <p class="text-slate-600 mt-1 leading-relaxed">料金や設備といったデータだけでは伝わらない、練習場の“雰囲気”やパター練習場の広さ、“ちょっとした裏技”まで。そんな「生きた情報」は、私の体験談（note）で詳しく解説しています。ぜひ、そちらも覗いてみてください。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </BaseLayout>

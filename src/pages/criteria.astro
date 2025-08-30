@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pageTitle = "評価基準 | シガゴル";
+const description = "シガゴルのレビューにおける5つの評価基準「打席・レンジの質」「設備の充実度」「練習環境の多様性」「コストパフォーマンス」「快適性」について詳しく解説します。";
+
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <h1 class="text-3xl font-bold text-center my-8">シガゴルの評価基準について</h1>
+  
+  <div id="criteria-view" class="view bg-white p-6 md:p-8 rounded-lg shadow-lg">
+    <a href="/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">‹ トップページに戻る</a>
+    <h2 class="text-3xl font-bold mb-4">シガゴルの評価基準について</h2>
+    <div class="text-slate-600 space-y-4 leading-relaxed">
+        <p>「シガゴル」の管理者レビューは、公平性と透明性を保つため、以下の基準に基づいて評価を行っています。</p>
+        <p>ユーザーの皆様がレビューを投稿される際の参考になれば幸いです。</p>
+    </div>
+    <div class="space-y-6 mt-6">
+        <div>
+            <h3 class="text-xl font-bold">1. 打席・レンジの質（★★★★★）</h3>
+            <p class="text-slate-500">内容: マットの状態、ボールの質（新しさ・綺麗さ）、レンジの広さ・開放感</p>
+        </div>
+        <div>
+            <h3 class="text-xl font-bold">2. 設備の充実度（★★★★★）</h3>
+            <p class="text-slate-500">内容: 弾道測定器の有無と性能、オートティーアップ、各打席の備品</p>
+        </div>
+        <div>
+            <h3 class="text-xl font-bold">3. 練習環境の多様性（★★★★★）</h3>
+            <p class="text-slate-500">内容: アプローチ、バンカー、パター練習場の有無と質、ショートコースの併設</p>
+        </div>
+        <div>
+            <h3 class="text-xl font-bold">4. コストパフォーマンス（★★★★★）</h3>
+            <p class="text-slate-500">内容: ボール単価、打ち放題プランの価格と時間、総合的な価格満足度</p>
+        </div>
+        <div>
+            <h3 class="text-xl font-bold">5. 快適性・ホスピタリティ（初心者への配慮）（★★★★★）</h3>
+            <p class="text-slate-500">内容: スタッフの接客、施設内の案内の分かりやすさ、レンタルクラブの有無と質、クラブハウスやトイレの清潔感</p>
+        </div>
+    </div>
+    <h3 class="text-2xl font-bold mt-8 mb-4">総合評価の決め方</h3>
+    <ol class="list-decimal list-inside space-y-2 text-slate-600">
+        <li>上記5項目をそれぞれ5段階で採点します。</li>
+        <li>5項目の点数の平均点を算出します。</li>
+        <li>特筆すべき長所・短所があれば「X-Factor補正」として±0.5点の補正を加えることがあります。</li>
+        <li>最終的な点数を最も近い星の数に換算し、総合評価を決定します。</li>
+    </ol>
+  </div>
+  </BaseLayout>
