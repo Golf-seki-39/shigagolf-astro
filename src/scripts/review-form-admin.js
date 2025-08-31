@@ -115,8 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const reviewsCollectionPath = collection(db, 'artifacts', appId, 'public', 'data', 'practice_ranges', rangeId, 'reviews');
       await addDoc(reviewsCollectionPath, reviewData);
 
-      alert('レビューの投稿が完了しました！ありがとうございます。');
+      // ...
+      alert('レビューの投稿を受け付けました！ありがとうございます。サイトへの反映には数分かかる場合があります。');
       window.location.href = `/ranges/${rangeId}`;
+// ...
 
     } catch (e) {
       console.error("レビュー投稿中にエラーが発生しました: ", e);

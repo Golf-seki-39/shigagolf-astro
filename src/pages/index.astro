@@ -6,311 +6,345 @@ import { collection, getDocs, query, orderBy } from "firebase/firestore";
 // SEO情報
 const title = "シガゴル | 滋賀のリアルなゴルフ練習場レビューサイト";
 const description =
-	"シガゴルは、滋賀県内のゴルフ練習場のリアルな口コミ・レビューサイト。測定器の有無、アプローチ・バンカー練習場の併設など、あなたの目的に合った練習場探しをサポートします。";
+    "シガゴルは、滋賀県内のゴルフ練習場のリアルな口コミ・レビューサイト。測定器の有無、アプローチ・バンカー練習場の併設など、あなたの目的に合った練習場探しをサポートします。";
 
 // データ取得とエラーハンドリング
 let practiceRanges = [];
 let fetchError = false;
 
 try {
-	const rangesCollection = collection(
-		db,
-		"artifacts",
-		import.meta.env.PUBLIC_VITE_APP_ID,
-		"public",
-		"data",
-		"practice_ranges",
-	);
-	const q = query(rangesCollection, orderBy("avgRating", "desc"));
-	const querySnapshot = await getDocs(q);
-	practiceRanges = querySnapshot.docs.map((doc) => ({
-		id: doc.id,
-		...doc.data(),
-	}));
+    const rangesCollection = collection(
+        db,
+        "artifacts",
+        import.meta.env.PUBLIC_VITE_APP_ID,
+        "public",
+        "data",
+        "practice_ranges",
+    );
+    // 初期表示はおすすめ順（この例ではひとまず評価順にしておく）
+    const q = query(rangesCollection, orderBy("avgRating", "desc"));
+    const querySnapshot = await getDocs(q);
+    practiceRanges = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
 } catch (error) {
-	console.error("Firebase data fetching failed:", error);
-	fetchError = true;
+    console.error("Firebase data fetching failed:", error);
+    fetchError = true;
 }
 ---
 
 <BaseLayout title={title} description={description}>
-	<main class="container mx-auto p-4 md:p-6">
-		<div class="text-center mb-6">
-			<h1 class="text-2xl md:text-3xl font-bold mb-2">
-				滋賀のゴルフ練習場を探す
-			</h1>
-			<p class="text-slate-500">
-				あなたの目的に合った<br />最高の練習環境を見つけよう。
-			</p>
-			<p class="text-amber-600 font-semibold mt-2">
-				by 関＠初心者向けゴルフ施設レビュアー
-			</p>
-		</div>
-		<div class="mb-6 flex justify-center">
-			<div class="inline-flex rounded-md shadow-sm" role="group">
-				<a
-					href="/"
-					class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded-l-lg hover:bg-green-700"
-					aria-current="page"
-				>
-					リスト表示
-				</a>
-				<a
-					href="/map"
-					class="px-4 py-2 text-sm font-medium text-green-600 bg-white border border-green-600 rounded-r-md hover:bg-green-50"
-				>
-					マップで探す
-				</a>
-			</div>
-		</div>
+    <main class="container mx-auto p-4 md:p-6">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl md:text-3xl font-bold mb-2">
+                滋賀のゴルフ練習場を探す
+            </h1>
+            <p class="text-slate-500">
+                あなたの目的に合った<br />最高の練習環境を見つけよう。
+            </p>
+            <p class="text-amber-600 font-semibold mt-2">
+                by 関＠初心者向けゴルフ施設レビュアー
+            </p>
+        </div>
+        <div class="mb-6 flex justify-center">
+            <div class="inline-flex rounded-md shadow-sm" role="group">
+                <a
+                    href="/"
+                    class="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-green-600 rounded-l-lg hover:bg-green-700"
+                    aria-current="page"
+                >
+                    リスト表示
+                </a>
+                <a
+                    href="/map"
+                    class="px-4 py-2 text-sm font-medium text-green-600 bg-white border border-green-600 rounded-r-md hover:bg-green-50"
+                >
+                    マップで探す
+                </a>
+            </div>
+        </div>
 
-		<div
-			id="filters"
-			class="bg-white p-2 rounded-lg shadow-sm mb-6 sticky top-[68px] z-10 bg-opacity-95 backdrop-blur-sm"
-		>
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-				<input
-					type="text"
-					id="search-keyword"
-					placeholder="練習場名で検索..."
-					class="w-full p-2 border border-slate-300 rounded-md"
-				/>
-				<select
-					id="filter-area"
-					class="w-full p-2 border border-slate-300 rounded-md"
-				>
-					<option value="">すべてのエリア</option>
-					<option value="大津">大津エリア</option>
-					<option value="草津・栗東・守山・野洲"
-						>草津・栗東・守山・野洲エリア</option
-					>
-					<option value="甲賀・湖南">甲賀・湖南エリア</option>
-					<option value="近江八幡・東近江"
-						>近江八幡・東近江エリア</option
-					>
-					<option value="湖北">湖北エリア</option>
-					<option value="湖西">湖西エリア</option>
-				</select>
-				<select
-					id="sort-order"
-					class="w-full p-2 border border-slate-300 rounded-md"
-				>
-					<option value="default">おすすめ順</option>
-					<option value="rating_desc">評価が高い順</option>
-					<option value="reviews_desc">レビューが多い順</option>
-				</select>
-			</div>
-			<div class="mt-2 pt-2 border-t border-slate-200">
-				<label class="text-xs font-medium text-slate-600"
-					>設備で絞り込む:</label
-				>
-				<div
-					class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 items-center mt-1"
-					role="group"
-				>
-					<label class="flex items-center space-x-2"
-						><input
-							type="checkbox"
-							name="feature"
-							value="hasTracer"
-						/><span>📡 測定器</span></label
-					>
-					<label class="flex items-center space-x-2"
-						><input
-							type="checkbox"
-							name="feature"
-							value="hasApproach"
-						/><span>⛳️ アプローチ</span></label
-					>
-					<label class="flex items-center space-x-2"
-						><input
-							type="checkbox"
-							name="feature"
-							value="hasBunker"
-						/><span>🕳️ バンカー</span></label
-					>
-					<label class="flex items-center space-x-2"
-						><input
-							type="checkbox"
-							name="feature"
-							value="hasPutter"
-						/><span>🏌️ パター</span></label
-					>
-					<label class="flex items-center space-x-2"
-						><input
-							type="checkbox"
-							name="feature"
-							value="hasUchihodai"
-						/><span>💰 打放題</span></label
-					>
-				</div>
-			</div>
-		</div>
-		<div
-			id="cta-magazine"
-			class="bg-gradient-to-r from-green-600 to-emerald-700 text-white p-6 rounded-lg shadow-lg mb-8 text-center"
-			role="region"
-			aria-labelledby="cta-magazine-title"
-		>
-			<h3 id="cta-magazine-title" class="text-2xl font-bold mb-2">
-				無駄ゼロで100切り！ゴルフ練習設計図
-			</h3>
-			<p class="mb-4">
-				「練習してるのに上手くならない…」を解決し、<br />
-				年間数万円のコストをカットする具体的な行動マップを限定公開中！
-			</p>
-			<a
-				href="https://note.com/seki_golf_39/m/m57fd539cb6b1"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="inline-block bg-white text-green-700 font-bold py-2 px-6 rounded-full hover:bg-gray-100 transition"
-				>購入者限定ツール付きマガジンを見る</a
-			>
-		</div>
-		{
-			fetchError ? (
-				<div class="text-center py-16 bg-red-50 text-red-700 rounded-lg">
-					<p class="text-lg font-semibold">
-						データの読み込みに失敗しました。
-					</p>
-					<p class="text-slate-600 mt-2">
-						時間をおいて再度お試しください。
-					</p>
-				</div>
-			) : (
-				<div
-					id="range-list"
-					class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-				>
-					{practiceRanges.map((range) => {
-						const badges = [];
-						if (range.isIndoor) badges.push("インドア");
-						if (range.is_beginner_friendly)
-							badges.push("初心者に優しい");
-						if (range.hasTracer) badges.push("弾道測定器あり");
-						if (range.tags && range.tags.includes("GP併設"))
-							badges.push("GP併設");
-						if (range.hasUchihodai) badges.push("打ち放題あり");
+        <div
+            id="filters"
+            class="bg-white p-2 rounded-lg shadow-sm mb-6 sticky top-[68px] z-10 bg-opacity-95 backdrop-blur-sm"
+        >
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                <input
+                    type="text"
+                    id="search-keyword"
+                    placeholder="練習場名で検索..."
+                    class="w-full p-2 border border-slate-300 rounded-md"
+                />
+                <select
+                    id="filter-area"
+                    class="w-full p-2 border border-slate-300 rounded-md"
+                >
+                    <option value="">すべてのエリア</option>
+                    <option value="大津">大津エリア</option>
+                    <option value="草津・栗東・守山・野洲"
+                        >草津・栗東・守山・野洲エリア</option
+                    >
+                    <option value="甲賀・湖南">甲賀・湖南エリア</option>
+                    <option value="近江八幡・東近江"
+                        >近江八幡・東近江エリア</option
+                    >
+                    <option value="湖北">湖北エリア</option>
+                    <option value="湖西">湖西エリア</option>
+                </select>
+                <select
+                    id="sort-order"
+                    class="w-full p-2 border border-slate-300 rounded-md"
+                >
+                    <option value="default">おすすめ順</option>
+                    <option value="rating_desc">評価が高い順</option>
+                    <option value="reviews_desc">レビューが多い順</option>
+                </select>
+            </div>
+            <div class="mt-2 pt-2 border-t border-slate-200">
+                <label class="text-xs font-medium text-slate-600"
+                    >設備で絞り込む:</label
+                >
+                <div
+                    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 items-center mt-1"
+                    role="group"
+                >
+                    <label class="flex items-center space-x-2"
+                        ><input
+                            type="checkbox"
+                            name="feature"
+                            value="hasTracer"
+                        /><span>📡 測定器</span></label
+                    >
+                    <label class="flex items-center space-x-2"
+                        ><input
+                            type="checkbox"
+                            name="feature"
+                            value="hasApproach"
+                        /><span>⛳️ アプローチ</span></label
+                    >
+                    <label class="flex items-center space-x-2"
+                        ><input
+                            type="checkbox"
+                            name="feature"
+                            value="hasBunker"
+                        /><span>🕳️ バンカー</span></label
+                    >
+                    <label class="flex items-center space-x-2"
+                        ><input
+                            type="checkbox"
+                            name="feature"
+                            value="hasPutter"
+                        /><span>🏌️ パター</span></label
+                    >
+                    <label class="flex items-center space-x-2"
+                        ><input
+                            type="checkbox"
+                            name="feature"
+                            value="hasUchihodai"
+                        /><span>💰 打放題</span></label
+                    >
+                </div>
+            </div>
+        </div>
+        <div
+            id="cta-magazine"
+            class="bg-gradient-to-r from-green-600 to-emerald-700 text-white p-6 rounded-lg shadow-lg mb-8 text-center"
+            role="region"
+            aria-labelledby="cta-magazine-title"
+        >
+            <h3 id="cta-magazine-title" class="text-2xl font-bold mb-2">
+                無駄ゼロで100切り！ゴルフ練習設計図
+            </h3>
+            <p class="mb-4">
+                「練習してるのに上手くならない…」を解決し、<br />
+                年間数万円のコストをカットする具体的な行動マップを限定公開中！
+            </p>
+            <a
+                href="https://note.com/seki_golf_39/m/m57fd539cb6b1"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-block bg-white text-green-700 font-bold py-2 px-6 rounded-full hover:bg-gray-100 transition"
+                >購入者限定ツール付きマガジンを見る</a
+            >
+        </div>
+        {
+            fetchError ? (
+                <div class="text-center py-16 bg-red-50 text-red-700 rounded-lg">
+                    <p class="text-lg font-semibold">
+                        データの読み込みに失敗しました。
+                    </p>
+                    <p class="text-slate-600 mt-2">
+                        時間をおいて再度お試しください。
+                    </p>
+                </div>
+            ) : (
+                <div
+                    id="range-list"
+                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
+                    {practiceRanges.map((range) => {
+                        const badges = [];
+                        if (range.isIndoor) badges.push("インドア");
+                        if (range.is_beginner_friendly)
+                            badges.push("初心者に優しい");
+                        if (range.hasTracer) badges.push("弾道測定器あり");
+                        if (range.tags && range.tags.includes("GP併設"))
+                            badges.push("GP併設");
+                        if (range.hasUchihodai) badges.push("打ち放題あり");
 
-						return (
-							<a
-								href={`/ranges/${range.id}`}
-								class="range-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
-								data-name={range.name.toLowerCase()}
-								data-area={range.area}
-								data-tracer={range.hasTracer}
-								data-approach={range.hasApproach}
-								data-bunker={range.hasBunker}
-								data-putter={range.hasPutter}
-								data-uchihodai={range.hasUchihodai}
-							>
-								<img
-									src={range.imageUrl}
-									alt={`${range.name}の外観`}
-									class="w-full h-40 object-cover"
-								/>
-								<div class="p-4 flex-grow flex flex-col">
-									<p class="text-sm text-green-600 font-semibold">
-										{range.area}エリア
-									</p>
-									<h2 class="text-xl font-bold mt-1 text-slate-800">
-										{range.name}
-									</h2>
+                        return (
+                            <a
+                                href={`/ranges/${range.id}`}
+                                class="range-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                                data-name={range.name.toLowerCase()}
+                                data-area={range.area}
+                                data-tracer={range.hasTracer}
+                                data-approach={range.hasApproach}
+                                data-bunker={range.hasBunker}
+                                data-putter={range.hasPutter}
+                                data-uchihodai={range.hasUchihodai}
+                                data-rating={range.avgRating || 0}
+                                data-reviews={range.reviewCount || 0}
+                            >
+                                <img
+                                    src={range.imageUrl}
+                                    alt={`${range.name}の外観`}
+                                    class="w-full h-40 object-cover"
+                                />
+                                <div class="p-4 flex-grow flex flex-col">
+                                    <p class="text-sm text-green-600 font-semibold">
+                                        {range.area}エリア
+                                    </p>
+                                    <h2 class="text-xl font-bold mt-1 text-slate-800">
+                                        {range.name}
+                                    </h2>
 
-									{badges.length > 0 && (
-										<div class="mt-2 flex flex-wrap gap-1">
-											{badges.slice(0, 2).map((badge) => (
-												<span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-1 rounded-full">
-													{badge}
-												</span>
-											))}
-										</div>
-									)}
+                                    {badges.length > 0 && (
+                                        <div class="mt-2 flex flex-wrap gap-1">
+                                            {badges.slice(0, 2).map((badge) => (
+                                                <span class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-2 py-1 rounded-full">
+                                                    {badge}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
 
-									<div class="mt-auto pt-2 flex items-center text-sm text-slate-500">
-										<span class="text-amber-500">
-											{"★".repeat(
-												Math.round(
-													range.avgRating || 0,
-												),
-											) +
-												"☆".repeat(
-													5 -
-														Math.round(
-															range.avgRating ||
-																0,
-														),
-												)}
-										</span>
-										<span class="ml-2">
-											({range.reviewCount || 0}件)
-										</span>
-									</div>
-								</div>
-							</a>
-						);
-					})}
-				</div>
-			)
-		}
-	</main>
+                                    <div class="mt-auto pt-2 flex items-center text-sm text-slate-500">
+                                        <span class="text-amber-500">
+                                            {"★".repeat(
+                                                Math.round(
+                                                    range.avgRating || 0,
+                                                ),
+                                            ) +
+                                                "☆".repeat(
+                                                    5 -
+                                                        Math.round(
+                                                            range.avgRating ||
+                                                                0,
+                                                        ),
+                                                )}
+                                        </span>
+                                        <span class="ml-2">
+                                            ({range.reviewCount || 0}件)
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        );
+                    })}
+                </div>
+            )
+        }
+    </main>
 </BaseLayout>
 
 <script>
-	document.addEventListener("DOMContentLoaded", () => {
-		const searchInput = document.getElementById("search-keyword");
-		const areaFilter = document.getElementById("filter-area");
-		const featureCheckboxes = document.querySelectorAll(
-			'input[name="feature"]',
-		);
-		const rangeCards = document.querySelectorAll(".range-card");
+    document.addEventListener("DOMContentLoaded", () => {
+        // --- DOM要素の取得 ---
+        const searchInput = document.getElementById("search-keyword");
+        const areaFilter = document.getElementById("filter-area");
+        const sortOrder = document.getElementById("sort-order");
+        const featureCheckboxes = document.querySelectorAll(
+            'input[name="feature"]',
+        );
+        const rangeList = document.getElementById("range-list");
+        // NodeListをArrayに変換しておく
+        const rangeCards = Array.from(document.querySelectorAll(".range-card"));
 
-		const featureMap = {
-			hasTracer: "tracer",
-			hasApproach: "approach",
-			hasBunker: "bunker",
-			hasPutter: "putter",
-			hasUchihodai: "uchihodai",
-		};
+        const featureMap = {
+            hasTracer: "tracer",
+            hasApproach: "approach",
+            hasBunker: "bunker",
+            hasPutter: "putter",
+            hasUchihodai: "uchihodai",
+        };
+        
+        // --- フィルターとソートをまとめて実行する関数 ---
+        function applySortAndFilters() {
+            // --- フィルター処理 ---
+            const keyword = searchInput.value.toLowerCase();
+            const area = areaFilter.value;
+            const checkedFeatures = {};
+            featureCheckboxes.forEach((checkbox) => {
+                if (checkbox.checked) {
+                    const dataKey = featureMap[checkbox.value];
+                    if (dataKey) {
+                        checkedFeatures[dataKey] = true;
+                    }
+                }
+            });
 
-		function applyFilters() {
-			const keyword = searchInput.value.toLowerCase();
-			const area = areaFilter.value;
+            // 表示すべきカードのリストを作成
+            const visibleCards = rangeCards.filter(card => {
+                const nameMatch = card.dataset.name.includes(keyword);
+                const areaMatch = area === "" || card.dataset.area === area;
+                
+                let featuresMatch = true;
+                for (const feature in checkedFeatures) {
+                    if (card.dataset[feature] !== "true") {
+                        featuresMatch = false;
+                        break;
+                    }
+                }
+                return nameMatch && areaMatch && featuresMatch;
+            });
 
-			const checkedFeatures = {};
-			featureCheckboxes.forEach((checkbox) => {
-				if (checkbox.checked) {
-					const dataKey = featureMap[checkbox.value];
-					if (dataKey) {
-						checkedFeatures[dataKey] = true;
-					}
-				}
-			});
+            // --- ソート処理 ---
+            const sortBy = sortOrder.value;
+            if (sortBy !== 'default') {
+                visibleCards.sort((a, b) => {
+                    if (sortBy === 'rating_desc') {
+                        return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
+                    }
+                    if (sortBy === 'reviews_desc') {
+                        return parseInt(b.dataset.reviews) - parseInt(a.dataset.reviews);
+                    }
+                    return 0;
+                });
+            }
+            // 'default'の場合はソートせず、元のHTMLの順序（フィルター済み）を維持
 
-			rangeCards.forEach((card) => {
-				const nameMatch = card.dataset.name.includes(keyword);
-				const areaMatch = area === "" || card.dataset.area === area;
+            // --- DOMの更新 ---
+            // 全てのカードを一旦非表示に
+            rangeCards.forEach(card => card.style.display = 'none');
+            // 表示すべきカードを順番通りに表示
+            visibleCards.forEach(card => {
+                card.style.display = 'flex';
+                // DOM上でカードを正しい順序にするため、rangeListに再度追加
+                rangeList.appendChild(card);
+            });
+        }
+        
+        // --- イベントリスナーの設定 ---
+        searchInput.addEventListener("input", applySortAndFilters);
+        areaFilter.addEventListener("change", applySortAndFilters);
+        sortOrder.addEventListener("change", applySortAndFilters);
+        featureCheckboxes.forEach((checkbox) => {
+            checkbox.addEventListener("change", applySortAndFilters);
+        });
 
-				let featuresMatch = true;
-				for (const feature in checkedFeatures) {
-					if (card.dataset[feature] !== "true") {
-						featuresMatch = false;
-						break;
-					}
-				}
-
-				if (nameMatch && areaMatch && featuresMatch) {
-					card.style.display = "flex";
-				} else {
-					card.style.display = "none";
-				}
-			});
-		}
-
-		if (searchInput) searchInput.addEventListener("input", applyFilters);
-		if (areaFilter) areaFilter.addEventListener("change", applyFilters);
-		featureCheckboxes.forEach((checkbox) => {
-			checkbox.addEventListener("change", applyFilters);
-		});
-	});
+        // 初期表示時にも一度実行
+        applySortAndFilters();
+    });
 </script>
