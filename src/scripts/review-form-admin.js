@@ -1,3 +1,5 @@
+// src/scripts/review-form-admin.js
+
 import { db, storage } from '../lib/firebase.js';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -12,19 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const adminScoresSection = document.getElementById('admin-scores-section');
   const adminScoreInputs = adminScoresSection.querySelectorAll('input');
 
-  // ニックネームが変更されたら、管理人フォームの表示とrequired属性を切り替える
   reviewerNameInput.addEventListener('input', () => {
     const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
-    if (isAdmin) {
-      adminScoresSection.classList.remove('hidden');
-      adminScoreInputs.forEach(input => input.required = true);
-    } else {
-      adminScoresSection.classList.add('hidden');
-      adminScoreInputs.forEach(input => input.required = false);
-    }
+    adminScoresSection.classList.toggle('hidden', !isAdmin);
+    adminScoreInputs.forEach(input => input.required = isAdmin);
   });
 
-  // --- 写真プレビューのコード (変更なし) ---
+  // --- 写真プレビューのコード (あなたのコードをそのまま使用) ---
   const imageUploadInput = document.getElementById('review-image-upload');
   const imagePreviewContainer = document.getElementById('image-preview-container');
   let uploadedFiles = [];
@@ -53,8 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
           removeBtn.textContent = '×';
           removeBtn.className = 'absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs';
           removeBtn.onclick = () => {
-            const index = uploadedFiles.indexOf(fileWithId);
-            if (index > -1) { uploadedFiles.splice(index, 1); }
+            uploadedFiles = uploadedFiles.filter(f => f !== fileWithId);
             previewWrapper.remove();
           };
           previewWrapper.appendChild(img);
@@ -69,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- フォーム送信のコード (変更なし) ---
+  // --- フォーム送信のコード ---
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     
@@ -78,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitButton.textContent = '投稿中...';
 
     try {
+      // 画像を先にアップロード
       const imageUrls = [];
       for (const file of uploadedFiles) {
         const storageRef = ref(storage, `reviews-images/${file.name}`);
@@ -86,39 +82,45 @@ document.addEventListener('DOMContentLoaded', () => {
         imageUrls.push(downloadURL);
       }
 
-      const rangeId = document.getElementById('rangeId').value;
+      const formData = new FormData(form);
+      const rangeId = formData.get('rangeId');
       const appId = form.dataset.appId;
-      const name = document.getElementById('reviewerName').value;
-      const title = document.getElementById('reviewTitle').value;
-      const body = document.getElementById('reviewComment').value;
-      const rating = form.querySelector('input[name="rating"]:checked').value;
+      const author = formData.get('reviewerName');
+      const title = formData.get('reviewTitle');
+      const body = formData.get('reviewComment');
+      const rating = parseInt(formData.get('rating'), 10); // ★★★ 文字列を数値に変換 ★★★
+
+      if (!rating) {
+        alert('評価（星）を選択してください。');
+        submitButton.disabled = false;
+        submitButton.textContent = '投稿する';
+        return;
+      }
       
       const reviewData = {
-        author: name,
-        title: title,
-        body: body,
-        rating: Number(rating),
+        author,
+        title,
+        body,
+        rating, // 数値化されたratingを保存
         createdAt: serverTimestamp(),
-        imageUrls: imageUrls,
+        imageUrls,
       };
 
-      if (name === '関＠シガゴル管理人') {
+      if (author === '関＠シガゴル管理人') {
         reviewData.scores = {
-          "打席・レンジの質": Number(document.getElementById('score_range').value),
-          "設備の充実度": Number(document.getElementById('score_facilities').value),
-          "練習環境の多様性": Number(document.getElementById('score_variety').value),
-          "コストパフォーマンス": Number(document.getElementById('score_cost').value),
-          "快適性・ホスピタリティ": Number(document.getElementById('score_hospitality').value)
+          "打席・レンジの質": Number(formData.get('score_range')),
+          "設備の充実度": Number(formData.get('score_facilities')),
+          "練習環境の多様性": Number(formData.get('score_variety')),
+          "コストパフォーマンス": Number(formData.get('score_cost')),
+          "快適性・ホスピタリティ": Number(formData.get('score_hospitality'))
         };
       }
 
       const reviewsCollectionPath = collection(db, 'artifacts', appId, 'public', 'data', 'practice_ranges', rangeId, 'reviews');
       await addDoc(reviewsCollectionPath, reviewData);
-
-      // ...
+      
       alert('レビューの投稿を受け付けました！ありがとうございます。サイトへの反映には数分かかる場合があります。');
       window.location.href = `/ranges/${rangeId}`;
-// ...
 
     } catch (e) {
       console.error("レビュー投稿中にエラーが発生しました: ", e);
