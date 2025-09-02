@@ -108,6 +108,7 @@ const sortedReviews = [...adminReviews, ...userReviews];
         </section>
         {/* 以下の<section>から</section>までを、まるごとコピーして置き換えてください */}
 {/* 以下の<section>から</section>までを、まるごとコピーして置き換えてください */}
+{/* 以下の<section>から</section>までを、まるごとコピーして置き換えてください */}
 <section>
   <h2 class="text-2xl font-bold">基本情報</h2>
   <ul class="mt-2 space-y-2 text-slate-600">
@@ -118,18 +119,15 @@ const sortedReviews = [...adminReviews, ...userReviews];
     <li><strong>駐車場:</strong> {range.parking_info || '情報なし'}</li>
     <li><strong>レンタルクラブ:</strong> {range.rental_club_info || '情報なし'}</li>
     <li><strong>左利き打席:</strong> {range.lefty_bays_info || '情報なし'}</li>
-    
-    {/* ▼▼▼ ここが修正されたリンクです ▼▼▼ */}
-    {range.links && (
-      <li class="pt-2 mt-2 border-t border-slate-200">
-        <strong>関連リンク:</strong>
-        <div class="flex flex-col sm:flex-row sm:space-x-4 mt-1">
-          {range.links.homepage && <a href={range.links.homepage} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">公式サイトを見る</a>}
-          {range.links.note && <a href={range.links.note} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">私のnote記事を読む</a>}
-          {range.links.golfMedley && <a href={range.links.golfMedley} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">ゴルフメドレー記事を読む</a>}
-        </div>
-      </li>
-    )}
+    <li class="pt-2 mt-2 border-t border-slate-200">
+      <strong>関連リンク:</strong>
+      <div class="flex flex-col sm:flex-row sm:space-x-4 mt-1">
+        {/* ▼▼▼ ここが修正されたリンクです ▼▼▼ */}
+        {range.links?.homepage && <a href={range.links.homepage} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">公式サイトを見る</a>}
+        {range.links?.note && <a href={range.links.note} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">私のnote記事を読む</a>}
+        {range.links?.golfMedley && <a href={range.links.golfMedley} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">ゴルフメドレー記事を読む</a>}
+      </div>
+    </li>
   </ul>
 </section>
       </div>
