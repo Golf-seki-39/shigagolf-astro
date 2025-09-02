@@ -1,5 +1,3 @@
-// functions/index.js
-
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { setGlobalOptions } = require("firebase-functions/v2");
 const functions = require("firebase-functions");
@@ -20,30 +18,41 @@ exports.updateStatsAndTriggerBuild = onDocumentCreated(
             const { appId, rangeId } = event.params;
             const db = admin.firestore();
 
-            // --- レビュー件数と平均評価を再計算 ---
             const rangeRef = db.doc(`artifacts/${appId}/public/data/practice_ranges/${rangeId}`);
             const reviewsRef = rangeRef.collection("reviews");
             
             const reviewsSnapshot = await reviewsRef.get();
             
-            const newReviewCount = reviewsSnapshot.size;
-            
-            let totalRating = 0;
+            // ★★★ ここからが修正箇所です ★★★
+
+            let validReviewsCount = 0; // 有効なレビューの数
+            let totalRating = 0;       // 有効な評価の合計
+
             reviewsSnapshot.forEach(doc => {
-                totalRating += doc.data().rating || 0;
+                const reviewData = doc.data();
+                // 'rating'フィールドが存在し、かつ、それが数値として有効かを確認
+                if (reviewData && typeof reviewData.rating === 'number' && !isNaN(reviewData.rating)) {
+                    totalRating += reviewData.rating;
+                    validReviewsCount++; // 有効なレビューとしてカウント
+                }
             });
             
-            const newAvgRating = newReviewCount > 0 ? totalRating / newReviewCount : 0;
+            // 全てのレビューの総数は newReviewCount として保持
+            const newReviewCount = reviewsSnapshot.size;
+
+            // 平均評価は「有効なレビュー」だけで計算
+            const newAvgRating = validReviewsCount > 0 ? totalRating / validReviewsCount : 0;
             const roundedAvgRating = Math.round(newAvgRating * 10) / 10;
             
-            // 新しい統計データを更新
+            // データベースには、総レビュー数と、計算された平均評価を更新
             await rangeRef.update({ 
                 reviewCount: newReviewCount,
                 avgRating: roundedAvgRating 
             });
+            // ★★★ 修正箇所はここまで ★★★
+
             functions.logger.info(`Successfully updated stats for ${rangeId}: Count=${newReviewCount}, AvgRating=${roundedAvgRating}`);
 
-            // --- Netlifyに、サイトの再ビルドを命令 ---
             if (NETLIFY_BUILD_HOOK_URL) {
                 await fetch(NETLIFY_BUILD_HOOK_URL, { method: 'POST' });
                 functions.logger.info("Successfully triggered a new build on Netlify!");
