@@ -239,7 +239,7 @@ const appId = import.meta.env.PUBLIC_VITE_APP_ID;
 
 <script>
   // Firebaseの必要な機能をインポート
-  import { db, storage } from '../../lib/firebase.js';
+  import { db, storage } from '@/lib/firebase.js';
   import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
   import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
