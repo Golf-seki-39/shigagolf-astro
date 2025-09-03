@@ -229,7 +229,7 @@ const ldJson = {
             allowfullscreen
             referrerpolicy="no-referrer-when-downgrade"
             {/* 2. srcのURLを埋め込み専用の正しい形式に修正 */}
-src={`https://www.google.com/maps/search/4{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + ' ' + range.address)}`}        >
+src={`https://www.google.com/maps/embed/v1/place{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + ' ' + range.address)}`}    >
           </iframe>
         </div>
       </section>
