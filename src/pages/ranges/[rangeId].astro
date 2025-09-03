@@ -10,7 +10,9 @@ export async function getStaticPaths() {
   const querySnapshot = await getDocs(rangesCollection);
   // Firestoreのデータをそのまま渡す形に戻します
   const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
+  console.log(`Firestoreから取得した練習場の数: ${ranges.length}件`);
+  console.log("最初の練習場のデータ:", JSON.stringify(ranges[0], null, 2));
+  
   return ranges.map(range => ({
     params: { rangeId: range.id },
     props: { range },
