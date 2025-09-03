@@ -7,7 +7,15 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 export async function getStaticPaths() {
   const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges');
   const querySnapshot = await getDocs(rangesCollection);
-  const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const ranges = querySnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      ...data,
+      // linksオブジェクトが存在しない場合に備えて、空のオブジェクトをデフォルト値とする
+      links: data.links || {}, 
+    };
+  });
 
   return ranges.map(range => ({
     params: { rangeId: range.id },
