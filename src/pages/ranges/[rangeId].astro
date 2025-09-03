@@ -5,6 +5,7 @@ import { db } from '../../lib/firebase.js';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export async function getStaticPaths() {
+      console.log("Netlify Build Log - Project ID:", import.meta.env.PUBLIC_FIREBASE_PROJECT_ID);
   const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges');
   const querySnapshot = await getDocs(rangesCollection);
   // Firestoreのデータをそのまま渡す形に戻します
