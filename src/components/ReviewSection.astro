@@ -87,7 +87,7 @@ const appId = import.meta.env.PUBLIC_VITE_APP_ID;
 
 <script>
   // Firebaseの必要な機能をインポートします
-  import { db, storage } from '../../lib/firebase.js'; // firebase.jsのパスは環境に合わせて確認してください
+  import { db, storage } from '../lib/firebase.js'; // firebase.jsのパスは環境に合わせて確認してください
   import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
   import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
