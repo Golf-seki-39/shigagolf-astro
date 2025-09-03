@@ -19,8 +19,6 @@ const { range } = Astro.props;
 const title = `${range.name}の口コミ・評判 | シガゴル`;
 const description = `${range.name}（${range.area}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${range.name}に関する詳細情報が満載です。`;
 
-// (中略... badges, reviews, ldJson などの定義は変更ありません)
-// --- 特徴バッジを、既存のデータから自動生成するロジック ---
 const badges = [];
 if (range.isIndoor) badges.push("インドア");
 if (range.is_beginner_friendly) badges.push("初心者に優しい");
@@ -28,18 +26,15 @@ if (range.hasTracer && range.tracer_brand === 'トップトレーサー') badges
 else if (range.hasTracer) badges.push("弾道測定器あり");
 if (range.tags && range.tags.includes("GP併設")) badges.push("GP併設");
 
-// --- データベースからレビューを取得 ---
 const reviewsCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges', range.id, 'reviews');
 const q = query(reviewsCollection, orderBy("createdAt", "desc"));
 const reviewsSnapshot = await getDocs(q);
 const reviews = reviewsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-// --- 「公式レビュー」を一番上にするための並べ替えロジック ---
 const adminReviews = reviews.filter(review => review.author === '関＠シガゴル管理人');
 const userReviews = reviews.filter(review => review.author !== '関＠シガゴル管理人');
 const sortedReviews = [...adminReviews, ...userReviews];
 
-// --- 構造化データ(JSON-LD)を生成 ---
 const ldJson = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
@@ -75,7 +70,6 @@ const ldJson = {
 
     <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
       <header>
-        {/* (中略... ヘッダー部分は変更ありません) */}
         <img src={range.imageUrl} alt={`${range.name}の外観`} class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy">
         <div>
           <p class="text-lg text-green-600 font-semibold">{range.area}エリア</p>
@@ -106,8 +100,6 @@ const ldJson = {
       </header>
 
       <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
-        
-        {/* (中略... 設備情報, 料金情報, 基本情報, 関連リンクのセクションは変更ありません) */}
         <section>
           <h2 class="text-2xl font-bold">設備情報</h2>
           <ul class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600">
@@ -145,7 +137,7 @@ const ldJson = {
             <table class="min-w-full text-sm">
               <tbody class="text-slate-600">
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{range.business_hours || '情報なし'}</td></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://maps.google.com/maps?q=$5{encodeURIComponent(range.address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{range.address || '情報なし'}</a></td></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/embed/v1/search{encodeURIComponent(range.address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{range.address || '情報なし'}</a></td></tr>
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${range.phone}`} class="text-green-700 hover:underline">{range.phone || '情報なし'}</a></td></tr>
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{range.access || '情報なし'}</td></tr>
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th><td class="py-3 px-4">{range.parking_info || '情報なし'}</td></tr>
@@ -156,13 +148,29 @@ const ldJson = {
           </div>
         </section>
 
+        {/* --- ▼▼▼ ここからが修正点1：関連リンクのコードを元に戻す ▼▼▼ --- */}
         {(range.website || range.noteUrl || range.medleyUrl) && (
           <section>
             <h2 class="text-2xl font-bold">関連リンク</h2>
             <div class="mt-2 space-y-3">
-              {range.website && ( <a href={range.website} ...> ... </a> )}
-              {range.noteUrl && ( <a href={range.noteUrl} ...> ... </a> )}
-              {range.medleyUrl && ( <a href={range.medleyUrl} ...> ... </a> )}
+              {range.website && (
+                <a href={range.website} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                  <span class="font-semibold text-slate-800 group-hover:underline">公式サイトを見る</span>
+                </a>
+              )}
+              {range.noteUrl && (
+                <a href={range.noteUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  <span class="font-semibold text-slate-800 group-hover:underline">noteの記事を読む</span>
+                </a>
+              )}
+              {range.medleyUrl && (
+                <a href={range.medleyUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"></path></svg>
+                  <span class="font-semibold text-slate-800 group-hover:underline">ゴルフメドレーの記事を読む</span>
+                </a>
+              )}
             </div>
           </section>
         )}
@@ -176,7 +184,6 @@ const ldJson = {
 
       <section class="mt-8 pt-6 border-t border-slate-200">
         <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
-        {/* (中略... レビュー表示部分は変更ありません) */}
         <div class="space-y-6">
           {sortedReviews.length > 0 ? (
             sortedReviews.map((review, reviewIndex) => {
@@ -215,9 +222,6 @@ const ldJson = {
         </div>
       </section>
 
-      {/* --- ▼▼▼ ここからが変更点です ▼▼▼ --- */}
-
-      {/* 1. Googleマップのセクションをレビューの下に移動 */}
       <section class="mt-8 pt-6 border-t border-slate-200">
         <h2 class="text-2xl font-bold">アクセスマップ</h2>
         <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
@@ -228,13 +232,11 @@ const ldJson = {
             loading="lazy"
             allowfullscreen
             referrerpolicy="no-referrer-when-downgrade"
-            {/* 2. srcのURLを埋め込み専用の正しい形式に修正 */}
-src={`https://www.google.com/maps/embed/v1/place{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + ' ' + range.address)}`}    >
+            src={`https://developers.google.com/maps/terms{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + ' ' + range.address)}`}
+          >
           </iframe>
         </div>
       </section>
-
-      {/* --- ▲▲▲ ここまで ▲▲▲ --- */}
       
       <div id="review-form-wrapper" class="hidden">
         <ReviewSection range={range} />
@@ -243,7 +245,7 @@ src={`https://www.google.com/maps/embed/v1/place{import.meta.env.PUBLIC_GOOGLE_M
   </main>
 </BaseLayout>
 
-{/* (中略... scriptタグ部分は変更ありません) */}
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const showButton = document.getElementById('show-review-form-btn');
