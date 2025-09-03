@@ -5,10 +5,8 @@ import { db } from '../../lib/firebase.js';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export async function getStaticPaths() {
-      console.log("Netlify Build Log - Project ID:", import.meta.env.PUBLIC_FIREBASE_PROJECT_ID);
   const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges');
   const querySnapshot = await getDocs(rangesCollection);
-  // Firestoreのデータをそのまま渡す形に戻します
   const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
   return ranges.map(range => ({
@@ -18,9 +16,6 @@ export async function getStaticPaths() {
 }
 
 const { range } = Astro.props;
-if (range.id === '365_hikone') {
-  console.log("「365_hikone」のページが受け取った全データ:", JSON.stringify(range, null, 2));
-}
 const title = `${range.name}の口コミ・評判 | シガゴル`;
 const description = `${range.name}（${range.area}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${range.name}に関する詳細情報が満載です。`;
 
@@ -42,9 +37,37 @@ const reviews = reviewsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
 const adminReviews = reviews.filter(review => review.author === '関＠シガゴル管理人');
 const userReviews = reviews.filter(review => review.author !== '関＠シガゴル管理人');
 const sortedReviews = [...adminReviews, ...userReviews];
+
+// --- 構造化データ(JSON-LD)を生成 ---
+const ldJson = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": range.name,
+  "image": range.imageUrl,
+  "telephone": range.phone,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": range.address,
+    "addressLocality": range.city, // DBから市区町村を自動設定
+    "addressRegion": "滋賀県",
+    "postalCode": range.postalCode, // DBから郵便番号を自動設定
+    "addressCountry": "JP"
+  },
+  ...(range.reviewCount > 0 && {
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": range.avgRating,
+      "reviewCount": range.reviewCount
+    }
+  })
+};
 ---
 
 <BaseLayout title={title} description={description}>
+  
+  {/* 構造化データを出力 */}
+  <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
+
   <main class="container mx-auto p-4 md:p-6">
     <div class="mb-4">
       <a href="/" class="text-green-700 font-semibold hover:underline">‹ 練習場一覧に戻る</a>
@@ -52,6 +75,7 @@ const sortedReviews = [...adminReviews, ...userReviews];
 
     <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
       <header>
+        {/* 練習場のメイン画像にalt属性を追加 */}
         <img src={range.imageUrl} alt={`${range.name}の外観`} class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy">
         <div>
           <p class="text-lg text-green-600 font-semibold">{range.area}エリア</p>
@@ -92,6 +116,7 @@ const sortedReviews = [...adminReviews, ...userReviews];
             <li>💰 打ち放題: {range.hasUchihodai ? 'あり' : 'なし'}</li>
           </ul>
         </section>
+        
         <section>
           <h2 class="text-2xl font-bold">料金情報</h2>
           <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
@@ -111,53 +136,50 @@ const sortedReviews = [...adminReviews, ...userReviews];
             <li><strong>最低料金の目安:</strong> {range.initial_cost || '情報なし'}</li>
           </ul>
         </section>
-        {/* 以下の<section>から</section>までを、まるごとコピーして置き換えてください */}
-{/* 以下の<section>から</section>までを、まるごとコピーして置き換えてください */}
-{/* 以下の<section>から</section>までを、まるごとコピーして置き換えてください */}
-{/* 基本情報 */}
-<section>
-  <h2 class="text-2xl font-bold">基本情報</h2>
-  <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
-    <table class="min-w-full text-sm">
-      <tbody class="text-slate-600">
-        <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{range.business_hours || '情報なし'}</td></tr>
-        <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://maps.google.com/maps?q=${encodeURIComponent(range.address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{range.address || '情報なし'}</a></td></tr>
-        <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${range.phone}`} class="text-green-700 hover:underline">{range.phone || '情報なし'}</a></td></tr>
-        <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{range.access || '情報なし'}</td></tr>
-        <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th><td class="py-3 px-4">{range.parking_info || '情報なし'}</td></tr>
-        <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">レンタルクラブ</th><td class="py-3 px-4">{range.rental_club_info || '情報なし'}</td></tr>
-        <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50">左利き打席</th><td class="py-3 px-4">{range.lefty_bays_info || '情報なし'}</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
 
-{/* 関連リンク */}
-{(range.website || range.noteUrl || range.medleyUrl) && (
-  <section class="mt-8">
-    <h2 class="text-2xl font-bold">関連リンク</h2>
-    <div class="mt-2 space-y-3">
-      {range.website && (
-        <a href={range.website} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-          <span class="font-semibold text-slate-800 group-hover:underline">公式サイトを見る</span>
-        </a>
-      )}
-      {range.noteUrl && (
-        <a href={range.noteUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-          <span class="font-semibold text-slate-800 group-hover:underline">noteの記事を読む</span>
-        </a>
-      )}
-      {range.medleyUrl && (
-        <a href={range.medleyUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"></path></svg>
-          <span class="font-semibold text-slate-800 group-hover:underline">ゴルフメドレーの記事を読む</span>
-        </a>
-      )}
-    </div>
-  </section>
-)}
+        <section>
+          <h2 class="text-2xl font-bold">基本情報</h2>
+          <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
+            <table class="min-w-full text-sm">
+              <tbody class="text-slate-600">
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{range.business_hours || '情報なし'}</td></tr>
+                {/* 住所のGoogleマップリンクを修正 */}
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(range.address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{range.address || '情報なし'}</a></td></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${range.phone}`} class="text-green-700 hover:underline">{range.phone || '情報なし'}</a></td></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{range.access || '情報なし'}</td></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th><td class="py-3 px-4">{range.parking_info || '情報なし'}</td></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">レンタルクラブ</th><td class="py-3 px-4">{range.rental_club_info || '情報なし'}</td></tr>
+                <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50">左利き打席</th><td class="py-3 px-4">{range.lefty_bays_info || '情報なし'}</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {(range.website || range.noteUrl || range.medleyUrl) && (
+          <section>
+            <h2 class="text-2xl font-bold">関連リンク</h2>
+            <div class="mt-2 space-y-3">
+              {range.website && (
+                <a href={range.website} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                  <span class="font-semibold text-slate-800 group-hover:underline">公式サイトを見る</span>
+                </a>
+              )}
+              {range.noteUrl && (
+                <a href={range.noteUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  <span class="font-semibold text-slate-800 group-hover:underline">noteの記事を読む</span>
+                </a>
+              )}
+              {range.medleyUrl && (
+                <a href={range.medleyUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"></path></svg>
+                  <span class="font-semibold text-slate-800 group-hover:underline">ゴルフメドレーの記事を読む</span>
+                </a>
+              )}
+            </div>
+          </section>
+        )}
       </div>
       
       <div class="my-8 text-center">
@@ -170,7 +192,7 @@ const sortedReviews = [...adminReviews, ...userReviews];
         <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
         <div class="space-y-6">
           {sortedReviews.length > 0 ? (
-            sortedReviews.map(review => {
+            sortedReviews.map((review, reviewIndex) => {
               const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
               const date = review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString('ja-JP') : '日付不明';
               const isAdminReview = review.author === '関＠シガゴル管理人';
@@ -189,9 +211,10 @@ const sortedReviews = [...adminReviews, ...userReviews];
                   <p class="text-slate-600 my-4 whitespace-pre-wrap">{review.body}</p>
                   {review.imageUrls && review.imageUrls.length > 0 && (
                     <div class="mt-4 flex flex-wrap gap-3">
-                      {review.imageUrls.map(url => (
+                      {/* レビュー画像に動的なalt属性を追加 */}
+                      {review.imageUrls.map((url, imageIndex) => (
                         <a href={url} target="_blank" rel="noopener noreferrer" class="block">
-                          <img src={url} alt="レビュー写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" />
+                          <img src={url} alt={`${range.name}のレビュー写真${imageIndex + 1}（${review.author}さん投稿）`} class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" />
                         </a>
                       ))}
                     </div>
