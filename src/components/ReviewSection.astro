@@ -84,3 +84,142 @@ const appId = import.meta.env.PUBLIC_VITE_APP_ID;
 </style>
 
 <script src="../scripts/review-form-admin.js"></script>
+
+<script>
+  // Firebaseの必要な機能をインポートします
+  import { db, storage } from '../../lib/firebase.js'; // firebase.jsのパスは環境に合わせて確認してください
+  import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+  import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+  // --- 要素の取得 ---
+  const form = document.getElementById('review-form');
+  const submitButton = form.querySelector('button[type="submit"]');
+  const rangeId = document.getElementById('rangeId').value;
+  const imageUploadInput = document.getElementById('review-image-upload');
+  const imagePreviewContainer = document.getElementById('image-preview-container');
+  let imageFiles = [];
+
+  // --- 画像プレビュー機能 ---
+  imageUploadInput.addEventListener('change', (event) => {
+    imagePreviewContainer.innerHTML = ''; // プレビューをリセット
+    imageFiles = Array.from(event.target.files).slice(0, 5); // 5枚までに制限
+
+    imageFiles.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imgElement = document.createElement('img');
+        imgElement.src = e.target.result;
+        imgElement.className = 'w-24 h-24 object-cover rounded-md';
+        imagePreviewContainer.appendChild(imgElement);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+  
+  // --- フォーム送信時の処理 ---
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); // ページの再読み込みをキャンセル
+
+    submitButton.disabled = true;
+    submitButton.textContent = '投稿中...';
+
+    try {
+      // 1. フォームから入力データを取得
+      const author = document.getElementById('reviewerName').value || '匿名';
+      const rating = parseInt(form.querySelector('input[name="rating"]:checked')?.value, 10);
+      const title = document.getElementById('reviewTitle').value;
+      const body = document.getElementById('reviewComment').value;
+      
+      if (!rating) {
+        alert('総合評価を選択してください。');
+        throw new Error('Rating not selected');
+      }
+
+      // 2. 画像をFirebase Storageにアップロード (Promise.allで並列処理)
+      const uploadPromises = imageFiles.map(file => {
+        const imageRef = ref(storage, `reviews/${rangeId}/${Date.now()}_${file.name}`);
+        return uploadBytes(imageRef, file).then(snapshot => getDownloadURL(snapshot.ref));
+      });
+      const imageUrls = await Promise.all(uploadPromises);
+
+      const newReviewData = {
+        author,
+        rating,
+        title,
+        body,
+        imageUrls,
+        createdAt: new Date(), // ★画面表示用の仮の日付
+      };
+
+      // 3. ★★★先に画面にレビューを「擬似的」に追加★★★
+      addReviewToUI(newReviewData);
+
+      // 4. Firestoreデータベースにレビューを保存
+      const publicDataPath = `artifacts/${import.meta.env.PUBLIC_FIREBASE_APP_ID}/public/data`;
+      const reviewsCollection = collection(db, publicDataPath, 'practice_ranges', rangeId, 'reviews');
+      
+      await addDoc(reviewsCollection, {
+        ...newReviewData,
+        createdAt: serverTimestamp(), // ★DBには正確なサーバー時刻を保存
+      });
+
+      // 5. 投稿完了後の処理
+      form.style.display = 'none';
+      const successMessage = document.createElement('div');
+      successMessage.className = 'text-center py-10';
+      successMessage.innerHTML = `<p class="text-xl font-bold text-green-700">レビューの投稿ありがとうございます！</p><p class="mt-2 text-slate-600">貴重なご意見に感謝いたします。</p>`;
+      form.parentElement.appendChild(successMessage);
+
+    } catch (error) {
+      console.error("レビュー投稿中にエラーが発生しました: ", error);
+      alert("エラーが発生しました。時間をおいて再度お試しください。");
+      submitButton.disabled = false;
+      submitButton.textContent = '投稿する';
+    }
+  });
+
+  // --- UIに新しいレビューを追加する関数 ---
+  function addReviewToUI(review) {
+    const reviewsList = document.getElementById('reviews-list');
+    if (!reviewsList) return;
+
+    // 「レビューはありません」のメッセージがあれば消す
+    const noReviewsMessage = document.getElementById('no-reviews-message');
+    if (noReviewsMessage) {
+      noReviewsMessage.remove();
+    }
+
+    const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+    const date = review.createdAt.toLocaleDateString('ja-JP');
+
+    const article = document.createElement('article');
+    article.className = 'border-b border-slate-200 pb-6';
+    
+    // 画像部分のHTMLを生成
+    let imagesHTML = '';
+    if (review.imageUrls && review.imageUrls.length > 0) {
+      imagesHTML = `
+        <div class="mt-4 flex flex-wrap gap-3">
+          ${review.imageUrls.map(url => `
+            <a href="${url}" target="_blank" rel="noopener noreferrer" class="block">
+              <img src="${url}" alt="投稿写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" />
+            </a>
+          `).join('')}
+        </div>`;
+    }
+
+    // レビュー全体のHTMLを生成
+    article.innerHTML = `
+      <div class="flex items-center gap-x-4">
+        <div class="text-amber-500 text-xl" title="${review.rating}つ星">${stars}</div>
+      </div>
+      <h3 class="text-lg font-bold mt-2">${review.title}</h3>
+      <p class="text-slate-600 my-4 whitespace-pre-wrap">${review.body}</p>
+      ${imagesHTML}
+      <p class="text-sm text-slate-400 text-right mt-4">投稿者: ${review.author} / 投稿日: ${date}</p>
+    `;
+
+    // 既存レビューリストの一番上に新しいレビューを追加
+    reviewsList.prepend(article);
+  }
+</script>

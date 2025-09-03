@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { db } from '../../lib/firebase.js';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
+// 1. データベースから全練習場のリストを取得し、どのページを作るかAstroに教える
 export async function getStaticPaths() {
   const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges');
   const querySnapshot = await getDocs(rangesCollection);
@@ -15,7 +16,10 @@ export async function getStaticPaths() {
   }));
 }
 
+// 2. 個別のページを作る際に、その練習場のデータを受け取る
 const { range } = Astro.props;
+
+// 3. 受け取ったデータを使って、ページのタイトルや説明文などを準備する
 const title = `${range.name}の口コミ・評判 | シガゴル`;
 const description = `${range.name}（${range.area}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${range.name}に関する詳細情報が満載です。`;
 
@@ -26,15 +30,18 @@ if (range.hasTracer && range.tracer_brand === 'トップトレーサー') badges
 else if (range.hasTracer) badges.push("弾道測定器あり");
 if (range.tags && range.tags.includes("GP併設")) badges.push("GP併設");
 
+// 練習場に紐づくレビューを日付の新しい順に取得
 const reviewsCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges', range.id, 'reviews');
 const q = query(reviewsCollection, orderBy("createdAt", "desc"));
 const reviewsSnapshot = await getDocs(q);
 const reviews = reviewsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
+// 管理人レビューと一般ユーザーレビューを分け、管理人レビューを先頭にする
 const adminReviews = reviews.filter(review => review.author === '関＠シガゴル管理人');
 const userReviews = reviews.filter(review => review.author !== '関＠シガゴル管理人');
 const sortedReviews = [...adminReviews, ...userReviews];
 
+// SEOのための構造化データ(JSON-LD)を準備
 const ldJson = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
@@ -59,6 +66,7 @@ const ldJson = {
 };
 ---
 
+{/* 4. 準備したデータを使って、ページの骨格(レイアウト)やHTMLを組み立てる */}
 <BaseLayout title={title} description={description}>
   
   <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
@@ -137,9 +145,7 @@ const ldJson = {
             <table class="min-w-full text-sm">
               <tbody class="text-slate-600">
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{range.business_hours || '情報なし'}</td></tr>
-                {/* --- ▼▼▼ ここが最後の修正点です ▼▼▼ --- */}
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=365ゴルフクラブ彦根...2{encodeURIComponent(range.address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{range.address || '情報なし'}</a></td></tr>
-                {/* --- ▲▲▲ ここまで ▲▲▲ --- */}
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${range.phone}`} class="text-green-700 hover:underline">{range.phone || '情報なし'}</a></td></tr>
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{range.access || '情報なし'}</td></tr>
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th><td class="py-3 px-4">{range.parking_info || '情報なし'}</td></tr>
@@ -185,9 +191,11 @@ const ldJson = {
 
       <section class="mt-8 pt-6 border-t border-slate-200">
         <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
-        <div class="space-y-6">
+        
+        {/* レビューの即時反映のため、コンテナにIDを追加 */}
+        <div id="reviews-list" class="space-y-6">
           {sortedReviews.length > 0 ? (
-            sortedReviews.map((review, reviewIndex) => {
+            sortedReviews.map((review) => {
               const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
               const date = review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString('ja-JP') : '日付不明';
               const isAdminReview = review.author === '関＠シガゴル管理人';
@@ -218,25 +226,25 @@ const ldJson = {
               )
             })
           ) : (
-            <p class="text-slate-500 text-center py-4">まだレビューはありません。最初のレビューを投稿しませんか？</p>
+            <p id="no-reviews-message" class="text-slate-500 text-center py-4">まだレビューはありません。最初のレビューを投稿しませんか？</p>
           )}
         </div>
       </section>
 
       <section class="mt-8 pt-6 border-t border-slate-200">
-  <h2 class="text-2xl font-bold">アクセスマップ</h2>
-  <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
-    <iframe
-      width="100%"
-      height="100%"
-      style="border:0"
-      loading="lazy"
-      allowfullscreen
-      referrerpolicy="no-referrer-when-downgrade"
-      src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + ' ' + range.address)}`}>
-    </iframe>
-  </div>
-</section>
+        <h2 class="text-2xl font-bold">アクセスマップ</h2>
+        <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
+          <iframe
+            width="100%"
+            height="100%"
+            style="border:0"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + ' ' + range.address)}`}>
+          </iframe>
+        </div>
+      </section>
       
       <div id="review-form-wrapper" class="hidden">
         <ReviewSection range={range} />
@@ -246,7 +254,7 @@ const ldJson = {
 </BaseLayout>
 
 <script>
-  // Chart.jsはBaseLayout.astroで読み込みます
+  // 「レビューを書く」ボタンを押したらフォームを表示するスクリプト
   document.addEventListener('DOMContentLoaded', () => {
     const showButton = document.getElementById('show-review-form-btn');
     const formWrapper = document.getElementById('review-form-wrapper');
@@ -257,8 +265,8 @@ const ldJson = {
       formWrapper.scrollIntoView({ behavior: 'smooth' });
     });
   });
-</script>
-<script>
+
+  // 管理人レビューのレーダーチャートを描画するスクリプト
   document.addEventListener('DOMContentLoaded', () => {
     const chartCanvases = document.querySelectorAll('.radar-chart-canvas');
     if (typeof Chart === 'undefined') {
