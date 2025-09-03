@@ -6,7 +6,7 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 export async function getStaticPaths() {
       console.log("Netlify Build Log - Project ID:", import.meta.env.PUBLIC_FIREBASE_PROJECT_ID);
-  const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges');
+  const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges');
   const querySnapshot = await getDocs(rangesCollection);
   // Firestoreのデータをそのまま渡す形に戻します
   const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -30,7 +30,7 @@ else if (range.hasTracer) badges.push("弾道測定器あり");
 if (range.tags && range.tags.includes("GP併設")) badges.push("GP併設");
 
 // --- データベースからレビューを取得 ---
-const reviewsCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges', range.id, 'reviews');
+const reviewsCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges', range.id, 'reviews');
 const q = query(reviewsCollection, orderBy("createdAt", "desc"));
 const reviewsSnapshot = await getDocs(q);
 const reviews = reviewsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
