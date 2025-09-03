@@ -7,15 +7,8 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 export async function getStaticPaths() {
   const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges');
   const querySnapshot = await getDocs(rangesCollection);
-  const ranges = querySnapshot.docs.map(doc => {
-    const data = doc.data();
-    return {
-      id: doc.id,
-      ...data,
-      // linksオブジェクトが存在しない場合に備えて、空のオブジェクトをデフォルト値とする
-      links: data.links || {}, 
-    };
-  });
+  // Firestoreのデータをそのまま渡す形に戻します
+  const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
   return ranges.map(range => ({
     params: { rangeId: range.id },
@@ -128,13 +121,13 @@ const sortedReviews = [...adminReviews, ...userReviews];
     <li><strong>レンタルクラブ:</strong> {range.rental_club_info || '情報なし'}</li>
     <li><strong>左利き打席:</strong> {range.lefty_bays_info || '情報なし'}</li>
     <li class="pt-2 mt-2 border-t border-slate-200">
-      <strong>関連リンク:</strong>
-      <div class="flex flex-col sm:flex-row sm:space-x-4 mt-1">
-        {/* ▼▼▼ ここが修正されたリンクです ▼▼▼ */}
-        {range.links?.homepage && <a href={range.links.homepage} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">公式サイトを見る</a>}
-        {range.links?.note && <a href={range.links.note} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">私のnote記事を読む</a>}
-        {range.links?.golfMedley && <a href={range.links.golfMedley} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">ゴルフメドレー記事を読む</a>}
-      </div>
+        <strong>関連リンク:</strong>
+        <div class="flex flex-col sm:flex-row sm:space-x-4 mt-1">
+            {/* ▼▼▼ あなたの正しいデータ構造に合わせて修正しました ▼▼▼ */}
+            {range.website && <a href={range.website} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">公式サイトを見る</a>}
+            {range.noteUrl && <a href={range.noteUrl} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">私のnote記事を読む</a>}
+            {range.medleyUrl && <a href={range.medleyUrl} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">ゴルフメドレー記事を読む</a>}
+        </div>
     </li>
   </ul>
 </section>
