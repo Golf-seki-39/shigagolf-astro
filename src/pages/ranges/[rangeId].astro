@@ -48,9 +48,9 @@ const ldJson = {
   "address": {
     "@type": "PostalAddress",
     "streetAddress": range.address,
-    "addressLocality": range.city, // DBから市区町村を自動設定
+    "addressLocality": range.city,
     "addressRegion": "滋賀県",
-    "postalCode": range.postalCode, // DBから郵便番号を自動設定
+    "postalCode": range.postalCode,
     "addressCountry": "JP"
   },
   ...(range.reviewCount > 0 && {
@@ -75,7 +75,6 @@ const ldJson = {
 
     <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
       <header>
-        {/* 練習場のメイン画像にalt属性を追加 */}
         <img src={range.imageUrl} alt={`${range.name}の外観`} class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy">
         <div>
           <p class="text-lg text-green-600 font-semibold">{range.area}エリア</p>
@@ -137,14 +136,31 @@ const ldJson = {
           </ul>
         </section>
 
+        {/* --- ▼▼▼ ここからGoogleマップ埋め込みセクションを追加 ▼▼▼ --- */}
+        <section>
+          <h2 class="text-2xl font-bold">アクセスマップ</h2>
+          <div class="mt-2 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
+            <iframe
+              width="100%"
+              height="100%"
+              style="border:0"
+              loading="lazy"
+              allowfullscreen
+              referrerpolicy="no-referrer-when-downgrade"
+              src={`https://www.google.com/search?q=https://maps.google.com/maps%3Fq%3D%242{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + ' ' + range.address)}`}
+            >
+            </iframe>
+          </div>
+        </section>
+        {/* --- ▲▲▲ ここまで ▲▲▲ --- */}
+
         <section>
           <h2 class="text-2xl font-bold">基本情報</h2>
           <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
             <table class="min-w-full text-sm">
               <tbody class="text-slate-600">
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{range.business_hours || '情報なし'}</td></tr>
-                {/* 住所のGoogleマップリンクを修正 */}
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(range.address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{range.address || '情報なし'}</a></td></tr>
+                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://maps.google.com/maps?q=$4{encodeURIComponent(range.address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{range.address || '情報なし'}</a></td></tr>
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${range.phone}`} class="text-green-700 hover:underline">{range.phone || '情報なし'}</a></td></tr>
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{range.access || '情報なし'}</td></tr>
                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th><td class="py-3 px-4">{range.parking_info || '情報なし'}</td></tr>
@@ -211,7 +227,6 @@ const ldJson = {
                   <p class="text-slate-600 my-4 whitespace-pre-wrap">{review.body}</p>
                   {review.imageUrls && review.imageUrls.length > 0 && (
                     <div class="mt-4 flex flex-wrap gap-3">
-                      {/* レビュー画像に動的なalt属性を追加 */}
                       {review.imageUrls.map((url, imageIndex) => (
                         <a href={url} target="_blank" rel="noopener noreferrer" class="block">
                           <img src={url} alt={`${range.name}のレビュー写真${imageIndex + 1}（${review.author}さん投稿）`} class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" />
