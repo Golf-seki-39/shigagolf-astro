@@ -1,19 +1,29 @@
 ---
-import ReviewSection from '../../components/ReviewSection.astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { db } from '../../lib/firebase.js';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import ReviewSection from "../../components/ReviewSection.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { db } from "../../lib/firebase.js";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 // 1. データベースから全練習場のリストを取得し、どのページを作るかAstroに教える
 export async function getStaticPaths() {
-  const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges');
-  const querySnapshot = await getDocs(rangesCollection);
-  const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const rangesCollection = collection(
+        db,
+        "artifacts",
+        import.meta.env.PUBLIC_FIREBASE_APP_ID,
+        "public",
+        "data",
+        "practice_ranges",
+    );
+    const querySnapshot = await getDocs(rangesCollection);
+    const ranges = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
 
-  return ranges.map(range => ({
-    params: { rangeId: range.id },
-    props: { range },
-  }));
+    return ranges.map((range) => ({
+        params: { rangeId: range.id },
+        props: { range },
+    }));
 }
 
 // 2. 個別のページを作る際に、その練習場のデータを受け取る
@@ -26,287 +36,639 @@ const description = `${range.name}（${range.area}エリア）の口コミ・評
 const badges = [];
 if (range.isIndoor) badges.push("インドア");
 if (range.is_beginner_friendly) badges.push("初心者に優しい");
-if (range.hasTracer && range.tracer_brand === 'トップトレーサー') badges.push("全打席トップトレーサー");
+if (range.hasTracer && range.tracer_brand === "トップトレーサー")
+    badges.push("全打席トップトレーサー");
 else if (range.hasTracer) badges.push("弾道測定器あり");
 if (range.tags && range.tags.includes("GP併設")) badges.push("GP併設");
 
 // 練習場に紐づくレビューを日付の新しい順に取得
-const reviewsCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges', range.id, 'reviews');
+const reviewsCollection = collection(
+    db,
+    "artifacts",
+    import.meta.env.PUBLIC_FIREBASE_APP_ID,
+    "public",
+    "data",
+    "practice_ranges",
+    range.id,
+    "reviews",
+);
 const q = query(reviewsCollection, orderBy("createdAt", "desc"));
 const reviewsSnapshot = await getDocs(q);
-const reviews = reviewsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+const reviews = reviewsSnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+}));
 
 // 管理人レビューと一般ユーザーレビューを分け、管理人レビューを先頭にする
-const adminReviews = reviews.filter(review => review.author === '関＠シガゴル管理人');
-const userReviews = reviews.filter(review => review.author !== '関＠シガゴル管理人');
+const adminReviews = reviews.filter(
+    (review) => review.author === "関＠シガゴル管理人",
+);
+const userReviews = reviews.filter(
+    (review) => review.author !== "関＠シガゴル管理人",
+);
 const sortedReviews = [...adminReviews, ...userReviews];
 
 // SEOのための構造化データ(JSON-LD)を準備
 const ldJson = {
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "name": range.name,
-  "image": range.imageUrl,
-  "telephone": range.phone,
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": range.address,
-    "addressLocality": range.city,
-    "addressRegion": "滋賀県",
-    "postalCode": range.postalCode,
-    "addressCountry": "JP"
-  },
-  ...(range.reviewCount > 0 && {
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": range.avgRating,
-      "reviewCount": range.reviewCount
-    }
-  })
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: range.name,
+    image: range.imageUrl,
+    telephone: range.phone,
+    address: {
+        "@type": "PostalAddress",
+        streetAddress: range.address,
+        addressLocality: range.city,
+        addressRegion: "滋賀県",
+        postalCode: range.postalCode,
+        addressCountry: "JP",
+    },
+    ...(range.reviewCount > 0 && {
+        aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: range.avgRating,
+            reviewCount: range.reviewCount,
+        },
+    }),
 };
 ---
 
 {/* 4. 準備したデータを使って、ページの骨格(レイアウト)やHTMLを組み立てる */}
 <BaseLayout title={title} description={description}>
-  
-  <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
+    <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
 
-  <main class="container mx-auto p-4 md:p-6">
-    <div class="mb-4">
-      <a href="/" class="text-green-700 font-semibold hover:underline">‹ 練習場一覧に戻る</a>
-    </div>
-
-    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
-      <header>
-        <img src={range.imageUrl} alt={`${range.name}の外観`} class="w-full h-64 object-cover rounded-lg mb-6" loading="lazy">
-        <div>
-          <p class="text-lg text-green-600 font-semibold">{range.area}エリア</p>
-          <h1 class="text-4xl font-bold mt-1">{range.name}</h1>
-          
-          {badges.length > 0 && (
-            <div class="mt-4 flex flex-wrap gap-2">
-              {badges.map(badge => (
-                <span class="text-sm bg-blue-100 text-blue-800 font-semibold px-3 py-1 rounded-full">
-                  {badge}
-                </span>
-              ))}
-            </div>
-          )}
+    <main class="container mx-auto p-4 md:p-6">
+        <div class="mb-4">
+            <a href="/" class="text-green-700 font-semibold hover:underline"
+                >‹ 練習場一覧に戻る</a
+            >
         </div>
-        <div class="my-6 grid grid-cols-2 gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden text-center">
-          <div class="bg-white p-4">
-            <p class="text-sm text-slate-500">ヤード数</p>
-            <p class="text-2xl font-bold">
-              {range.isIndoor ? <span class="whitespace-nowrap">（インドア）</span> : (range.yardage ? `${range.yardage}yd` : '-')}
-            </p>
-          </div>
-          <div class="bg-white p-4">
-            <p class="text-sm text-slate-500">打席数</p>
-            <p class="text-2xl font-bold">{range.bays ? `${range.bays}打席` : '-'}</p>
-          </div>
-        </div>
-      </header>
 
-      <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
-        <section>
-          <h2 class="text-2xl font-bold">設備情報</h2>
-          <ul class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600">
-            <li>📡 弾道測定器: {range.hasTracer ? `あり (${range.tracer_brand})` : 'なし'}</li>
-            <li>⛳️ アプローチ: {range.hasApproach ? 'あり' : 'なし'}</li>
-            <li>🕳️ バンカー: {range.hasBunker ? 'あり' : 'なし'}</li>
-            <li>🏌️ パター: {range.hasPutter ? 'あり' : 'なし'}</li>
-            <li>💰 打ち放題: {range.hasUchihodai ? 'あり' : 'なし'}</li>
-          </ul>
-        </section>
-        
-        <section>
-          <h2 class="text-2xl font-bold">料金情報</h2>
-          <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
-            <table class="min-w-full text-sm">
-              <tbody class="text-slate-600">
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap">球単価（平日）</th><td class="py-3 px-4" set:html={range.price_ball_weekday_str ? range.price_ball_weekday_str.replace(/\//g, '<br>').replace(/\(/g, '<br>(') : '情報なし'} /></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">球単価（土日祝）</th><td class="py-3 px-4" set:html={range.price_ball_weekend_str ? range.price_ball_weekend_str.replace(/\//g, '<br>').replace(/\(/g, '<br>(') : '情報なし'} /></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（平日）</th><td class="py-3 px-4" set:html={range.hasUchihodai ? (range.price_uchihodai_weekday_str ? range.price_uchihodai_weekday_str.replace(/\//g, '<br>').replace(/\(/g, '<br>(') : '情報なし') : '打放題なし'} /></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（土日祝）</th><td class="py-3 px-4" set:html={range.hasUchihodai ? (range.price_uchihodai_weekend_str ? range.price_uchihodai_weekend_str.replace(/\//g, '<br>').replace(/\(/g, '<br>(') : '情報なし') : '打放題なし'} /></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">アプローチ練習場</th><td class="py-3 px-4">{range.approach_fee_info || '情報なし'}</td></tr>
-                <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">バンカー練習場</th><td class="py-3 px-4">{range.bunker_fee_info || '情報なし'}</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <ul class="mt-4 space-y-2 text-slate-600 text-sm">
-            <li><strong>支払い方法:</strong> {range.payment_methods || '情報なし'}</li>
-            <li><strong>最低料金の目安:</strong> {range.initial_cost || '情報なし'}</li>
-          </ul>
-        </section>
+        <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+            <header>
+                <img
+                    src={range.imageUrl}
+                    alt={`${range.name}の外観`}
+                    class="w-full h-64 object-cover rounded-lg mb-6"
+                    loading="lazy"
+                />
+                <div>
+                    <p class="text-lg text-green-600 font-semibold">
+                        {range.area}エリア
+                    </p>
+                    <h1 class="text-4xl font-bold mt-1">{range.name}</h1>
 
-        <section>
-          <h2 class="text-2xl font-bold">基本情報</h2>
-          <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
-            <table class="min-w-full text-sm">
-              <tbody class="text-slate-600">
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{range.business_hours || '情報なし'}</td></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=365ゴルフクラブ彦根...2{encodeURIComponent(range.address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{range.address || '情報なし'}</a></td></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${range.phone}`} class="text-green-700 hover:underline">{range.phone || '情報なし'}</a></td></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{range.access || '情報なし'}</td></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th><td class="py-3 px-4">{range.parking_info || '情報なし'}</td></tr>
-                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">レンタルクラブ</th><td class="py-3 px-4">{range.rental_club_info || '情報なし'}</td></tr>
-                <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50">左利き打席</th><td class="py-3 px-4">{range.lefty_bays_info || '情報なし'}</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {(range.website || range.noteUrl || range.medleyUrl) && (
-          <section>
-            <h2 class="text-2xl font-bold">関連リンク</h2>
-            <div class="mt-2 space-y-3">
-              {range.website && (
-                <a href={range.website} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                  <span class="font-semibold text-slate-800 group-hover:underline">公式サイトを見る</span>
-                </a>
-              )}
-              {range.noteUrl && (
-                <a href={range.noteUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                  <span class="font-semibold text-slate-800 group-hover:underline">noteの記事を読む</span>
-                </a>
-              )}
-              {range.medleyUrl && (
-                <a href={range.medleyUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"></path></svg>
-                  <span class="font-semibold text-slate-800 group-hover:underline">ゴルフメドレーの記事を読む</span>
-                </a>
-              )}
-            </div>
-          </section>
-        )}
-      </div>
-      
-      <div class="my-8 text-center">
-        <button id="show-review-form-btn" class="bg-amber-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-600 transition text-lg">
-          この練習場のレビューを書く
-        </button>
-      </div>
-
-      <section class="mt-8 pt-6 border-t border-slate-200">
-        <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
-        
-        {/* レビューの即時反映のため、コンテナにIDを追加 */}
-        <div id="reviews-list" class="space-y-6">
-          {sortedReviews.length > 0 ? (
-            sortedReviews.map((review) => {
-              const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-              const date = review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString('ja-JP') : '日付不明';
-              const isAdminReview = review.author === '関＠シガゴル管理人';
-              return (
-                <article class="border-b border-slate-200 pb-6">
-                  <div class="flex items-center gap-x-4">
-                    <div class="text-amber-500 text-xl" title={`${review.rating}つ星`}>{stars}</div>
-                    {isAdminReview && (<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">公式レビュー</span>)}
-                  </div>
-                  <h3 class="text-lg font-bold mt-2">{review.title}</h3>
-                  {isAdminReview && review.scores && (
-                    <div class="my-4 max-w-sm mx-auto">
-                      <canvas class="radar-chart-canvas" data-scores={JSON.stringify(review.scores)}></canvas>
+                    {
+                        badges.length > 0 && (
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                {badges.map((badge) => (
+                                    <span class="text-sm bg-blue-100 text-blue-800 font-semibold px-3 py-1 rounded-full">
+                                        {badge}
+                                    </span>
+                                ))}
+                            </div>
+                        )
+                    }
+                </div>
+                <div
+                    class="my-6 grid grid-cols-2 gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden text-center"
+                >
+                    <div class="bg-white p-4">
+                        <p class="text-sm text-slate-500">ヤード数</p>
+                        <p class="text-2xl font-bold">
+                            {
+                                range.isIndoor ? (
+                                    <span class="whitespace-nowrap">
+                                        （インドア）
+                                    </span>
+                                ) : range.yardage ? (
+                                    `${range.yardage}yd`
+                                ) : (
+                                    "-"
+                                )
+                            }
+                        </p>
                     </div>
-                  )}
-                  <p class="text-slate-600 my-4 whitespace-pre-wrap">{review.body}</p>
-                  {review.imageUrls && review.imageUrls.length > 0 && (
-                    <div class="mt-4 flex flex-wrap gap-3">
-                      {review.imageUrls.map((url, imageIndex) => (
-                        <a href={url} target="_blank" rel="noopener noreferrer" class="block">
-                          <img src={url} alt={`${range.name}のレビュー写真${imageIndex + 1}（${review.author}さん投稿）`} class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" />
-                        </a>
-                      ))}
+                    <div class="bg-white p-4">
+                        <p class="text-sm text-slate-500">打席数</p>
+                        <p class="text-2xl font-bold">
+                            {range.bays ? `${range.bays}打席` : "-"}
+                        </p>
                     </div>
-                  )}
-                  <p class="text-sm text-slate-400 text-right mt-4">投稿者: {review.author} / 投稿日: {date}</p>
-                </article>
-              )
-            })
-          ) : (
-            <p id="no-reviews-message" class="text-slate-500 text-center py-4">まだレビューはありません。最初のレビューを投稿しませんか？</p>
-          )}
-        </div>
-      </section>
+                </div>
+            </header>
+            <section class="mt-8 pt-6 border-t border-slate-200">
+                <h2 class="text-2xl font-bold">フォトギャラリー</h2>
 
-      <section class="mt-8 pt-6 border-t border-slate-200">
-        <h2 class="text-2xl font-bold">アクセスマップ</h2>
-        <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
-          <iframe
-            width="100%"
-            height="100%"
-            style="border:0"
-            loading="lazy"
-            allowfullscreen
-            referrerpolicy="no-referrer-when-downgrade"
-            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + ' ' + range.address)}`}>
-          </iframe>
+                {/* Firestoreに追加した galleryImages をチェック */}
+                {
+                    range.galleryImages && range.galleryImages.length > 0 ? (
+                        <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {/* データベースの情報を元に、写真を一枚ずつ表示 */}
+                            {range.galleryImages.map((image, index) => (
+                                <a
+                                    href={image.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block aspect-square group"
+                                >
+                                    <img
+                                        src={image.url}
+                                        alt={`${range.name}のギャラリー写真 ${index + 1}（投稿者: ${image.author}） ${image.description || ""}`}
+                                        class="w-full h-full object-cover rounded-lg group-hover:opacity-80 transition-opacity"
+                                        loading="lazy"
+                                    />
+                                </a>
+                            ))}
+                        </div>
+                    ) : (
+                        <p class="mt-4 text-slate-500">
+                            現在、登録されている写真はありません。
+                        </p>
+                    )
+                }
+            </section>
+
+            <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
+                <section>
+                    <h2 class="text-2xl font-bold">設備情報</h2>
+                    <ul
+                        class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600"
+                    >
+                        <li>
+                            📡 弾道測定器: {
+                                range.hasTracer
+                                    ? `あり (${range.tracer_brand})`
+                                    : "なし"
+                            }
+                        </li>
+                        <li>
+                            ⛳️ アプローチ: {range.hasApproach ? "あり" : "なし"}
+                        </li>
+                        <li>
+                            🕳️ バンカー: {range.hasBunker ? "あり" : "なし"}
+                        </li>
+                        <li>🏌️ パター: {range.hasPutter ? "あり" : "なし"}</li>
+                        <li>
+                            💰 打ち放題: {range.hasUchihodai ? "あり" : "なし"}
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold">料金情報</h2>
+                    <div
+                        class="mt-2 overflow-x-auto border border-slate-200 rounded-lg"
+                    >
+                        <table class="min-w-full text-sm">
+                            <tbody class="text-slate-600">
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap"
+                                        >球単価（平日）</th
+                                    ><td
+                                        class="py-3 px-4"
+                                        set:html={range.price_ball_weekday_str
+                                            ? range.price_ball_weekday_str
+                                                  .replace(/\//g, "<br>")
+                                                  .replace(/\(/g, "<br>(")
+                                            : "情報なし"}
+                                    /></tr
+                                >
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                        >球単価（土日祝）</th
+                                    ><td
+                                        class="py-3 px-4"
+                                        set:html={range.price_ball_weekend_str
+                                            ? range.price_ball_weekend_str
+                                                  .replace(/\//g, "<br>")
+                                                  .replace(/\(/g, "<br>(")
+                                            : "情報なし"}
+                                    /></tr
+                                >
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                        >打ち放題（平日）</th
+                                    ><td
+                                        class="py-3 px-4"
+                                        set:html={range.hasUchihodai
+                                            ? range.price_uchihodai_weekday_str
+                                                ? range.price_uchihodai_weekday_str
+                                                      .replace(/\//g, "<br>")
+                                                      .replace(/\(/g, "<br>(")
+                                                : "情報なし"
+                                            : "打放題なし"}
+                                    /></tr
+                                >
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                        >打ち放題（土日祝）</th
+                                    ><td
+                                        class="py-3 px-4"
+                                        set:html={range.hasUchihodai
+                                            ? range.price_uchihodai_weekend_str
+                                                ? range.price_uchihodai_weekend_str
+                                                      .replace(/\//g, "<br>")
+                                                      .replace(/\(/g, "<br>(")
+                                                : "情報なし"
+                                            : "打放題なし"}
+                                    /></tr
+                                >
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                        >アプローチ練習場</th
+                                    ><td class="py-3 px-4"
+                                        >{
+                                            range.approach_fee_info ||
+                                                "情報なし"
+                                        }</td
+                                    ></tr
+                                >
+                                <tr
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                        >バンカー練習場</th
+                                    ><td class="py-3 px-4"
+                                        >{
+                                            range.bunker_fee_info || "情報なし"
+                                        }</td
+                                    ></tr
+                                >
+                            </tbody>
+                        </table>
+                    </div>
+                    <ul class="mt-4 space-y-2 text-slate-600 text-sm">
+                        <li>
+                            <strong>支払い方法:</strong>
+                            {range.payment_methods || "情報なし"}
+                        </li>
+                        <li>
+                            <strong>最低料金の目安:</strong>
+                            {range.initial_cost || "情報なし"}
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold">基本情報</h2>
+                    <div
+                        class="mt-2 overflow-x-auto border border-slate-200 rounded-lg"
+                    >
+                        <table class="min-w-full text-sm">
+                            <tbody class="text-slate-600">
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap"
+                                        >営業時間</th
+                                    ><td class="py-3 px-4"
+                                        >{
+                                            range.business_hours || "情報なし"
+                                        }</td
+                                    ></tr
+                                >
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
+                                        >住所</th
+                                    ><td class="py-3 px-4"
+                                        ><a
+                                            href={`https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=365ゴルフクラブ彦根...2{encodeURIComponent(range.address || '')}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-green-700 hover:underline"
+                                            >{range.address || "情報なし"}</a
+                                        ></td
+                                    ></tr
+                                >
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
+                                        >電話番号</th
+                                    ><td class="py-3 px-4"
+                                        ><a
+                                            href={`tel:${range.phone}`}
+                                            class="text-green-700 hover:underline"
+                                            >{range.phone || "情報なし"}</a
+                                        ></td
+                                    ></tr
+                                >
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
+                                        >アクセス</th
+                                    ><td class="py-3 px-4"
+                                        >{range.access || "情報なし"}</td
+                                    ></tr
+                                >
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
+                                        >駐車場</th
+                                    ><td class="py-3 px-4"
+                                        >{range.parking_info || "情報なし"}</td
+                                    ></tr
+                                >
+                                <tr class="border-b border-slate-200"
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
+                                        >レンタルクラブ</th
+                                    ><td class="py-3 px-4"
+                                        >{
+                                            range.rental_club_info || "情報なし"
+                                        }</td
+                                    ></tr
+                                >
+                                <tr
+                                    ><th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
+                                        >左利き打席</th
+                                    ><td class="py-3 px-4"
+                                        >{
+                                            range.lefty_bays_info || "情報なし"
+                                        }</td
+                                    ></tr
+                                >
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                {
+                    (range.website || range.noteUrl || range.medleyUrl) && (
+                        <section>
+                            <h2 class="text-2xl font-bold">関連リンク</h2>
+                            <div class="mt-2 space-y-3">
+                                {range.website && (
+                                    <a
+                                        href={range.website}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-6 w-6 text-green-700"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                            />
+                                        </svg>
+                                        <span class="font-semibold text-slate-800 group-hover:underline">
+                                            公式サイトを見る
+                                        </span>
+                                    </a>
+                                )}
+                                {range.noteUrl && (
+                                    <a
+                                        href={range.noteUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-6 w-6 text-green-700"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                            />
+                                        </svg>
+                                        <span class="font-semibold text-slate-800 group-hover:underline">
+                                            noteの記事を読む
+                                        </span>
+                                    </a>
+                                )}
+                                {range.medleyUrl && (
+                                    <a
+                                        href={range.medleyUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-6 w-6 text-green-700"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                        >
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"
+                                            />
+                                        </svg>
+                                        <span class="font-semibold text-slate-800 group-hover:underline">
+                                            ゴルフメドレーの記事を読む
+                                        </span>
+                                    </a>
+                                )}
+                            </div>
+                        </section>
+                    )
+                }
+            </div>
+
+            <div class="my-8 text-center">
+                <button
+                    id="show-review-form-btn"
+                    class="bg-amber-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-600 transition text-lg"
+                >
+                    この練習場のレビューを書く
+                </button>
+            </div>
+
+            <section class="mt-8 pt-6 border-t border-slate-200">
+                <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
+
+                {/* レビューの即時反映のため、コンテナにIDを追加 */}
+                <div id="reviews-list" class="space-y-6">
+                    {
+                        sortedReviews.length > 0 ? (
+                            sortedReviews.map((review) => {
+                                const stars =
+                                    "★".repeat(review.rating) +
+                                    "☆".repeat(5 - review.rating);
+                                const date = review.createdAt?.toDate
+                                    ? review.createdAt
+                                          .toDate()
+                                          .toLocaleDateString("ja-JP")
+                                    : "日付不明";
+                                const isAdminReview =
+                                    review.author === "関＠シガゴル管理人";
+                                return (
+                                    <article class="border-b border-slate-200 pb-6">
+                                        <div class="flex items-center gap-x-4">
+                                            <div
+                                                class="text-amber-500 text-xl"
+                                                title={`${review.rating}つ星`}
+                                            >
+                                                {stars}
+                                            </div>
+                                            {isAdminReview && (
+                                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                                                    公式レビュー
+                                                </span>
+                                            )}
+                                        </div>
+                                        <h3 class="text-lg font-bold mt-2">
+                                            {review.title}
+                                        </h3>
+                                        {isAdminReview && review.scores && (
+                                            <div class="my-4 max-w-sm mx-auto">
+                                                <canvas
+                                                    class="radar-chart-canvas"
+                                                    data-scores={JSON.stringify(
+                                                        review.scores,
+                                                    )}
+                                                />
+                                            </div>
+                                        )}
+                                        <p class="text-slate-600 my-4 whitespace-pre-wrap">
+                                            {review.body}
+                                        </p>
+                                        {review.imageUrls &&
+                                            review.imageUrls.length > 0 && (
+                                                <div class="mt-4 flex flex-wrap gap-3">
+                                                    {review.imageUrls.map(
+                                                        (url, imageIndex) => (
+                                                            <a
+                                                                href={url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                class="block"
+                                                            >
+                                                                <img
+                                                                    src={url}
+                                                                    alt={`${range.name}のレビュー写真${imageIndex + 1}（${review.author}さん投稿）`}
+                                                                    class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition"
+                                                                    loading="lazy"
+                                                                />
+                                                            </a>
+                                                        ),
+                                                    )}
+                                                </div>
+                                            )}
+                                        <p class="text-sm text-slate-400 text-right mt-4">
+                                            投稿者: {review.author} / 投稿日:{" "}
+                                            {date}
+                                        </p>
+                                    </article>
+                                );
+                            })
+                        ) : (
+                            <p
+                                id="no-reviews-message"
+                                class="text-slate-500 text-center py-4"
+                            >
+                                まだレビューはありません。最初のレビューを投稿しませんか？
+                            </p>
+                        )
+                    }
+                </div>
+            </section>
+
+            <section class="mt-8 pt-6 border-t border-slate-200">
+                <h2 class="text-2xl font-bold">アクセスマップ</h2>
+                <div
+                    class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200"
+                >
+                    <iframe
+                        width="100%"
+                        height="100%"
+                        style="border:0"
+                        loading="lazy"
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + " " + range.address)}`}
+                    >
+                    </iframe>
+                </div>
+            </section>
+
+            <div id="review-form-wrapper" class="hidden">
+                <ReviewSection range={range} />
+            </div>
         </div>
-      </section>
-      
-      <div id="review-form-wrapper" class="hidden">
-        <ReviewSection range={range} />
-      </div>
-    </div>
-  </main>
+    </main>
 </BaseLayout>
 
 <script>
-  // 「レビューを書く」ボタンを押したらフォームを表示するスクリプト
-  document.addEventListener('DOMContentLoaded', () => {
-    const showButton = document.getElementById('show-review-form-btn');
-    const formWrapper = document.getElementById('review-form-wrapper');
-    if (!showButton || !formWrapper) { return; }
-    showButton.addEventListener('click', () => {
-      formWrapper.classList.remove('hidden');
-      showButton.style.display = 'none';
-      formWrapper.scrollIntoView({ behavior: 'smooth' });
-    });
-  });
-
-  // 管理人レビューのレーダーチャートを描画するスクリプト
-  document.addEventListener('DOMContentLoaded', () => {
-    const chartCanvases = document.querySelectorAll('.radar-chart-canvas');
-    if (typeof Chart === 'undefined') {
-      console.error('Chart.js is not loaded.');
-      return;
-    }
-    chartCanvases.forEach(canvas => {
-      const scoresData = JSON.parse(canvas.dataset.scores);
-      const labels = Object.keys(scoresData);
-      const data = Object.values(scoresData);
-      new Chart(canvas, {
-        type: 'radar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: '評価スコア',
-            data: data,
-            fill: true,
-            backgroundColor: 'rgba(34, 197, 94, 0.2)',
-            borderColor: 'rgb(22, 163, 74)',
-            pointBackgroundColor: 'rgb(22, 163, 74)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgb(22, 163, 74)'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            r: {
-              angleLines: { display: false },
-              suggestedMin: 0,
-              suggestedMax: 5,
-              pointLabels: { font: { size: 10 } }
-            }
-          },
-          plugins: { legend: { display: false } }
+    // 「レビューを書く」ボタンを押したらフォームを表示するスクリプト
+    document.addEventListener("DOMContentLoaded", () => {
+        const showButton = document.getElementById("show-review-form-btn");
+        const formWrapper = document.getElementById("review-form-wrapper");
+        if (!showButton || !formWrapper) {
+            return;
         }
-      });
+        showButton.addEventListener("click", () => {
+            formWrapper.classList.remove("hidden");
+            showButton.style.display = "none";
+            formWrapper.scrollIntoView({ behavior: "smooth" });
+        });
     });
-  });
+
+    // 管理人レビューのレーダーチャートを描画するスクリプト
+    document.addEventListener("DOMContentLoaded", () => {
+        const chartCanvases = document.querySelectorAll(".radar-chart-canvas");
+        if (typeof Chart === "undefined") {
+            console.error("Chart.js is not loaded.");
+            return;
+        }
+        chartCanvases.forEach((canvas) => {
+            const scoresData = JSON.parse(canvas.dataset.scores);
+            const labels = Object.keys(scoresData);
+            const data = Object.values(scoresData);
+            new Chart(canvas, {
+                type: "radar",
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: "評価スコア",
+                            data: data,
+                            fill: true,
+                            backgroundColor: "rgba(34, 197, 94, 0.2)",
+                            borderColor: "rgb(22, 163, 74)",
+                            pointBackgroundColor: "rgb(22, 163, 74)",
+                            pointBorderColor: "#fff",
+                            pointHoverBackgroundColor: "#fff",
+                            pointHoverBorderColor: "rgb(22, 163, 74)",
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 5,
+                            pointLabels: { font: { size: 10 } },
+                        },
+                    },
+                    plugins: { legend: { display: false } },
+                },
+            });
+        });
+    });
 </script>
