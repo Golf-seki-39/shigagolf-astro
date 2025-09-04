@@ -170,7 +170,7 @@ const ldJson = {
                     <div class="gallery-item hidden">
                       <a href={image.url} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
                         <img 
-                          src={`${image.url}?nf_resize=fit&w=400`} 
+                          src={image.url}
                           alt={`${range.name}のギャラリー写真 ${index + 1}（投稿者: ${image.author}） ${image.description || ''}`}
                           class="w-full h-full object-cover rounded-lg group-hover:opacity-80 transition-opacity"
                           loading="lazy"
