@@ -95,26 +95,35 @@ const ldJson = {
     }),
 };
 
-// ★★★ 縮小版画像のURLを生成するための関数 ★★★
-// ★★★ 修正後の関数 ★★★
+// ★★★ 修正版：サムネイルURLを生成する関数 ★★★
+// (トークンを破棄し、?alt=mediaのみを付与する)
 function getThumbnailUrl(originalUrl) {
     if (!originalUrl) return '';
 
-    // 1. URLをパス部分とクエリパラメータ部分に分割
+    // 1. ? 以降（トークン）をすべて破棄
     const urlParts = originalUrl.split('?');
     const path = urlParts[0];
-    const queryString = urlParts.length > 1 ? urlParts[1] : null; // クエリパラメータを保持
 
     const extensionIndex = path.lastIndexOf('.');
-    if (extensionIndex === -1) return originalUrl; // 拡張子がない場合はそのまま返す
+    if (extensionIndex === -1) return `${path}?alt=media`; // 拡張子がない場合
 
-    // 2. パス部分（ファイル名）だけを変更
+    // 2. パスをサムネイル用に変更
     const basePath = path.substring(0, extensionIndex);
     const extension = path.substring(extensionIndex);
     const thumbnailPath = `${basePath}_400x400${extension}`;
 
-    // 3. 変更後のパスに、保持しておいたクエリパラメータを再度結合して返す
-    return queryString ? `${thumbnailPath}?${queryString}` : thumbnailPath;
+    // 3. トークン無しで ?alt=media のみ追加して返す（公開ルールで許可される）
+    return `${thumbnailPath}?alt=media`;
+}
+
+// ★★★ 追加：元のURLからトークンだけを除去する関数 ★★★
+function getPublicUrl(originalUrl) {
+    if (!originalUrl) return '';
+    
+    // ? 以降（トークン）をすべて破棄し、?alt=media のみ追加する
+    const urlParts = originalUrl.split('?');
+    const path = urlParts[0];
+    return `${path}?alt=media`;
 }
 ---
 
@@ -189,7 +198,7 @@ function getThumbnailUrl(originalUrl) {
                 <div id="gallery-grid" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                   {range.galleryImages.map((image, index) => (
                     <div class="gallery-item hidden">
-                      <a href={image.url} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
+                      <a href={getPublicUrl(image.url)} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
                         <img 
                           src={getThumbnailUrl(image.url)}
                           alt={`${range.name}のギャラリー写真 ${index + 1}（投稿者: ${image.author}） ${image.description || ''}`}
@@ -572,13 +581,13 @@ function getThumbnailUrl(originalUrl) {
                                                     {review.imageUrls.map(
                                                         (url, imageIndex) => (
                                                             <a
-                                                                href={url}
+                                                                href={getPublicUrl(url)}
                                                                 target="_blank"
                                                                 rel="noopener noreferrer"
                                                                 class="block"
                                                             >
                                                                 <img
-                                                                    src={url}
+                                                                    src={getPublicUrl(url)}
                                                                     alt={`${range.name}のレビュー写真${imageIndex + 1}（${review.author}さん投稿）`}
                                                                     class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition"
                                                                     loading="lazy"
