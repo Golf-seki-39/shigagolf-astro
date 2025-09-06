@@ -96,18 +96,25 @@ const ldJson = {
 };
 
 // ★★★ 縮小版画像のURLを生成するための関数 ★★★
+// ★★★ 修正後の関数 ★★★
 function getThumbnailUrl(originalUrl) {
     if (!originalUrl) return '';
+
+    // 1. URLをパス部分とクエリパラメータ部分に分割
     const urlParts = originalUrl.split('?');
     const path = urlParts[0];
-    const extensionIndex = path.lastIndexOf('.');
-    if (extensionIndex === -1) return originalUrl; // 拡張子がない場合は元のURLを返す
+    const queryString = urlParts.length > 1 ? urlParts[1] : null; // クエリパラメータを保持
 
-    // ファイル名の拡張子の直前に「_400x400」を挿入する
+    const extensionIndex = path.lastIndexOf('.');
+    if (extensionIndex === -1) return originalUrl; // 拡張子がない場合はそのまま返す
+
+    // 2. パス部分（ファイル名）だけを変更
     const basePath = path.substring(0, extensionIndex);
     const extension = path.substring(extensionIndex);
-    
-    return `${basePath}_400x400${extension}`;
+    const thumbnailPath = `${basePath}_400x400${extension}`;
+
+    // 3. 変更後のパスに、保持しておいたクエリパラメータを再度結合して返す
+    return queryString ? `${thumbnailPath}?${queryString}` : thumbnailPath;
 }
 ---
 
