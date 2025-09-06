@@ -29,7 +29,7 @@ export async function getStaticPaths() {
 // 2. 個別のページを作る際に、その練習場のデータを受け取る
 const { range } = Astro.props;
 
-// ★★★ isFeaturedがtrueのものを優先して並び替える ★★★
+// isFeaturedがtrueのものを優先して並び替える
 range.galleryImages?.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
 
 // 3. 受け取ったデータを使って、ページのタイトルや説明文などを準備する
@@ -94,6 +94,21 @@ const ldJson = {
         },
     }),
 };
+
+// ★★★ 縮小版画像のURLを生成するための関数 ★★★
+function getThumbnailUrl(originalUrl) {
+    if (!originalUrl) return '';
+    const urlParts = originalUrl.split('?');
+    const path = urlParts[0];
+    const extensionIndex = path.lastIndexOf('.');
+    if (extensionIndex === -1) return originalUrl; // 拡張子がない場合は元のURLを返す
+
+    // ファイル名の拡張子の直前に「_400x400」を挿入する
+    const basePath = path.substring(0, extensionIndex);
+    const extension = path.substring(extensionIndex);
+    
+    return `${basePath}_400x400${extension}`;
+}
 ---
 
 <BaseLayout title={title} description={description}>
@@ -160,7 +175,6 @@ const ldJson = {
                 </div>
             </header>
             
-            {/* ★★★ ここが新しいフォトギャラリーセクションです ★★★ */}
             {range.galleryImages && range.galleryImages.length > 0 && (
               <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold">フォトギャラリー</h2>
@@ -170,7 +184,7 @@ const ldJson = {
                     <div class="gallery-item hidden">
                       <a href={image.url} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
                         <img 
-                          src={image.url}
+                          src={getThumbnailUrl(image.url)}
                           alt={`${range.name}のギャラリー写真 ${index + 1}（投稿者: ${image.author}） ${image.description || ''}`}
                           class="w-full h-full object-cover rounded-lg group-hover:opacity-80 transition-opacity"
                           loading="lazy"
@@ -383,7 +397,6 @@ const ldJson = {
                                             range.rental_club_info || "情報なし"
                                         }</td
                                     ></tr
-
                                 >
                                 <tr
                                     ><th
