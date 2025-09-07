@@ -252,85 +252,106 @@ function getPublicUrl(originalUrl) {
                         class="mt-2 overflow-x-auto border border-slate-200 rounded-lg"
                     >
                         <table class="min-w-full text-sm">
-                            <tbody class="text-slate-600">
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap"
-                                        >球単価（平日）</th
-                                    ><td
-                                        class="py-3 px-4"
-                                        set:html={range.price_ball_weekday_str
-                                            ? range.price_ball_weekday_str
-                                                  .replace(/\//g, "<br>")
-                                                  .replace(/\(/g, "<br>(")
-                                            : "情報なし"}
-                                    /></tr
-                                >
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                        >球単価（土日祝）</th
-                                    ><td
-                                        class="py-3 px-4"
-                                        set:html={range.price_ball_weekend_str
-                                            ? range.price_ball_weekend_str
-                                                  .replace(/\//g, "<br>")
-                                                  .replace(/\(/g, "<br>(")
-                                            : "情報なし"}
-                                    /></tr
-                                >
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                        >打ち放題（平日）</th
-                                    ><td
-                                        class="py-3 px-4"
-                                        set:html={range.hasUchihodai
-                                            ? range.price_uchihodai_weekday_str
-                                                ? range.price_uchihodai_weekday_str
-                                                      .replace(/\//g, "<br>")
-                                                      .replace(/\(/g, "<br>(")
-                                                : "情報なし"
-                                            : "打放題なし"}
-                                    /></tr
-                                >
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                        >打ち放題（土日祝）</th
-                                    ><td
-                                        class="py-3 px-4"
-                                        set:html={range.hasUchihodai
-                                            ? range.price_uchihodai_weekend_str
-                                                ? range.price_uchihodai_weekend_str
-                                                      .replace(/\//g, "<br>")
-                                                      .replace(/\(/g, "<br>(")
-                                                : "情報なし"
-                                            : "打放題なし"}
-                                    /></tr
-                                >
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                        >アプローチ練習場</th
-                                    ><td class="py-3 px-4"
-                                        >{
-                                            range.approach_fee_info ||
-                                                "情報なし"
-                                        }</td
-                                    ></tr
-                                >
-                                <tr
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                        >バンカー練習場</th
-                                    ><td class="py-3 px-4"
-                                        >{
-                                            range.bunker_fee_info || "情報なし"
-                                        }</td
-                                    ></tr
-                                >
-                            </tbody>
+                            {/* ↓↓↓ 料金テーブルの <tbody ...> の「中身だけ」を全部これに差し替えてください ↓↓↓ */}
+
+<tbody class="text-slate-600">
+    {/* --- ここが「インドアではない」時だけ表示する「球単価」ブロック --- */}
+    {!range.isIndoor && (
+        <>
+            {/* 球単価（平日）の行 */}
+            <tr class="border-b border-slate-200">
+                <th
+                    class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap"
+                >
+                    球単価（平日）
+                </th>
+                <td
+                    class="py-3 px-4"
+                    set:html={range.price_ball_weekday_str
+                        ? range.price_ball_weekday_str
+                              .replace(/\//g, "<br>")
+                              .replace(/\(/g, "<br>(")
+                        : "情報なし"}
+                />
+            </tr>
+            {/* 球単価（土日祝）の行 */}
+            <tr class="border-b border-slate-200">
+                <th
+                    class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                >
+                    球単価（土日祝）
+                </th>
+                <td
+                    class="py-3 px-4"
+                    set:html={range.price_ball_weekend_str
+                        ? range.price_ball_weekend_str
+                              .replace(/\//g, "<br>")
+                              .replace(/\(/g, "<br>(")
+                        : "情報なし"}
+                />
+            </tr>
+        </>
+    )}
+    {/* --- 球単価ブロックはここまで --- */}
+
+    {/* --- ここから「打ち放題」（これは常時表示） --- */}
+    {/* ★★★ おそらくこの2行を消してしまっていました ★★★ */}
+    <tr class="border-b border-slate-200">
+        <th
+            class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+        >
+            打ち放題（平日）
+        </th>
+        <td
+            class="py-3 px-4"
+            set:html={range.hasUchihodai
+                ? range.price_uchihodai_weekday_str
+                    ? range.price_uchihodai_weekday_str
+                          .replace(/\//g, "<br>")
+                          .replace(/\(/g, "<br>(")
+                    : "情報なし"
+                : "打放題なし"}
+        />
+    </tr>
+    <tr class="border-b border-slate-200">
+        <th
+            class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+        >
+            打ち放題（土日祝）
+        </th>
+        <td
+            class="py-3 px-4"
+            set:html={range.hasUchihodai
+                ? range.price_uchihodai_weekend_str
+                    ? range.price_uchihodai_weekend_str
+                          .replace(/\//g, "<br>")
+                          .replace(/\(/g, "<br>(")
+                    : "情報なし"
+                : "打放題なし"}
+        />
+    </tr>
+    {/* ★★★ 打ち放題ここまで ★★★ */}
+
+    {/* --- ここからアプローチとバンカー（これらは元のコードに残っていました） --- */}
+    <tr class="border-b border-slate-200">
+        <th
+            class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+        >
+            アプローチ練習場
+        </th>
+        <td class="py-3 px-4">{range.approach_fee_info || "情報なし"}</td>
+    </tr>
+    <tr>
+        <th
+            class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+        >
+            バンカー練習場
+        </th>
+        <td class="py-3 px-4">{range.bunker_fee_info || "情報なし"}</td>
+    </tr>
+</tbody>
+
+{/* ↑↑↑ 料金テーブルの </tbody> はここまで ↑↑↑ */}
                         </table>
                     </div>
                     <ul class="mt-4 space-y-2 text-slate-600 text-sm">
