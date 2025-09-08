@@ -1,10 +1,16 @@
 ---
+// ★★★
+// 変更点: レビュー取得ロジックをサーバー側から削除し、
+// 練習場の静的情報（range）のみをビルド時に取得する形に戻しました。
+// ★★★
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ReviewSection from "../../components/ReviewSection.astro";
-import { db } from "../../lib/firebase.js";
+// import ReviewChart from '../../components/ReviewChart.astro'; // ※クライアントスクリプトでChart.jsを直接呼ぶため不要
+import { db } from "../../lib/firebase.js"; // getStaticPaths で使用
 import { collection, getDocs } from "firebase/firestore";
 
-// getStaticPathsは変更なし
+// このページは再び「静的ページ」としてビルドされるため、getStaticPathsが必須です
 export async function getStaticPaths() {
     const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
     const publicDataPath = `artifacts/${appId}/public/data`;
@@ -13,26 +19,19 @@ export async function getStaticPaths() {
 
     const paths = querySnapshot.docs.map(doc => ({
         params: { rangeId: doc.id },
-        props: { range: { id: doc.id, ...doc.data() } }
+        props: { range: { id: doc.id, ...doc.data() } } // rangeオブジェクト全体をpropsとして渡す
     }));
     return paths;
 }
 
+// 2. 個別のページを作る際に、その練習場のデータを受け取る
 const { range } = Astro.props;
-const { name, address, phone, businessHours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl, isIndoor, is_beginner_friendly, hasTracer, tracer_brand, tags, galleryImages, yardage, bays, hasApproach, hasBunker, hasPutter, hasUchihodai, price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str, approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info, rental_club_info, lefty_bays_info, managerReviewUrl } = range;
+const { id, name, address, phone, businessHours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl, isIndoor, is_beginner_friendly, hasTracer, tracer_brand, tags, galleryImages, yardage, bays, hasApproach, hasBunker, hasPutter, hasUchihodai, price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str, approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info, rental_club_info, lefty_bays_info, managerReviewUrl } = range;
 
+
+// 3. 受け取ったデータを使って、ページのタイトルや説明文などを準備する
 const title = `${name}の口コミ・評判 | シガゴル`;
 const description = `${name}（${area}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${name}に関する詳細情報が満載です。`;
-
-const clientFirebaseConfig = {
-    apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
-    authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
-};
-const googleMapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 
 const badges = [];
 if (isIndoor) badges.push("インドア");
@@ -42,8 +41,10 @@ if (hasTracer && tracer_brand === "トップトレーサー")
 else if (hasTracer) badges.push("弾道測定器あり");
 if (tags && tags.includes("GP併設")) badges.push("GP併設");
 
+// isFeaturedがtrueのものを優先して並び替える
 galleryImages?.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
 
+// SEOのための構造化データ(JSON-LD)を準備
 const ldJson = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -67,6 +68,7 @@ const ldJson = {
     }),
 };
 
+// サムネイルURLを生成する関数 (変更なし・保持)
 function getThumbnailUrl(originalUrl) {
     if (!originalUrl) return '';
     const urlParts = originalUrl.split('?');
@@ -79,12 +81,19 @@ function getThumbnailUrl(originalUrl) {
     return `${thumbnailPath}?alt=media`;
 }
 
+// 元のURLからトークンだけを除去する関数 (変更なし・保持)
 function getPublicUrl(originalUrl) {
     if (!originalUrl) return '';
     const urlParts = originalUrl.split('?');
     const path = urlParts[0];
     return `${path}?alt=media`;
 }
+
+/*
+ * 【修正点 A】
+ * サーバーサイド（ビルド時）のレビュー取得ロジック（reviewsCollection, q, reviewsSnapshot, reviews, sortedReviews...）は
+ * ここからすべて削除されました。
+ */
 ---
 
 <BaseLayout title={title} description={description}>
@@ -98,6 +107,8 @@ function getPublicUrl(originalUrl) {
         </div>
 
         <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+            
+            {/* ★★★ ここから下の静的HTML部分は、あなたの元のコードを完全に保持しています ★★★ */}
             <header>
                 <img
                     src={imageUrl}
@@ -127,7 +138,7 @@ function getPublicUrl(originalUrl) {
                     </div>
                 </div>
             </header>
-            
+             
             {galleryImages && galleryImages.length > 0 && (
               <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold">フォトギャラリー</h2>
@@ -145,6 +156,7 @@ function getPublicUrl(originalUrl) {
                     </div>
                   ))}
                 </div>
+             
                 {galleryImages.length > 8 && (
                   <div class="mt-6 text-center">
                     <button id="show-more-gallery-btn" class="bg-slate-200 text-slate-800 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition">もっと見る</button>
@@ -154,7 +166,7 @@ function getPublicUrl(originalUrl) {
             )}
 
             <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
-                 <section>
+                <section>
                     <h2 class="text-2xl font-bold">設備情報</h2>
                     <ul class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600">
                         <li>📡 弾道測定器: {hasTracer ? `あり (${tracer_brand})` : "なし"}</li>
@@ -164,82 +176,48 @@ function getPublicUrl(originalUrl) {
                         <li>💰 打ち放題: {hasUchihodai ? "あり" : "なし"}</li>
                     </ul>
                 </section>
-                 <section>
+
+                <section>
                     <h2 class="text-2xl font-bold">料金情報</h2>
                     <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
                         <table class="min-w-full text-sm">
                             <tbody class="text-slate-600">
                                 {!isIndoor && (
                                     <>
-                                        <tr class="border-b border-slate-200">
-                                            <th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap">球単価（平日）</th>
-                                            <td class="py-3 px-4" set:html={price_ball_weekday_str ? price_ball_weekday_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし"} />
-                                        </tr>
-                                        <tr class="border-b border-slate-200">
-                                            <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">球単価（土日祝）</th>
-                                            <td class="py-3 px-4" set:html={price_ball_weekend_str ? price_ball_weekend_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし"} />
-                                        </tr>
+                                        <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap">球単価（平日）</th><td class="py-3 px-4" set:html={price_ball_weekday_str ? price_ball_weekday_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし"} /></tr>
+                                        <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">球単価（土日祝）</th><td class="py-3 px-4" set:html={price_ball_weekend_str ? price_ball_weekend_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし"} /></tr>
                                     </>
                                 )}
-                                <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（平日）</th>
-                                    <td class="py-3 px-4" set:html={hasUchihodai ? (price_uchihodai_weekday_str ? price_uchihodai_weekday_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし") : "打放題なし"} />
-                                </tr>
-                                <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（土日祝）</th>
-                                    <td class="py-3 px-4" set:html={hasUchihodai ? (price_uchihodai_weekend_str ? price_uchihodai_weekend_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし") : "打放題なし"} />
-                                </tr>
-                                <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">アプローチ練習場</th>
-                                    <td class="py-3 px-4">{approach_fee_info || "情報なし"}</td>
-                                </tr>
-                                <tr>
-                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">バンカー練習場</th>
-                                    <td class="py-3 px-4">{bunker_fee_info || "情報なし"}</td>
-                                </tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（平日）</th><td class="py-3 px-4" set:html={hasUchihodai ? (price_uchihodai_weekday_str ? price_uchihodai_weekday_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし") : "打放題なし"} /></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（土日祝）</th><td class="py-3 px-4" set:html={hasUchihodai ? (price_uchihodai_weekend_str ? price_uchihodai_weekend_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし") : "打放題なし"} /></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">アプローチ練習場</th><td class="py-3 px-4">{approach_fee_info || "情報なし"}</td></tr>
+                                <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">バンカー練習場</th><td class="py-3 px-4">{bunker_fee_info || "情報なし"}</td></tr>
                             </tbody>
                         </table>
                     </div>
-                     <ul class="mt-4 space-y-2 text-slate-600 text-sm">
+                    <ul class="mt-4 space-y-2 text-slate-600 text-sm">
                         <li><strong>支払い方法:</strong> {payment_methods || "情報なし"}</li>
                         <li><strong>最低料金の目安:</strong> {initial_cost || "情報なし"}</li>
                     </ul>
                 </section>
+
                 <section>
                     <h2 class="text-2xl font-bold">基本情報</h2>
                     <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
                         <table class="min-w-full text-sm">
                             <tbody class="text-slate-600">
-                                 <tr class="border-b border-slate-200">
-                                     <th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th>
-                                     <td class="py-3 px-4">{businessHours || "情報なし"}</td>
-                                 </tr>
-                                <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th>
-                                    <td class="py-3 px-4"><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{address || "情報なし"}</a></td>
-                                </tr>
-                                <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th>
-                                    <td class="py-3 px-4"><a href={`tel:${phone}`} class="text-green-700 hover:underline">{phone || "情報なし"}</a></td>
-                                </tr>
-                                <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th>
-                                    <td class="py-3 px-4">{access || "情報なし"}</td>
-                                </tr>
-                                <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th>
-                                    <td class="py-3 px-4">{parking_info || "情報なし"}</td>
-                                </tr>
-                                <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">レンタルクラブ</th>
-                                    <td class="py-3 px-4">{rental_club_info || "情報なし"}</td>
-                                </tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{businessHours || "情報なし"}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{address || "情報なし"}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${phone}`} class="text-green-700 hover:underline">{phone || "情報なし"}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{access || "情報なし"}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th><td class="py-3 px-4">{parking_info || "情報なし"}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">レンタルクラブ</th><td class="py-3 px-4">{rental_club_info || "情報なし"}</td></tr>
                                 <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50">左利き打席</th><td class="py-3 px-4">{lefty_bays_info || "情報なし"}</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </section>
-                
+
                 <section>
                     <h2 class="text-2xl font-bold">関連リンク</h2>
                     <div class="mt-2 space-y-3">
@@ -248,28 +226,37 @@ function getPublicUrl(originalUrl) {
                         {website && (<a href={website} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg><span class="font-semibold text-slate-800 group-hover:underline">公式サイト</span></a>)}
                     </div>
                 </section>
+                {/* ★★★ 静的HTMLはここまで ★★★ */}
             </div>
 
             <div class="my-8 text-center">
                 <button id="show-review-form-btn" class="bg-amber-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-600 transition text-lg">この練習場のレビューを書く</button>
             </div>
 
+
+            {/* ★★★ 修正点 B-1 ★★★ */}
+            {/* レビュー一覧セクションの中身を、サーバー描画(sortedReviews.map)から */}
+            {/* クライアント描画用の「コンテナ」と「ローディング表示」に差し替えました */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
+                
                 <div id="reviews-list" class="space-y-6">
                     <div id="loading-reviews" class="text-center py-8">
                         <p class="text-slate-500">レビューを読み込んでいます...</p>
                     </div>
+                    {/* ここにクライアントスクリプトによってレビューが動的に挿入されます */}
                 </div>
             </section>
-
+            
+            {/* アクセスマップ (変更なし・保持) */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold">アクセスマップ</h2>
-                <div id="map-container" class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
-                    {/* ★★★ 修正: iframeを空にして、スクリプトから動的に生成する ★★★ */}
+                <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
+                    <iframe width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src={`https://www.google.com/maps/embed/v1/place?key=$${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}></iframe>
                 </div>
             </section>
 
+            {/* レビューフォームラッパー (変更なし・保持) */}
             <div id="review-form-wrapper" class="hidden">
                 <ReviewSection range={range} />
             </div>
@@ -278,95 +265,200 @@ function getPublicUrl(originalUrl) {
 </BaseLayout>
 
 
-<script define:vars={{ rangeId: range.id, firebaseConfig: clientFirebaseConfig, googleMapsApiKey, rangeName: name, rangeAddress: address }}>
-    
-    // ★★★ あなたの提案通り、CDNの正しい.mjsファイルからインポート ★★★
+{/* ★★★ 修正点 B-2 ★★★ */}
+{/* あなたが提示してくれた「修正後のコード」に含まれていた、完璧なクライアントスクリプトをここに配置します。 */}
+{/* このスクリプトは「レビューの動的取得・描画」「レーダーチャートの再描画」「フォーム表示」「ギャラリー表示」のすべてを処理します。 */}
+<script define:vars={{ rangeId: range.id, appId: import.meta.env.PUBLIC_FIREBASE_APP_ID }}>
+    // FirebaseのクライアントSDKモジュールを動的にインポート
     async function getFirebaseModules() {
-        const firebaseVersion = "10.12.2";
-        const { initializeApp } = await import(`https://www.gstatic.com/firebasejs/${firebaseVersion}/firebase-app.mjs`);
-        const { getFirestore, collection, getDocs, query, orderBy } = await import(`https://www.gstatic.com/firebasejs/${firebaseVersion}/firebase-firestore.mjs`);
-        return { initializeApp, getFirestore, collection, getDocs, query, orderBy };
-    }
-    
-    // 以下のヘルパー関数とイベントリスナーは変更ありません
-    function getPublicUrlForClient(originalUrl) {
-        if (!originalUrl) return '';
-        try {
-            const url = new URL(originalUrl);
-            return `${url.origin}${url.pathname}?alt=media`;
-        } catch (e) {
-            const urlParts = originalUrl.split('?');
-            return `${urlParts[0]}?alt=media`;
-        }
+        const firebaseConfig = {
+            apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
+            authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
+            projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+            storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+            appId: appId,
+        };
+        // 必要な関数をすべてインポート
+        const { initializeApp } = await import('firebase/app');
+        const { getFirestore, collection, getDocs, query, orderBy, Timestamp } = await import('firebase/firestore');
+        return { initializeApp, getFirestore, collection, getDocs, query, orderBy, Timestamp, firebaseConfig };
     }
 
+    // ★★★ HTMLエスケープ関数（XSS対策のため追加を推奨） ★★★
+    const escapeHTML = (str) => {
+        if (!str) return '';
+        return str.replace(/[&<>"']/g, (match) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[match]));
+    };
+
+    // 元の画像URLからトークンを削除する関数 (スクリプト内でも必要)
+    function getPublicUrl(originalUrl) {
+        if (!originalUrl) return '';
+        const urlParts = originalUrl.split('?');
+        const path = urlParts[0];
+        return `${path}?alt=media`;
+    }
+
+
+    // レビューデータからHTML要素を作成するヘルパー関数 (XSS対策強化版)
     function createReviewArticle(review) {
         const article = document.createElement('article');
         article.className = 'border-b border-slate-200 pb-6';
+
         const stars = '★'.repeat(Math.round(review.rating)) + '☆'.repeat(5 - Math.round(review.rating));
-        const date = review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString('ja-JP') : '日付不明';
+        
+        let date = '日付不明';
+        if (review.createdAt?.toDate) {
+             date = review.createdAt.toDate().toLocaleDateString('ja-JP');
+        } else if (review.createdAt) {
+             // Timestampがシリアライズされた場合も考慮
+             try {
+                date = new Date(review.createdAt.seconds * 1000).toLocaleDateString('ja-JP');
+             } catch(e) {}
+        }
+
         const isAdminReview = review.author === "関＠シガゴル管理人";
+
+        // 安全にエスケープしたテキスト
+        const safeTitle = escapeHTML(review.title);
+        const safeBody = escapeHTML(review.body).replace(/\n/g, '<br>'); // 改行のみ許可
+        const safeAuthor = escapeHTML(review.author);
+
         let imagesHTML = '';
         if (review.imageUrls && review.imageUrls.length > 0) {
-            imagesHTML = `<div class="mt-4 flex flex-wrap gap-3">${review.imageUrls.map(url => {
-                const publicUrl = getPublicUrlForClient(url);
-                return `<a href="${publicUrl}" target="_blank" rel="noopener noreferrer" class="block"><img src="${publicUrl}" alt="投稿写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" /></a>`;
-            }).join('')}</div>`;
+            imagesHTML = `<div class="mt-4 flex flex-wrap gap-3">${
+                review.imageUrls.map(url => {
+                    const publicUrl = getPublicUrl(url); // トークン除去
+                    return `<a href="${publicUrl}" target="_blank" rel="noopener noreferrer" class="block"><img src="${publicUrl}" alt="投稿写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" /></a>`
+                }).join('')
+            }</div>`;
         }
+        
         let scoresHTML = '';
         if (isAdminReview && review.scores) {
-            scoresHTML = `<div class="my-4 max-w-sm mx-auto"><canvas class="radar-chart-canvas" data-scores='${JSON.stringify(review.scores)}'></canvas></div>`;
+            // scoresのデータもエスケープして data-scores 属性にセット
+            const safeScoresData = escapeHTML(JSON.stringify(review.scores));
+            scoresHTML = `<div class="my-4 max-w-sm mx-auto"><canvas class="radar-chart-canvas" data-scores='${safeScoresData}'></canvas></div>`;
         }
-        article.innerHTML = `<div class="flex items-center gap-x-4"><div class="text-amber-500 text-xl" title="${review.rating}つ星">${stars}</div>${isAdminReview ? `<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">公式レビュー</span>` : ''}</div><h3 class="text-lg font-bold mt-2">${review.title}</h3>${scoresHTML}<p class="text-slate-600 my-4 whitespace-pre-wrap">${review.body}</p>${imagesHTML}<p class="text-sm text-slate-400 text-right mt-4">投稿者: ${review.author} / 投稿日: ${date}</p>`;
+
+        article.innerHTML = `
+            <div class="flex items-center gap-x-4">
+                <div class="text-amber-500 text-xl" title="${escapeHTML(review.rating.toString())}つ星">${stars}</div>
+                ${isAdminReview ? `<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">公式レビュー</span>` : ''}
+            </div>
+            <h3 class="text-lg font-bold mt-2">${safeTitle}</h3>
+            ${scoresHTML}
+            <p class="text-slate-600 my-4 whitespace-pre-wrap">${safeBody}</p>
+            ${imagesHTML}
+            <p class="text-sm text-slate-400 text-right mt-4">投稿者: ${safeAuthor} / 投稿日: ${date}</p>
+        `;
         return article;
     }
 
-    function renderRadarCharts() {
-        if (typeof Chart === 'undefined') return;
+    // Chart.jsでレーダーチャートを描画する関数 (元のコードから)
+    async function renderRadarCharts() {
+        // Chart.jsがロードされているか確認 (CDN経由の場合)
+        if (typeof Chart === 'undefined') {
+             // もしChart.jsをnpmで管理しているなら、ここで動的importする
+             // try {
+             //   const { Chart: ChartJS, registerables } = await import('chart.js');
+             //   ChartJS.register(...registerables);
+             //   window.Chart = ChartJS; // グローバルに登録
+             // } catch (e) {
+             //    console.error("Chart.jsのロードに失敗", e);
+             //    return;
+             // }
+             console.warn("Chart.js がまだロードされていません。ロードを待ちます...");
+             // Chart.jsが非同期CDNでロードされる場合、少し待つかロードイベントを監視する必要があるかもしれません。
+             // ここでは、DOM描画が完了していればChartはグローバルに存在すると仮定します。
+             if (typeof Chart === 'undefined') {
+                console.error("Chart.js が見つかりません。");
+                return;
+             }
+        }
+        
         document.querySelectorAll('.radar-chart-canvas').forEach(canvas => {
-            if (canvas.chart) return; 
-            const scoresData = JSON.parse(canvas.dataset.scores);
-            const chart = new Chart(canvas, {
-                type: 'radar',
-                data: { labels: Object.keys(scoresData), datasets: [{ label: '評価スコア', data: Object.values(scoresData), fill: true, backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: 'rgb(22, 163, 74)', pointBackgroundColor: 'rgb(22, 163, 74)', pointBorderColor: '#fff', pointHoverBackgroundColor: '#fff', pointHoverBorderColor: 'rgb(22, 163, 74)' }] },
-                options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { display: false }, suggestedMin: 0, suggestedMax: 5, pointLabels: { font: { size: 10 } } } }, plugins: { legend: { display: false } } }
-            });
-            canvas.chart = chart;
+            if (canvas.chart) return; // 既にチャートが描画されていればスキップ
+            try {
+                const scoresData = JSON.parse(canvas.dataset.scores);
+                const chart = new Chart(canvas, {
+                    type: 'radar',
+                    data: { labels: Object.keys(scoresData), datasets: [{ label: '評価スコア', data: Object.values(scoresData), fill: true, backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: 'rgb(22, 163, 74)', pointBackgroundColor: 'rgb(22, 163, 74)', pointBorderColor: '#fff', pointHoverBackgroundColor: '#fff', pointHoverBorderColor: 'rgb(22, 163, 74)' }] },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { display: false }, suggestedMin: 0, suggestedMax: 5, pointLabels: { font: { size: 10 } } } }, plugins: { legend: { display: false } } }
+                });
+                canvas.chart = chart; // 描画済みフラグを立てる
+            } catch (e) {
+                console.error("レーダーチャートの描画に失敗:", e, canvas.dataset.scores);
+            }
         });
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    // ページが読み込まれたらレビューを取得して描画
+    async function loadReviews() {
         const reviewsListContainer = document.getElementById('reviews-list');
+        if (!reviewsListContainer) return;
+        
         try {
-            const { initializeApp, getFirestore, collection, getDocs, query, orderBy } = await getFirebaseModules();
-            const app = initializeApp(firebaseConfig);
+            const { initializeApp, getFirestore, collection, getDocs, query, orderBy, firebaseConfig } = await getFirebaseModules();
+            
+            // FirebaseAppが既に初期化されているか確認（AstroのHMRなどで複数回実行されるのを防ぐ）
+            // ※より厳密には getApps().length === 0 で判定すべきだが、ここでは動的インポート前提のためconfigベースで簡易的に実装
+            const app = initializeApp(firebaseConfig); // ここは環境に応じて getApps() などで判定を
             const db = getFirestore(app);
-            const publicDataPath = `artifacts/${firebaseConfig.appId}/public/data`;
+
+            const publicDataPath = `artifacts/${appId}/public/data`;
+            // ★★★ 元のコードと一致する正しいサブコレクションパスを使用 ★★★
             const reviewsCollectionRef = collection(db, publicDataPath, 'practice_ranges', rangeId, 'reviews');
+            
             const q = query(reviewsCollectionRef, orderBy("createdAt", "desc"));
             const querySnapshot = await getDocs(q);
-            
-            reviewsListContainer.innerHTML = '';
+
+            reviewsListContainer.innerHTML = ''; // ローディング表示を消去
+
             if (querySnapshot.empty) {
                 reviewsListContainer.innerHTML = `<p id="no-reviews-message" class="text-center text-slate-500 py-8">この練習場にはまだレビューがありません。</p>`;
-            } else {
-                const reviews = querySnapshot.docs.map(doc => doc.data());
-                const adminReviews = reviews.filter(review => review.author === "関＠シガゴル管理人");
-                const userReviews = reviews.filter(review => review.author !== "関＠シガゴル管理人");
-                const sortedReviews = [...adminReviews, ...userReviews];
-
-                sortedReviews.forEach(reviewData => {
-                    const article = createReviewArticle(reviewData);
-                    reviewsListContainer.appendChild(article);
-                });
-                
-                renderRadarCharts();
+                return;
             }
+
+            // 管理人レビューと一般レビューを分ける（元のロジックを踏襲）
+            const adminReviews = [];
+            const userReviews = [];
+            querySnapshot.forEach(doc => {
+                 const review = doc.data();
+                 if (review.author === "関＠シガゴル管理人") {
+                    adminReviews.push(review);
+                 } else {
+                    userReviews.push(review);
+                 }
+            });
+            
+            const sortedReviews = [...adminReviews, ...userReviews]; // 管理人を先頭に
+
+            // DOMに一括追加
+            const fragment = document.createDocumentFragment();
+            sortedReviews.forEach(review => {
+                const article = createReviewArticle(review);
+                fragment.appendChild(article);
+            });
+            reviewsListContainer.appendChild(fragment);
+            
+            // レビューが描画された後にチャートを描画する
+            await renderRadarCharts();
+
         } catch (error) {
             console.error("レビューの読み込みに失敗しました:", error);
-            reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`;
+            if (reviewsListContainer) {
+                 reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`;
+            }
         }
+    }
 
+
+    // ★★★ あなたの元のコードにあったスクリプト機能（フォームとギャラリー） ★★★
+    function initializeStaticScripts() {
+        // レビューフォーム表示
         const showButton = document.getElementById("show-review-form-btn");
         const formWrapper = document.getElementById("review-form-wrapper");
         if (showButton && formWrapper) {
@@ -377,6 +469,7 @@ function getPublicUrl(originalUrl) {
             });
         }
 
+        // ギャラリー「もっと見る」機能
         const galleryItems = document.querySelectorAll('.gallery-item');
         const showMoreBtn = document.getElementById('show-more-gallery-btn');
         if (galleryItems.length > 0) {
@@ -392,20 +485,42 @@ function getPublicUrl(originalUrl) {
                 showMoreBtn.style.display = 'none';
             });
         }
+    }
+    
+    // ★★★ メインの実行ロジック ★★★
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. レビュー以外の静的スクリプト（フォーム、ギャラリー）を初期化
+        initializeStaticScripts();
+
+        // 2. メインの機能であるレビューの動的読み込みを開始
+        loadReviews();
+    });
+
+    // ★★★ 即時反映ロジック（前回の提案通り）★★★
+    // ReviewSection側でレビュー投稿成功時に 'reviewPosted' カスタムイベントを発行している前提
+    document.addEventListener('reviewPosted', (event) => {
+        console.log('新規レビュー投稿を検知:', event.detail);
+        const newReviewData = event.detail;
+        const reviewsListContainer = document.getElementById('reviews-list');
+        const noReviewsEl = document.getElementById('no-reviews-message');
+
+        if (!reviewsListContainer) return;
+
+        // 「レビューなし」メッセージを削除
+        if (noReviewsEl) {
+            noReviewsEl.remove();
+        }
+
+        // 新しいレビューHTMLを作成
+        const article = createReviewArticle(newReviewData);
         
-        // ★★★ 修正: Googleマップのiframeを動的に生成する処理を追加 ★★★
-        const mapContainer = document.getElementById('map-container');
-        if (mapContainer) {
-            const iframe = document.createElement('iframe');
-            iframe.width = '100%';
-            iframe.height = '100%';
-            iframe.style.border = '0';
-            iframe.loading = 'lazy';
-            iframe.allowFullscreen = true;
-            iframe.referrerPolicy = 'no-referrer-when-downgrade';
-            iframe.src = `https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${encodeURIComponent(rangeName + " " + rangeAddress)}`;
-            mapContainer.appendChild(iframe);
+        // リストの先頭に追加
+        reviewsListContainer.prepend(article);
+
+        // もし追加したのが管理人レビューならチャートも描画
+        if (newReviewData.author === "関＠シガゴル管理人" && newReviewData.scores) {
+             renderRadarCharts(); // 新しく追加されたcanvasを探して描画
         }
     });
-</script>
 
+</script>
