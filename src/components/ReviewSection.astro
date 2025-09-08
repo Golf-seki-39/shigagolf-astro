@@ -8,7 +8,7 @@ interface Props {
 }
 const { range } = Astro.props;
 
-// ★★★ 修正点1: 必要な環境変数をすべてここで取得 ★★★
+// 必要な環境変数をすべてここで取得
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const apiKey = import.meta.env.PUBLIC_FIREBASE_API_KEY;
 const authDomain = import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN;
@@ -105,7 +105,7 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
         </div>
     </form>
     
-    <div id="success-message" class="hidden"></div>
+    {/* ★★★ 変更点: UI即時反映が不要になったため、この成功メッセージ用DIVは削除しました ★★★ */}
 </section>
 
 <style>
@@ -165,7 +165,6 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
     }
 </style>
 
-{/* ★★★ 修正点2: フロントマターで取得した変数をスクリプトに渡す ★★★ */}
 <script define:vars={{ appId, apiKey, authDomain, projectId, storageBucket }}>
   const getFirebaseModules = async () => {
     const [
@@ -189,33 +188,21 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
     const form = document.getElementById('review-form');
     if (!form) return;
 
-    // --- フォーム関連の要素 ---
     const submitButton = form.querySelector('button[type="submit"]');
     const rangeId = document.getElementById('rangeId').value;
     const imageUploadInput = document.getElementById('review-image-upload');
     const imagePreviewContainer = document.getElementById('image-preview-container');
     const imageError = document.getElementById('image-error');
     const formErrorMessage = document.getElementById('form-error-message');
-    const successMessageContainer = document.getElementById('success-message');
     let imageFiles = [];
 
-    // --- 管理人モード用要素 ---
     const reviewerNameInput = document.getElementById('reviewerName');
     const adminScoresSection = document.getElementById('admin-scores-section');
     const userRatingSection = document.getElementById('user-rating-section');
 
-    // --- Firebase初期化と匿名認証 ---
     try {
       const modules = await getFirebaseModules();
-      
-      // ★★★ 修正点3: import.meta.env を define:vars で渡された変数に置き換え ★★★
-      const firebaseConfig = {
-        apiKey: apiKey,
-        authDomain: authDomain,
-        projectId: projectId,
-        storageBucket: storageBucket,
-        appId: appId,
-      };
+      const firebaseConfig = { apiKey, authDomain, projectId, storageBucket, appId };
       const app = modules.initializeApp(firebaseConfig);
       
       db = modules.getFirestore(app);
@@ -242,7 +229,6 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
       return;
     }
 
-    // --- 管理人モードロジック (変更なし) ---
     reviewerNameInput.addEventListener('input', () => {
       const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
       adminScoresSection.classList.toggle('hidden', !isAdmin);
@@ -251,7 +237,6 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
       userRatingSection.querySelectorAll('input[name="rating"]').forEach(input => input.required = !isAdmin);
     });
 
-    // --- 画像プレビュー機能 (変更なし) ---
     imageUploadInput.addEventListener('change', (event) => {
         const newFiles = Array.from(event.target.files);
         imageError.classList.add('hidden');
@@ -291,7 +276,6 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
         });
     }
     
-    // --- フォーム送信処理 (変更なし) ---
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -307,7 +291,6 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
       formErrorMessage.classList.add('hidden');
 
       try {
-        
         const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
         let rating = 0;
         let scores = {};
@@ -346,28 +329,22 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
         });
         const imageUrls = await Promise.all(uploadPromises);
 
-        const newReviewDataForUI = {
+        const reviewDataToSave = {
           author: reviewerNameInput.value || '匿名',
           rating: Number(rating.toFixed(1)),
           title: document.getElementById('reviewTitle').value,
           body: document.getElementById('reviewComment').value,
           imageUrls,
-          createdAt: new Date(),
+          createdAt: serverTimestamp(),
+          userId: auth.currentUser.uid,
           ...(isAdmin && { scores }),
         };
 
-        addReviewToUI(newReviewDataForUI);
-
         const reviewsCollection = collection(db, `artifacts/${appId}/public/data/practice_ranges`, rangeId, 'reviews');
-        await addDoc(reviewsCollection, {
-            ...newReviewDataForUI,
-            createdAt: serverTimestamp(),
-            userId: auth.currentUser.uid,
-        });
+        await addDoc(reviewsCollection, reviewDataToSave);
         
-        form.style.display = 'none';
-        successMessageContainer.classList.remove('hidden');
-        successMessageContainer.innerHTML = `<p class="text-xl font-bold text-green-700">レビューの投稿ありがとうございます！</p><p class="mt-2 text-slate-600">貴重なご意見に感謝いたします。</p>`;
+        // ★★★ 変更点: 成功時に詳細ページへリダイレクト ★★★
+        window.location.href = `/ranges/${rangeId}`;
 
       } catch (error) {
         console.error("レビュー投稿中にエラーが発生しました: ", error);
@@ -376,51 +353,12 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
             : 'エラーが発生しました。入力内容を確認し、再度お試しください。';
         formErrorMessage.classList.remove('hidden');
         submitButton.disabled = false;
+        submitButton.classList.remove('loading');
         submitButton.textContent = '投稿する';
       }
     });
 
-    // --- UIに新しいレビューを追加する関数 (変更なし) ---
-    function addReviewToUI(review) {
-      const reviewsList = document.getElementById('reviews-list');
-      if (!reviewsList) return;
-
-      const noReviewsMessage = document.getElementById('no-reviews-message');
-      if (noReviewsMessage) {
-        noReviewsMessage.remove();
-      }
-
-      const stars = '★'.repeat(Math.round(review.rating)) + '☆'.repeat(5 - Math.round(review.rating));
-      const date = review.createdAt.toLocaleDateString('ja-JP');
-
-      const article = document.createElement('article');
-      article.className = 'border-b border-slate-200 pb-6';
-      
-      let imagesHTML = '';
-      if (review.imageUrls && review.imageUrls.length > 0) {
-        imagesHTML = `
-          <div class="mt-4 flex flex-wrap gap-3">
-            ${review.imageUrls.map(url => `
-              <a href="${url}" target="_blank" rel="noopener noreferrer" class="block">
-                <img src="${url}" alt="投稿写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" />
-              </a>
-            `).join('')}
-          </div>`;
-      }
-
-      article.innerHTML = `
-        <div class="flex items-center gap-x-4">
-          <div class="text-amber-500 text-xl" title="${review.rating}つ星">${stars}</div>
-          ${review.author === '関＠シガゴル管理人' ? `<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">公式レビュー</span>` : ''}
-        </div>
-        <h3 class="text-lg font-bold mt-2">${review.title}</h3>
-        <p class="text-slate-600 my-4 whitespace-pre-wrap">${review.body}</p>
-        ${imagesHTML}
-        <p class="text-sm text-slate-400 text-right mt-4">投稿者: ${review.author} / 投稿日: ${date}</p>
-      `;
-
-      reviewsList.prepend(article);
-    }
+    // ★★★ 変更点: UI即時反映が不要になったため、addReviewToUI関数は削除しました ★★★
   });
 </script>
 
