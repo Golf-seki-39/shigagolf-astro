@@ -1,7 +1,6 @@
 ---
-// Gemini最終修正版 (v3): 2024/09/09
-// SSGモード。クライアントスクリプトを「import()」方式から「グローバルCDN (firebase-compat.js)」方式に全面改訂。
-// Maps URLの403エラーも修正。
+// Gemini最終修正版 (v4): 2024/09/09
+// v3で発生した "Invalid or unexpected token" (escapeHTML関数のタイプミス) を修正。
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ReviewSection from "../../components/ReviewSection.astro";
@@ -81,7 +80,7 @@ function getPublicUrl(originalUrl) {
     return `${path}?alt=media`;
 }
 
-// 3. クライアントスクリプトに渡すためのConfig (変更なし、これは正しい)
+// 3. クライアントスクリプトに渡すためのConfig (変更なし)
 const clientFirebaseConfig = {
     apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
     authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -104,6 +103,7 @@ const clientFirebaseConfig = {
 
         <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
             
+            {/* */}
             <header>
                 <img
                     src={imageUrl}
@@ -161,7 +161,6 @@ const clientFirebaseConfig = {
             )}
 
             <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
-                {/* (設備情報、料金情報、基本情報... すべて元のコードのまま) */}
                 <section>
                     <h2 class="text-2xl font-bold">設備情報</h2>
                     <ul class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600">
@@ -203,9 +202,7 @@ const clientFirebaseConfig = {
                         <table class="min-w-full text-sm">
                             <tbody class="text-slate-600">
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{businessHours || "情報なし"}</td></tr>
-                                
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{address || "情報なし"}</a></td></tr>
-                                
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${phone}`} class="text-green-700 hover:underline">{phone || "情報なし"}</a></td></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{access || "情報なし"}</td></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th><td class="py-3 px-4">{parking_info || "情報なし"}</td></tr>
@@ -230,11 +227,8 @@ const clientFirebaseConfig = {
                 <button id="show-review-form-btn" class="bg-amber-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-600 transition text-lg">この練習場のレビューを書く</button>
             </div>
 
-
-            {/* レビュー一覧セクション (ローディングコンテナのみ) */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
-                
                 <div id="reviews-list" class="space-y-6">
                     <div id="loading-reviews" class="text-center py-8">
                         <p class="text-slate-500">レビューを読み込んでいます...</p>
@@ -242,16 +236,13 @@ const clientFirebaseConfig = {
                 </div>
             </section>
             
-            {/* アクセスマップ */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold">アクセスマップ</h2>
                 <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
-                    {/* ★★★ 403 エラー修正済: 元の .../1... (正しいAPIキー呼び出し) に戻しました ★★★ */}
                     <iframe width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}></iframe>
                 </div>
             </section>
 
-            {/* レビューフォームラッパー */}
             <div id="review-form-wrapper" class="hidden">
                 <ReviewSection range={range} />
             </div>
@@ -260,16 +251,20 @@ const clientFirebaseConfig = {
 </BaseLayout>
 
 
-{/* ★★★ 修正済 B-2 (クライアントスクリプト) ★★★ */}
-{/* 全面的に書き直し。動的 import() を廃止し、BaseLayoutで読み込まれたグローバルな「firebase」オブジェクト(v8互換構文)を使用します。*/}
-{/* これにより "Failed to resolve module specifier" エラーが解消されます。*/}
+{/* ★★★ 修正済 v4: クライアントスクリプト ★★★ */}
+{/* escapeHTML 関数のタイプミス (''' -> '&#39;') を修正しました */}
 <script define:vars={{ rangeId: range.id, passedConfig: clientFirebaseConfig }}>
 
     // HTMLエスケープ関数（XSS対策）
     const escapeHTML = (str) => {
         if (typeof str !== 'string' || !str) return '';
+        // ★★★ ここが修正点です (''' -> '&#39;') ★★★
         return str.replace(/[&<>"']/g, (match) => ({
-            '&': '&', '<': '<', '>': '>', '"': '"', "'": '''
+            '&': '&',
+            '<': '<',
+            '>': '>',
+            '"': '"',
+            "'": '&#39;' // 修正済み
         }[match]));
     };
 
@@ -291,7 +286,6 @@ const clientFirebaseConfig = {
         
         let date = '日付不明';
         try {
-            // v8互換でも、FirestoreのTimestampは .toDate() メソッドを持ちます
             if (review.createdAt && typeof review.createdAt.toDate === 'function') {
                 date = review.createdAt.toDate().toLocaleDateString('ja-JP');
             } else if (review.createdAt && review.createdAt.seconds) {
@@ -360,46 +354,37 @@ const clientFirebaseConfig = {
         });
     }
 
-    // ★★★ メインロジック修正 (v8構文) ★★★
-    // ページが読み込まれたらレビューを取得して描画
+    // メインロジック (v8 CDN構文) (変更なし)
     async function loadReviews() {
         const reviewsListContainer = document.getElementById('reviews-list');
         if (!reviewsListContainer) return;
         
         try {
-            // 1. グローバルな 'firebase' オブジェクトの存在を確認 (CDNがロードされているか)
             if (typeof firebase === 'undefined' || typeof firebase.firestore === 'undefined') {
                 console.error("Firebase CDN スクリプト (firebase-app-compat.js と firebase-firestore-compat.js) が BaseLayout.astro で読み込まれていません。");
                 reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">エラー: 必須スクリプトが読み込まれていません。</p>`;
                 return;
             }
 
-            // 2. サーバーから渡された設定 (passedConfig) を使って v8 互換構文で初期化
-            // (v8では getApps().length が不要な場合が多い。ページごとに初期化する想定)
             if (!firebase.apps.length) {
                  firebase.initializeApp(passedConfig);
             }
-            const db = firebase.firestore(); // v8 構文の Firestore インスタンス取得
+            const db = firebase.firestore(); 
             const appId = passedConfig.appId;
-
-            // 3. v8 構文でコレクションパスを構築
             const publicDataPath = `artifacts/${appId}/public/data`;
             const fullReviewPath = `${publicDataPath}/practice_ranges/${rangeId}/reviews`;
-            
             const reviewsCollectionRef = db.collection(fullReviewPath);
             
-            // 4. v8 構文でクエリを実行
             const q = reviewsCollectionRef.orderBy("createdAt", "desc");
-            const querySnapshot = await q.get(); // v8 構文は .get() を呼び出す
+            const querySnapshot = await q.get(); 
 
-            reviewsListContainer.innerHTML = ''; // ローディング表示を消去
+            reviewsListContainer.innerHTML = ''; 
 
             if (querySnapshot.empty) {
                 reviewsListContainer.innerHTML = `<p id="no-reviews-message" class="text-center text-slate-500 py-8">この練習場にはまだレビューがありません。</p>`;
                 return;
             }
 
-            // 5. データ処理 (この部分は v8 も v9 もほぼ同じ)
             const adminReviews = [];
             const userReviews = [];
             querySnapshot.forEach(doc => {
@@ -420,11 +405,10 @@ const clientFirebaseConfig = {
             });
             reviewsListContainer.appendChild(fragment);
             
-            // 6. 描画後にチャートを呼び出し (変更なし)
             await renderRadarCharts();
 
         } catch (error) {
-            console.error("レビューの読み込みに失敗しました:", error); // コンソールに完全なエラーを出力
+            console.error("レビューの読み込みに失敗しました:", error); 
             if (reviewsListContainer) {
                  reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。 (詳細はコンソールを確認してください)</p>`;
             }
@@ -460,16 +444,13 @@ const clientFirebaseConfig = {
         }
     }
     
-    // ★★★ メイン実行ロジック ★★★ (変更なし)
+    // メイン実行ロジック (変更なし)
     document.addEventListener('DOMContentLoaded', () => {
-        // 1. 静的スクリプトを初期化
         initializeStaticScripts();
-
-        // 2. メインのレビュー読み込みを開始
         loadReviews();
     });
 
-    // ★★★ 即時反映ロジック ★★★ (変更なし)
+    // 即時反映ロジック (変更なし)
     document.addEventListener('reviewPosted', (event) => {
         console.log('新規レビュー投稿を検知:', event.detail);
         const newReviewData = event.detail;
