@@ -32,6 +32,7 @@ const clientFirebaseConfig = {
     messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
     appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
 };
+const googleMapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 
 const badges = [];
 if (isIndoor) badges.push("インドア");
@@ -97,7 +98,6 @@ function getPublicUrl(originalUrl) {
         </div>
 
         <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
-            {/* HTML部分は変更ありません */}
             <header>
                 <img
                     src={imageUrl}
@@ -156,131 +156,53 @@ function getPublicUrl(originalUrl) {
             <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
                  <section>
                     <h2 class="text-2xl font-bold">設備情報</h2>
-                    <ul
-                        class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600"
-                    >
-                        <li>
-                            📡 弾道測定器: {
-                                hasTracer
-                                    ? `あり (${tracer_brand})`
-                                    : "なし"
-                            }
-                        </li>
-                        <li>
-                            ⛳️ アプローチ: {hasApproach ? "あり" : "なし"}
-                        </li>
-                        <li>
-                            🕳️ バンカー: {hasBunker ? "あり" : "なし"}
-                        </li>
+                    <ul class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600">
+                        <li>📡 弾道測定器: {hasTracer ? `あり (${tracer_brand})` : "なし"}</li>
+                        <li>⛳️ アプローチ: {hasApproach ? "あり" : "なし"}</li>
+                        <li>🕳️ バンカー: {hasBunker ? "あり" : "なし"}</li>
                         <li>🏌️ パター: {hasPutter ? "あり" : "なし"}</li>
-                        <li>
-                            💰 打ち放題: {hasUchihodai ? "あり" : "なし"}
-                        </li>
+                        <li>💰 打ち放題: {hasUchihodai ? "あり" : "なし"}</li>
                     </ul>
                 </section>
                  <section>
                     <h2 class="text-2xl font-bold">料金情報</h2>
-                    <div
-                        class="mt-2 overflow-x-auto border border-slate-200 rounded-lg"
-                    >
+                    <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
                         <table class="min-w-full text-sm">
                             <tbody class="text-slate-600">
                                 {!isIndoor && (
                                     <>
                                         <tr class="border-b border-slate-200">
-                                            <th
-                                                class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap"
-                                            >
-                                                球単価（平日）
-                                            </th>
-                                            <td
-                                                class="py-3 px-4"
-                                                set:html={price_ball_weekday_str
-                                                    ? price_ball_weekday_str
-                                                          .replace(/\//g, "<br>")
-                                                          .replace(/\(/g, "<br>(")
-                                                    : "情報なし"}
-                                            />
+                                            <th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap">球単価（平日）</th>
+                                            <td class="py-3 px-4" set:html={price_ball_weekday_str ? price_ball_weekday_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし"} />
                                         </tr>
                                         <tr class="border-b border-slate-200">
-                                            <th
-                                                class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                            >
-                                                球単価（土日祝）
-                                            </th>
-                                            <td
-                                                class="py-3 px-4"
-                                                set:html={price_ball_weekend_str
-                                                    ? price_ball_weekend_str
-                                                          .replace(/\//g, "<br>")
-                                                          .replace(/\(/g, "<br>(")
-                                                    : "情報なし"}
-                                            />
+                                            <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">球単価（土日祝）</th>
+                                            <td class="py-3 px-4" set:html={price_ball_weekend_str ? price_ball_weekend_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし"} />
                                         </tr>
                                     </>
                                 )}
                                 <tr class="border-b border-slate-200">
-                                    <th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                    >
-                                        打ち放題（平日）
-                                    </th>
-                                    <td
-                                        class="py-3 px-4"
-                                        set:html={hasUchihodai
-                                            ? price_uchihodai_weekday_str
-                                                ? price_uchihodai_weekday_str
-                                                      .replace(/\//g, "<br>")
-                                                      .replace(/\(/g, "<br>(")
-                                                : "情報なし"
-                                            : "打放題なし"}
-                                    />
+                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（平日）</th>
+                                    <td class="py-3 px-4" set:html={hasUchihodai ? (price_uchihodai_weekday_str ? price_uchihodai_weekday_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし") : "打放題なし"} />
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                    >
-                                        打ち放題（土日祝）
-                                    </th>
-                                    <td
-                                        class="py-3 px-4"
-                                        set:html={hasUchihodai
-                                            ? price_uchihodai_weekend_str
-                                                ? price_uchihodai_weekend_str
-                                                      .replace(/\//g, "<br>")
-                                                      .replace(/\(/g, "<br>(")
-                                                : "情報なし"
-                                            : "打放題なし"}
-                                    />
+                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（土日祝）</th>
+                                    <td class="py-3 px-4" set:html={hasUchihodai ? (price_uchihodai_weekend_str ? price_uchihodai_weekend_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし") : "打放題なし"} />
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                    >
-                                        アプローチ練習場
-                                    </th>
+                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">アプローチ練習場</th>
                                     <td class="py-3 px-4">{approach_fee_info || "情報なし"}</td>
                                 </tr>
                                 <tr>
-                                    <th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                                    >
-                                        バンカー練習場
-                                    </th>
+                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">バンカー練習場</th>
                                     <td class="py-3 px-4">{bunker_fee_info || "情報なし"}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                      <ul class="mt-4 space-y-2 text-slate-600 text-sm">
-                        <li>
-                            <strong>支払い方法:</strong>
-                            {payment_methods || "情報なし"}
-                        </li>
-                        <li>
-                            <strong>最低料金の目安:</strong>
-                            {initial_cost || "情報なし"}
-                        </li>
+                        <li><strong>支払い方法:</strong> {payment_methods || "情報なし"}</li>
+                        <li><strong>最低料金の目安:</strong> {initial_cost || "情報なし"}</li>
                     </ul>
                 </section>
                 <section>
@@ -288,68 +210,30 @@ function getPublicUrl(originalUrl) {
                     <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
                         <table class="min-w-full text-sm">
                             <tbody class="text-slate-600">
-                                 <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap"
-                                        >営業時間</th
-                                    ><td class="py-3 px-4"
-                                        >{
-                                            businessHours || "情報なし"
-                                        }</td
-                                    ></tr
-                                >
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
-                                        >住所</th
-                                    ><td class="py-3 px-4"
-                                        ><a
-                                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="text-green-700 hover:underline"
-                                            >{address || "情報なし"}</a
-                                        ></td
-                                    ></tr
-                                >
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
-                                        >電話番号</th
-                                    ><td class="py-3 px-4"
-                                        ><a
-                                            href={`tel:${phone}`}
-                                            class="text-green-700 hover:underline"
-                                            >{phone || "情報なし"}</a
-                                        ></td
-                                    ></tr
-                                >
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
-                                        >アクセス</th
-                                    ><td class="py-3 px-4"
-                                        >{access || "情報なし"}</td
-                                    ></tr
-                                >
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
-                                        >駐車場</th
-                                    ><td class="py-3 px-4"
-                                        >{parking_info || "情報なし"}</td
-                                    ></tr
-                                >
-                                <tr class="border-b border-slate-200"
-                                    ><th
-                                        class="py-3 px-4 text-left font-semibold bg-slate-50"
-                                        >レンタルクラブ</th
-                                    ><td class="py-3 px-4"
-                                        >{
-                                            rental_club_info || "情報なし"
-                                        }</td
-                                    ></tr
-                                >
+                                 <tr class="border-b border-slate-200">
+                                     <th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th>
+                                     <td class="py-3 px-4">{businessHours || "情報なし"}</td>
+                                 </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th>
+                                    <td class="py-3 px-4"><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{address || "情報なし"}</a></td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th>
+                                    <td class="py-3 px-4"><a href={`tel:${phone}`} class="text-green-700 hover:underline">{phone || "情報なし"}</a></td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th>
+                                    <td class="py-3 px-4">{access || "情報なし"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th>
+                                    <td class="py-3 px-4">{parking_info || "情報なし"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 text-left font-semibold bg-slate-50">レンタルクラブ</th>
+                                    <td class="py-3 px-4">{rental_club_info || "情報なし"}</td>
+                                </tr>
                                 <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50">左利き打席</th><td class="py-3 px-4">{lefty_bays_info || "情報なし"}</td></tr>
                             </tbody>
                         </table>
@@ -381,8 +265,8 @@ function getPublicUrl(originalUrl) {
 
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold">アクセスマップ</h2>
-                <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
-                    <iframe width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}></iframe>
+                <div id="map-container" class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+                    {/* ★★★ 修正: iframeを空にして、スクリプトから動的に生成する ★★★ */}
                 </div>
             </section>
 
@@ -394,27 +278,17 @@ function getPublicUrl(originalUrl) {
 </BaseLayout>
 
 
-{/* ★★★ 修正箇所 ★★★ */}
-<script define:vars={{ rangeId: range.id, firebaseConfig: clientFirebaseConfig }}>
-
-    // FirebaseのクライアントSDKモジュールを動的にインポートする関数
+<script define:vars={{ rangeId: range.id, firebaseConfig: clientFirebaseConfig, googleMapsApiKey, rangeName: name, rangeAddress: address }}>
+    
+    // ★★★ あなたの提案通り、CDNの正しい.mjsファイルからインポート ★★★
     async function getFirebaseModules() {
-        // ★★★ 修正: ブラウザが解釈できるよう、CDNの完全なURLに変更 ★★★
-        const firebaseApp = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-        const firestore = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-        
-        return {
-            initializeApp: firebaseApp.initializeApp,
-            getFirestore: firestore.getFirestore,
-            collection: firestore.collection,
-            getDocs: firestore.getDocs,
-            query: firestore.query,
-            orderBy: firestore.orderBy,
-            firebaseConfig, // サーバーから渡された設定をそのまま返す
-        };
+        const firebaseVersion = "10.12.2";
+        const { initializeApp } = await import(`https://www.gstatic.com/firebasejs/${firebaseVersion}/firebase-app.mjs`);
+        const { getFirestore, collection, getDocs, query, orderBy } = await import(`https://www.gstatic.com/firebasejs/${firebaseVersion}/firebase-firestore.mjs`);
+        return { initializeApp, getFirestore, collection, getDocs, query, orderBy };
     }
     
-    // レビュー画像のURLからトークンを除去する関数
+    // 以下のヘルパー関数とイベントリスナーは変更ありません
     function getPublicUrlForClient(originalUrl) {
         if (!originalUrl) return '';
         try {
@@ -426,7 +300,6 @@ function getPublicUrl(originalUrl) {
         }
     }
 
-    // レビューデータからHTML要素を作成するヘルパー関数
     function createReviewArticle(review) {
         const article = document.createElement('article');
         article.className = 'border-b border-slate-200 pb-6';
@@ -448,7 +321,6 @@ function getPublicUrl(originalUrl) {
         return article;
     }
 
-    // Chart.jsでレーダーチャートを描画する関数
     function renderRadarCharts() {
         if (typeof Chart === 'undefined') return;
         document.querySelectorAll('.radar-chart-canvas').forEach(canvas => {
@@ -463,16 +335,13 @@ function getPublicUrl(originalUrl) {
         });
     }
 
-    // DOMContentLoadedリスナー（1つに統合済み）
     document.addEventListener('DOMContentLoaded', async () => {
-        
-        // --- レビュー取得・描画処理 ---
         const reviewsListContainer = document.getElementById('reviews-list');
         try {
-            const { initializeApp, getFirestore, collection, getDocs, query, orderBy, firebaseConfig: config } = await getFirebaseModules();
-            const app = initializeApp(config);
+            const { initializeApp, getFirestore, collection, getDocs, query, orderBy } = await getFirebaseModules();
+            const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
-            const publicDataPath = `artifacts/${config.appId}/public/data`;
+            const publicDataPath = `artifacts/${firebaseConfig.appId}/public/data`;
             const reviewsCollectionRef = collection(db, publicDataPath, 'practice_ranges', rangeId, 'reviews');
             const q = query(reviewsCollectionRef, orderBy("createdAt", "desc"));
             const querySnapshot = await getDocs(q);
@@ -498,7 +367,6 @@ function getPublicUrl(originalUrl) {
             reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`;
         }
 
-        // --- ページ表示関連のUI処理 ---
         const showButton = document.getElementById("show-review-form-btn");
         const formWrapper = document.getElementById("review-form-wrapper");
         if (showButton && formWrapper) {
@@ -523,6 +391,20 @@ function getPublicUrl(originalUrl) {
                 });
                 showMoreBtn.style.display = 'none';
             });
+        }
+        
+        // ★★★ 修正: Googleマップのiframeを動的に生成する処理を追加 ★★★
+        const mapContainer = document.getElementById('map-container');
+        if (mapContainer) {
+            const iframe = document.createElement('iframe');
+            iframe.width = '100%';
+            iframe.height = '100%';
+            iframe.style.border = '0';
+            iframe.loading = 'lazy';
+            iframe.allowFullscreen = true;
+            iframe.referrerPolicy = 'no-referrer-when-downgrade';
+            iframe.src = `https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${encodeURIComponent(rangeName + " " + rangeAddress)}`;
+            mapContainer.appendChild(iframe);
         }
     });
 </script>
