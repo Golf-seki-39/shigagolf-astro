@@ -14,7 +14,8 @@ try {
     const articlesCollection = collection(
         db,
         "artifacts",
-        import.meta.env.PUBLIC_VITE_APP_ID, // .envファイルからApp IDを取得
+        // ★★★ 環境変数名を変更しました ★★★
+        import.meta.env.PUBLIC_FIREBASE_APP_ID, 
         "public",
         "data",
         "articles",
@@ -66,7 +67,7 @@ const categories = Object.keys(articlesByCategory);
       </div>
     ) : (
       <>
-        <!-- 注目記事セクション -->
+        {/* 注目記事セクション */}
         {featuredArticles.length > 0 && (
           <section class="mb-12">
             <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">注目記事</h2>
@@ -96,7 +97,7 @@ const categories = Object.keys(articlesByCategory);
           </section>
         )}
 
-        <!-- カテゴリ別記事セクション -->
+        {/* カテゴリ別記事セクション */}
         {categories.map(category => (
           <section class="mb-12">
             <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">{category}</h2>
