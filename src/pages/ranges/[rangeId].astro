@@ -1,14 +1,14 @@
 ---
-// Gemini最終修正版: 2024/09/09
-// SSG（静的）モードで動作し、レビュー取得と描画のみをクライアントサイドで行います。
-// 致命的だった SyntaxError (import.meta) と 403 (Map URL) の両方を修正済みです。
+// Gemini最終修正版 (v3): 2024/09/09
+// SSGモード。クライアントスクリプトを「import()」方式から「グローバルCDN (firebase-compat.js)」方式に全面改訂。
+// Maps URLの403エラーも修正。
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ReviewSection from "../../components/ReviewSection.astro";
-import { db } from "../../lib/firebase.js"; // getStaticPaths で使用
+import { db } from "../../lib/firebase.js"; // getStaticPaths でのみ使用
 import { collection, getDocs } from "firebase/firestore";
 
-// 1. このページは「静的ページ」としてビルドされるため、getStaticPathsが必須です
+// 1. getStaticPaths (変更なし)
 export async function getStaticPaths() {
     const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
     const publicDataPath = `artifacts/${appId}/public/data`;
@@ -17,18 +17,15 @@ export async function getStaticPaths() {
 
     const paths = querySnapshot.docs.map(doc => ({
         params: { rangeId: doc.id },
-        props: { range: { id: doc.id, ...doc.data() } } // rangeオブジェクト全体をpropsとして渡す
+        props: { range: { id: doc.id, ...doc.data() } } 
     }));
     return paths;
 }
 
-// 2. 個別のページを作る際に、その練習場のデータを受け取る
-// (元のコードの静的HTMLで必要なすべての変数を展開します)
+// 2. Props と静的変数の定義 (変更なし)
 const { range } = Astro.props;
 const { id, name, address, phone, businessHours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl, isIndoor, is_beginner_friendly, hasTracer, tracer_brand, tags, galleryImages, yardage, bays, hasApproach, hasBunker, hasPutter, hasUchihodai, price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str, approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info, rental_club_info, lefty_bays_info, managerReviewUrl } = range;
 
-
-// 3. 受け取ったデータを使って、ページのタイトルや説明文などを準備する (元のコード保持)
 const title = `${name}の口コミ・評判 | シガゴル`;
 const description = `${name}（${area}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${name}に関する詳細情報が満載です。`;
 
@@ -40,10 +37,8 @@ if (hasTracer && tracer_brand === "トップトレーサー")
 else if (hasTracer) badges.push("弾道測定器あり");
 if (tags && tags.includes("GP併設")) badges.push("GP併設");
 
-// isFeaturedがtrueのものを優先して並び替える (元のコード保持)
 galleryImages?.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
 
-// SEOのための構造化データ(JSON-LD)を準備 (元のコード保持)
 const ldJson = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -67,7 +62,6 @@ const ldJson = {
     }),
 };
 
-// サムネイルURLを生成する関数 (元のコード保持)
 function getThumbnailUrl(originalUrl) {
     if (!originalUrl) return '';
     const urlParts = originalUrl.split('?');
@@ -80,7 +74,6 @@ function getThumbnailUrl(originalUrl) {
     return `${thumbnailPath}?alt=media`;
 }
 
-// 元のURLからトークンだけを除去する関数 (元のコード保持)
 function getPublicUrl(originalUrl) {
     if (!originalUrl) return '';
     const urlParts = originalUrl.split('?');
@@ -88,14 +81,7 @@ function getPublicUrl(originalUrl) {
     return `${path}?alt=media`;
 }
 
-/*
- * 【修正済 A】
- * サーバーサイド（ビルド時）のレビュー取得ロジック（reviewsSnapshot, sortedReviews...）は全て削除済みです。
- */
-
-// ★★★ SyntaxError 修正 ★★★
-// クライアントスクリプトに渡すFirebase設定を、ここで（サーバー側で）安全に構築します。
-// クライアント側は import.meta.env を一切参照しなくなります。
+// 3. クライアントスクリプトに渡すためのConfig (変更なし、これは正しい)
 const clientFirebaseConfig = {
     apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
     authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -118,7 +104,6 @@ const clientFirebaseConfig = {
 
         <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
             
-            {/* ★★★ ここから下の静的HTML部分は、あなたの元のコードを完全に保持しています ★★★ */}
             <header>
                 <img
                     src={imageUrl}
@@ -176,6 +161,7 @@ const clientFirebaseConfig = {
             )}
 
             <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
+                {/* (設備情報、料金情報、基本情報... すべて元のコードのまま) */}
                 <section>
                     <h2 class="text-2xl font-bold">設備情報</h2>
                     <ul class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600">
@@ -245,9 +231,7 @@ const clientFirebaseConfig = {
             </div>
 
 
-            {/* ★★★ 修正済 B-1 ★★★ */}
-            {/* レビュー一覧セクション。サーバー側の sortedReviews.map(...) を削除し、 */}
-            {/* クライアント描画用のコンテナとローディング表示のみを設置します。 */}
+            {/* レビュー一覧セクション (ローディングコンテナのみ) */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
                 
@@ -255,20 +239,19 @@ const clientFirebaseConfig = {
                     <div id="loading-reviews" class="text-center py-8">
                         <p class="text-slate-500">レビューを読み込んでいます...</p>
                     </div>
-                    {/* ここにクライアントスクリプトによってレビューが動的に挿入されます */}
                 </div>
             </section>
             
-            {/* アクセスマップ (元のコード保持) */}
+            {/* アクセスマップ */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold">アクセスマップ</h2>
                 <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
-                    {/* ★★★ 403 エラー修正済: 元の .../1... に戻しました ★★★ */}
-                    <iframe width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src={`https://www.google.com/maps/embed/v1/place?key=$${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}></iframe>
+                    {/* ★★★ 403 エラー修正済: 元の .../1... (正しいAPIキー呼び出し) に戻しました ★★★ */}
+                    <iframe width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}></iframe>
                 </div>
             </section>
 
-            {/* レビューフォームラッパー (元のコード保持) */}
+            {/* レビューフォームラッパー */}
             <div id="review-form-wrapper" class="hidden">
                 <ReviewSection range={range} />
             </div>
@@ -278,36 +261,19 @@ const clientFirebaseConfig = {
 
 
 {/* ★★★ 修正済 B-2 (クライアントスクリプト) ★★★ */}
-{/* SyntaxErrorを回避するため、サーバー側で構築した "passedConfig" オブジェクトを受け取ります。*/}
-{/* このスクリプトは「レビューの動的取得・描画」「レーダーチャートの再描画」「フォーム表示」「ギャラリー表示」のすべてを処理します。*/}
+{/* 全面的に書き直し。動的 import() を廃止し、BaseLayoutで読み込まれたグローバルな「firebase」オブジェクト(v8互換構文)を使用します。*/}
+{/* これにより "Failed to resolve module specifier" エラーが解消されます。*/}
 <script define:vars={{ rangeId: range.id, passedConfig: clientFirebaseConfig }}>
 
-    // FirebaseのクライアントSDKモジュールを動的にインポート
-    async function getFirebaseModules() {
-        // ★★★ SyntaxError 修正 ★★★
-        // サーバーから渡された 'passedConfig' (フロントマターで定義) を使用します。
-        // これでこのスクリプト内（ブラウザ側）から "import.meta.env" の呼び出しが一切なくなります。
-        const firebaseConfig = passedConfig; 
-        
-        // 必要な関数をすべてインポート
-        const { initializeApp } = await import('firebase/app');
-        const { getFirestore, collection, getDocs, query, orderBy, Timestamp } = await import('firebase/firestore');
-
-        // appId も passedConfig から取得
-        const appId = passedConfig.appId;
-
-        return { initializeApp, getFirestore, collection, getDocs, query, orderBy, Timestamp, firebaseConfig, appId };
-    }
-    
     // HTMLエスケープ関数（XSS対策）
     const escapeHTML = (str) => {
         if (typeof str !== 'string' || !str) return '';
         return str.replace(/[&<>"']/g, (match) => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            '&': '&', '<': '<', '>': '>', '"': '"', "'": '''
         }[match]));
     };
 
-    // 元の画像URLからトークンを削除する関数 (スクリプト内でも必要)
+    // 元の画像URLからトークンを削除する関数
     function getPublicUrl(originalUrl) {
         if (!originalUrl) return '';
         const urlParts = originalUrl.split('?');
@@ -315,7 +281,7 @@ const clientFirebaseConfig = {
         return `${path}?alt=media`;
     }
 
-    // レビューデータからHTML要素を作成するヘルパー関数 (XSS対策適用済み)
+    // レビューデータからHTML要素を作成するヘルパー関数 (変更なし)
     function createReviewArticle(review) {
         const article = document.createElement('article');
         article.className = 'border-b border-slate-200 pb-6';
@@ -325,10 +291,10 @@ const clientFirebaseConfig = {
         
         let date = '日付不明';
         try {
-            if (review.createdAt?.toDate) {
+            // v8互換でも、FirestoreのTimestampは .toDate() メソッドを持ちます
+            if (review.createdAt && typeof review.createdAt.toDate === 'function') {
                 date = review.createdAt.toDate().toLocaleDateString('ja-JP');
             } else if (review.createdAt && review.createdAt.seconds) {
-                // FirestoreのTimestampがJSONシリアライズされた場合のフォールバック
                 date = new Date(review.createdAt.seconds * 1000).toLocaleDateString('ja-JP');
             }
         } catch (e) {
@@ -336,17 +302,15 @@ const clientFirebaseConfig = {
         }
 
         const isAdminReview = review.author === "関＠シガゴル管理人";
-
-        // 安全にエスケープしたテキスト
         const safeTitle = escapeHTML(review.title || '');
-        const safeBody = review.body ? escapeHTML(review.body).replace(/\n/g, '<br>') : ''; // 改行のみ許可
+        const safeBody = review.body ? escapeHTML(review.body).replace(/\n/g, '<br>') : '';
         const safeAuthor = escapeHTML(review.author || '匿名');
 
         let imagesHTML = '';
         if (review.imageUrls && review.imageUrls.length > 0) {
             imagesHTML = `<div class="mt-4 flex flex-wrap gap-3">${
                 review.imageUrls.map(url => {
-                    const publicUrl = getPublicUrl(url); // トークン除去
+                    const publicUrl = getPublicUrl(url);
                     return `<a href="${publicUrl}" target="_blank" rel="noopener noreferrer" class="block"><img src="${publicUrl}" alt="投稿写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" /></a>`
                 }).join('')
             }</div>`;
@@ -354,7 +318,6 @@ const clientFirebaseConfig = {
         
         let scoresHTML = '';
         if (isAdminReview && review.scores) {
-            // scoresのデータもエスケープして data-scores 属性にセット
             const safeScoresData = escapeHTML(JSON.stringify(review.scores));
             scoresHTML = `<div class="my-4 max-w-sm mx-auto"><canvas class="radar-chart-canvas" data-scores='${safeScoresData}'></canvas></div>`;
         }
@@ -374,16 +337,15 @@ const clientFirebaseConfig = {
         return article;
     }
 
-    // Chart.jsでレーダーチャートを描画する関数 (元のコードから)
-    async function renderRadarCharts() {
+    // Chart.jsでレーダーチャートを描画する関数 (変更なし)
+    function renderRadarCharts() {
         if (typeof Chart === 'undefined') {
-             // Chart.jsがBaseLayout.astroなどでグローバルに読み込まれていることを前提とします
-             console.error("Chart.js がグローバルに見つかりません。");
+             console.error("Chart.js が BaseLayout で読み込まれていません。");
              return;
         }
         
         document.querySelectorAll('.radar-chart-canvas').forEach(canvas => {
-            if (canvas.chart) return; // 既にチャートが描画されていればスキップ
+            if (canvas.chart) return; 
             try {
                 const scoresData = JSON.parse(canvas.dataset.scores);
                 const chart = new Chart(canvas, {
@@ -391,38 +353,44 @@ const clientFirebaseConfig = {
                     data: { labels: Object.keys(scoresData), datasets: [{ label: '評価スコア', data: Object.values(scoresData), fill: true, backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: 'rgb(22, 163, 74)', pointBackgroundColor: 'rgb(22, 163, 74)', pointBorderColor: '#fff', pointHoverBackgroundColor: '#fff', pointHoverBorderColor: 'rgb(22, 163, 74)' }] },
                     options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { display: false }, suggestedMin: 0, suggestedMax: 5, pointLabels: { font: { size: 10 } } } }, plugins: { legend: { display: false } } }
                 });
-                canvas.chart = chart; // 描画済みフラグを立てる
+                canvas.chart = chart;
             } catch (e) {
                 console.error("レーダーチャートの描画に失敗:", e, canvas.dataset.scores);
             }
         });
     }
 
+    // ★★★ メインロジック修正 (v8構文) ★★★
     // ページが読み込まれたらレビューを取得して描画
     async function loadReviews() {
         const reviewsListContainer = document.getElementById('reviews-list');
         if (!reviewsListContainer) return;
         
         try {
-            // ★★★ 修正: appId を getFirebaseModules から受け取る ★★★
-            const { initializeApp, getFirestore, collection, getDocs, query, orderBy, firebaseConfig, appId } = await getFirebaseModules();
-            
-            // FirebaseAppが既に初期化されているか確認 (AstroのHMR対策なども兼ねる)
-            let app;
-            // Astroでは `getApps()` が標準的だが、動的インポートでは利用しづらいため、簡易的にグローバルチェック
-            if (!window._firebaseApp) {
-                 window._firebaseApp = initializeApp(firebaseConfig);
+            // 1. グローバルな 'firebase' オブジェクトの存在を確認 (CDNがロードされているか)
+            if (typeof firebase === 'undefined' || typeof firebase.firestore === 'undefined') {
+                console.error("Firebase CDN スクリプト (firebase-app-compat.js と firebase-firestore-compat.js) が BaseLayout.astro で読み込まれていません。");
+                reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">エラー: 必須スクリプトが読み込まれていません。</p>`;
+                return;
             }
-            app = window._firebaseApp;
-            const db = getFirestore(app);
 
-            // ★★★ 修正: getFirebaseModules から来た appId を使用 ★★★
+            // 2. サーバーから渡された設定 (passedConfig) を使って v8 互換構文で初期化
+            // (v8では getApps().length が不要な場合が多い。ページごとに初期化する想定)
+            if (!firebase.apps.length) {
+                 firebase.initializeApp(passedConfig);
+            }
+            const db = firebase.firestore(); // v8 構文の Firestore インスタンス取得
+            const appId = passedConfig.appId;
+
+            // 3. v8 構文でコレクションパスを構築
             const publicDataPath = `artifacts/${appId}/public/data`;
-            // ★★★ 元のコードと一致する正しいサブコレクションパスを使用 ★★★
-            const reviewsCollectionRef = collection(db, publicDataPath, 'practice_ranges', rangeId, 'reviews');
+            const fullReviewPath = `${publicDataPath}/practice_ranges/${rangeId}/reviews`;
             
-            const q = query(reviewsCollectionRef, orderBy("createdAt", "desc"));
-            const querySnapshot = await getDocs(q);
+            const reviewsCollectionRef = db.collection(fullReviewPath);
+            
+            // 4. v8 構文でクエリを実行
+            const q = reviewsCollectionRef.orderBy("createdAt", "desc");
+            const querySnapshot = await q.get(); // v8 構文は .get() を呼び出す
 
             reviewsListContainer.innerHTML = ''; // ローディング表示を消去
 
@@ -431,7 +399,7 @@ const clientFirebaseConfig = {
                 return;
             }
 
-            // 元のコードロジックを踏襲: 管理人レビューと一般レビューを分け、管理人レビューを先頭にする
+            // 5. データ処理 (この部分は v8 も v9 もほぼ同じ)
             const adminReviews = [];
             const userReviews = [];
             querySnapshot.forEach(doc => {
@@ -443,9 +411,8 @@ const clientFirebaseConfig = {
                  }
             });
             
-            const sortedReviews = [...adminReviews, ...userReviews]; // 管理人を先頭に
+            const sortedReviews = [...adminReviews, ...userReviews]; 
 
-            // DOMに一括追加 (DocumentFragmentを使ってパフォーマンス向上)
             const fragment = document.createDocumentFragment();
             sortedReviews.forEach(review => {
                 const article = createReviewArticle(review);
@@ -453,20 +420,19 @@ const clientFirebaseConfig = {
             });
             reviewsListContainer.appendChild(fragment);
             
-            // レビューが描画された後にチャートを描画する
+            // 6. 描画後にチャートを呼び出し (変更なし)
             await renderRadarCharts();
 
         } catch (error) {
-            console.error("レビューの読み込みに失敗しました:", error);
+            console.error("レビューの読み込みに失敗しました:", error); // コンソールに完全なエラーを出力
             if (reviewsListContainer) {
-                 reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`;
+                 reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。 (詳細はコンソールを確認してください)</p>`;
             }
         }
     }
 
-    // 元のコードにあった静的スクリプト（フォームとギャラリー）
+    // 元の静的スクリプト（フォームとギャラリー）(変更なし)
     function initializeStaticScripts() {
-        // レビューフォーム表示
         const showButton = document.getElementById("show-review-form-btn");
         const formWrapper = document.getElementById("review-form-wrapper");
         if (showButton && formWrapper) {
@@ -477,7 +443,6 @@ const clientFirebaseConfig = {
             });
         }
 
-        // ギャラリー「もっと見る」機能
         const galleryItems = document.querySelectorAll('.gallery-item');
         const showMoreBtn = document.getElementById('show-more-gallery-btn');
         if (galleryItems.length > 0) {
@@ -495,17 +460,16 @@ const clientFirebaseConfig = {
         }
     }
     
-    // ★★★ メインの実行ロジック ★★★
+    // ★★★ メイン実行ロジック ★★★ (変更なし)
     document.addEventListener('DOMContentLoaded', () => {
-        // 1. レビュー以外の静的スクリプト（フォーム、ギャラリー）を初期化
+        // 1. 静的スクリプトを初期化
         initializeStaticScripts();
 
-        // 2. メインの機能であるレビューの動的読み込みを開始
+        // 2. メインのレビュー読み込みを開始
         loadReviews();
     });
 
-    // ★★★ 即時反映ロジック ★★★
-    // ReviewSection側でレビュー投稿成功時に 'reviewPosted' カスタムイベントを発行している前提
+    // ★★★ 即時反映ロジック ★★★ (変更なし)
     document.addEventListener('reviewPosted', (event) => {
         console.log('新規レビュー投稿を検知:', event.detail);
         const newReviewData = event.detail;
@@ -514,20 +478,15 @@ const clientFirebaseConfig = {
 
         if (!reviewsListContainer) return;
 
-        // 「レビューなし」メッセージを削除
         if (noReviewsEl) {
             noReviewsEl.remove();
         }
 
-        // 新しいレビューHTMLを作成
         const article = createReviewArticle(newReviewData);
-        
-        // リストの先頭に追加
         reviewsListContainer.prepend(article);
 
-        // もし追加したのが管理人レビューならチャートも描画
         if (newReviewData.author === "関＠シガゴル管理人" && newReviewData.scores) {
-             renderRadarCharts(); // 新しく追加されたcanvasを探して描画
+             renderRadarCharts(); 
         }
     });
 
