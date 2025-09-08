@@ -5,58 +5,119 @@ const title = "お役立ち記事一覧 | シガゴル";
 const description = "滋賀のゴルファーに役立つ情報を発信中。練習場の体験談やギアレビュー、スコアアップのコツなど、様々な角度からゴルフライフをサポートします。";
 
 // 今後、CMSなどから記事データを取得することを想定し、配列で記事を管理します
-const articles = [
+const allArticles = [
   {
     title: "【写真付きレビュー】KSP彦根に行ってみた！施設の詳細や感想を紹介",
     description: "彦根市にある人気の練習場「KSP彦根」を管理人が徹底レビュー！施設の隅々まで写真付きで紹介し、リアルな感想をお届けします。",
-    // managerReviewUrlに設定したURLと同じものを設定してください
     url: "/articles/ksp-hikone-review", 
     category: "体験談",
-    imageUrl: "https://placehold.co/600x400/16a34a/ffffff?text=KSP彦根",
+    imageUrl: "https://i.imgur.com/SvB5tHL.png", // ★ご指定の画像に更新しました
+    isFeatured: false, // ★注目記事として設定
   },
   {
-    title: "近江八幡・東近江エリアの練習場を徹底比較！あなたに合うのはどこ？",
+    // ★ご指定のタイトルに更新しました
+    title: "【近江八幡・東近江】ゴルフ練習場4選・徹底比較！料金・設備・目的で選ぶ、あなたにピッタリの場所はここだ！",
     description: "ゴルフ激戦区の近江八幡・東近江エリア。主要な練習場の特徴や料金、設備を比較し、目的別に最適な練習場を提案します。",
-    // この記事の実際のパスを指定しています
     url: "/articles/omi-higashiomi-comparison",
     category: "比較記事",
-    imageUrl: "https://placehold.co/600x400/15803d/ffffff?text=比較記事",
+    // ★★★お願い★★★
+    // こちらの記事のアイキャッチ画像のURLを教えていただけますでしょうか？
+    // ひとまず仮の画像を入れています。
+    imageUrl: "https://i.imgur.com/DyVr8of.jpeg",
+    isFeatured: true,
   },
   // 今後記事が追加されたら、この配列に新しいオブジェクトを追加します
+  // {
+  //   title: "新しい記事のタイトル",
+  //   description: "新しい記事の説明文。",
+  //   url: "/articles/new-article",
+  //   category: "上達のヒント",
+  //   imageUrl: "...",
+  //   isFeatured: false,
+  // },
 ];
+
+// 注目記事とそれ以外の記事に分ける
+const featuredArticles = allArticles.filter(a => a.isFeatured);
+const regularArticles = allArticles.filter(a => !a.isFeatured);
+
+// 通常記事をカテゴリ別にグループ化する
+const articlesByCategory = regularArticles.reduce((acc, article) => {
+  const category = article.category;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(article);
+  return acc;
+}, {});
+
+const categories = Object.keys(articlesByCategory);
 ---
 
 <BaseLayout title={title} description={description}>
   <main class="container mx-auto p-4 md:p-6">
-    <div class="text-center mb-8">
+    <div class="text-center mb-10">
       <h1 class="text-2xl md:text-3xl font-bold mb-2">お役立ち記事一覧</h1>
       <p class="text-slate-500">
         練習場の体験談やゴルフ上達のヒントなど
       </p>
     </div>
 
-    <!-- ここから記事一覧のセクション -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {articles.map(article => (
-        <a href={article.url} class="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
-          <div class="relative">
-            <img src={article.imageUrl} alt={article.title} class="w-full h-40 object-cover" />
-            <span class="absolute top-2 left-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">{article.category}</span>
-          </div>
-          <div class="p-4 flex-grow flex flex-col">
-            <h2 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors">
-              {article.title}
-            </h2>
-            <p class="text-sm text-slate-600 mt-2 flex-grow">
-              {article.description}
-            </p>
-            <div class="mt-4 text-right text-sm font-semibold text-green-600">
-              続きを読む →
-            </div>
-          </div>
-        </a>
-      ))}
-    </div>
+    <!-- 注目記事セクション -->
+    {featuredArticles.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">注目記事</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {featuredArticles.map(article => (
+            <a href={article.url} class="flex flex-col sm:flex-row bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+              <img src={article.imageUrl} alt={article.title} class="w-full sm:w-1/2 h-48 object-cover" />
+              <div class="p-5 flex flex-col justify-between">
+                <div>
+                  <span class="text-sm bg-green-100 text-green-800 font-semibold px-2 py-1 rounded">{article.category}</span>
+                  <h3 class="text-xl font-bold mt-2 text-slate-800 group-hover:text-green-700 transition-colors">
+                    {article.title}
+                  </h3>
+                  <p class="text-sm text-slate-600 mt-2">
+                    {article.description}
+                  </p>
+                </div>
+                <div class="mt-4 text-right text-sm font-semibold text-green-600">
+                  続きを読む →
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- カテゴリ別記事セクション -->
+    {categories.map(category => (
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">{category}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {articlesByCategory[category].map(article => (
+            <a href={article.url} class="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+              <div class="relative">
+                <img src={article.imageUrl} alt={article.title} class="w-full h-40 object-cover" />
+              </div>
+              <div class="p-4 flex-grow flex flex-col">
+                <h3 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors">
+                  {article.title}
+                </h3>
+                <p class="text-sm text-slate-600 mt-2 flex-grow">
+                  {article.description}
+                </p>
+                <div class="mt-4 text-right text-sm font-semibold text-green-600">
+                  続きを読む →
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+    
   </main>
 </BaseLayout>
 
