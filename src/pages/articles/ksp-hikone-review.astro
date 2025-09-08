@@ -2,12 +2,14 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 // SEO and page metadata
-const pageTitle = "【KSP彦根】ゴルフの練習が劇的に変わる！全打席トップトレーサー無料の練習場が初心者の味方だった話 | シガゴル";
+// ★★★ 変数名を pageTitle から title に変更しました ★★★
+const title = "【KSP彦根】ゴルフの練習が劇的に変わる！全打席トップトレーサー無料の練習場が初心者の味方だった話 | シガゴル";
 const description = "KSP彦根を徹底レビュー！全打席無料のトップトレーサーが初心者の練習をどう変えるのか？ICカードの安心システムから270Yの開放感まで解説。";
 const pubDate = "2025-06-05"; // 記事の公開日
 ---
 
-<BaseLayout pageTitle={pageTitle} description={description}>
+{/* ★★★ ここも title={title} に変更しました ★★★ */}
+<BaseLayout title={title} description={description}>
     
     <div
         id="article-ksp-hikone-review-view"
@@ -24,7 +26,8 @@ const pubDate = "2025-06-05"; // 記事の公開日
         >
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {pageTitle.split(' | ')[0]} 
+                    {/* ★★★ ここも title に変更しました ★★★ */}
+                    {title.split(' | ')[0]} 
                 </h1>
                 <p class="text-sm text-slate-500 mt-2">
                     公開日：{pubDate}
@@ -179,3 +182,4 @@ const pubDate = "2025-06-05"; // 記事の公開日
         </article>
     </div>
 </BaseLayout>
+
