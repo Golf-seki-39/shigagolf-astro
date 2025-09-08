@@ -252,106 +252,93 @@ function getPublicUrl(originalUrl) {
                         class="mt-2 overflow-x-auto border border-slate-200 rounded-lg"
                     >
                         <table class="min-w-full text-sm">
-                            {/* ↓↓↓ 料金テーブルの <tbody ...> の「中身だけ」を全部これに差し替えてください ↓↓↓ */}
+                            <tbody class="text-slate-600">
+                                {!range.isIndoor && (
+                                    <>
+                                        <tr class="border-b border-slate-200">
+                                            <th
+                                                class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap"
+                                            >
+                                                球単価（平日）
+                                            </th>
+                                            <td
+                                                class="py-3 px-4"
+                                                set:html={range.price_ball_weekday_str
+                                                    ? range.price_ball_weekday_str
+                                                          .replace(/\//g, "<br>")
+                                                          .replace(/\(/g, "<br>(")
+                                                    : "情報なし"}
+                                            />
+                                        </tr>
+                                        <tr class="border-b border-slate-200">
+                                            <th
+                                                class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                            >
+                                                球単価（土日祝）
+                                            </th>
+                                            <td
+                                                class="py-3 px-4"
+                                                set:html={range.price_ball_weekend_str
+                                                    ? range.price_ball_weekend_str
+                                                          .replace(/\//g, "<br>")
+                                                          .replace(/\(/g, "<br>(")
+                                                    : "情報なし"}
+                                            />
+                                        </tr>
+                                    </>
+                                )}
 
-<tbody class="text-slate-600">
-    {/* --- ここが「インドアではない」時だけ表示する「球単価」ブロック --- */}
-    {!range.isIndoor && (
-        <>
-            {/* 球単価（平日）の行 */}
-            <tr class="border-b border-slate-200">
-                <th
-                    class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap"
-                >
-                    球単価（平日）
-                </th>
-                <td
-                    class="py-3 px-4"
-                    set:html={range.price_ball_weekday_str
-                        ? range.price_ball_weekday_str
-                              .replace(/\//g, "<br>")
-                              .replace(/\(/g, "<br>(")
-                        : "情報なし"}
-                />
-            </tr>
-            {/* 球単価（土日祝）の行 */}
-            <tr class="border-b border-slate-200">
-                <th
-                    class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-                >
-                    球単価（土日祝）
-                </th>
-                <td
-                    class="py-3 px-4"
-                    set:html={range.price_ball_weekend_str
-                        ? range.price_ball_weekend_str
-                              .replace(/\//g, "<br>")
-                              .replace(/\(/g, "<br>(")
-                        : "情報なし"}
-                />
-            </tr>
-        </>
-    )}
-    {/* --- 球単価ブロックはここまで --- */}
-
-    {/* --- ここから「打ち放題」（これは常時表示） --- */}
-    {/* ★★★ おそらくこの2行を消してしまっていました ★★★ */}
-    <tr class="border-b border-slate-200">
-        <th
-            class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-        >
-            打ち放題（平日）
-        </th>
-        <td
-            class="py-3 px-4"
-            set:html={range.hasUchihodai
-                ? range.price_uchihodai_weekday_str
-                    ? range.price_uchihodai_weekday_str
-                          .replace(/\//g, "<br>")
-                          .replace(/\(/g, "<br>(")
-                    : "情報なし"
-                : "打放題なし"}
-        />
-    </tr>
-    <tr class="border-b border-slate-200">
-        <th
-            class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-        >
-            打ち放題（土日祝）
-        </th>
-        <td
-            class="py-3 px-4"
-            set:html={range.hasUchihodai
-                ? range.price_uchihodai_weekend_str
-                    ? range.price_uchihodai_weekend_str
-                          .replace(/\//g, "<br>")
-                          .replace(/\(/g, "<br>(")
-                    : "情報なし"
-                : "打放題なし"}
-        />
-    </tr>
-    {/* ★★★ 打ち放題ここまで ★★★ */}
-
-    {/* --- ここからアプローチとバンカー（これらは元のコードに残っていました） --- */}
-    <tr class="border-b border-slate-200">
-        <th
-            class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-        >
-            アプローチ練習場
-        </th>
-        <td class="py-3 px-4">{range.approach_fee_info || "情報なし"}</td>
-    </tr>
-    <tr>
-        <th
-            class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
-        >
-            バンカー練習場
-        </th>
-        <td class="py-3 px-4">{range.bunker_fee_info || "情報なし"}</td>
-    </tr>
-</tbody>
-
-{/* ↑↑↑ 料金テーブルの </tbody> はここまで ↑↑↑ */}
+                                <tr class="border-b border-slate-200">
+                                    <th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                    >
+                                        打ち放題（平日）
+                                    </th>
+                                    <td
+                                        class="py-3 px-4"
+                                        set:html={range.hasUchihodai
+                                            ? range.price_uchihodai_weekday_str
+                                                ? range.price_uchihodai_weekday_str
+                                                      .replace(/\//g, "<br>")
+                                                      .replace(/\(/g, "<br>(")
+                                                : "情報なし"
+                                            : "打放題なし"}
+                                    />
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                    >
+                                        打ち放題（土日祝）
+                                    </th>
+                                    <td
+                                        class="py-3 px-4"
+                                        set:html={range.hasUchihodai
+                                            ? range.price_uchihodai_weekend_str
+                                                ? range.price_uchihodai_weekend_str
+                                                      .replace(/\//g, "<br>")
+                                                      .replace(/\(/g, "<br>(")
+                                                : "情報なし"
+                                            : "打放題なし"}
+                                    />
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                    >
+                                        アプローチ練習場
+                                    </th>
+                                    <td class="py-3 px-4">{range.approach_fee_info || "情報なし"}</td>
+                                </tr>
+                                <tr>
+                                    <th
+                                        class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
+                                    >
+                                        バンカー練習場
+                                    </th>
+                                    <td class="py-3 px-4">{range.bunker_fee_info || "情報なし"}</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                     <ul class="mt-4 space-y-2 text-slate-600 text-sm">
@@ -389,7 +376,7 @@ function getPublicUrl(originalUrl) {
                                         >住所</th
                                     ><td class="py-3 px-4"
                                         ><a
-                                            href={`https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=365ゴルフクラブ彦根...2{encodeURIComponent(range.address || '')}`}
+                                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(range.address || '')}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             class="text-green-700 hover:underline"
@@ -450,93 +437,88 @@ function getPublicUrl(originalUrl) {
                     </div>
                 </section>
 
-                {
-                    (range.website || range.noteUrl || range.medleyUrl) && (
-                        <section>
-                            <h2 class="text-2xl font-bold">関連リンク</h2>
-                            <div class="mt-2 space-y-3">
-                                {range.website && (
-                                    <a
-                                        href={range.website}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="h-6 w-6 text-green-700"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                            />
-                                        </svg>
-                                        <span class="font-semibold text-slate-800 group-hover:underline">
-                                            公式サイトを見る
-                                        </span>
-                                    </a>
-                                )}
-                                {range.noteUrl && (
-                                    <a
-                                        href={range.noteUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="h-6 w-6 text-green-700"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                            />
-                                        </svg>
-                                        <span class="font-semibold text-slate-800 group-hover:underline">
-                                            noteの記事を読む
-                                        </span>
-                                    </a>
-                                )}
-                                {range.medleyUrl && (
-                                    <a
-                                        href={range.medleyUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="h-6 w-6 text-green-700"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                            stroke-width="2"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"
-                                            />
-                                        </svg>
-                                        <span class="font-semibold text-slate-800 group-hover:underline">
-                                            ゴルフメドレーの記事を読む
-                                        </span>
-                                    </a>
-                                )}
-                            </div>
-                        </section>
-                    )
-                }
+                <!-- ↓↓↓ ここから関連リンクのセクションを丸ごと差し替えました ↓↓↓ -->
+                <section>
+                    <h2 class="text-2xl font-bold">関連リンク</h2>
+                    <div class="mt-2 space-y-3">
+                        
+                        <!-- 1. この練習場の管理人の体験談を見る -->
+                        {range.managerReviewUrl && (
+                            <a
+                                href={range.managerReviewUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-6 w-6 text-green-700"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    />
+                                </svg>
+                                <span class="font-semibold text-slate-800 group-hover:underline">
+                                    この練習場の管理人の体験談を見る
+                                </span>
+                            </a>
+                        )}
+
+                        <!-- 2. お役立ち情報一覧 -->
+                        <a
+                            href="/articles"
+                            class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6 text-green-700"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"/>
+                            </svg>
+                            <span class="font-semibold text-slate-800 group-hover:underline">
+                                お役立ち情報一覧
+                            </span>
+                        </a>
+
+                        <!-- 3. 公式サイト -->
+                        {range.website && (
+                            <a
+                                href={range.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-6 w-6 text-green-700"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                    />
+                                </svg>
+                                <span class="font-semibold text-slate-800 group-hover:underline">
+                                    公式サイト
+                                </span>
+                            </a>
+                        )}
+                    </div>
+                </section>
+                <!-- ↑↑↑ 関連リンクのセクションはここまで ↑↑↑ -->
             </div>
 
             <div class="my-8 text-center">
