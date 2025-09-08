@@ -1,27 +1,27 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-// ★★★ 修正1: 変数名を pageTitle から title に変更 ★★★
+// ★ 修正1: 変数名を pageTitle から title に変更
 const title = "【近江八幡・東近江】ゴルフ練習場4選・徹底比較！ | シガゴル";
 const description = "近江八幡・東近江エリアの主要なゴルフ練習場4ヶ所を、料金、設備、目的別に徹底比較。あなたにピッタリの練習場が必ず見つかります。";
 const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
 ---
 
-{/* ★★★ 修正2: 構造化データ(JSON-LD)をこの記事用に新規追加 ★★★ */}
+{/* ★ 修正2: 構造化データ(JSON-LD)をこの記事用に新規追加 */}
 <Fragment slot="head">
     <script
         type="application/ld+json"
         set:html={JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "BlogPosting", // "Article"でも可
+            "@type": "BlogPosting",
             "mainEntityOfPage": {
                 "@type": "WebPage",
-                "@id": Astro.url.href, // このページの完全なURL
+                "@id": Astro.url.href, 
             },
-            "headline": title.split(" | ")[0], // フロントマターの変数
-            "description": description,      // フロントマターの変数
+            "headline": title.split(" | ")[0],
+            "description": description,
             "image": [
-                "https://i.imgur.com/DyVr8of.jpeg" // この記事のメイン画像
+                "https://i.imgur.com/DyVr8of.jpeg"
             ],
             "author": {
                 "@type": "Organization",
@@ -32,19 +32,19 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 "name": "シガゴル",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://i.imgur.com/mN0IbPS.png" // サイト共通のロゴ
+                    "url": "https://i.imgur.com/mN0IbPS.png"
                 }
             },
             "datePublished": articlePubDate,
-            "dateModified": articlePubDate // 公開日と更新日をセット
+            "dateModified": articlePubDate
         })}
     />
 </Fragment>
 
 
-{/* ★★★ 修正1: BaseLayoutに渡す props を pageTitle={...} から title={title} と description={description} に修正 ★★★ */}
+{/* ★ 修正1: BaseLayoutに渡す props を修正 */}
 <BaseLayout title={title} description={description}>
-    {/* ★★★ 修正3: PC可読性のため、白いカードDIVに max-w-4xl mx-auto を追加 ★★★ */}
+    {/* ★ 修正3: PC可読性のため、白いカードDIVに max-w-4xl mx-auto を追加 */}
     <div
         id="article-omi-higashiomi-comparison-view"
         class="view bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
@@ -57,7 +57,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
         <article
             class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
         >
-         {/* ユーザーが追加したアンカーリンクずれ対策CSS（これは優秀なのでそのまま保持） */}
          <style>
           html {
             scroll-behavior: auto; /* スムーズスクロールを一旦無効化 */
@@ -67,15 +66,15 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
           }
         </style>
             <header>
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-800">
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
                     【近江八幡・東近江】ゴルフ練習場4選・徹底比較！料金・設備・目的で選ぶ、あなたにピッタリの場所はここだ！
-                </h2>
+                </h1>
                 <p class="text-sm text-slate-500 mt-2">
                     最終更新日：{articlePubDate}
                 </p>
             </header>
 
-            {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+            {/* ★ 修正4: CLS対策 (width/height追加) */}
             <img
                 src="https://i.imgur.com/DyVr8of.jpeg"
                 alt="アイキャッチ画像：ゴルフ練習場の打席から見た風景"
@@ -96,7 +95,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 </p>
                 <p>
                     「初心者でも周りの目を気にせず、<br
-                    />のびのび練習できる場所がいいな」
+                    />のびび練習できる場所がいいな」
                 </p>
             </div>
 
@@ -108,7 +107,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                     rel="noopener noreferrer"
                     class="text-blue-600 hover:underline">関（@seki_golf_39）</a
                 >です。
-                {/* ↑ CSSグローバル設定により、このリンクには自動で ↗︎ が付きます */}
             </p>
             <p>この記事では、そんなあなたの悩みを一発で解決します！</p>
             <p>
@@ -120,7 +118,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 >まで。この記事を読めば、あなたにピッタリの練習場が必ず見つかります。
             </p>
 
-            {/* 目次 (変更なし) */}
             <div class="mt-8 p-4 bg-gray-50 rounded-lg border">
                 <h3 class="text-xl font-bold text-center mb-3">
                     気になる練習場へジャンプ▼
@@ -163,7 +160,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 <table
                     class="w-full text-sm text-left border border-slate-300 min-w-[800px]"
                 >
-                    {/* (テーブル内容は変更なし) */}
+                    
 <thead class="bg-slate-50">
     <tr>
         <th scope="col" class="px-4 py-3 border border-slate-300 align-middle text-center whitespace-nowrap text-base font-semibold normal-case">比較項目</th>
@@ -185,8 +182,114 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
         </th>
     </tr>
 </thead>
+                    
+                    {/* ★★★ 復元: 省略されていたテーブルの行をすべて元に戻しました ★★★ */}
                     <tbody>
-                        {/* ... (テーブルのtbodyは変更なし) ... */}
+                        <tr class="bg-white border-b"
+                            ><th class="px-4 py-2 border whitespace-nowrap"
+                                >🎯 こんな人におすすめ</th
+                            ><td class="px-4 py-2 border">初心者・安心感重視</td
+                            ><td class="px-4 py-2 border"
+                                >女性・ジュニア・お得好き</td
+                            ><td class="px-4 py-2 border"
+                                >スコアアップを目指す中級者〜</td
+                            ><td class="px-4 py-2 border"
+                                >価格最優先の練習場</td
+                            ></tr
+                        >
+                        <tr class="bg-slate-50 border-b"
+                            ><th class="px-4 py-2 border whitespace-nowrap"
+                                >📍 エリア</th
+                            ><td class="px-4 py-2 border">近江八幡市</td><td
+                                class="px-4 py-2 border">東近江市</td
+                            ><td class="px-4 py-2 border">東近江市</td><td
+                                class="px-4 py-2 border">近江八幡市</td
+                            ></tr
+                        >
+                        <tr class="bg-white border-b"
+                            ><th class="px-4 py-2 border whitespace-nowrap"
+                                >💰 料金（目安）</th
+                            ><td class="px-4 py-2 border"
+                                >現金で都度払い<br />・100球 700円<br
+                                />・打ち放題(2h) 1,200円<br />（入場料なし）</td
+                            ><td class="px-4 py-2 border"
+                                >プリカ式<br />・[女性] 打ち放題(1h) 515円<br
+                                />・[男性] 1球8円〜 + 入場料</td
+                            ><td class="px-4 py-2 border"
+                                >プリカ式<br />・1球8円〜 + 入場料<br
+                                />（サービスタイム）</td
+                            ><td class="px-4 py-2 border"
+                                >プリカ式<br />・[割引対象] 1球3円〜 + 入場料<br
+                                />・[女性] 打ち放題(1h) 550円</td
+                            ></tr
+                        >
+                        <tr class="bg-slate-50 border-b"
+                            ><th class="px-4 py-2 border whitespace-nowrap"
+                                >⛳️ アプローチ<br /><span
+                                    style="font-size: 0.8em;"
+                                    >（手軽さ / 質）</span
+                                ></th
+                            ><td class="px-4 py-2 border">なし</td><td
+                                class="px-4 py-2 border">◎ 無料 / ◯ 実践的</td
+                            ><td class="px-4 py-2 border"
+                                >△ 会員限定 / ◎ 本格的</td
+                            ><td class="px-4 py-2 border">◯ 有料 / △</td></tr
+                        >
+                        <tr class="bg-white border-b"
+                            ><th class="px-4 py-2 border whitespace-nowrap"
+                                >⛳️ バンカー<br /><span
+                                    style="font-size: 0.8em;"
+                                    >（手軽さ / 質）</span
+                                ></th
+                            ><td class="px-4 py-2 border">◯ 無料 / ◯</td><td
+                                class="px-4 py-2 border">◎ 無料 / ◯</td
+                            ><td class="px-4 py-2 border"
+                                >△ 会員限定 / ◎ 本格的</td
+                            ><td class="px-4 py-2 border">◯ 有料 / △</td></tr
+                        >
+                        <tr class="bg-slate-50 border-b"
+                            ><th class="px-4 py-2 border whitespace-nowrap"
+                                >⛳️ パター<br /><span style="font-size: 0.8em;"
+                                    >（手軽さ / 質）</span
+                                ></th
+                            ><td class="px-4 py-2 border"
+                                >△ 無料 / 簡易マット</td
+                            ><td class="px-4 py-2 border">◯ 無料 / △ 簡易的</td
+                            ><td class="px-4 py-2 border"
+                                >◎ 無料 / ◎◎ 超高品質</td
+                            ><td class="px-4 py-2 border">◯ 無料 / ◯</td></tr
+                        >
+                        <tr class="bg-white border-b"
+                            ><th class="px-4 py-2 border whitespace-nowrap"
+                                >⚙️ 測定器</th
+                            ><td class="px-4 py-2 border">なし</td><td
+                                class="px-4 py-2 border">◯ (無料レンタル)</td
+                            ><td class="px-4 py-2 border">△ (有料/1台)</td><td
+                                class="px-4 py-2 border">なし</td
+                            ></tr
+                        >
+                        <tr class="bg-slate-50 border-b"
+                            ><th class="px-4 py-2 border whitespace-nowrap"
+                                >🔰 初心者への配慮</th
+                            ><td class="px-4 py-2 border"
+                                >◎ (料金明快/雰囲気が温かい)</td
+                            ><td class="px-4 py-2 border"
+                                >◎ (専用スペースあり)</td
+                            ><td class="px-4 py-2 border"
+                                >◯ (初心者レーンあり)</td
+                            ><td class="px-4 py-2 border">△ (環境が人を選ぶ)</td
+                            ></tr
+                        >
+                        <tr class="bg-white border-b"
+                            ><th class="px-4 py-2 border whitespace-nowrap"
+                                >💳 支払い方法</th
+                            ><td class="px-4 py-2 border">現金のみ</td><td
+                                class="px-4 py-2 border">プリカ (現金)</td
+                            ><td class="px-4 py-2 border">プリカ (現金)</td><td
+                                class="px-4 py-2 border"
+                                >プリカ (現金/d払い/メルペイ)</td
+                            ></tr
+                        >
                         <tr class="bg-slate-50"
                             ><th class="px-4 py-2 border whitespace-nowrap"
                                 >一言メモ</th
@@ -225,7 +328,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 <h4 class="text-2xl font-bold text-slate-800 mt-1">
                     安土ゴルフクラブ
                 </h4>
-                {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/IGsEk2z.png"
                     alt="安土ゴルフクラブの外観"
@@ -252,7 +355,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                         />ツアー経験者の入江賢プロから、本物の技術をマンツーマンで学べます。本気で上手くなりたいなら、これ以上ない最高の環境です。
                     </li>
                 </ul>
-                {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/80XB6BT.png"
                     alt="安土ゴルフクラブの打席"
@@ -281,7 +384,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                     <li>✅ アイアンの方向性や精度をとことん磨きたい方</li>
                     <li>✅ ツアープロの質の高い指導を受けたい方</li>
                 </ul>
-                {/* (CTAボタンはユーザー設計のまま変更なし) */}
                 <div class="text-center my-6">
                     <a
                         href="/review/azuchi_gc"
@@ -307,7 +409,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 <h4 class="text-2xl font-bold text-slate-800 mt-1">
                     さくらゴルフ倶楽部
                 </h4>
-                {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/g7hXn4M.png"
                     alt="さくらゴルフ倶楽部の外観"
@@ -337,7 +439,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                     </li>
                 </ul>
                 <div class="grid md:grid-cols-2 gap-4 my-4">
-                    {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                    {/* ★ 修正4: CLS対策 */}
                     <img
                         src="https://i.imgur.com/meiYoKy.png"
                         alt="さくらゴルフ倶楽部の初心者向け打席"
@@ -346,7 +448,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                         width="1200"
                         height="800"
                     />
-                    {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                    {/* ★ 修正4: CLS対策 */}
                     <img
                         src="https://i.imgur.com/8MCJcvD.jpeg"
                         alt="さくらゴルフ倶楽部のアプローチ練習場"
@@ -403,7 +505,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 <h4 class="text-2xl font-bold text-slate-800 mt-1">
                     リバーサイドジャンボゴルフ
                 </h4>
-                {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/0MtYdOy.jpeg"
                     alt="リバーサイドジャンボゴルフの入口"
@@ -433,7 +535,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                     </li>
                 </ul>
                 <div class="grid md:grid-cols-2 gap-4 my-4">
-                    {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                    {/* ★ 修正4: CLS対策 */}
                     <img
                         src="https://i.imgur.com/gLcQ0kd.jpeg"
                         alt="リバーサイドジャンボゴルフのパター練習場"
@@ -442,7 +544,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                         width="1200"
                         height="800"
                     />
-                    {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                    {/* ★ 修正4: CLS対策 */}
                     <img
                         src="https://i.imgur.com/IMamheh.jpeg"
                         alt="リバーサイドジャンボゴルフのヤード表示"
@@ -499,7 +601,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 <h4 class="text-2xl font-bold text-slate-800 mt-1">
                     グリーンピア近江八幡ゴルフ
                 </h4>
-                {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/1A8qwY3.jpeg"
                     alt="グリーンピア近江八幡ゴルフの外観"
@@ -526,7 +628,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                         />平坦なライだけでなく、コースで遭遇する様々な傾斜を想定した練習ができるユニークな設備です。
                     </li>
                 </ul>
-                {/* ★★★ 修正4: CLS対策 (width/height追加) ★★★ */}
+                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/GIxn7On.png"
                     alt="グリーンピア近江八幡ゴルフの傾斜マット"
@@ -579,7 +681,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                     4つの個性豊かな練習場をご紹介しましたが、あなたにピッタリの場所は見つかりましたか？<br
                     />最後に、あなたのタイプ別に結論をまとめます。
                 </p>
-                {/* (まとめのスタイルボックスは変更なし) */}
                 <div class="space-y-4 mt-4">
                     <div
                         class="bg-slate-50 p-4 rounded-lg border-l-4 border-green-500"
@@ -592,7 +693,28 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                             >がおすすめです。プリカ不要のここで、ゴルフ練習場の温かい雰囲気に慣れてみませんか？
                         </p>
                     </div>
-                    {/* ... (他のおすすめボックス) ... */}
+                    <div
+                        class="bg-slate-50 p-4 rounded-lg border-l-4 border-green-500"
+                    >
+                        <h5 class="font-bold">
+                            💰 お得にたくさん練習したい女性・ジュニアのあなたへ
+                        </h5>
+                        <p>
+                            👉 <strong>B. さくらゴルフ倶楽部</strong
+                            >がおすすめです。他のどこよりもお得な特典で、上達への最短ルートを走りましょう！
+                        </p>
+                    </div>
+                    <div
+                        class="bg-slate-50 p-4 rounded-lg border-l-4 border-green-500"
+                    >
+                        <h5 class="font-bold">
+                            📈 本気でスコアアップを目指したいあなたへ
+                        </h5>
+                        <p>
+                            👉 <strong>C. リバーサイドジャンボゴルフ</strong
+                            >がおすすめです。ここの“神”施設があなたのスコアを劇的に変えてくれるはずです。
+                        </p>
+                    </div>
                     <div
                         class="bg-slate-50 p-4 rounded-lg border-l-4 border-green-500"
                     >
@@ -636,30 +758,182 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                     各施設の詳細情報まとめ
                 </h3>
                 <div class="space-y-8 mt-4">
-                    {/* (施設情報は変更なし) */}
-                    {/* (iframeはCLS対策の対象外なので、そのまま) */}
+                    
+                    {/* ★★★ 復元: Google Map iframe をすべて元に戻しました ★★★ */}
                     <div>
                         <h4 class="text-xl font-bold">A. 安土ゴルフクラブ</h4>
-                        {/* ... */}
+                        <p class="text-sm text-slate-500">
+                            最終確認日： 2025年7月24日
+                        </p>
+                        <ul class="list-none p-0 mt-2 space-y-1">
+                            <li>
+                                <strong>営業時間：</strong> 平日 9:00 - 21:30 / 土日祝
+                                8:00 - 21:30
+                            </li>
+                            <li>
+                                <strong>住所：</strong> 滋賀県近江八幡市安土町上出992-33
+                            </li>
+                            <li><strong>公式HP：</strong> なし</li>
+                            <li>
+                                <strong>詳細レビュー記事：</strong>
+                                <a
+                                    href="https://golf-medley.com/articles/bydriving-range-review169"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >ゴルフメドレーで読む</a>
+                            </li>
+                        </ul>
+                        <div class="mt-2">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3263.012084516368!2d136.1466207118835!3d35.131371972656176!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60017c6886eda78b%3A0x3fe7dabe03d999d6!2z5a6J5Zyf44K044Or44OV44Kv44Op44OW!5e0!3m2!1sja!2sjp!4v1755591836409!5m2!1sja!2sjp"
+                                width="100%"
+                                height="300"
+                                style="border:0;"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                            ></iframe>
+                        </div>
                     </div>
                     <div>
                         <h4 class="text-xl font-bold">B. さくらゴルフ倶楽部</h4>
-                        {/* ... */}
+                        <p class="text-sm text-slate-500">
+                            最終確認日： 2025年6月20日
+                        </p>
+                        <ul class="list-none p-0 mt-2 space-y-1">
+                            <li><strong>営業時間：</strong> 6:00 - 24:00</li>
+                            <li>
+                                <strong>住所：</strong> 滋賀県東近江市上平木町1977
+                            </li>
+                            <li>
+                                <strong>公式HP：</strong>
+                                <a
+                                    href="https://golf-club.sakura.ne.jp/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >https://golf-club.sakura.ne.jp/</a>
+                            </li>
+                            <li>
+                                <strong>詳細レビュー記事：</strong>
+                                <a
+                                    href="https://golf-medley.com/articles/bydriving-range-review148"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >ゴルフメドレーで読む</a
+                                > / <a
+                                    href="https://note.com/seki_golf_39/n/n759ba0e6cda6"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >noteで読む</a>
+                            </li>
+                        </ul>
+                        <div class="mt-2">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3264.2455486943586!2d136.1336437118822!3d35.100578972666746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60017c9f1ff20459%3A0x3639bc1e54ce9425!2z44GV44GP44KJ44K044Or44OV5YC25qW96YOo!5e0!3m2!1sja!2sjp!4v1755592416536!5m2!1sja!2sjp"
+                                width="100%"
+                                height="300"
+                                style="border:0;"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                            ></iframe>
+                        </div>
                     </div>
                     <div>
                         <h4 class="text-xl font-bold">
                             C. リバーサイドジャンボゴルフ
                         </h4>
-                        {/* ... */}
+                        <p class="text-sm text-slate-500">
+                            最終確認日： 2025年6月12日
+                        </p>
+                        <ul class="list-none p-0 mt-2 space-y-1">
+                            <li>
+                                <strong>営業時間：</strong> 6:00 - 24:00 (木曜は12:00から)
+                            </li>
+                            <li>
+                                <strong>住所：</strong> 滋賀県東近江市建部下野町16
+                            </li>
+                            <li>
+                                <strong>公式HP：</strong>
+                                <a
+                                    href="https://golf.sk-grp.co.jp/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >https://golf.sk-grp.co.jp/</a>
+                            </li>
+                            <li>
+                                <strong>詳細レビュー記事：</strong>
+                                <a
+                                    href="https://golf-medley.com/articles/bydriving-range-review149"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >ゴルフメドレーで読む</a
+                                > / <a
+                                    href="https://note.com/seki_golf_39/n/n08dd06e73210"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >noteで読む</a>
+                            </li>
+                        </ul>
+                        <div class="mt-2">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3262.815251141806!2d136.2004049118833!3d35.13628367265461!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60017d64e9ff4c87%3A0x3798be6bbbce0e72!2z44Oq44OQ44O844K144Kk44OJ44K444Oj44Oz44Oc44K044Or44OV!5e0!3m2!1sja!2sjp!4v1755592435713!5m2!1sja!2sjp"
+                                width="100%"
+                                height="300"
+                                style="border:0;"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                            ></iframe>
+                        </div>
                     </div>
                     <div>
                         <h4 class="text-xl font-bold">
                             D. グリーンピア近江八幡ゴルフ
                         </h4>
-                        {/* ... */}
+                        <p class="text-sm text-slate-500">
+                            最終確認日： 2025年5月29日
+                        </p>
+                        <ul class="list-none p-0 mt-2 space-y-1">
+                            <li><strong>営業時間：</strong> 6:00 - 23:00</li>
+                            <li>
+                                <strong>住所：</strong> 滋賀県近江八幡市倉橋部町146-5
+                            </li>
+                            <li>
+                                <strong>公式HP：</strong>
+                                <a
+                                    href="https://greenpia-golf.com/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >https://greenpia-golf.com/</a>
+                            </li>
+                            <li>
+                                <strong>詳細レビュー記事：</strong>
+                                <a
+                                    href="https://golf-medley.com/articles/bydriving-range-review159"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >ゴルフメドレーで読む</a
+                                > / <a
+                                    href="https://note.com/seki_golf_39/n/nb7380ee3708a"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-blue-600 hover:underline"
+                                    >noteで読む</a>
+                            </li>
+                        </ul>
                         <div class="mt-2">
                             <iframe
-                                src="http://googleusercontent.com/maps/google.com/3"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3264.585707987426!2d136.12657001188165!3d35.092082872669664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60017b5eea38d415%3A0xa86f04d65461e783!2z44Kw44Oq44O844Oz44OU44Ki6L-R5rGf5YWr5bmh44K044Or44OV!5e0!3m2!1sja!2sjp!4v1755592461066!5m2!1sja!2sjp"
                                 width="100%"
                                 height="300"
                                 style="border:0;"
@@ -672,7 +946,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 </div>
             </section>
         </article>
-
-    {/* この </div> が「白いカード」の閉じタグ。これが<article>の"後"にあることが正しい構造です。 */}
+        
+    {/* この </div> が「白いカード」divの正しい閉じタグです */}
     </div>
 </BaseLayout>
