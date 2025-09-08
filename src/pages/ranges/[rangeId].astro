@@ -3,6 +3,7 @@ import ReviewSection from "../../components/ReviewSection.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { db } from "../../lib/firebase.js";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
+export const prerender = false;
 
 // 1. データベースから全練習場のリストを取得し、どのページを作るかAstroに教える
 export async function getStaticPaths() {
