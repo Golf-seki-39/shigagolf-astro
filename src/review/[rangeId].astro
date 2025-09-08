@@ -60,7 +60,7 @@ const { range } = Astro.props;
 
   // 変数を直接取得
   const rangeId = "{{ Astro.params.rangeId }}";
-  const appId = "{{ import.meta.env.PUBLIC_VITE_APP_ID }}";
+  const appId = "{{ import.meta.env.PUBLIC_FIREBASE_APP_ID }}";
   
   const form = document.getElementById('review-form');
   const submitBtn = document.getElementById('submit-review-btn');

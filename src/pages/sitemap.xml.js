@@ -3,7 +3,7 @@ import { collection, getDocs } from 'firebase/firestore';
 
 // 動的なページ（練習場詳細ページ）のリストを取得
 async function getRangeUrls() {
-  const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges');
+  const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges');
   const querySnapshot = await getDocs(rangesCollection);
   const ranges = querySnapshot.docs.map(doc => doc.id);
   return ranges.map(id => `/ranges/${id}`);
