@@ -1,107 +1,171 @@
 ---
-import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { db } from '../lib/firebase.js';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { db } from "../lib/firebase.js";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 // ポップアップ用に、全ての練習場リストをここで取得します
-const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges');
+const rangesCollection = collection(
+    db,
+    "artifacts",
+    import.meta.env.PUBLIC_FIREBASE_APP_ID,
+    "public",
+    "data",
+    "practice_ranges",
+);
 const q = query(rangesCollection, orderBy("name"));
 const querySnapshot = await getDocs(q);
-const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+const ranges = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-const { 
-  title = "シガゴル | 滋賀のリアルなゴルフ練習場レビューサイト", 
-  description = "シガゴルは、滋賀県内のゴルフ練習場のリアルな口コミ・レビューサイト。測定器の有無、アプローチ・バンカー練習場の併設など、あなたの目的に合った練習場探しをサポートします。",
-  noindex = false
+const {
+    title = "シガゴル | 滋賀のリアルなゴルフ練習場レビューサイト",
+    description = "シガゴルは、滋賀県内のゴルフ練習場のリアルな口コミ・レビューサイト。測定器の有無、アプローチ・バンカー練習場の併設など、あなたの目的に合った練習場探しをサポートします。",
+    noindex = false,
 } = Astro.props;
 ---
+
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-        <meta name="google-site-verification" content="maPYAUHEk3sRpZWM1CpscPsZfe_MuE7QGU4QKQuC1EM" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={Astro.url} />
-    <meta property="og:image" content="https://i.imgur.com/mN0IbPS.png" />
-    <meta property="og:site_name" content="シガゴル" />
-    <meta property="og:type" content="website" />
-    {noindex && (<meta name="robots" content="noindex" />)}
-    <link rel="apple-touch-icon" href="https://i.imgur.com/mN0IbPS.png" />
-    <link rel="icon" href="https://i.imgur.com/mN0IbPS.png" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-  </head>
-  <body class="bg-slate-50 text-slate-800">
-    <Header />
-    <slot />
-    <Footer />
-    
-    <div id="review-modal" class="fixed inset-0 bg-black bg-opacity-50 z-30 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[80vh] flex flex-col">
-            <div class="p-4 border-b flex justify-between items-center">
-                <h3 id="modal-title" class="text-xl font-bold">レビューする練習場を選択</h3>
-                <button id="close-modal-btn" class="text-2xl text-slate-500 hover:text-slate-800" aria-label="モーダルを閉じる">×</button>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta
+            name="google-site-verification"
+            content="maPYAUHEk3sRpZWM1CpscPsZfe_MuE7QGU4QKQuC1EM"
+        />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={Astro.url} />
+        <meta property="og:image" content="https://i.imgur.com/mN0IbPS.png" />
+        <meta property="og:site_name" content="シガゴル" />
+        <meta property="og:type" content="website" />
+        {noindex && <meta name="robots" content="noindex" />}
+        <link rel="apple-touch-icon" href="https://i.imgur.com/mN0IbPS.png" />
+        <link rel="icon" href="https://i.imgur.com/mN0IbPS.png" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"
+        ></script>
+        <slot name="head" />
+    </head>
+    <body class="bg-slate-50 text-slate-800">
+        <Header />
+        <slot />
+        <Footer />
+
+        <div
+            id="review-modal"
+            class="fixed inset-0 bg-black bg-opacity-50 z-30 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+        >
+            <div
+                class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[80vh] flex flex-col"
+            >
+                <div class="p-4 border-b flex justify-between items-center">
+                    <h3 id="modal-title" class="text-xl font-bold">
+                        レビューする練習場を選択
+                    </h3>
+                    <button
+                        id="close-modal-btn"
+                        class="text-2xl text-slate-500 hover:text-slate-800"
+                        aria-label="モーダルを閉じる">×</button
+                    >
+                </div>
+                <div class="p-4">
+                    <input
+                        type="text"
+                        id="modal-search"
+                        placeholder="練習場名で検索..."
+                        class="w-full p-2 border border-slate-300 rounded-md"
+                    />
+                </div>
+                <div
+                    id="modal-range-list"
+                    class="overflow-y-auto p-4 space-y-2"
+                >
+                </div>
             </div>
-            <div class="p-4"><input type="text" id="modal-search" placeholder="練習場名で検索..." class="w-full p-2 border border-slate-300 rounded-md"></div>
-            <div id="modal-range-list" class="overflow-y-auto p-4 space-y-2"></div>
         </div>
-    </div>
 
-    <button id="back-to-top" class="hidden fixed bottom-5 right-5 bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700 z-20">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
-    </button>
-    
-    <script define:vars={{ ranges }}>
-      // トップへ戻るボタン
-      const backToTopButton = document.getElementById('back-to-top');
-      if (backToTopButton) {
-        window.addEventListener('scroll', () => { window.scrollY > 200 ? backToTopButton.classList.remove('hidden') : backToTopButton.classList.add('hidden'); });
-        backToTopButton.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-      }
+        <button
+            id="back-to-top"
+            class="hidden fixed bottom-5 right-5 bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700 z-20"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+                ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 15l7-7 7 7"></path></svg
+            >
+        </button>
 
-      // ヘッダーのレビュー投稿ボタン
-      const showModalButton = document.getElementById('show-review-modal-global');
-      const closeModalButton = document.getElementById('close-modal-btn');
-      const modal = document.getElementById('review-modal');
-      const modalRangeList = document.getElementById('modal-range-list');
-      const modalSearch = document.getElementById('modal-search');
+        <script define:vars={{ ranges }}>
+            // トップへ戻るボタン
+            const backToTopButton = document.getElementById("back-to-top");
+            if (backToTopButton) {
+                window.addEventListener("scroll", () => {
+                    window.scrollY > 200
+                        ? backToTopButton.classList.remove("hidden")
+                        : backToTopButton.classList.add("hidden");
+                });
+                backToTopButton.addEventListener("click", () =>
+                    window.scrollTo({ top: 0, behavior: "smooth" }),
+                );
+            }
 
-      const renderRanges = (filteredRanges) => {
-        modalRangeList.innerHTML = '';
-        filteredRanges.forEach(range => {
-          const link = document.createElement('a');
-          link.href = `/review/${range.id}`; 
-          link.className = 'p-2 border rounded-md block hover:bg-slate-100';
-          link.textContent = range.name;
-          modalRangeList.appendChild(link);
-        });
-      };
+            // ヘッダーのレビュー投稿ボタン
+            const showModalButton = document.getElementById(
+                "show-review-modal-global",
+            );
+            const closeModalButton = document.getElementById("close-modal-btn");
+            const modal = document.getElementById("review-modal");
+            const modalRangeList = document.getElementById("modal-range-list");
+            const modalSearch = document.getElementById("modal-search");
 
-      if (showModalButton) {
-        showModalButton.addEventListener('click', () => {
-          renderRanges(ranges);
-          modal.classList.remove('hidden');
-          setTimeout(() => modal.classList.remove('opacity-0'), 10);
-        });
-      }
-      if (closeModalButton) {
-        closeModalButton.addEventListener('click', () => {
-          modal.classList.add('opacity-0');
-          setTimeout(() => modal.classList.add('hidden'), 300);
-        });
-      }
-      if (modalSearch) {
-        modalSearch.addEventListener('input', (e) => {
-          const searchTerm = e.target.value.toLowerCase();
-          const filteredRanges = ranges.filter(range => range.name.toLowerCase().includes(searchTerm));
-          renderRanges(filteredRanges);
-        });
-      }
-    </script>
-  </body>
+            const renderRanges = (filteredRanges) => {
+                modalRangeList.innerHTML = "";
+                filteredRanges.forEach((range) => {
+                    const link = document.createElement("a");
+                    link.href = `/review/${range.id}`;
+                    link.className =
+                        "p-2 border rounded-md block hover:bg-slate-100";
+                    link.textContent = range.name;
+                    modalRangeList.appendChild(link);
+                });
+            };
+
+            if (showModalButton) {
+                showModalButton.addEventListener("click", () => {
+                    renderRanges(ranges);
+                    modal.classList.remove("hidden");
+                    setTimeout(() => modal.classList.remove("opacity-0"), 10);
+                });
+            }
+            if (closeModalButton) {
+                closeModalButton.addEventListener("click", () => {
+                    modal.classList.add("opacity-0");
+                    setTimeout(() => modal.classList.add("hidden"), 300);
+                });
+            }
+            if (modalSearch) {
+                modalSearch.addEventListener("input", (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const filteredRanges = ranges.filter((range) =>
+                        range.name.toLowerCase().includes(searchTerm),
+                    );
+                    renderRanges(filteredRanges);
+                });
+            }
+        </script>
+    </body>
 </html>

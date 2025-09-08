@@ -7,7 +7,40 @@ const description = "KSP彦根を徹底レビュー！全打席無料のトッ�
 const pubDate = "2025-06-05"; // 記事の公開日
 ---
 
-{/* 変更なし：BaseLayout に props を渡す */}
+{/* ★★★ 提案1: 構造化データ(JSON-LD)の追加 ★★★ */}
+{/* BaseLayout.astroに <slot name="head" /> を追加したので、これが機能します */}
+<Fragment slot="head">
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": Astro.url.href  // 現在のページの完全なURL
+    },
+    "headline": title.split(' | ')[0], // フロントマターの変数
+    "description": description,      // フロントマターの変数
+    "image": [
+      "https://i.imgur.com/PDrCUnt.jpeg" // この記事のメイン画像
+     ],
+    "author": {
+      "@type": "Organization",
+      "name": "シガゴル"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "シガゴル",
+      "logo": {
+        "@type": "ImageObject",
+        // ★★★ ロゴ画像URLを BaseLayout から取得したURLに設定 ★★★
+        "url": "https://i.imgur.com/mN0IbPS.png" 
+      }
+    },
+    "datePublished": pubDate // フロントマターの変数
+  })} />
+</Fragment>
+
+
+{/* ここから記事本文のレイアウト */}
 <BaseLayout title={title} description={description}>
     
     <div
@@ -25,7 +58,6 @@ const pubDate = "2025-06-05"; // 記事の公開日
         >
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {/* H1タイトルからサイト名を除外する処理（元のまま） */}
                     {title.split(' | ')[0]} 
                 </h1>
                 <p class="text-sm text-slate-500 mt-2">
@@ -33,14 +65,14 @@ const pubDate = "2025-06-05"; // 記事の公開日
                 </p>
             </header>
 
-            <img src="https://i.imgur.com/PDrCUnt.jpeg" alt="KSP彦根のエントランス＿一部屋根もあり雨の日も安心" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            {/* ★★★ 提案2: CLS対策 (width/height追加) ★★★ */}
+            <img src="https://i.imgur.com/PDrCUnt.jpeg" alt="KSP彦根のエントランス＿一部屋根もあり雨の日も安心" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
 
             <p>「自分のショット、本当は何ヤード飛んでるの？」「もっと効率よく上手くなりたいけど、何から始めれば…？」</p>
             <p>ゴルフは感覚も大切ですが、自分のショットが「データで見える化」されたら、練習がもっと楽しく、効率よく上達できそうだと思いませんか？</p>
             <p>滋賀県彦根市にある「KSP彦根」は、まさにそんな願いを叶えてくれる、ちょっと未来的なゴルフ練習場です。何を隠そう、私がこの練習場に惹かれる最大の理由は、全打席に標準装備された「トップトレーサー・レンジ」。そして、広々とした駐車場と十分な打席数で、行きたい時にふらっと立ち寄れる快適さも魅力です。</p>
             <p>今回は、ハイテク設備と安心システムが融合した「KSP彦根」を、私の体験や活用術（今後の野望も！）を交えながら、徹底的にご紹介します！</p>
             
-            {/* 目次セクション (変更なし) */}
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
               <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
               <ul class="space-y-2 list-disc list-inside">
@@ -54,37 +86,33 @@ const pubDate = "2025-06-05"; // 記事の公開日
               </ul>
             </div>
 
-            {/* ★★★ 変更点(1): 見出し(h2)にクラスを追加。アンカーリンクのずれを修正する scroll-mt-24 と、デザイン用のクラスを追加。★★★ */}
+            {/* 見出しスタイル + scroll-mt-24 + CLS対応 適用済み */}
             <h2 id="about-ksp" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 KSP彦根ってどんなところ？〜最新技術と安心システムの融合〜
             </h2>
-            <img src="https://i.imgur.com/G38XdaX.jpeg" alt="ハイテク練習＿トップトレーサーの実際の画面" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/G38XdaX.jpeg" alt="ハイテク練習＿トップトレーサーの実際の画面" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <p>KSP彦根は、滋賀県彦根市にある、最新技術と安心のシステムでゴルファーの上達をスマートにサポートしてくれるゴルフ練習場です。その最大の魅力は、なんといっても全打席に無料で使える「トップトレーサー・レンジ」が備わっていること！そして、利用者を考えた便利なシステムが充実している点も見逃せません。「彦根 ゴルフ練習場 初心者」で探している方にも、ぜひ知ってほしい場所です。</p>
 
-            {/* ★★★ 変更点(1): h2 にクラスを追加 ★★★ */}
             <h2 id="toptracer" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 【最大の推しポイント】全打席トップトレーサー・レンジが無料で使い放題！
             </h2>
-            <img src="https://i.imgur.com/ShEkmpS.jpeg" alt="KSP彦根の打席。全打席にモニター完備" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/ShEkmpS.jpeg" alt="KSP彦根の打席。全打席にモニター完備" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <p>KSP彦根の心臓部とも言えるのが、全80打席に標準装備された「トップトレーサー・レンジ」！これがなんと、追加料金なしで利用可能なのです。打席に立つだけで、あなたのショットの飛距離、弾道、ボール初速といった詳細なデータが、目の前のモニターにリアルタイムで表示されます。これは本当に画期的です！</p>
-            <img src="https://i.imgur.com/XrDi68G.jpeg" alt="弾道測定器＿トップトレーサーのモニター表示画面" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/XrDi68G.jpeg" alt="弾道測定器＿トップトレーサーのモニター表示画面" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <p>つまり、KSP彦根は「ハイテク」と「安心」が詰まった次世代型練習場なのです。</p>
 
-            {/* ★★★ 変更点(1): 見出し(h3)にクラスを追加。スマホでも見やすいようにサイズと余白を調整 ★★★ */}
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
                 🔰初心者ゴルファーの救世主！〜私の「トップトレーサー」活用術と叶えたい夢〜
             </h3>
-            <img src="https://i.imgur.com/s5crBVH.jpeg" alt="クラブごとの飛距離をデータで把握" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/s5crBVH.jpeg" alt="クラブごとの飛距離をデータで把握" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <p>私自身、初心者なので各番手ごとの正確な飛距離や弾道の傾向をまだ完全に把握できていません。そんな私にとって、このKSP彦根のトップトレーサーはまさに「救世主」！</p>
             
-            {/* ★★★ 変更点(1): 見出し(h4)にもスタイルを追加（proseはh4以降のスタイルが弱いことが多いため） ★★★ */}
             <h4 class="text-lg font-semibold text-slate-800 mt-6 mb-2">初心者ゴルファーにおすすめな理由</h4>
             <p>特に活用しているのが、「クラブ別測定」モード。まずは「フリー計測」で軽くウォーミングアップし、体が温まったところで「クラブ別測定」に切り替え、番手ごとの飛距離を確認します。すると、1球ごとの詳細データはもちろん、そのクラブでの平均飛距離や左右のブレ幅などが一目瞭然！「あ、今のショットはちょっとトップ気味だったから飛距離が落ちたな」とか、「このクラブだと、だいたい150ヤードくらい飛ぶんだな」というのを、感覚だけでなくデータで客観的に理解できるのです。</p>
             <p>これが本当に効率的な練習に繋がると感じています。まずの目標は、ドライバーで安定して200ヤードを超えること。さらに、アイアンは縦距離の精度アップも狙っています！そして、いつかは憧れの「ペブルビーチ」（バーチャルゴルフモードで！）に挑戦して、自分の実力がどこまで通用するのか試してみたいと思っています（笑）夢は大きく！</p>
 
-            {/* ★★★ 変更点(1): h4 にクラスを追加 ★★★ */}
             <h4 class="text-lg font-semibold text-slate-800 mt-6 mb-2">💡トップトレーサーの分析力とは？〜“飛距離・球筋・打ち出し角”まで丸わかり！〜</h4>
-            <img src="https://i.imgur.com/Y6ZxhBH.jpeg" alt="トップトレーサーのモニター画面＿総飛距離やボール速度などの詳細" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/Y6ZxhBH.jpeg" alt="トップトレーサーのモニター画面＿総飛距離やボール速度などの詳細" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <p>トップトレーサーは、ただ飛距離が分かるだけじゃありません。</p>
             <ul>
                 <li><strong>弾道追跡：</strong> 自分の球筋が視覚的に分かります。（スライス、フック、ストレートなど）</li>
@@ -94,11 +122,10 @@ const pubDate = "2025-06-05"; // 記事の公開日
             </ul>
             <p>つまり、トップトレーサーは”感覚頼り”の練習から卒業させてくれる”最強の相棒”なんです。初心者の方でも操作は簡単なので、ぜひKSP彦根で臆せず触ってみてください！</p>
 
-            {/* ★★★ 変更点(1): h2 にクラスを追加 ★★★ */}
             <h2 id="ic-card" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 【これはスゴイ！】ICカードシステム〜安心便利なシステムでもうプリカを失くして泣かない！〜
             </h2>
-            <img src="https://i.imgur.com/JcoaLeo.jpeg" alt="KSP彦根のICカード" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/JcoaLeo.jpeg" alt="KSP彦根のICカード" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <p>KSP彦根は、チャージ式のICカードシステムを採用しています。「プリペイドカードって、失くしちゃったらどうしよう…」という心配、ありますよね？特に私のようなうっかり者には…（笑）。でも、KSP彦根のICカードなら大丈夫です！</p>
             <p><strong>▶︎KSP彦根ICカードは、ここが便利！</strong></p>
             <ul>
@@ -107,77 +134,68 @@ const pubDate = "2025-06-05"; // 記事の公開日
                 <li><strong>打つたびにポイントが貯まる！：</strong> 打球ごとにもポイントが付与され、貯まったポイントはボール代として利用可能です。</li>
                 <li><strong>共通利用OK：</strong> KSP希望ヶ丘ゴルフ倶部と共通で使えます。</li>
             </ul>
-            <img src="https://i.imgur.com/vV8AdPB.jpeg" alt="ICカードチャージ機" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/vV8AdPB.jpeg" alt="ICカードチャージ機" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <p>実際に私もプリカをよく忘れたりするので、このシステムは最高にありがたいと感じています。「彦根 ゴルフ練習場」で、こんな安心システムがあるのは嬉しいですね。つまり、KSP彦根のICカードシステムは、ゴルファーの「あったらいいな」を形にしたシステムです。</p>
 
-            {/* ★★★ 変更点(1): h2 にクラスを追加 ★★★ */}
             <h2 id="driving-range" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 【快適練習環境】KSP彦根の広々270ヤード！〜選べる料金プランで集中力アップ〜
             </h2>
-            <img src="https://i.imgur.com/PwoIX2h.png" alt="270ヤードの開放感！KSP彦根" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/PwoIX2h.png" alt="270ヤードの開放感！KSP彦根" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1600" height="900" />
             <p>KSP彦根のドライビングレンジは、奥行きなんと270ヤード！開放感たっぷりで、思いっきりドライバーを振れます。打席は1階・2階合わせて全80打席と十分な数があり、そのうち左利き用打席も6打席用意されています。駐車場も約95台分と広いので、私が行く時間帯では（早朝以外）「打席待ちで練習できなかった…」という経験は今のところありません。行きたい時にふらっと立ち寄れるのは、練習を継続する上でとても重要ですよね。</p>
 
-            {/* ★★★ 変更点(1): h3 にクラスを追加 ★★★ */}
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
                 ✅ 使いやすい打席設備
             </h3>
             <ul>
                 <li><strong>ティーアップ：</strong> 便利なオート式。高さ調整は、打席横にあるボール型のスイッチを足で踏むことで電動で微調整が可能！これが直感的で非常に使いやすいです。</li>
             </ul>
-            <img src="https://i.imgur.com/JwF5u69.jpeg" alt="ティーアップの高さを調整するスイッチ" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/JwF5u69.jpeg" alt="ティーアップの高さを調整するスイッチ" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <ul>
                 <li><strong>ボール：</strong> レンジボールで統一されています。</li>
             </ul>
-            <img src="https://i.imgur.com/KqHmPT9.jpeg" alt="ロゴ入りレンジボール" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/KqHmPT9.jpeg" alt="ロゴ入りレンジボール" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <ul>
                 <li><strong>ターゲット：</strong> 遠くにグリーンや旗も見えますが、やはり各打席のトップトレーサーモニターに表示される詳細な距離情報と自分の弾道が、より実践的で正確な練習を可能にしてくれます。</li>
             </ul>
-            <img src="https://i.imgur.com/fkJp5qJ.jpeg" alt="トップトレーサーのモニター画面＿ヤード表示" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/fkJp5qJ.jpeg" alt="トップトレーサーのモニター画面＿ヤード表示" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
 
-            {/* ★★★ 変更点(1): h3 にクラスを追加 ★★★ */}
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
                 ✅ 選べる料金システム
             </h3>
             <p>自分の練習時間や目的に合わせて、1球単価と時間打ち（放題）を選べるのも嬉しいポイント。じっくり打ち込みたい時、たくさん球数を打ちたい時など、状況に合わせて選べます。女性と中学生以下は終日お得な優待単価でプレーできるのも◎</p>
-            <img src="https://i.imgur.com/hgtCXuv.jpeg" alt="ICカード挿入機＿打席で単価打ちと時間打ちを選択" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/hgtCXuv.jpeg" alt="ICカード挿入機＿打席で単価打ちと時間打ちを選択" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
 
-            {/* ★★★ 変更点(1): h2 にクラスを追加 ★★★ */}
             <h2 id="facility-info" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 知っておくとちょっと便利？施設情報
             </h2>
-            <img src="https://i.imgur.com/qT99DHd.jpeg" alt="パター練習場所＿1Fフロント横" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/qT99DHd.jpeg" alt="パター練習場所＿1Fフロント横" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             
-            {/* ★★★ 変更点(1): h3 にクラスを追加 ★★★ */}
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
                 🅿️ パター練習マットと遊び心
             </h3>
             <p>1階フロント横には無料のパター練習スペースがあります。人工芝に移動式カップが置かれ、ボールも用意されています。本格的なグリーンとは言えませんが、打席練習の合間の気分転換や、スタート前のちょっとした調整には便利です。横には、なぜかレトロなパターゲーム機（有料）もあって、ちょっとした遊び心も。</p>
-            <img src="https://i.imgur.com/X4J0sjl.jpeg" alt="レトロなパター練習マシーン" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/X4J0sjl.jpeg" alt="レトロなパター練習マシーン" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
 
-            {/* ★★★ 変更点(1): h3 にクラスを追加 ★★★ */}
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
                 🚻 トイレ事情（初心者あるある！？）
             </h3>
             <p>これ、私が初心者だった頃（いや、今もたまにやるんですが…）の話なんですが、2階打席で練習していて急にトイレに行きたくなった時、「あれ？トイレどこだっけ？」とフロアをうろうろしてしまった経験があります（恥）。実は、トイレは1階にしかないので、2階で練習する際は、先に1階で済ませておくか、余裕を持って移動するのがおすすめです！</p>
 
-            {/* ★★★ 変更点(1): h3 にクラスを追加 ★★★ */}
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
                 🏫 充実のゴルフスクール＆レッスン
             </h3>
             <p>各種ゴルフスクールやプロによるレッスンも開催されているようです（予約・詳細はフロントにてご確認ください）</p>
-            <img src="https://i.imgur.com/zBepEJZ.jpeg" alt="ゴルフスクールの詳細案内" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/zBepEJZ.jpeg" alt="ゴルフスクールの詳細案内" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
 
-            {/* ★★★ 変更点(1): h3 にクラスを追加 ★★★ */}
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
                 その他設備
             </h3>
             <p>休憩スペースは打席後方だけでなく1階にも2ヶ所。駐車場にはEV充電器、フロントには打席の空席情報がわかる電光掲示板、1階には喫煙所、そして有料のロッカールームも完備されています。KSP彦根は、ゴルファーが練習に集中できる環境が整っています。</p>
 
-            {/* ★★★ 変更点(1): h2 にクラスを追加 ★★★ */}
             <h2 id="basic-info" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 【KSP彦根の基本情報】
             </h2>
-            <img src="https://i.imgur.com/QBprcwS.png" alt="広々とした駐車場！KSP彦根へのアクセスも便利" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/QBprcwS.png" alt="広々とした駐車場！KSP彦根へのアクセスも便利" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1600" height="900" />
             <ul>
                 <li><strong>場所：</strong> 滋賀県彦根市（名神高速「湖東三山スマートIC」から車で約15分。JR「稲枝駅」および近江鉄道「愛知川駅」から、それぞれ車で約6分）</li>
                 <li><strong>駐車場：</strong> 約95台分（EV充電器あり）</li>
@@ -189,32 +207,25 @@ const pubDate = "2025-06-05"; // 記事の公開日
                     </ul>
                 </li>
             </ul>
-            <img src="https://i.imgur.com/JV554j9.jpeg" alt="営業時間が記載された店舗前看板" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/JV554j9.jpeg" alt="営業時間が記載された店舗前看板" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             <ul>
                 <li><strong>支払い：</strong> 打席にある打席操作パネルにてICカード決済。ICカードへのチャージは現金、クレジットカード、QRコード決済対応。</li>
                 <li><strong>料金：</strong> 入場料（打席料）は時間帯により変動。練習は1球単価と時間打ち（放題）を選択可能。女性・中学生以下は終日優待単価あり。</li>
                 <li><strong>レンタルクラブ：</strong> 小学生はゴルフセット無料（滋賀県ゴルフ練習場協会の特典）。一般の方のレンタルクラブは有料です。</li>
             </ul>
-            <img src="https://i.imgur.com/J7yqD6l.jpeg" alt="ジュニアゴルフセット無料貸出のポスター" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" />
+            <img src="https://i.imgur.com/J7yqD6l.jpeg" alt="ジュニアゴルフセット無料貸出のポスター" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
 
-            {/* ★★★ 変更点(1): h2 にクラスを追加 ★★★ */}
             <h2 id="summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 まとめ：データで楽しむゴルフ練習！
             </h2>
             <p>KSP彦根の魅力、特に「全打席トップトレーサー無料」というデータ活用の楽しさ、伝わりましたでしょうか？</p>
 
-            {/* ★★★ 変更点(2): 「まとめ」の箇条書きを見やすくするために、目次と同様の「not-prose」を使った装飾ボックスに変更 ★★★ */}
-            {/* 元の <p>と<ul> は、この装飾ボックスにまとめます */}
+            {/* まとめボックス（前回修正版のまま） */}
             <div class="summary-box not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8">
-                {/* ボックス内にも見出しを立てて、何をまとめているか明確にします */}
                 <h3 class="text-xl font-bold text-slate-800 mb-4 text-center md:text-left">
                     KSP彦根は、こんなあなたにピッタリ！
                 </h3>
-                {/* リストのスタイルをデフォルト(prose)から解除し、フレックスボックスで見やすく整形 
-                  list-noneでデフォルトの・を消し、p-0 m-0で余白をリセット
-                */}
                 <ul class="list-none p-0 m-0 space-y-3">
-                    {/* アイコン(✅)とテキストを横並びにするために flex を使用 */}
                     <li class="flex items-start">
                         <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
                         <span class="flex-1">自分のショットをデータで見える化して効率よく練習したい人</span>
@@ -245,17 +256,21 @@ const pubDate = "2025-06-05"; // 記事の公開日
                     </li>
                 </ul>
             </div>
-            {/* ★★★ 装飾ボックスのここまで ★★★ */}
 
 
             <p>一度行けば、きっとまた通いたくなるKSP彦根。「もっと早く知っていれば…！」と感じる方も多いはず。ぜひ、未来型ゴルフ練習を体感してみてくださいね！</p>
             
             <hr />
 
+            {/* ★★★ 提案4: CVR対策のため、CTA(行動喚起)をリンクからボタンに変更 ★★★ */}
             <p class="text-center font-bold text-lg">
-                🎯 KSP彦根の「公式レビュー（総評）」と基本情報・口コミはこちらのページで確認できます！<br />
-                <a href="/ranges/ksp_hikone" class="text-blue-600 hover:underline">
-                    → 「KSP彦根」のシガゴル公式レビューページへ戻る
+                🎯 KSP彦根の「公式レビュー（総評）」と基本情報・口コミはこちらのページで確認できます！
+                <br />
+                <a 
+                    href="/ranges/ksp_hikone" 
+                    class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    「KSP彦根」のシガゴル公式レビューページへ戻る
                 </a>
             </p>
 

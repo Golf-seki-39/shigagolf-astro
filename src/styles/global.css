@@ -69,3 +69,16 @@ body { font-family: 'Noto Sans JP', sans-serif; }
 @keyframes spin {
     to { transform: translateY(-50%) rotate(360deg); }
 }
+/* === 外部リンクに自動でアイコンを付与する設定 === */
+
+/* 記事本文(<article>タグの中)にある<a>リンクのうち、
+  "http"で始まるが、"shiga-golf.com" (あなたのドメイン) を含まないリンクを対象
+*/
+article a[href^="http"]:not([href*="shiga-golf.com"])::after {
+  content: ' ↗︎'; /* 外部リンクを示す矢印アイコンを追加 */
+  display: inline-block;
+  margin-left: 0.25rem;    /* アイコンの左側に少し余白 */
+  font-size: 0.9em;        /* アイコンを少し小さく */
+  text-decoration: none;   /* アイコン自体に下線がつかないように */
+  font-weight: normal;     /* アイコンが太字にならないように */
+}
