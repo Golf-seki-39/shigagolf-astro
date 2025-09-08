@@ -7,7 +7,13 @@ interface Props {
   };
 }
 const { range } = Astro.props;
+
+// ★★★ 修正点1: 必要な環境変数をすべてここで取得 ★★★
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const apiKey = import.meta.env.PUBLIC_FIREBASE_API_KEY;
+const authDomain = import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN;
+const projectId = import.meta.env.PUBLIC_FIREBASE_PROJECT_ID;
+const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
 ---
 
 <section
@@ -103,7 +109,6 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 </section>
 
 <style>
-    /* ★★★ 修正点1: display: none を accessibility-friendly な方法に変更 ★★★ */
     .star-rating input[type="radio"] {
         position: absolute;
         opacity: 0;
@@ -160,8 +165,8 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
     }
 </style>
 
-<script define:vars={{ appId }}>
-  // ★★★ 変更点2: 全てのFirebase機能を動的インポートに統一し、認証機能を追加 ★★★
+{/* ★★★ 修正点2: フロントマターで取得した変数をスクリプトに渡す ★★★ */}
+<script define:vars={{ appId, apiKey, authDomain, projectId, storageBucket }}>
   const getFirebaseModules = async () => {
     const [
       { initializeApp },
@@ -176,6 +181,9 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
     ]);
     return { initializeApp, getAuth, signInAnonymously, onAuthStateChanged, getFirestore, collection, addDoc, serverTimestamp, getStorage, ref, uploadBytes, getDownloadURL };
   };
+
+  let db, storage, auth;
+  let collection, addDoc, serverTimestamp, ref, uploadBytes, getDownloadURL;
 
   document.addEventListener('DOMContentLoaded', async () => {
     const form = document.getElementById('review-form');
@@ -196,25 +204,34 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
     const adminScoresSection = document.getElementById('admin-scores-section');
     const userRatingSection = document.getElementById('user-rating-section');
 
-    // ★★★ 変更点3: Firebase初期化と匿名認証を最初に実行 ★★★
-    let db, storage, auth;
+    // --- Firebase初期化と匿名認証 ---
     try {
-      const { initializeApp, getAuth, signInAnonymously, onAuthStateChanged, getFirestore, getStorage } = await getFirebaseModules();
+      const modules = await getFirebaseModules();
+      
+      // ★★★ 修正点3: import.meta.env を define:vars で渡された変数に置き換え ★★★
       const firebaseConfig = {
-        apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
-        authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
-        projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
-        storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
+        apiKey: apiKey,
+        authDomain: authDomain,
+        projectId: projectId,
+        storageBucket: storageBucket,
         appId: appId,
       };
-      const app = initializeApp(firebaseConfig);
-      db = getFirestore(app);
-      storage = getStorage(app);
-      auth = getAuth(app);
+      const app = modules.initializeApp(firebaseConfig);
       
-      onAuthStateChanged(auth, user => {
+      db = modules.getFirestore(app);
+      storage = modules.getStorage(app);
+      auth = modules.getAuth(app);
+      
+      collection = modules.collection;
+      addDoc = modules.addDoc;
+      serverTimestamp = modules.serverTimestamp;
+      ref = modules.ref;
+      uploadBytes = modules.uploadBytes;
+      getDownloadURL = modules.getDownloadURL;
+      
+      modules.onAuthStateChanged(auth, user => {
         if (!user) {
-          signInAnonymously(auth).catch(err => console.error("Anonymous sign-in failed", err));
+          modules.signInAnonymously(auth).catch(err => console.error("Anonymous sign-in failed", err));
         }
       });
     } catch (e) {
@@ -225,7 +242,7 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
       return;
     }
 
-    // --- 管理人モードロジック (元のコードを維持) ---
+    // --- 管理人モードロジック (変更なし) ---
     reviewerNameInput.addEventListener('input', () => {
       const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
       adminScoresSection.classList.toggle('hidden', !isAdmin);
@@ -234,7 +251,7 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
       userRatingSection.querySelectorAll('input[name="rating"]').forEach(input => input.required = !isAdmin);
     });
 
-    // ★★★ 変更点4: 複数画像を追加・削除できるプレビュー機能に強化 ★★★
+    // --- 画像プレビュー機能 (変更なし) ---
     imageUploadInput.addEventListener('change', (event) => {
         const newFiles = Array.from(event.target.files);
         imageError.classList.add('hidden');
@@ -274,7 +291,7 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
         });
     }
     
-    // --- フォーム送信処理 (元のロジックと認証・圧縮をマージ) ---
+    // --- フォーム送信処理 (変更なし) ---
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -290,8 +307,7 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
       formErrorMessage.classList.add('hidden');
 
       try {
-        const { collection, addDoc, serverTimestamp, ref, uploadBytes, getDownloadURL } = await getFirebaseModules();
-
+        
         const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
         let rating = 0;
         let scores = {};
@@ -312,7 +328,6 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
           rating = parseInt(ratingInput.value, 10);
         }
 
-        // 画像圧縮ライブラリを動的にロード
         if (imageFiles.length > 0 && typeof imageCompression === 'undefined') {
             await new Promise((resolve, reject) => {
                 const script = document.createElement('script');
@@ -341,10 +356,8 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
           ...(isAdmin && { scores }),
         };
 
-        // UIに即時反映（元のコードの機能を維持）
         addReviewToUI(newReviewDataForUI);
 
-        // Firestoreに保存
         const reviewsCollection = collection(db, `artifacts/${appId}/public/data/practice_ranges`, rangeId, 'reviews');
         await addDoc(reviewsCollection, {
             ...newReviewDataForUI,
@@ -367,7 +380,7 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
       }
     });
 
-    // --- UIに新しいレビューを追加する関数 (元のコードを維持) ---
+    // --- UIに新しいレビューを追加する関数 (変更なし) ---
     function addReviewToUI(review) {
       const reviewsList = document.getElementById('reviews-list');
       if (!reviewsList) return;
