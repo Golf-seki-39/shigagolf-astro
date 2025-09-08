@@ -7,7 +7,7 @@ const pageTitle = "マップで探す | シガゴル";
 const description = "滋賀県内のゴルフ練習場を地図上で探せます。現在地から一番近い練習場や、各エリアの練習場の場所が一目で分かります。";
 
 
-const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges');
+const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges');
 const querySnapshot = await getDocs(rangesCollection);
 const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 ---
