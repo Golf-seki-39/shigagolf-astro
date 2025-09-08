@@ -1,5 +1,4 @@
 ---
-// ★★★ 修正3: 不要なReviewChartコンポーネントのimportを削除 ★★★
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ReviewSection from "../../components/ReviewSection.astro";
 import { db } from "../../lib/firebase.js";
@@ -24,6 +23,16 @@ const { name, address, phone, businessHours, website, scores, area, city, postal
 
 const title = `${name}の口コミ・評判 | シガゴル`;
 const description = `${name}（${area}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${name}に関する詳細情報が満載です。`;
+
+// ★★★ 修正1: クライアントスクリプトに渡すためのFirebase設定オブジェクトを作成 ★★★
+const clientFirebaseConfig = {
+    apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
+    authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
+};
 
 const badges = [];
 if (isIndoor) badges.push("インドア");
@@ -89,7 +98,7 @@ function getPublicUrl(originalUrl) {
         </div>
 
         <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
-            {/* あなたの元のHTML部分は完全に保持されています */}
+            {/* HTML部分は変更ありません */}
             <header>
                 <img
                     src={imageUrl}
@@ -146,7 +155,30 @@ function getPublicUrl(originalUrl) {
             )}
 
             <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
-                {/* ... (設備情報、料金情報、基本情報セクションは変更なし) ... */}
+                 <section>
+                    <h2 class="text-2xl font-bold">設備情報</h2>
+                    <ul
+                        class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600"
+                    >
+                        <li>
+                            📡 弾道測定器: {
+                                hasTracer
+                                    ? `あり (${tracer_brand})`
+                                    : "なし"
+                            }
+                        </li>
+                        <li>
+                            ⛳️ アプローチ: {hasApproach ? "あり" : "なし"}
+                        </li>
+                        <li>
+                            🕳️ バンカー: {hasBunker ? "あり" : "なし"}
+                        </li>
+                        <li>🏌️ パター: {hasPutter ? "あり" : "なし"}</li>
+                        <li>
+                            💰 打ち放題: {hasUchihodai ? "あり" : "なし"}
+                        </li>
+                    </ul>
+                </section>
                  <section>
                     <h2 class="text-2xl font-bold">料金情報</h2>
                     <div
@@ -188,7 +220,6 @@ function getPublicUrl(originalUrl) {
                                         </tr>
                                     </>
                                 )}
-
                                 <tr class="border-b border-slate-200">
                                     <th
                                         class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap"
@@ -364,17 +395,12 @@ function getPublicUrl(originalUrl) {
 </BaseLayout>
 
 
-<script define:vars={{ rangeId: range.id, appId: import.meta.env.PUBLIC_FIREBASE_APP_ID }}>
-    // FirebaseのクライアントSDKモジュールを動的にインポート
+{/* ★★★ 修正2: define:varsでサーバーからfirebaseConfigオブジェクト全体を受け取るように変更 ★★★ */}
+<script define:vars={{ rangeId: range.id, firebaseConfig: clientFirebaseConfig }}>
+
+    // FirebaseのクライアントSDKモジュールを動的にインポートする関数
     async function getFirebaseModules() {
-        const firebaseConfig = {
-            apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
-            authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
-            projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
-            storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
-            messagingSenderId: import.meta.env.PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-            appId: appId,
-        };
+        // ★★★ 修正2: ここでimport.meta.envを直接参照するのをやめ、define:varsで渡されたfirebaseConfigを使う ★★★
         const { initializeApp } = await import('firebase/app');
         const { getFirestore, collection, getDocs, query, orderBy } = await import('firebase/firestore');
         return { initializeApp, getFirestore, collection, getDocs, query, orderBy, firebaseConfig };
@@ -429,15 +455,16 @@ function getPublicUrl(originalUrl) {
         });
     }
 
-    // ページが読み込まれたらレビューを取得して描画
+    // ★★★ 修正3: 2つあったDOMContentLoadedリスナーを1つに統合 ★★★
     document.addEventListener('DOMContentLoaded', async () => {
+        
+        // --- レビュー取得・描画処理 ---
         const reviewsListContainer = document.getElementById('reviews-list');
         try {
-            const { initializeApp, getFirestore, collection, getDocs, query, orderBy, firebaseConfig } = await getFirebaseModules();
-            const app = initializeApp(firebaseConfig);
+            const { initializeApp, getFirestore, collection, getDocs, query, orderBy, firebaseConfig: config } = await getFirebaseModules();
+            const app = initializeApp(config);
             const db = getFirestore(app);
-            const publicDataPath = `artifacts/${appId}/public/data`;
-            // ★★★ ご指摘のバグ修正: range.id -> rangeId に変更 ★★★
+            const publicDataPath = `artifacts/${config.appId}/public/data`;
             const reviewsCollectionRef = collection(db, publicDataPath, 'practice_ranges', rangeId, 'reviews');
             const q = query(reviewsCollectionRef, orderBy("createdAt", "desc"));
             const querySnapshot = await getDocs(q);
@@ -445,29 +472,25 @@ function getPublicUrl(originalUrl) {
             reviewsListContainer.innerHTML = '';
             if (querySnapshot.empty) {
                 reviewsListContainer.innerHTML = `<p id="no-reviews-message" class="text-center text-slate-500 py-8">この練習場にはまだレビューがありません。</p>`;
-                return;
+            } else {
+                const reviews = querySnapshot.docs.map(doc => doc.data());
+                const adminReviews = reviews.filter(review => review.author === "関＠シガゴル管理人");
+                const userReviews = reviews.filter(review => review.author !== "関＠シガゴル管理人");
+                const sortedReviews = [...adminReviews, ...userReviews];
+
+                sortedReviews.forEach(reviewData => {
+                    const article = createReviewArticle(reviewData);
+                    reviewsListContainer.appendChild(article);
+                });
+                
+                renderRadarCharts();
             }
-
-            // 管理人レビューを先頭にするソート処理
-            const reviews = querySnapshot.docs.map(doc => doc.data());
-            const adminReviews = reviews.filter(review => review.author === "関＠シガゴル管理人");
-            const userReviews = reviews.filter(review => review.author !== "関＠シガゴル管理人");
-            const sortedReviews = [...adminReviews, ...userReviews];
-
-            sortedReviews.forEach(reviewData => {
-                const article = createReviewArticle(reviewData);
-                reviewsListContainer.appendChild(article);
-            });
-            
-            renderRadarCharts();
         } catch (error) {
             console.error("レビューの読み込みに失敗しました:", error);
             reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`;
         }
-    });
 
-    // ページ表示関連のスクリプト
-    document.addEventListener("DOMContentLoaded", () => {
+        // --- ページ表示関連のUI処理 ---
         const showButton = document.getElementById("show-review-form-btn");
         const formWrapper = document.getElementById("review-form-wrapper");
         if (showButton && formWrapper) {
