@@ -1,4 +1,11 @@
 ---
+// このコンポーネントが受け取るプロパティを定義
+interface Props {
+  range: {
+    id: string;
+    name: string;
+  };
+}
 const { range } = Astro.props;
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 ---
@@ -10,14 +17,11 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
     <h2 class="text-3xl font-bold mb-2 text-center">レビューを投稿する</h2>
     <p class="text-slate-500 mb-6 text-xl text-center">{range.name}</p>
 
-    <form id="review-form" data-app-id={appId}>
+    <form id="review-form">
         <input type="hidden" id="rangeId" value={range.id} />
         <div class="space-y-6">
             <div>
-                <label
-                    for="reviewerName"
-                    class="block text-lg font-semibold mb-2">ニックネーム</label
-                >
+                <label for="reviewerName" class="block text-lg font-semibold mb-2">ニックネーム</label>
                 <input
                     type="text"
                     id="reviewerName"
@@ -27,202 +31,85 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
                 />
             </div>
 
-            <div
-                id="admin-scores-section"
-                class="hidden space-y-4 pt-4 border-t border-dashed"
-            >
-                <h3 class="text-lg font-bold text-green-700">
-                    【管理人用】レーダーチャート評価
-                </h3>
+            <div id="admin-scores-section" class="hidden space-y-4 pt-4 border-t border-dashed">
+                <h3 class="text-lg font-bold text-green-700">【管理人用】レーダーチャート評価</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label
-                            for="score_range"
-                            class="block text-sm font-medium text-slate-700"
-                            >打席・レンジの質</label
-                        >
-                        <input
-                            type="number"
-                            id="score_range"
-                            min="1"
-                            max="5"
-                            class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
-                        />
+                        <label for="score_range" class="block text-sm font-medium text-slate-700">打席・レンジの質</label>
+                        <input type="number" id="score_range" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
                     </div>
                     <div>
-                        <label
-                            for="score_facilities"
-                            class="block text-sm font-medium text-slate-700"
-                            >設備の充実度</label
-                        >
-                        <input
-                            type="number"
-                            id="score_facilities"
-                            min="1"
-                            max="5"
-                            class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
-                        />
+                        <label for="score_facilities" class="block text-sm font-medium text-slate-700">設備の充実度</label>
+                        <input type="number" id="score_facilities" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
                     </div>
                     <div>
-                        <label
-                            for="score_variety"
-                            class="block text-sm font-medium text-slate-700"
-                            >練習環境の多様性</label
-                        >
-                        <input
-                            type="number"
-                            id="score_variety"
-                            min="1"
-                            max="5"
-                            class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
-                        />
+                        <label for="score_variety" class="block text-sm font-medium text-slate-700">練習環境の多様性</label>
+                        <input type="number" id="score_variety" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
                     </div>
                     <div>
-                        <label
-                            for="score_cost"
-                            class="block text-sm font-medium text-slate-700"
-                            >コストパフォーマンス</label
-                        >
-                        <input
-                            type="number"
-                            id="score_cost"
-                            min="1"
-                            max="5"
-                            class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
-                        />
+                        <label for="score_cost" class="block text-sm font-medium text-slate-700">コストパフォーマンス</label>
+                        <input type="number" id="score_cost" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
                     </div>
                     <div class="sm:col-span-2">
-                        <label
-                            for="score_hospitality"
-                            class="block text-sm font-medium text-slate-700"
-                            >快適性・ホスピタリティ</label
-                        >
-                        <input
-                            type="number"
-                            id="score_hospitality"
-                            min="1"
-                            max="5"
-                            class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
-                        />
+                        <label for="score_hospitality" class="block text-sm font-medium text-slate-700">快適性・ホスピタリティ</label>
+                        <input type="number" id="score_hospitality" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
                     </div>
                 </div>
             </div>
 
             <div id="user-rating-section">
                 <p class="block text-lg font-semibold mb-2">総合評価</p>
-
                 <div class="flex justify-between items-center">
                     <div class="star-rating flex flex-row-reverse justify-end">
-                        <input
-                            type="radio"
-                            id="star5"
-                            name="rating"
-                            value="5"
-                            required
-                        /><label for="star5">★</label>
-
-                        <input
-                            type="radio"
-                            id="star4"
-                            name="rating"
-                            value="4"
-                        /><label for="star4">★</label>
-
-                        <input
-                            type="radio"
-                            id="star3"
-                            name="rating"
-                            value="3"
-                        /><label for="star3">★</label>
-
-                        <input
-                            type="radio"
-                            id="star2"
-                            name="rating"
-                            value="2"
-                        /><label for="star2">★</label>
-
-                        <input
-                            type="radio"
-                            id="star1"
-                            name="rating"
-                            value="1"
-                        /><label for="star1">★</label>
+                        <input type="radio" id="star5" name="rating" value="5" required /><label for="star5">★</label>
+                        <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
+                        <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
+                        <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
+                        <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
                     </div>
-
-                    <a
-                        href="/criteria"
-                        target="_blank"
-                        class="text-sm text-green-700 hover:underline"
-                        >評価基準についてはこちら</a
-                    >
+                    <a href="/criteria" target="_blank" class="text-sm text-green-700 hover:underline">評価基準についてはこちら</a>
                 </div>
             </div>
+            
             <div>
-                <label
-                    for="reviewTitle"
-                    class="block text-lg font-semibold mb-2"
-                    >レビュータイトル</label
-                >
-                <input
-                    type="text"
-                    id="reviewTitle"
-                    required
-                    class="w-full p-3 border border-slate-300 rounded-md"
-                    placeholder="例：最高の練習環境でした！"
-                />
+                <label for="reviewTitle" class="block text-lg font-semibold mb-2">レビュータイトル</label>
+                <input type="text" id="reviewTitle" required class="w-full p-3 border border-slate-300 rounded-md" placeholder="例：最高の練習環境でした！" />
             </div>
+            
             <div>
-                <label
-                    for="reviewComment"
-                    class="block text-lg font-semibold mb-2">レビュー本文</label
-                >
-                <textarea
-                    id="reviewComment"
-                    rows="6"
-                    required
-                    class="w-full p-3 border border-slate-300 rounded-md"
-                    placeholder="施設の良かった点、改善してほしい点などを具体的に教えてください。"
-                ></textarea>
+                <label for="reviewComment" class="block text-lg font-semibold mb-2">レビュー本文</label>
+                <textarea id="reviewComment" rows="6" required class="w-full p-3 border border-slate-300 rounded-md" placeholder="施設の良かった点、改善してほしい点などを具体的に教えてください。"></textarea>
             </div>
+            
             <div>
-                <label class="block text-lg font-semibold mb-2"
-                    >写真を追加 (5枚まで)</label
-                >
-                <div
-                    id="image-preview-container"
-                    class="flex flex-wrap gap-2 p-2 border-2 border-dashed border-slate-300 rounded-md min-h-[110px] bg-slate-50"
-                >
-                </div>
+                <label class="block text-lg font-semibold mb-2">写真を追加 (5枚まで)</label>
+                <div id="image-preview-container" class="flex flex-wrap gap-2 p-2 border-2 border-dashed border-slate-300 rounded-md min-h-[110px] bg-slate-50"></div>
                 <div class="mt-2">
-                    <label
-                        for="review-image-upload"
-                        class="cursor-pointer bg-white text-green-700 font-bold py-2 px-4 border border-green-700 rounded-lg hover:bg-green-50 transition"
-                        >ファイルを選択</label
-                    >
-                    <input
-                        type="file"
-                        id="review-image-upload"
-                        accept="image/png, image/jpeg"
-                        class="hidden"
-                        multiple
-                    />
+                    <label for="review-image-upload" class="cursor-pointer bg-white text-green-700 font-bold py-2 px-4 border border-green-700 rounded-lg hover:bg-green-50 transition">ファイルを選択</label>
+                    <input type="file" id="review-image-upload" accept="image/png, image/jpeg" class="hidden" multiple />
+                    <p id="image-error" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
             </div>
+            
+            <div id="form-error-message" class="hidden text-center p-4 bg-red-50 text-red-700 rounded-md"></div>
+
             <div class="text-right">
-                <button
-                    type="submit"
-                    class="bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition text-lg"
-                    >投稿する</button
-                >
+                <button type="submit" class="submit-button bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition text-lg disabled:bg-slate-400">投稿する</button>
             </div>
         </div>
     </form>
+    
+    <div id="success-message" class="hidden"></div>
 </section>
 
 <style>
+    /* ★★★ 修正点1: display: none を accessibility-friendly な方法に変更 ★★★ */
     .star-rating input[type="radio"] {
-        display: none;
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
     }
     .star-rating label {
         font-size: 2.5rem;
@@ -235,192 +122,292 @@ const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
     .star-rating label:hover ~ label {
         color: #f59e0b;
     }
+    .preview-image-wrapper {
+        position: relative;
+    }
+    .remove-image-btn {
+        position: absolute;
+        top: -0.5rem;
+        right: -0.5rem;
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        border-radius: 9999px;
+        width: 1.75rem;
+        height: 1.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        cursor: pointer;
+        border: 2px solid white;
+        line-height: 1;
+    }
+    .submit-button.loading::after {
+        content: '';
+        position: absolute;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.5rem;
+        height: 1.5rem;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        to { transform: translateY(-50%) rotate(360deg); }
+    }
 </style>
 
-<script>
-  // Firebaseの必要な機能をインポート
-  import { db, storage } from '@/lib/firebase.js';
-  import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-  import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+<script define:vars={{ appId }}>
+  // ★★★ 変更点2: 全てのFirebase機能を動的インポートに統一し、認証機能を追加 ★★★
+  const getFirebaseModules = async () => {
+    const [
+      { initializeApp },
+      { getAuth, signInAnonymously, onAuthStateChanged },
+      { getFirestore, collection, addDoc, serverTimestamp },
+      { getStorage, ref, uploadBytes, getDownloadURL }
+    ] = await Promise.all([
+      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'),
+      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'),
+      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js')
+    ]);
+    return { initializeApp, getAuth, signInAnonymously, onAuthStateChanged, getFirestore, collection, addDoc, serverTimestamp, getStorage, ref, uploadBytes, getDownloadURL };
+  };
 
-  // --- フォーム関連の要素をまとめて取得 ---
-  const form = document.getElementById('review-form');
-  const submitButton = form.querySelector('button[type="submit"]');
-  const rangeId = document.getElementById('rangeId').value;
-  const imageUploadInput = document.getElementById('review-image-upload');
-  const imagePreviewContainer = document.getElementById('image-preview-container');
-  let imageFiles = [];
+  document.addEventListener('DOMContentLoaded', async () => {
+    const form = document.getElementById('review-form');
+    if (!form) return;
 
-  // --- 管理人モード用の要素 ---
-  const reviewerNameInput = document.getElementById('reviewerName');
-  const adminScoresSection = document.getElementById('admin-scores-section');
-  const adminScoreInputs = adminScoresSection.querySelectorAll('input');
-  const userRatingSection = document.getElementById('user-rating-section');
-  const userRatingInputs = userRatingSection.querySelectorAll('input[name="rating"]');
+    // --- フォーム関連の要素 ---
+    const submitButton = form.querySelector('button[type="submit"]');
+    const rangeId = document.getElementById('rangeId').value;
+    const imageUploadInput = document.getElementById('review-image-upload');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imageError = document.getElementById('image-error');
+    const formErrorMessage = document.getElementById('form-error-message');
+    const successMessageContainer = document.getElementById('success-message');
+    let imageFiles = [];
 
-  // ===================================================================
-  // ★★★ 管理人モード切り替えロジック ★★★
-  // ===================================================================
-  reviewerNameInput.addEventListener('input', () => {
-    const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
-    
-    // 管理人/一般ユーザーでフォームの表示/非表示を切り替え
-    adminScoresSection.classList.toggle('hidden', !isAdmin);
-    userRatingSection.classList.toggle('hidden', isAdmin);
+    // --- 管理人モード用要素 ---
+    const reviewerNameInput = document.getElementById('reviewerName');
+    const adminScoresSection = document.getElementById('admin-scores-section');
+    const userRatingSection = document.getElementById('user-rating-section');
 
-    // 入力必須(required)属性も動的に切り替え
-    adminScoreInputs.forEach(input => input.required = isAdmin);
-    userRatingInputs.forEach(input => input.required = !isAdmin);
-  });
-
-  // ===================================================================
-  // ★★★ 画像プレビュー機能 ★★★
-  // ===================================================================
-  imageUploadInput.addEventListener('change', (event) => {
-    imagePreviewContainer.innerHTML = ''; // プレビューをリセット
-    imageFiles = Array.from(event.target.files).slice(0, 5); // 5枚までに制限
-
-    imageFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const imgElement = document.createElement('img');
-        imgElement.src = e.target.result;
-        imgElement.className = 'w-24 h-24 object-cover rounded-md';
-        imagePreviewContainer.appendChild(imgElement);
-      };
-      reader.readAsDataURL(file);
-    });
-  });
-  
-  // ===================================================================
-  // ★★★ フォーム送信時のメイン処理 ★★★
-  // ===================================================================
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault(); // ページの再読み込みをキャンセル
-
-    submitButton.disabled = true;
-    submitButton.textContent = '投稿中...';
-
+    // ★★★ 変更点3: Firebase初期化と匿名認証を最初に実行 ★★★
+    let db, storage, auth;
     try {
-      const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
-      let rating = 0;
-      let scores = {};
-
-      // --- 管理人か一般ユーザーかで取得するデータを分岐 ---
-      if (isAdmin) {
-        // 管理人の場合：各スコアを取得
-        scores = {
-          '打席・レンジ': parseInt(document.getElementById('score_range').value, 10),
-          '設備': parseInt(document.getElementById('score_facilities').value, 10),
-          '練習環境': parseInt(document.getElementById('score_variety').value, 10),
-          'コスパ': parseInt(document.getElementById('score_cost').value, 10),
-          '快適性': parseInt(document.getElementById('score_hospitality').value, 10),
-        };
-        // 管理人の総合評価は各スコアの平均値を計算して入れる
-        const scoreValues = Object.values(scores);
-        const totalScore = scoreValues.reduce((sum, val) => sum + val, 0);
-        rating = Math.round((totalScore / scoreValues.length) * 10) / 10; // 小数点第1位までに丸める
-      } else {
-        // 一般ユーザーの場合：星評価を取得
-        const ratingInput = form.querySelector('input[name="rating"]:checked');
-        if (!ratingInput) {
-          alert('総合評価を選択してください。');
-          throw new Error('Rating not selected');
+      const { initializeApp, getAuth, signInAnonymously, onAuthStateChanged, getFirestore, getStorage } = await getFirebaseModules();
+      const firebaseConfig = {
+        apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
+        authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
+        projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+        storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
+        appId: appId,
+      };
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      storage = getStorage(app);
+      auth = getAuth(app);
+      
+      onAuthStateChanged(auth, user => {
+        if (!user) {
+          signInAnonymously(auth).catch(err => console.error("Anonymous sign-in failed", err));
         }
-        rating = parseInt(ratingInput.value, 10);
+      });
+    } catch (e) {
+      console.error("Firebase initialization failed:", e);
+      formErrorMessage.textContent = 'サービスの初期化に失敗しました。ページを再読み込みしてください。';
+      formErrorMessage.classList.remove('hidden');
+      submitButton.disabled = true;
+      return;
+    }
+
+    // --- 管理人モードロジック (元のコードを維持) ---
+    reviewerNameInput.addEventListener('input', () => {
+      const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
+      adminScoresSection.classList.toggle('hidden', !isAdmin);
+      userRatingSection.classList.toggle('hidden', isAdmin);
+      adminScoresSection.querySelectorAll('input').forEach(input => input.required = isAdmin);
+      userRatingSection.querySelectorAll('input[name="rating"]').forEach(input => input.required = !isAdmin);
+    });
+
+    // ★★★ 変更点4: 複数画像を追加・削除できるプレビュー機能に強化 ★★★
+    imageUploadInput.addEventListener('change', (event) => {
+        const newFiles = Array.from(event.target.files);
+        imageError.classList.add('hidden');
+        if (imageFiles.length + newFiles.length > 5) {
+            imageError.textContent = '写真は合計5枚までです。';
+            imageError.classList.remove('hidden');
+            return;
+        }
+        imageFiles.push(...newFiles);
+        renderImagePreviews();
+        imageUploadInput.value = '';
+    });
+
+    function renderImagePreviews() {
+        imagePreviewContainer.innerHTML = '';
+        imageFiles.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'preview-image-wrapper w-24 h-24';
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'w-full h-full object-cover rounded-md';
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'remove-image-btn';
+                removeBtn.textContent = '×';
+                removeBtn.onclick = () => {
+                    imageFiles.splice(index, 1);
+                    renderImagePreviews();
+                };
+                wrapper.appendChild(img);
+                wrapper.appendChild(removeBtn);
+                imagePreviewContainer.appendChild(wrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    // --- フォーム送信処理 (元のロジックと認証・圧縮をマージ) ---
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!auth.currentUser) {
+        formErrorMessage.textContent = '認証に失敗しました。ページを再読み込みしてください。';
+        formErrorMessage.classList.remove('hidden');
+        return;
       }
 
-      // --- 共通のデータを取得 ---
-      const author = reviewerNameInput.value || '匿名';
-      const title = document.getElementById('reviewTitle').value;
-      const body = document.getElementById('reviewComment').value;
+      submitButton.disabled = true;
+      submitButton.classList.add('loading');
+      submitButton.textContent = '投稿中...';
+      formErrorMessage.classList.add('hidden');
 
-      // --- 画像をFirebase Storageにアップロード ---
-      const uploadPromises = imageFiles.map(file => {
-        const imageRef = ref(storage, `reviews/${rangeId}/${Date.now()}_${file.name}`);
-        return uploadBytes(imageRef, file).then(snapshot => getDownloadURL(snapshot.ref));
-      });
-      const imageUrls = await Promise.all(uploadPromises);
+      try {
+        const { collection, addDoc, serverTimestamp, ref, uploadBytes, getDownloadURL } = await getFirebaseModules();
 
-      // --- 画面表示用/DB保存用のデータを作成 ---
-      const newReviewData = {
-        author,
-        rating,
-        title,
-        body,
-        imageUrls,
-        createdAt: new Date(), // 画面表示用の仮の日付
-        ...(isAdmin && { scores }), // 管理人の場合だけscoresプロパティを追加
-      };
+        const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
+        let rating = 0;
+        let scores = {};
 
-      // ★先に画面にレビューを「擬似的」に追加
-      addReviewToUI(newReviewData);
+        if (isAdmin) {
+          scores = {
+            '打席・レンジ': parseInt(document.getElementById('score_range').value, 10),
+            '設備': parseInt(document.getElementById('score_facilities').value, 10),
+            '練習環境': parseInt(document.getElementById('score_variety').value, 10),
+            'コスパ': parseInt(document.getElementById('score_cost').value, 10),
+            '快適性': parseInt(document.getElementById('score_hospitality').value, 10),
+          };
+          const scoreValues = Object.values(scores).filter(v => !isNaN(v));
+          rating = scoreValues.length > 0 ? scoreValues.reduce((s, v) => s + v, 0) / scoreValues.length : 0;
+        } else {
+          const ratingInput = form.querySelector('input[name="rating"]:checked');
+          if (!ratingInput) throw new Error('総合評価を選択してください。');
+          rating = parseInt(ratingInput.value, 10);
+        }
 
-      // ★Firestoreデータベースにレビューを保存
-      const publicDataPath = `artifacts/${import.meta.env.PUBLIC_FIREBASE_APP_ID}/public/data`;
-      const reviewsCollection = collection(db, publicDataPath, 'practice_ranges', rangeId, 'reviews');
+        // 画像圧縮ライブラリを動的にロード
+        if (imageFiles.length > 0 && typeof imageCompression === 'undefined') {
+            await new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+        
+        const uploadPromises = imageFiles.map(async (file) => {
+            const compressedFile = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true });
+            const imageRef = ref(storage, `reviews/${rangeId}/${Date.now()}_${compressedFile.name}`);
+            const snapshot = await uploadBytes(imageRef, compressedFile);
+            return getDownloadURL(snapshot.ref);
+        });
+        const imageUrls = await Promise.all(uploadPromises);
+
+        const newReviewDataForUI = {
+          author: reviewerNameInput.value || '匿名',
+          rating: Number(rating.toFixed(1)),
+          title: document.getElementById('reviewTitle').value,
+          body: document.getElementById('reviewComment').value,
+          imageUrls,
+          createdAt: new Date(),
+          ...(isAdmin && { scores }),
+        };
+
+        // UIに即時反映（元のコードの機能を維持）
+        addReviewToUI(newReviewDataForUI);
+
+        // Firestoreに保存
+        const reviewsCollection = collection(db, `artifacts/${appId}/public/data/practice_ranges`, rangeId, 'reviews');
+        await addDoc(reviewsCollection, {
+            ...newReviewDataForUI,
+            createdAt: serverTimestamp(),
+            userId: auth.currentUser.uid,
+        });
+        
+        form.style.display = 'none';
+        successMessageContainer.classList.remove('hidden');
+        successMessageContainer.innerHTML = `<p class="text-xl font-bold text-green-700">レビューの投稿ありがとうございます！</p><p class="mt-2 text-slate-600">貴重なご意見に感謝いたします。</p>`;
+
+      } catch (error) {
+        console.error("レビュー投稿中にエラーが発生しました: ", error);
+        formErrorMessage.textContent = error.message.includes('storage/unauthorized')
+            ? '画像のアップロード権限がありません。ページの再読み込み後、もう一度お試しください。'
+            : 'エラーが発生しました。入力内容を確認し、再度お試しください。';
+        formErrorMessage.classList.remove('hidden');
+        submitButton.disabled = false;
+        submitButton.textContent = '投稿する';
+      }
+    });
+
+    // --- UIに新しいレビューを追加する関数 (元のコードを維持) ---
+    function addReviewToUI(review) {
+      const reviewsList = document.getElementById('reviews-list');
+      if (!reviewsList) return;
+
+      const noReviewsMessage = document.getElementById('no-reviews-message');
+      if (noReviewsMessage) {
+        noReviewsMessage.remove();
+      }
+
+      const stars = '★'.repeat(Math.round(review.rating)) + '☆'.repeat(5 - Math.round(review.rating));
+      const date = review.createdAt.toLocaleDateString('ja-JP');
+
+      const article = document.createElement('article');
+      article.className = 'border-b border-slate-200 pb-6';
       
-      await addDoc(reviewsCollection, {
-        ...newReviewData,
-        createdAt: serverTimestamp(), // DBには正確なサーバー時刻を保存
-      });
+      let imagesHTML = '';
+      if (review.imageUrls && review.imageUrls.length > 0) {
+        imagesHTML = `
+          <div class="mt-4 flex flex-wrap gap-3">
+            ${review.imageUrls.map(url => `
+              <a href="${url}" target="_blank" rel="noopener noreferrer" class="block">
+                <img src="${url}" alt="投稿写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" />
+              </a>
+            `).join('')}
+          </div>`;
+      }
 
-      // --- 投稿完了後の処理 ---
-      form.style.display = 'none';
-      const successMessage = document.createElement('div');
-      successMessage.className = 'text-center py-10';
-      successMessage.innerHTML = `<p class="text-xl font-bold text-green-700">レビューの投稿ありがとうございます！</p><p class="mt-2 text-slate-600">貴重なご意見に感謝いたします。</p>`;
-      form.parentElement.appendChild(successMessage);
+      article.innerHTML = `
+        <div class="flex items-center gap-x-4">
+          <div class="text-amber-500 text-xl" title="${review.rating}つ星">${stars}</div>
+          ${review.author === '関＠シガゴル管理人' ? `<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">公式レビュー</span>` : ''}
+        </div>
+        <h3 class="text-lg font-bold mt-2">${review.title}</h3>
+        <p class="text-slate-600 my-4 whitespace-pre-wrap">${review.body}</p>
+        ${imagesHTML}
+        <p class="text-sm text-slate-400 text-right mt-4">投稿者: ${review.author} / 投稿日: ${date}</p>
+      `;
 
-    } catch (error) {
-      console.error("レビュー投稿中にエラーが発生しました: ", error);
-      alert("エラーが発生しました。時間をおいて再度お試しください。");
-      submitButton.disabled = false;
-      submitButton.textContent = '投稿する';
+      reviewsList.prepend(article);
     }
   });
-
-  // ===================================================================
-  // ★★★ UIに新しいレビューを追加する関数 ★★★
-  // ===================================================================
-  function addReviewToUI(review) {
-    const reviewsList = document.getElementById('reviews-list');
-    if (!reviewsList) return;
-
-    const noReviewsMessage = document.getElementById('no-reviews-message');
-    if (noReviewsMessage) {
-      noReviewsMessage.remove();
-    }
-
-    const stars = '★'.repeat(Math.round(review.rating)) + '☆'.repeat(5 - Math.round(review.rating));
-    const date = review.createdAt.toLocaleDateString('ja-JP');
-
-    const article = document.createElement('article');
-    article.className = 'border-b border-slate-200 pb-6';
-    
-    let imagesHTML = '';
-    if (review.imageUrls && review.imageUrls.length > 0) {
-      imagesHTML = `
-        <div class="mt-4 flex flex-wrap gap-3">
-          ${review.imageUrls.map(url => `
-            <a href="${url}" target="_blank" rel="noopener noreferrer" class="block">
-              <img src="${url}" alt="投稿写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" />
-            </a>
-          `).join('')}
-        </div>`;
-    }
-
-    article.innerHTML = `
-      <div class="flex items-center gap-x-4">
-        <div class="text-amber-500 text-xl" title="${review.rating}つ星">${stars}</div>
-        ${review.author === '関＠シガゴル管理人' ? `<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">公式レビュー</span>` : ''}
-      </div>
-      <h3 class="text-lg font-bold mt-2">${review.title}</h3>
-      <p class="text-slate-600 my-4 whitespace-pre-wrap">${review.body}</p>
-      ${imagesHTML}
-      <p class="text-sm text-slate-400 text-right mt-4">投稿者: ${review.author} / 投稿日: ${date}</p>
-    `;
-
-    reviewsList.prepend(article);
-  }
 </script>
+

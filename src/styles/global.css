@@ -4,7 +4,13 @@
 
 html { scroll-behavior: smooth; }
 body { font-family: 'Noto Sans JP', sans-serif; }
-.star-rating input[type="radio"] { display: none; }
+.star-rating input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
 .star-rating label { font-size: 2.5rem; color: #d1d5db; cursor: pointer; transition: color 0.2s; }
 .star-rating input[type="radio"]:checked ~ label,
 .star-rating label:hover,
@@ -74,7 +80,7 @@ body { font-family: 'Noto Sans JP', sans-serif; }
 /* 記事本文(<article>タグの中)にある<a>リンクのうち、
   "http"で始まるが、"shiga-golf.com" (あなたのドメイン) を含まないリンクを対象
 */
-article a[href^="http"]:not([href*="shiga-golf.com"])::after {
+article a[href^="http"]:not([href*="https://shigagolf-reviews.netlify.app/"])::after {
   content: ' ↗︎'; /* 外部リンクを示す矢印アイコンを追加 */
   display: inline-block;
   margin-left: 0.25rem;    /* アイコンの左側に少し余白 */
