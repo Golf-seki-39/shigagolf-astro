@@ -5,7 +5,7 @@ import Footer from "../components/Footer.astro";
 import { db } from "../lib/firebase.js";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
-// ポップアップ用に、全ての練習場リストをここで取得します
+// ポップアップ用に、全ての練習場リストをここで取得します (これはサーバーサイドなので変更なし)
 const rangesCollection = collection(
     db,
     "artifacts",
@@ -44,17 +44,16 @@ const {
         {noindex && <meta name="robots" content="noindex" />}
         <link rel="apple-touch-icon" href="https://i.imgur.com/mN0IbPS.png" />
         <link rel="icon" href="https://i.imgur.com/mN0IbPS.png" />
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
         <script
             src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"
         ></script>
+        
         <slot name="head" />
-        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"
-        ></script>
-        <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    </head>
+        
+        </head>
     <body class="bg-slate-50 text-slate-800">
         <Header />
         <slot />

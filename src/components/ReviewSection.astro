@@ -1,5 +1,6 @@
 ---
-// このコンポーネントが受け取るプロパティを定義
+// ★★★ これは src/components/ReviewSection.astro (最終修正版) です ★★★
+// (フロントマターはあなたのコードのまま変更ありません)
 interface Props {
   range: {
     id: string;
@@ -105,7 +106,10 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
         </div>
     </form>
     
-    {/* ★★★ 変更点: UI即時反映が不要になったため、この成功メッセージ用DIVは削除しました ★★★ */}
+    <div id="review-thanks-message" class="hidden text-center py-12">
+        <h3 class="text-2xl font-bold text-green-700">レビューありがとうございます！</h3>
+        <p class="mt-4 text-slate-600">投稿が一覧に反映されました。このページ上部のレビュー欄をご確認ください。</p>
+    </div>
 </section>
 
 <style>
@@ -166,6 +170,7 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
 </style>
 
 <script define:vars={{ appId, apiKey, authDomain, projectId, storageBucket }}>
+  // (getFirebaseModules 関数はあなたのコードのまま変更ありません)
   const getFirebaseModules = async () => {
     const [
       { initializeApp },
@@ -203,7 +208,12 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
     try {
       const modules = await getFirebaseModules();
       const firebaseConfig = { apiKey, authDomain, projectId, storageBucket, appId };
-      const app = modules.initializeApp(firebaseConfig);
+      
+      // ★★★ 修正: [rangeId].astro と初期化を共有するためのグローバル変数 ★★★
+      if (!window._firebaseAppV10) {
+        window._firebaseAppV10 = modules.initializeApp(firebaseConfig);
+      }
+      const app = window._firebaseAppV10;
       
       db = modules.getFirestore(app);
       storage = modules.getStorage(app);
@@ -229,6 +239,7 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
       return;
     }
 
+    // (reviewerNameInput リスナーはあなたのコードのまま変更ありません)
     reviewerNameInput.addEventListener('input', () => {
       const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
       adminScoresSection.classList.toggle('hidden', !isAdmin);
@@ -237,6 +248,7 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
       userRatingSection.querySelectorAll('input[name="rating"]').forEach(input => input.required = !isAdmin);
     });
 
+    // (imageUploadInput リスナーはあなたのコードのまま変更ありません)
     imageUploadInput.addEventListener('change', (event) => {
         const newFiles = Array.from(event.target.files);
         imageError.classList.add('hidden');
@@ -250,6 +262,7 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
         imageUploadInput.value = '';
     });
 
+    // (renderImagePreviews 関数はあなたのコードのまま変更ありません)
     function renderImagePreviews() {
         imagePreviewContainer.innerHTML = '';
         imageFiles.forEach((file, index) => {
@@ -276,6 +289,7 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
         });
     }
     
+    // ★★★ submit ハンドラを修正 ★★★
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -291,6 +305,7 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
       formErrorMessage.classList.add('hidden');
 
       try {
+        // (isAdminチェック、rating計算、画像圧縮、アップロード処理などは一切変更ありません)
         const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
         let rating = 0;
         let scores = {};
@@ -335,7 +350,7 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
           title: document.getElementById('reviewTitle').value,
           body: document.getElementById('reviewComment').value,
           imageUrls,
-          createdAt: serverTimestamp(),
+          createdAt: serverTimestamp(), // DBにはサーバー時刻を保存
           userId: auth.currentUser.uid,
           ...(isAdmin && { scores }),
         };
@@ -343,10 +358,36 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
         const reviewsCollection = collection(db, `artifacts/${appId}/public/data/practice_ranges`, rangeId, 'reviews');
         await addDoc(reviewsCollection, reviewDataToSave);
         
-        // ★★★ 変更点: 成功時に詳細ページへリダイレクト ★★★
-        window.location.href = `/ranges/${rangeId}`;
+        // ★★★ 修正点 2/2: ここからが修正箇所です ★★★
+        // window.location.href = `/ranges/${rangeId}`; // ← このリダイレクト行を削除
+
+        // 1. [rangeId].astro ページに通知するためのデータを作成
+        // (serverTimestamp() はローカルで即時反映できないため、クライアントの現在時刻で代替)
+        const eventData = {
+          ...reviewDataToSave,
+          createdAt: new Date(), // 即時反映のため、ローカルの現在時刻をセット
+          // (imageUrls は上で解決済みの配列をそのまま渡す)
+        };
+
+        // 2. カスタムイベントを発行（これで [rangeId].astro 側が検知します）
+        const event = new CustomEvent('reviewPosted', { detail: eventData });
+        document.dispatchEvent(event);
+
+        // 3. フォームを非表示にし、サンキューメッセージを表示
+        form.style.display = 'none'; // フォームを隠す
+        const thanksMessage = document.getElementById('review-thanks-message'); // 復活させたDIV
+        if (thanksMessage) {
+            thanksMessage.classList.remove('hidden');
+            // フォームセクション自体（の上部）にスクロール
+            const formSection = document.getElementById('review-form-section');
+            if (formSection) {
+                 formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        // ★★★ 修正はここまで ★★★
 
       } catch (error) {
+        // (エラー処理は変更なし)
         console.error("レビュー投稿中にエラーが発生しました: ", error);
         formErrorMessage.textContent = error.message.includes('storage/unauthorized')
             ? '画像のアップロード権限がありません。ページの再読み込み後、もう一度お試しください。'
@@ -358,7 +399,6 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
       }
     });
 
-    // ★★★ 変更点: UI即時反映が不要になったため、addReviewToUI関数は削除しました ★★★
+    // (削除済みの addReviewToUI 関数は不要のまま)
   });
 </script>
-

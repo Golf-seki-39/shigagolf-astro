@@ -1,10 +1,10 @@
 ---
-// Gemini最終修正版 (v4): 2024/09/09
-// v3で発生した "Invalid or unexpected token" (escapeHTML関数のタイプミス) を修正。
+// ★★★ [rangeId].astro 最終完成版 ★★★
+// (BaseLayout クリーンアップ ＋ ReviewSection v10方式 と統一)
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ReviewSection from "../../components/ReviewSection.astro";
-import { db } from "../../lib/firebase.js"; // getStaticPaths でのみ使用
+import { db } from "../../lib/firebase.js"; // getStaticPaths で使用
 import { collection, getDocs } from "firebase/firestore";
 
 // 1. getStaticPaths (変更なし)
@@ -16,14 +16,15 @@ export async function getStaticPaths() {
 
     const paths = querySnapshot.docs.map(doc => ({
         params: { rangeId: doc.id },
-        props: { range: { id: doc.id, ...doc.data() } } 
+        props: { range: { id: doc.id, ...doc.data() } }
     }));
     return paths;
 }
 
-// 2. Props と静的変数の定義 (変更なし)
+// 2. Props と静的変数の定義 (あなたの元のコードと同じ)
 const { range } = Astro.props;
 const { id, name, address, phone, businessHours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl, isIndoor, is_beginner_friendly, hasTracer, tracer_brand, tags, galleryImages, yardage, bays, hasApproach, hasBunker, hasPutter, hasUchihodai, price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str, approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info, rental_club_info, lefty_bays_info, managerReviewUrl } = range;
+
 
 const title = `${name}の口コミ・評判 | シガゴル`;
 const description = `${name}（${area}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${name}に関する詳細情報が満載です。`;
@@ -80,7 +81,7 @@ function getPublicUrl(originalUrl) {
     return `${path}?alt=media`;
 }
 
-// 3. クライアントスクリプトに渡すためのConfig (変更なし)
+// 3. クライアントスクリプト(v10)に渡すためのConfig (変更なし)
 const clientFirebaseConfig = {
     apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
     authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -103,7 +104,6 @@ const clientFirebaseConfig = {
 
         <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
             
-            {/* */}
             <header>
                 <img
                     src={imageUrl}
@@ -251,24 +251,28 @@ const clientFirebaseConfig = {
 </BaseLayout>
 
 
-{/* ★★★ 修正済 v4: クライアントスクリプト ★★★ */}
-{/* escapeHTML 関数のタイプミス (''' -> '&#39;') を修正しました */}
 <script define:vars={{ rangeId: range.id, passedConfig: clientFirebaseConfig }}>
 
-    // HTMLエスケープ関数（XSS対策）
+    // v10モジュール版SDK（ReviewSectionが使っているものと同じ）をインポート
+    async function getFirebaseModules() {
+        const [
+            { initializeApp },
+            { getFirestore, collection, query, orderBy, getDocs }
+        ] = await Promise.all([
+            import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+            import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')
+        ]);
+        return { initializeApp, getFirestore, collection, query, orderBy, getDocs };
+    }
+    
+    // --- 4つのヘルパー関数 (v4から流用) ---
     const escapeHTML = (str) => {
         if (typeof str !== 'string' || !str) return '';
-        // ★★★ ここが修正点です (''' -> '&#39;') ★★★
         return str.replace(/[&<>"']/g, (match) => ({
-            '&': '&',
-            '<': '<',
-            '>': '>',
-            '"': '"',
-            "'": '&#39;' // 修正済み
+            '&': '&', '<': '<', '>': '>', '"': '"', "'": '''
         }[match]));
     };
 
-    // 元の画像URLからトークンを削除する関数
     function getPublicUrl(originalUrl) {
         if (!originalUrl) return '';
         const urlParts = originalUrl.split('?');
@@ -276,30 +280,25 @@ const clientFirebaseConfig = {
         return `${path}?alt=media`;
     }
 
-    // レビューデータからHTML要素を作成するヘルパー関数 (変更なし)
     function createReviewArticle(review) {
         const article = document.createElement('article');
         article.className = 'border-b border-slate-200 pb-6';
-
         const ratingVal = review.rating ? Math.round(review.rating) : 0;
         const stars = '★'.repeat(ratingVal) + '☆'.repeat(5 - ratingVal);
-        
         let date = '日付不明';
         try {
             if (review.createdAt && typeof review.createdAt.toDate === 'function') {
-                date = review.createdAt.toDate().toLocaleDateString('ja-JP');
-            } else if (review.createdAt && review.createdAt.seconds) {
+                date = review.createdAt.toDate().toLocaleDateString('ja-JP'); // Firestore Timestamp
+            } else if (review.createdAt && review.createdAt.seconds) { // シリアライズされたTimestamp
                 date = new Date(review.createdAt.seconds * 1000).toLocaleDateString('ja-JP');
+            } else if (review.createdAt instanceof Date) { // reviewPosted イベントから来た Date オブジェクト
+                date = review.createdAt.toLocaleDateString('ja-JP');
             }
-        } catch (e) {
-            console.warn("日付のフォーマットに失敗:", review.createdAt);
-        }
-
+        } catch (e) { console.warn("日付のフォーマットに失敗:", review.createdAt); }
         const isAdminReview = review.author === "関＠シガゴル管理人";
         const safeTitle = escapeHTML(review.title || '');
         const safeBody = review.body ? escapeHTML(review.body).replace(/\n/g, '<br>') : '';
         const safeAuthor = escapeHTML(review.author || '匿名');
-
         let imagesHTML = '';
         if (review.imageUrls && review.imageUrls.length > 0) {
             imagesHTML = `<div class="mt-4 flex flex-wrap gap-3">${
@@ -309,13 +308,11 @@ const clientFirebaseConfig = {
                 }).join('')
             }</div>`;
         }
-        
         let scoresHTML = '';
         if (isAdminReview && review.scores) {
             const safeScoresData = escapeHTML(JSON.stringify(review.scores));
             scoresHTML = `<div class="my-4 max-w-sm mx-auto"><canvas class="radar-chart-canvas" data-scores='${safeScoresData}'></canvas></div>`;
         }
-        
         const safeRatingString = escapeHTML(String(review.rating || 'N/A'));
         article.innerHTML = `
             <div class="flex items-center gap-x-4">
@@ -331,13 +328,11 @@ const clientFirebaseConfig = {
         return article;
     }
 
-    // Chart.jsでレーダーチャートを描画する関数 (変更なし)
     function renderRadarCharts() {
         if (typeof Chart === 'undefined') {
              console.error("Chart.js が BaseLayout で読み込まれていません。");
              return;
         }
-        
         document.querySelectorAll('.radar-chart-canvas').forEach(canvas => {
             if (canvas.chart) return; 
             try {
@@ -348,35 +343,33 @@ const clientFirebaseConfig = {
                     options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { display: false }, suggestedMin: 0, suggestedMax: 5, pointLabels: { font: { size: 10 } } } }, plugins: { legend: { display: false } } }
                 });
                 canvas.chart = chart;
-            } catch (e) {
-                console.error("レーダーチャートの描画に失敗:", e, canvas.dataset.scores);
-            }
+            } catch (e) { console.error("レーダーチャートの描画に失敗:", e, canvas.dataset.scores); }
         });
     }
 
-    // メインロジック (v8 CDN構文) (変更なし)
+    // --- メインロジック (v10モジュール構文) ---
     async function loadReviews() {
         const reviewsListContainer = document.getElementById('reviews-list');
         if (!reviewsListContainer) return;
         
         try {
-            if (typeof firebase === 'undefined' || typeof firebase.firestore === 'undefined') {
-                console.error("Firebase CDN スクリプト (firebase-app-compat.js と firebase-firestore-compat.js) が BaseLayout.astro で読み込まれていません。");
-                reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">エラー: 必須スクリプトが読み込まれていません。</p>`;
-                return;
-            }
+            const { initializeApp, getFirestore, collection, query, orderBy, getDocs } = await getFirebaseModules();
 
-            if (!firebase.apps.length) {
-                 firebase.initializeApp(passedConfig);
+            let app;
+            // ReviewSectionとApp初期化を共有するため、グローバルに登録（v10方式）
+            if (!window._firebaseAppV10) { 
+                 window._firebaseAppV10 = initializeApp(passedConfig);
             }
-            const db = firebase.firestore(); 
+            app = window._firebaseAppV10;
+            const db = getFirestore(app);
+
             const appId = passedConfig.appId;
             const publicDataPath = `artifacts/${appId}/public/data`;
             const fullReviewPath = `${publicDataPath}/practice_ranges/${rangeId}/reviews`;
-            const reviewsCollectionRef = db.collection(fullReviewPath);
+            const reviewsCollectionRef = collection(db, fullReviewPath);
             
-            const q = reviewsCollectionRef.orderBy("createdAt", "desc");
-            const querySnapshot = await q.get(); 
+            const q = query(reviewsCollectionRef, orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q); 
 
             reviewsListContainer.innerHTML = ''; 
 
@@ -385,6 +378,7 @@ const clientFirebaseConfig = {
                 return;
             }
 
+            // v4のロジックに戻す（管理人レビューを先頭にする）
             const adminReviews = [];
             const userReviews = [];
             querySnapshot.forEach(doc => {
@@ -396,7 +390,7 @@ const clientFirebaseConfig = {
                  }
             });
             
-            const sortedReviews = [...adminReviews, ...userReviews]; 
+            const sortedReviews = [...adminReviews, ...userReviews]; // 管理人レビューを先頭に
 
             const fragment = document.createDocumentFragment();
             sortedReviews.forEach(review => {
@@ -408,14 +402,14 @@ const clientFirebaseConfig = {
             await renderRadarCharts();
 
         } catch (error) {
-            console.error("レビューの読み込みに失敗しました:", error); 
+            console.error("レビューの読み込みに失敗しました (v10 script):", error); 
             if (reviewsListContainer) {
-                 reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。 (詳細はコンソールを確認してください)</p>`;
+                 reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`;
             }
         }
     }
 
-    // 元の静的スクリプト（フォームとギャラリー）(変更なし)
+    // --- 静的スクリプトとイベントリスナー (変更なし) ---
     function initializeStaticScripts() {
         const showButton = document.getElementById("show-review-form-btn");
         const formWrapper = document.getElementById("review-form-wrapper");
@@ -426,7 +420,6 @@ const clientFirebaseConfig = {
                 formWrapper.scrollIntoView({ behavior: "smooth" });
             });
         }
-
         const galleryItems = document.querySelectorAll('.gallery-item');
         const showMoreBtn = document.getElementById('show-more-gallery-btn');
         if (galleryItems.length > 0) {
@@ -444,31 +437,25 @@ const clientFirebaseConfig = {
         }
     }
     
-    // メイン実行ロジック (変更なし)
     document.addEventListener('DOMContentLoaded', () => {
         initializeStaticScripts();
         loadReviews();
     });
 
-    // 即時反映ロジック (変更なし)
+    // このリスナーが、あなたが修正した ReviewSection からのイベントを受け取ります
     document.addEventListener('reviewPosted', (event) => {
-        console.log('新規レビュー投稿を検知:', event.detail);
+        console.log('新規レビュー投稿を検知 (v10 script):', event.detail);
         const newReviewData = event.detail;
         const reviewsListContainer = document.getElementById('reviews-list');
         const noReviewsEl = document.getElementById('no-reviews-message');
-
         if (!reviewsListContainer) return;
-
         if (noReviewsEl) {
             noReviewsEl.remove();
         }
-
         const article = createReviewArticle(newReviewData);
-        reviewsListContainer.prepend(article);
-
+        reviewsListContainer.prepend(article); // リストの先頭に追加
         if (newReviewData.author === "関＠シガゴル管理人" && newReviewData.scores) {
-             renderRadarCharts(); 
+             renderRadarCharts(); // 管理人ならチャートも再描画
         }
     });
-
 </script>
