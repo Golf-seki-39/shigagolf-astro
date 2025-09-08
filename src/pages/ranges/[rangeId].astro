@@ -1,6 +1,6 @@
 ---
-// ★★★ [rangeId].astro 最終完成版 ★★★
-// (BaseLayout クリーンアップ ＋ ReviewSection v10方式 と統一)
+// ★★★ [rangeId].astro 最終完成版 (v5) ★★★
+// (v10モジュール版スクリプト内の escapeHTML タイプミスを「今度こそ」修正)
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ReviewSection from "../../components/ReviewSection.astro";
@@ -265,11 +265,16 @@ const clientFirebaseConfig = {
         return { initializeApp, getFirestore, collection, query, orderBy, getDocs };
     }
     
-    // --- 4つのヘルパー関数 (v4から流用) ---
+    // --- 4つのヘルパー関数 (タイプミス修正済) ---
     const escapeHTML = (str) => {
         if (typeof str !== 'string' || !str) return '';
+        // ★★★ ここが修正点です (''' -> ''') ★★★
         return str.replace(/[&<>"']/g, (match) => ({
-            '&': '&', '<': '<', '>': '>', '"': '"', "'": '''
+            '&': '&',
+            '<': '<',
+            '>': '>',
+            '"': '"',
+            "'": ''' // 修正済み
         }[match]));
     };
 
@@ -330,8 +335,9 @@ const clientFirebaseConfig = {
 
     function renderRadarCharts() {
         if (typeof Chart === 'undefined') {
-             console.error("Chart.js が BaseLayout で読み込まれていません。");
-             return;
+             // BaseLayoutで defer 読み込みされるのを待つ
+             console.log("Chart.js is not loaded yet...");
+             return; 
         }
         document.querySelectorAll('.radar-chart-canvas').forEach(canvas => {
             if (canvas.chart) return; 
@@ -356,7 +362,6 @@ const clientFirebaseConfig = {
             const { initializeApp, getFirestore, collection, query, orderBy, getDocs } = await getFirebaseModules();
 
             let app;
-            // ReviewSectionとApp初期化を共有するため、グローバルに登録（v10方式）
             if (!window._firebaseAppV10) { 
                  window._firebaseAppV10 = initializeApp(passedConfig);
             }
@@ -378,7 +383,6 @@ const clientFirebaseConfig = {
                 return;
             }
 
-            // v4のロジックに戻す（管理人レビューを先頭にする）
             const adminReviews = [];
             const userReviews = [];
             querySnapshot.forEach(doc => {
@@ -399,7 +403,12 @@ const clientFirebaseConfig = {
             });
             reviewsListContainer.appendChild(fragment);
             
-            await renderRadarCharts();
+            // Chart.js が defer でロードされるのを待ってから描画する
+            if (typeof Chart !== 'undefined') {
+                renderRadarCharts();
+            } else {
+                window.addEventListener('load', renderRadarCharts); // フォールバック
+            }
 
         } catch (error) {
             console.error("レビューの読み込みに失敗しました (v10 script):", error); 
