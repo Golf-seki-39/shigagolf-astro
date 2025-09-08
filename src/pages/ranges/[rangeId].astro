@@ -1,6 +1,6 @@
 ---
-// ★★★ [rangeId].astro 最終完成版 (v5) ★★★
-// (v10モジュール版スクリプト内の escapeHTML タイプミスを「今度こそ」修正)
+// ★★★ [rangeId].astro 最終完成版 (v6) ★★★
+// (v5で修正し忘れた escapeHTML のタイプミスを「本当に」修正しました)
 
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ReviewSection from "../../components/ReviewSection.astro";
@@ -268,13 +268,13 @@ const clientFirebaseConfig = {
     // --- 4つのヘルパー関数 (タイプミス修正済) ---
     const escapeHTML = (str) => {
         if (typeof str !== 'string' || !str) return '';
-        // ★★★ ここが修正点です (''' -> ''') ★★★
+        // ★★★ v6: ここが今度こそ本当に修正された箇所です ★★★
         return str.replace(/[&<>"']/g, (match) => ({
             '&': '&',
             '<': '<',
             '>': '>',
             '"': '"',
-            "'": ''' // 修正済み
+            "'": '&#39;' // ←←← v5では ''' というバグが残っていました。これが正しいコードです。
         }[match]));
     };
 
@@ -353,7 +353,7 @@ const clientFirebaseConfig = {
         });
     }
 
-    // --- メインロジック (v10モジュール構文) ---
+    // --- メインロジック (v10モジュール構文) (変更なし) ---
     async function loadReviews() {
         const reviewsListContainer = document.getElementById('reviews-list');
         if (!reviewsListContainer) return;
@@ -403,11 +403,10 @@ const clientFirebaseConfig = {
             });
             reviewsListContainer.appendChild(fragment);
             
-            // Chart.js が defer でロードされるのを待ってから描画する
             if (typeof Chart !== 'undefined') {
                 renderRadarCharts();
             } else {
-                window.addEventListener('load', renderRadarCharts); // フォールバック
+                window.addEventListener('load', renderRadarCharts); 
             }
 
         } catch (error) {
