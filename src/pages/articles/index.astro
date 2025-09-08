@@ -1,32 +1,40 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { db } from "../../lib/firebase.js";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 const title = "お役立ち記事一覧 | シガゴル";
 const description = "滋賀のゴルファーに役立つ情報を発信中。練習場の体験談やギアレビュー、スコアアップのコツなど、様々な角度からゴルフライフをサポートします。";
 
-// 今後、CMSなどから記事データを取得することを想定し、配列で記事を管理します
-const allArticles = [
-  {
-    title: "【写真付きレビュー】KSP彦根に行ってみた！施設の詳細や感想を紹介",
-    description: "彦根市にある人気の練習場「KSP彦根」を管理人が徹底レビュー！施設の隅々まで写真付きで紹介し、リアルな感想をお届けします。",
-    url: "/articles/ksp-hikone-review", 
-    category: "体験談",
-    imageUrl: "https://i.imgur.com/SvB5tHL.png",
-    isFeatured: true,
-  },
-  {
-    title: "【近江八幡・東近江】ゴルフ練習場4選・徹底比較！料金・設備・目的で選ぶ、あなたにピッタリの場所はここだ！",
-    description: "ゴルフ激戦区の近江八幡・東近江エリア。主要な練習場の特徴や料金、設備を比較し、目的別に最適な練習場を提案します。",
-    url: "/articles/omi-higashiomi-comparison",
-    category: "比較記事",
-    // ★★★お願い★★★
-    // こちらの記事のアイキャッチ画像のURLを教えていただけますでしょうか？
-    // ひとまず仮の画像を入れています。
-    imageUrl: "https://i.imgur.com/DyVr8of.jpeg",
-    isFeatured: false,
-  },
-];
+// --- ▼▼▼ Firebaseから記事データを取得 ▼▼▼ ---
+let allArticles = [];
+let fetchError = false;
 
+try {
+    const articlesCollection = collection(
+        db,
+        "artifacts",
+        import.meta.env.PUBLIC_VITE_APP_ID, // .envファイルからApp IDを取得
+        "public",
+        "data",
+        "articles",
+    );
+    const q = query(articlesCollection, orderBy("createdAt", "desc")); // 新しい記事が上に来るようにソート
+    const querySnapshot = await getDocs(q);
+    
+    allArticles = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
+
+} catch (error) {
+    console.error("Firebase data fetching failed:", error);
+    fetchError = true;
+}
+// --- ▲▲▲ Firebaseからのデータ取得はここまで ▲▲▲ ---
+
+
+// 取得したデータを元に、注目記事やカテゴリ分けを行う
 const featuredArticles = allArticles.filter(a => a.isFeatured);
 const regularArticles = allArticles.filter(a => !a.isFeatured);
 
@@ -51,69 +59,73 @@ const categories = Object.keys(articlesByCategory);
       </p>
     </div>
 
-    <!-- 注目記事セクション -->
-    {featuredArticles.length > 0 && (
-      <section class="mb-12">
-        <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">注目記事</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {featuredArticles.map(article => (
-            <a href={article.url} class="flex flex-col sm:flex-row bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
-              {/* ▼▼▼ 変更点 ▼▼▼ object-cover を object-contain に変更し、背景色を追加しました */}
-              <div class="w-full sm:w-1/2 h-48 bg-slate-100 flex items-center justify-center">
-                <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
-              </div>
-              {/* ▲▲▲ 変更点 ▲▲▲ */}
-              <div class="p-5 flex flex-col justify-between flex-1">
-                <div>
-                  <span class="text-sm bg-green-100 text-green-800 font-semibold px-2 py-1 rounded">{article.category}</span>
-                  <h3 class="text-xl font-bold mt-2 text-slate-800 group-hover:text-green-700 transition-colors">
-                    {article.title}
-                  </h3>
-                  <p class="text-sm text-slate-600 mt-2">
-                    {article.description}
-                  </p>
-                </div>
-                <div class="mt-4 text-right text-sm font-semibold text-green-600">
-                  続きを読む →
-                </div>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
+    { fetchError ? (
+      <div class="text-center py-16 bg-red-50 text-red-700 rounded-lg">
+        <p class="text-lg font-semibold">記事データの読み込みに失敗しました。</p>
+        <p class="text-slate-600 mt-2">時間をおいて再度お試しください。</p>
+      </div>
+    ) : (
+      <>
+        <!-- 注目記事セクション -->
+        {featuredArticles.length > 0 && (
+          <section class="mb-12">
+            <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">注目記事</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {featuredArticles.map(article => (
+                <a href={article.url} class="flex flex-col sm:flex-row bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+                  <div class="w-full sm:w-1/2 h-48 bg-slate-100 flex items-center justify-center">
+                    <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
+                  </div>
+                  <div class="p-5 flex flex-col justify-between flex-1">
+                    <div>
+                      <span class="text-sm bg-green-100 text-green-800 font-semibold px-2 py-1 rounded">{article.category}</span>
+                      <h3 class="text-xl font-bold mt-2 text-slate-800 group-hover:text-green-700 transition-colors">
+                        {article.title}
+                      </h3>
+                      <p class="text-sm text-slate-600 mt-2">
+                        {article.description}
+                      </p>
+                    </div>
+                    <div class="mt-4 text-right text-sm font-semibold text-green-600">
+                      続きを読む →
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
 
-    <!-- カテゴリ別記事セクション -->
-    {categories.map(category => (
-      <section class="mb-12">
-        <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">{category}</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articlesByCategory[category].map(article => (
-            <a href={article.url} class="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
-              <div class="relative">
-                {/* ▼▼▼ 変更点 ▼▼▼ object-cover を object-contain に変更し、背景色を追加しました */}
-                <div class="w-full h-40 bg-slate-100 flex items-center justify-center">
-                  <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
-                </div>
-                {/* ▲▲▲ 変更点 ▲▲▲ */}
-              </div>
-              <div class="p-4 flex-grow flex flex-col">
-                <h3 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors">
-                  {article.title}
-                </h3>
-                <p class="text-sm text-slate-600 mt-2 flex-grow">
-                  {article.description}
-                </p>
-                <div class="mt-4 text-right text-sm font-semibold text-green-600">
-                  続きを読む →
-                </div>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-    ))}
-    
+        <!-- カテゴリ別記事セクション -->
+        {categories.map(category => (
+          <section class="mb-12">
+            <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">{category}</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {articlesByCategory[category].map(article => (
+                <a href={article.url} class="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+                  <div class="relative">
+                    <div class="w-full h-40 bg-slate-100 flex items-center justify-center">
+                      <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
+                    </div>
+                  </div>
+                  <div class="p-4 flex-grow flex flex-col">
+                    <h3 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors">
+                      {article.title}
+                    </h3>
+                    <p class="text-sm text-slate-600 mt-2 flex-grow">
+                      {article.description}
+                    </p>
+                    <div class="mt-4 text-right text-sm font-semibold text-green-600">
+                      続きを読む →
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </>
+    )}
   </main>
 </BaseLayout>
 
