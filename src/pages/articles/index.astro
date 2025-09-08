@@ -3,6 +3,27 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
 const title = "お役立ち記事一覧 | シガゴル";
 const description = "滋賀のゴルファーに役立つ情報を発信中。練習場の体験談やギアレビュー、スコアアップのコツなど、様々な角度からゴルフライフをサポートします。";
+
+// 今後、CMSなどから記事データを取得することを想定し、配列で記事を管理します
+const articles = [
+  {
+    title: "【写真付きレビュー】KSP彦根に行ってみた！施設の詳細や感想を紹介",
+    description: "彦根市にある人気の練習場「KSP彦根」を管理人が徹底レビュー！施設の隅々まで写真付きで紹介し、リアルな感想をお届けします。",
+    // managerReviewUrlに設定したURLと同じものを設定してください
+    url: "/articles/ksp-hikone-review", 
+    category: "体験談",
+    imageUrl: "https://placehold.co/600x400/16a34a/ffffff?text=KSP彦根",
+  },
+  {
+    title: "近江八幡・東近江エリアの練習場を徹底比較！あなたに合うのはどこ？",
+    description: "ゴルフ激戦区の近江八幡・東近江エリア。主要な練習場の特徴や料金、設備を比較し、目的別に最適な練習場を提案します。",
+    // この記事の実際のパスを指定しています
+    url: "/articles/omi-higashiomi-comparison",
+    category: "比較記事",
+    imageUrl: "https://placehold.co/600x400/15803d/ffffff?text=比較記事",
+  },
+  // 今後記事が追加されたら、この配列に新しいオブジェクトを追加します
+];
 ---
 
 <BaseLayout title={title} description={description}>
@@ -14,10 +35,28 @@ const description = "滋賀のゴルファーに役立つ情報を発信中。�
       </p>
     </div>
 
-    <div class="bg-slate-50 p-8 rounded-lg text-center">
-      <p class="text-slate-700">
-        ここに、これから作成する体験談や比較記事などの一覧が表示されます。
-      </p>
+    <!-- ここから記事一覧のセクション -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {articles.map(article => (
+        <a href={article.url} class="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+          <div class="relative">
+            <img src={article.imageUrl} alt={article.title} class="w-full h-40 object-cover" />
+            <span class="absolute top-2 left-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full">{article.category}</span>
+          </div>
+          <div class="p-4 flex-grow flex flex-col">
+            <h2 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors">
+              {article.title}
+            </h2>
+            <p class="text-sm text-slate-600 mt-2 flex-grow">
+              {article.description}
+            </p>
+            <div class="mt-4 text-right text-sm font-semibold text-green-600">
+              続きを読む →
+            </div>
+          </div>
+        </a>
+      ))}
     </div>
   </main>
 </BaseLayout>
+
