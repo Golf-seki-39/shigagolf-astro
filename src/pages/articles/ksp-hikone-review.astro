@@ -7,20 +7,19 @@ const description = "KSP彦根を徹底レビュー！全打席無料のトッ�
 const pubDate = "2025-06-05"; // 記事の公開日
 ---
 
-{/* ★★★ 提案1: 構造化データ(JSON-LD)の追加 ★★★ */}
-{/* BaseLayout.astroに <slot name="head" /> を追加したので、これが機能します */}
+{/* 提案1: 構造化データ(JSON-LD) */}
 <Fragment slot="head">
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": Astro.url.href  // 現在のページの完全なURL
+      "@id": Astro.url.href
     },
-    "headline": title.split(' | ')[0], // フロントマターの変数
-    "description": description,      // フロントマターの変数
+    "headline": title.split(' | ')[0],
+    "description": description,
     "image": [
-      "https://i.imgur.com/PDrCUnt.jpeg" // この記事のメイン画像
+      "https://i.imgur.com/PDrCUnt.jpeg"
      ],
     "author": {
       "@type": "Organization",
@@ -31,11 +30,10 @@ const pubDate = "2025-06-05"; // 記事の公開日
       "name": "シガゴル",
       "logo": {
         "@type": "ImageObject",
-        // ★★★ ロゴ画像URLを BaseLayout から取得したURLに設定 ★★★
         "url": "https://i.imgur.com/mN0IbPS.png" 
       }
     },
-    "datePublished": pubDate // フロントマターの変数
+    "datePublished": pubDate
   })} />
 </Fragment>
 
@@ -53,8 +51,13 @@ const pubDate = "2025-06-05"; // 記事の公開日
             >‹ トップページに戻る</a
         >
         
+        {/*
+          ★★★ PCでの可読性対策 ★★★
+          ご指摘の通り、この行から "max-w-none" を削除しました。
+          これにより、prose プラグイン標準の「読みやすい最大幅」が適用されます。
+        */}
         <article
-            class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
+            class="prose lg:prose-xl text-slate-700 leading-relaxed"
         >
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
@@ -65,7 +68,7 @@ const pubDate = "2025-06-05"; // 記事の公開日
                 </p>
             </header>
 
-            {/* ★★★ 提案2: CLS対策 (width/height追加) ★★★ */}
+            {/* CLS対策済みの画像 */}
             <img src="https://i.imgur.com/PDrCUnt.jpeg" alt="KSP彦根のエントランス＿一部屋根もあり雨の日も安心" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
 
             <p>「自分のショット、本当は何ヤード飛んでるの？」「もっと効率よく上手くなりたいけど、何から始めれば…？」</p>
@@ -73,6 +76,7 @@ const pubDate = "2025-06-05"; // 記事の公開日
             <p>滋賀県彦根市にある「KSP彦根」は、まさにそんな願いを叶えてくれる、ちょっと未来的なゴルフ練習場です。何を隠そう、私がこの練習場に惹かれる最大の理由は、全打席に標準装備された「トップトレーサー・レンジ」。そして、広々とした駐車場と十分な打席数で、行きたい時にふらっと立ち寄れる快適さも魅力です。</p>
             <p>今回は、ハイテク設備と安心システムが融合した「KSP彦根」を、私の体験や活用術（今後の野望も！）を交えながら、徹底的にご紹介します！</p>
             
+            {/* 目次 */}
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
               <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
               <ul class="space-y-2 list-disc list-inside">
@@ -86,7 +90,7 @@ const pubDate = "2025-06-05"; // 記事の公開日
               </ul>
             </div>
 
-            {/* 見出しスタイル + scroll-mt-24 + CLS対応 適用済み */}
+            {/* 見出しスタイル + scroll-mt (アンカーずれ防止) + CLS画像 適用済み */}
             <h2 id="about-ksp" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 KSP彦根ってどんなところ？〜最新技術と安心システムの融合〜
             </h2>
@@ -220,7 +224,7 @@ const pubDate = "2025-06-05"; // 記事の公開日
             </h2>
             <p>KSP彦根の魅力、特に「全打席トップトレーサー無料」というデータ活用の楽しさ、伝わりましたでしょうか？</p>
 
-            {/* まとめボックス（前回修正版のまま） */}
+            {/* まとめボックス（装飾済み） */}
             <div class="summary-box not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8">
                 <h3 class="text-xl font-bold text-slate-800 mb-4 text-center md:text-left">
                     KSP彦根は、こんなあなたにピッタリ！
@@ -262,7 +266,7 @@ const pubDate = "2025-06-05"; // 記事の公開日
             
             <hr />
 
-            {/* ★★★ 提案4: CVR対策のため、CTA(行動喚起)をリンクからボタンに変更 ★★★ */}
+            {/* CTAボタン（強化済み） */}
             <p class="text-center font-bold text-lg">
                 🎯 KSP彦根の「公式レビュー（総評）」と基本情報・口コミはこちらのページで確認できます！
                 <br />
