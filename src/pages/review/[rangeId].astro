@@ -7,11 +7,6 @@ import { collection, getDocs } from 'firebase/firestore';
 // どの練習場のレビューページを生成するかをAstroに教える
 export async function getStaticPaths() {
 
-      // ▼▼▼ このデバッグコードを追加 ▼▼▼
-  console.log('--- DEBUGGING ENV VAR ---');
-  console.log('App ID from env:', import.meta.env.PUBLIC_FIREBASE_APP_ID);
-  console.log('---------------------------');
-  // ▲▲▲ ここまで ▲▲▲
 
   const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges');
   const querySnapshot = await getDocs(rangesCollection);
