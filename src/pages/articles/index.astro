@@ -11,11 +11,10 @@ const allArticles = [
     description: "彦根市にある人気の練習場「KSP彦根」を管理人が徹底レビュー！施設の隅々まで写真付きで紹介し、リアルな感想をお届けします。",
     url: "/articles/ksp-hikone-review", 
     category: "体験談",
-    imageUrl: "https://i.imgur.com/SvB5tHL.png", // ★ご指定の画像に更新しました
-    isFeatured: false, // ★注目記事として設定
+    imageUrl: "https://i.imgur.com/SvB5tHL.png",
+    isFeatured: true,
   },
   {
-    // ★ご指定のタイトルに更新しました
     title: "【近江八幡・東近江】ゴルフ練習場4選・徹底比較！料金・設備・目的で選ぶ、あなたにピッタリの場所はここだ！",
     description: "ゴルフ激戦区の近江八幡・東近江エリア。主要な練習場の特徴や料金、設備を比較し、目的別に最適な練習場を提案します。",
     url: "/articles/omi-higashiomi-comparison",
@@ -24,24 +23,13 @@ const allArticles = [
     // こちらの記事のアイキャッチ画像のURLを教えていただけますでしょうか？
     // ひとまず仮の画像を入れています。
     imageUrl: "https://i.imgur.com/DyVr8of.jpeg",
-    isFeatured: true,
+    isFeatured: false,
   },
-  // 今後記事が追加されたら、この配列に新しいオブジェクトを追加します
-  // {
-  //   title: "新しい記事のタイトル",
-  //   description: "新しい記事の説明文。",
-  //   url: "/articles/new-article",
-  //   category: "上達のヒント",
-  //   imageUrl: "...",
-  //   isFeatured: false,
-  // },
 ];
 
-// 注目記事とそれ以外の記事に分ける
 const featuredArticles = allArticles.filter(a => a.isFeatured);
 const regularArticles = allArticles.filter(a => !a.isFeatured);
 
-// 通常記事をカテゴリ別にグループ化する
 const articlesByCategory = regularArticles.reduce((acc, article) => {
   const category = article.category;
   if (!acc[category]) {
@@ -70,8 +58,12 @@ const categories = Object.keys(articlesByCategory);
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           {featuredArticles.map(article => (
             <a href={article.url} class="flex flex-col sm:flex-row bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
-              <img src={article.imageUrl} alt={article.title} class="w-full sm:w-1/2 h-48 object-cover" />
-              <div class="p-5 flex flex-col justify-between">
+              {/* ▼▼▼ 変更点 ▼▼▼ object-cover を object-contain に変更し、背景色を追加しました */}
+              <div class="w-full sm:w-1/2 h-48 bg-slate-100 flex items-center justify-center">
+                <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
+              </div>
+              {/* ▲▲▲ 変更点 ▲▲▲ */}
+              <div class="p-5 flex flex-col justify-between flex-1">
                 <div>
                   <span class="text-sm bg-green-100 text-green-800 font-semibold px-2 py-1 rounded">{article.category}</span>
                   <h3 class="text-xl font-bold mt-2 text-slate-800 group-hover:text-green-700 transition-colors">
@@ -99,7 +91,11 @@ const categories = Object.keys(articlesByCategory);
           {articlesByCategory[category].map(article => (
             <a href={article.url} class="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
               <div class="relative">
-                <img src={article.imageUrl} alt={article.title} class="w-full h-40 object-cover" />
+                {/* ▼▼▼ 変更点 ▼▼▼ object-cover を object-contain に変更し、背景色を追加しました */}
+                <div class="w-full h-40 bg-slate-100 flex items-center justify-center">
+                  <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
+                </div>
+                {/* ▲▲▲ 変更点 ▲▲▲ */}
               </div>
               <div class="p-4 flex-grow flex flex-col">
                 <h3 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors">
