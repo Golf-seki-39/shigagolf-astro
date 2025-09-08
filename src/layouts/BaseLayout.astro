@@ -6,7 +6,7 @@ import { db } from '../lib/firebase.js';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 // ポップアップ用に、全ての練習場リストをここで取得します
-const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_VITE_APP_ID, 'public', 'data', 'practice_ranges');
+const rangesCollection = collection(db, 'artifacts', import.meta.env.PUBLIC_FIREBASE_APP_ID, 'public', 'data', 'practice_ranges');
 const q = query(rangesCollection, orderBy("name"));
 const querySnapshot = await getDocs(q);
 const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
