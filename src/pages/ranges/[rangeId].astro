@@ -140,7 +140,7 @@ const clientFirebaseConfig = {
                 <div id="gallery-grid" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                   {galleryImages.map((image, index) => (
                     <div class="gallery-item hidden">
-                      <a href={getPublicUrl(image.url)/} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
+                      <a href={getPublicUrl(image.url)} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
                         <img 
                           src={getThumbnailUrl(image.url)}
                           alt={`${name}のギャラリー写真 ${index + 1}（投稿者: ${image.author}） ${image.description || ''}`}
