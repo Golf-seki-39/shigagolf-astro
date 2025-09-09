@@ -2,9 +2,9 @@
 // ★★★ [rangeId].astro 最終完成版 (v6) ★★★
 // (v5で修正し忘れた escapeHTML のタイプミスを「本当に」修正しました)
 
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import ReviewSection from "../../components/ReviewSection.astro";
-import { db } from "../../lib/firebase.js"; // getStaticPaths で使用
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ReviewSection from "../../../components/ReviewSection.astro";
+import { db } from "../../../lib/firebase.js"; // getStaticPaths で使用
 import { collection, getDocs } from "firebase/firestore";
 
 // 1. getStaticPaths (変更なし)
