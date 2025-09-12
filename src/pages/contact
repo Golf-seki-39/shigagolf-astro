@@ -1,6 +1,6 @@
 ---
 // サイト全体のレイアウトを読み込みます
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
 // ページのタイトルを設定します
 const title = 'お問い合わせ | シガゴル';
