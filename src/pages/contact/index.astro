@@ -56,8 +56,8 @@ const formSuccess = Astro.url.searchParams.get('success') === 'true';
           name="contact"
           method="POST"
           data-netlify="true"
-          {/* ★★★ 最後の修正: 送信先を .html ファイルに直接指定します ★★★ */}
-          action="/contact/index.html?success=true" 
+          {/* ★★★ 修正点: 送信先を正しいページのURL /contact/ に変更します ★★★ */}
+          action="/contact/?success=true" 
           netlify-honeypot="bot-field"
           class="space-y-6 bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200"
         >
