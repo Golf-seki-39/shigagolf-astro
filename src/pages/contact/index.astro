@@ -4,12 +4,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 // ページのタイトルを設定します
 const title = 'お問い合わせ | シガゴル';
+
+// フォームが正常に送信されたかどうかをURLのパラメータで確認します
+const formSuccess = Astro.url.searchParams.get('success') === 'true';
 ---
 
 <BaseLayout title={title}>
-  {/* Netlifyがビルド時にフォームを確実に検出するための静的なフォーム定義です */}
-  {/* このフォームはユーザーには表示されません */}
-  <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  {/* ★★★ 最後の修正 ★★★ */}
+  {/* Netlifyのビルドロボットが見るこちらの隠しフォームに、action属性を追加します */}
+  <form name="contact" data-netlify="true" netlify-honeypot="bot-field" action="/contact/?success=true" hidden>
     <input type="hidden" name="form-name" value="contact" />
     <input type="text" name="name" />
     <input type="email" name="email" />
@@ -25,82 +28,106 @@ const title = 'お問い合わせ | シガゴル';
     </div>
 
     <div class="mt-12">
-      {/* ★★★ 最終修正案: actionのURLから末尾の / を削除します ★★★ */}
-      <form
-        name="contact"
-        method="POST"
-        data-netlify="true"
-        action="/contact/success" 
-        netlify-honeypot="bot-field"
-        class="space-y-6 bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200"
-      >
-        {/* Netlify Formsに必要な隠しフィールド */}
-        <input type="hidden" name="form-name" value="contact" />
-        <p class="hidden">
-          <label>
-            Don’t fill this out if you’re human: <input name="bot-field" />
-          </label>
-        </p>
-        
-        <div>
-          <label for="name" class="block text-sm font-medium leading-6 text-gray-900">
-            お名前 <span class="text-red-500">*</span>
-          </label>
-          <div class="mt-2">
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              autocomplete="name"
-              class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition"
-              placeholder="滋賀 太郎"
-            />
+      {/* フォーム送信が成功した場合、このメッセージを表示します */}
+      {formSuccess && (
+        <div id="success-message" class="rounded-md bg-green-50 p-4 text-center border border-green-200" role="alert">
+          <div class="flex justify-center">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-green-800">お問い合わせありがとうございました。</h3>
+              <div class="mt-2 text-sm text-green-700">
+                <p>内容を確認の上、返信が必要な場合はご連絡いたします。</p>
+              </div>
+               <div class="mt-6">
+                <a href="/" class="text-blue-600 hover:underline">トップページに戻る</a>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div>
-          <label for="email" class="block text-sm font-medium leading-6 text-gray-900">
-            メールアドレス <span class="text-red-500">*</span>
-          </label>
-          <div class="mt-2">
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              autocomplete="email"
-              class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition"
-              placeholder="your-email@example.com"
-            />
+      )}
+
+      {/* フォームがまだ送信されていない、または初回表示の場合、このフォームを表示します */}
+      {!formSuccess && (
+        <form
+          name="contact"
+          method="POST"
+          data-netlify="true"
+          action="/contact/?success=true" 
+          netlify-honeypot="bot-field"
+          class="space-y-6 bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200"
+        >
+          {/* Netlify Formsに必要な隠しフィールド */}
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hidden">
+            <label>
+              Don’t fill this out if you’re human: <input name="bot-field" />
+            </label>
+          </p>
+          
+          <div>
+            <label for="name" class="block text-sm font-medium leading-6 text-gray-900">
+              お名前 <span class="text-red-500">*</span>
+            </label>
+            <div class="mt-2">
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                autocomplete="name"
+                class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition"
+                placeholder="滋賀 太郎"
+              />
+            </div>
           </div>
-        </div>
-        
-        <div>
-          <label for="message" class="block text-sm font-medium leading-6 text-gray-900">
-            お問い合わせ内容 <span class="text-red-500">*</span>
-          </label>
-          <div class="mt-2">
-            <textarea
-              id="message"
-              name="message"
-              required
-              rows="6"
-              class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition"
-              placeholder="サイトの誤情報のご指摘や、ご意見・ご要望などをご自由にお書きください..."
-            ></textarea>
+          
+          <div>
+            <label for="email" class="block text-sm font-medium leading-6 text-gray-900">
+              メールアドレス <span class="text-red-500">*</span>
+            </label>
+            <div class="mt-2">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                autocomplete="email"
+                class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition"
+                placeholder="your-email@example.com"
+              />
+            </div>
           </div>
-        </div>
-        
-        <div class="text-center pt-4">
-          <button
-            type="submit"
-            class="w-full sm:w-auto rounded-md bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
-          >
-            送信する
-          </button>
-        </div>
-      </form>
+          
+          <div>
+            <label for="message" class="block text-sm font-medium leading-6 text-gray-900">
+              お問い合わせ内容 <span class="text-red-500">*</span>
+            </label>
+            <div class="mt-2">
+              <textarea
+                id="message"
+                name="message"
+                required
+                rows="6"
+                class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition"
+                placeholder="サイトの誤情報のご指摘や、ご意見・ご要望などをご自由にお書きください..."
+              ></textarea>
+            </div>
+          </div>
+          
+          <div class="text-center pt-4">
+            <button
+              type="submit"
+              class="w-full sm:w-auto rounded-md bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+            >
+              送信する
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   </div>
 </BaseLayout>
