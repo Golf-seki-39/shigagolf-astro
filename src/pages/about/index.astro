@@ -1,18 +1,46 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-// ★ 提案2: SEOを意識し、ページタイトルとディスクリプションにキーワードを追加 ★
+// ★ SEOを意識し、ページタイトルとディスクリプションにキーワードを追加 ★
 const pageTitle = "運営者紹介 | 滋賀のゴルフ練習場レビューサイト「シガゴル」";
 const description = "滋賀のゴルフ練習場レビューサイト「シガゴル」運営者の関です。ゴルフ歴1年未満の初心者目線で、忖度なしのリアルな情報をお届けします。外部メディア掲載実績も紹介。";
 
+// ★ 1. 構造化データ(JSON-LD)を拡張 ★
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "関（せき）",
+  "url": "https://shigagolf-reviews.netlify.app/about/",
+  "image": "https://i.imgur.com/BOcMOf3.png",
+  "jobTitle": "初心者向けゴルフ施設レビュアー",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "シガゴル"
+  },
+  "knowsAbout": ["Golf", "ゴルフ練習場", "滋賀県"],
+  "sameAs": [
+    "https://x.com/Golf_Seki39",
+    "https://golf-medley.com/articles/authors/seki"
+  ],
+  // ★ 追加: お問い合わせ情報をGoogleに伝える
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "url": "https://shigagolf-reviews.netlify.app/contact/"
+  }
+};
 ---
 
-<BaseLayout pageTitle={pageTitle}>
+<BaseLayout pageTitle={pageTitle} description={description}>
+  
+  <Fragment slot="head">
+    <meta property="og:image" content="https://i.imgur.com/BOcMOf3.png" />
+    <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+  </Fragment>
+
   <main class="container mx-auto px-4 py-8 md:py-12">
-    <!-- ★ 提案2: H1にキーワードを含める ★ -->
     <h1 class="text-3xl md:text-4xl font-bold text-center">運営者紹介 | シガゴル</h1>
     
-    <!-- ★ 提案1: キャッチコピーを導入 ★ -->
     <div class="text-center mt-4 mb-12 max-w-2xl mx-auto">
       <p class="text-lg md:text-xl font-semibold text-slate-700">
         滋賀でゴルフを始める人が“遠回り”せずに楽しめるように。
@@ -22,20 +50,17 @@ const description = "滋賀のゴルフ練習場レビューサイト「シガ�
       </p>
     </div>
 
-    <!-- ★ 提案8: セクション間の余白を広めに調整 ★ -->
     <div class="space-y-12 max-w-4xl mx-auto">
 
       <section class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
-        <!-- ★ 提案2: H2にサイト名を含める ★ -->
         <h2 class="text-2xl md:text-3xl font-bold text-slate-800">
           滋賀ゴルフ情報サイト『シガゴル』に込めた想い
         </h2>
         <div class="mt-6 text-slate-600 space-y-4 leading-relaxed">
-            <p>はじめまして！「シガゴル」管理人の 関（せき） と申します。</p>
+            <p>はじめまして！「シгаゴル」管理人の 関（せき） と申します。</p>
             <p>ゴルフ歴はまだ1年未満（2024年10月29日スタート）。そんな私が、なぜ滋賀県のゴルフ練習場に特化した、こんな少しマニアックなサイトを立ち上げたのか。少しだけ、このサイトに込めた私の想いをお話しさせてください。</p>
             
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 pt-4">「もっと早く知りたかった…」 私の“遠回り”が、このサイトの原点です。</h3>
-            <!-- ★ 提案5: 読者目線の言葉を増やす ★ -->
             <p>私が感じた“初心者の壁”を、これからゴルフを始める方には越えてほしい。練習を続ける中で何度も感じた<strong class="text-green-700">「ゴルフ練習場の情報って、ネットに少なくて分かりにくい…」</strong>という現実を解決したい。</p>
             <ul class="list-disc list-inside space-y-2 pl-4">
                 <li>「初めて行くのに、いくら持っていけば安心なんだろう？」</li>
@@ -44,7 +69,6 @@ const description = "滋賀のゴルフ練習場レビューサイト「シガ�
             </ul>
             <p>そんな、かつての私のような “遠回り” や “小さな損” を、あなたにしてほしくない。仕事でゴルフメディアの記事を執筆するために多くの練習場を巡る中で得た知識と、一人の初心者ゴルファーとしてのリアルな失敗談。そのすべてを注ぎ込み、滋賀のゴルファーにとっての「信頼できる相棒」のようなサイトを作りたい。その想いが「シガゴル」の原点です。</p>
             
-            <!-- ★ 提案3: 内部リンクの活用 ★ -->
             <div class="mt-8 pt-6 border-t border-slate-200 space-y-4">
                 <h4 class="text-lg font-semibold text-center text-slate-700">サイトを最大限に活用する</h4>
                 <div class="grid sm:grid-cols-2 gap-4">
@@ -65,21 +89,18 @@ const description = "滋賀のゴルフ練習場レビューサイト「シガ�
         <h2 class="text-2xl md:text-3xl font-bold text-slate-800">運営者プロフィール (E-E-A-T)</h2>
         <div class="mt-6 flex flex-col sm:flex-row gap-6 items-center">
             <div class="flex-shrink-0">
-                <!-- ★ 運営者の写真/イラストを差し替え ★ -->
                 <img src="https://i.imgur.com/BOcMOf3.png" alt="シガゴル運営者 関のプロフィール写真" class="rounded-full w-32 h-32 md:w-36 md:h-36 object-cover border-4 border-slate-200">
             </div>
             <div class="text-center sm:text-left">
                 <p class="text-xl font-semibold">関（せき）</p>
                 <p class="text-green-700 font-bold">初心者向けゴルフ施設レビュアー</p>
                 <p class="text-slate-600 mt-2 leading-relaxed">“初心者代表”として、忖度なしのリアルな情報をお届けします！</p>
-                 <!-- ★ 提案4: SNSアカウントリンク ★ -->
                 <div class="mt-2">
-                    <a href="#" class="text-blue-500 hover:underline font-semibold">X (旧Twitter) はこちら</a>
+                    <a href="https://x.com/Golf_Seki39" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:underline font-semibold">X (旧Twitter) はこちら</a>
                 </div>
             </div>
         </div>
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            <!-- ★ 提案1: E-E-A-T (経験・専門性) を数字で示す ★ -->
             <div>
                 <h4 class="font-semibold text-slate-800">経験 (Experience)</h4>
                 <p class="text-slate-600">ゴルフ歴1年未満（2024年10月〜）、ベストスコア114</p>
@@ -108,12 +129,10 @@ const description = "滋賀のゴルフ練習場レビューサイト「シガ�
         <p class="text-slate-600 mt-4 leading-relaxed">
             私の専門性や経験を評価いただき、ゴルフ専門メディアや大手ニュースアプリにて記事を執筆・掲載いただいた実績があります。
         </p>
-        <!-- ★ 提案4: 実績をカード化 ★ -->
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- ゴルフメドレー -->
             <div class="flex flex-col bg-slate-50 p-4 rounded-lg border h-full">
                 <div class="flex items-center mb-3">
-                    <!-- ★★★ ロゴ画像に差し替え ★★★ -->
                     <img src="https://i.imgur.com/QqxiurZ.png" alt="ゴルフメドレー ロゴ" class="w-12 h-12 mr-4 object-contain">
                     <h3 class="text-xl font-semibold text-slate-700">ゴルフメドレー様</h3>
                 </div>
@@ -127,7 +146,6 @@ const description = "滋賀のゴルフ練習場レビューサイト「シガ�
             <!-- スマートニュース -->
             <div class="flex flex-col bg-slate-50 p-4 rounded-lg border h-full">
                 <div class="flex items-center mb-3">
-                    <!-- ★★★ ロゴ画像に差し替え ★★★ -->
                     <img src="https://i.imgur.com/mpPPzI1.png" alt="スマートニュース ロゴ" class="w-12 h-12 mr-4 object-contain">
                     <h3 class="text-xl font-semibold text-slate-700">スマートニュース様</h3>
                 </div>
@@ -139,6 +157,16 @@ const description = "滋賀のゴルフ練習場レビューサイト「シガ�
                 </div>
             </div>
         </div>
+      </section>
+
+      <!-- ★ 2. 口コミ・推薦文エリアを追加 ★ -->
+      <section class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+        <h2 class="text-2xl md:text-3xl font-bold text-slate-800">読者・仲間からの声</h2>
+        <p class="text-slate-600 mt-4 leading-relaxed">
+          実際に一緒にゴルフを楽しんでいる仲間や、読者の方々からの温かい声を掲載する準備を進めています。
+          <br class="hidden sm:block" />
+          ※ 現在準備中。近日公開予定です！
+        </p>
       </section>
 
       <section class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
@@ -166,17 +194,22 @@ const description = "滋賀のゴルフ練習場レビューサイト「シガ�
                 </div>
             </div>
         </div>
-         <!-- ★ 提案4: 連絡先フォームへの導線 ★ -->
         <div class="mt-8 pt-6 border-t border-slate-200 text-center">
             <p class="text-sm text-slate-500">掲載情報に誤りがある場合や、ご意見・ご要望は、お気軽にご連絡ください。</p>
-            <a href="#" class="inline-block mt-2 text-green-700 font-semibold hover:underline">→ お問い合わせフォームへ</a>
+            <a href="/contact/" class="inline-block mt-2 text-green-700 font-semibold hover:underline">→ お問い合わせフォームへ</a>
         </div>
       </section>
-
-      <div class="text-center pt-4">
-        <a href="/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">‹ トップページに戻る</a>
+      
+      <!-- ★ 3. 内部リンクの整理 ★ -->
+      <div class="text-center pt-6 border-t">
+        <h3 class="font-semibold text-slate-700">他のページも見てみる</h3>
+        <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm">
+            <a href="/" class="text-green-700 hover:underline">トップページ</a>
+            <a href="/ranges/" class="text-green-700 hover:underline">練習場一覧</a>
+            <a href="/articles/" class="text-green-700 hover:underline">特集記事一覧</a>
+            <a href="/map/" class="text-green-700 hover:underline">練習場マップ</a>
+        </div>
       </div>
-
     </div>
   </main>
 </BaseLayout>
