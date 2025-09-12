@@ -25,12 +25,12 @@ const title = 'お問い合わせ | シガゴル';
     </div>
 
     <div class="mt-12">
-      {/* フォームの送信先を新しい完了ページ /contact/success/ に変更 */}
+      {/* ★★★ 最終修正案: actionのURLから末尾の / を削除します ★★★ */}
       <form
         name="contact"
         method="POST"
         data-netlify="true"
-        action="/contact/success/" 
+        action="/contact/success" 
         netlify-honeypot="bot-field"
         class="space-y-6 bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200"
       >
