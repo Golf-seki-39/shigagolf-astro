@@ -5,9 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 // ページのタイトルを設定します
 const title = 'お問い合わせ | シガゴル';
 
-// ★★★ 修正 ★★★
 // フォームが正常に送信されたかどうかをURLのパラメータで確認します
-// このロジックは、静的サイト（SSG）でもビルド後のブラウザで正しく機能します
 const formSuccess = Astro.url.searchParams.get('success') === 'true';
 ---
 
@@ -30,7 +28,6 @@ const formSuccess = Astro.url.searchParams.get('success') === 'true';
     </div>
 
     <div class="mt-12">
-      {/* ★★★ 修正 ★★★ */}
       {/* フォーム送信が成功した場合、このメッセージを表示します */}
       {formSuccess && (
         <div id="success-message" class="rounded-md bg-green-50 p-4 text-center border border-green-200" role="alert">
@@ -53,14 +50,14 @@ const formSuccess = Astro.url.searchParams.get('success') === 'true';
         </div>
       )}
 
-      {/* ★★★ 修正 ★★★ */}
       {/* フォームがまだ送信されていない、または初回表示の場合、このフォームを表示します */}
       {!formSuccess && (
         <form
           name="contact"
           method="POST"
           data-netlify="true"
-          action="/contact/?success=true" /* ★★★ 修正: 送信先をこのページ自身に戻す ★★★ */
+          {/* ★★★ 最後の修正: 送信先を .html ファイルに直接指定します ★★★ */}
+          action="/contact/index.html?success=true" 
           netlify-honeypot="bot-field"
           class="space-y-6 bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-gray-200"
         >
@@ -135,15 +132,4 @@ const formSuccess = Astro.url.searchParams.get('success') === 'true';
     </div>
   </div>
 </BaseLayout>
-```
-
----
-### 最後のデプロイ
-
-この2つの作業（フォルダ削除とファイル差し替え）が完了したら、最後のデプロイをお願いいたします。
-
-```sh
-git add .
-git commit -m "refactor: お問い合わせフォームを単一ページ完結型に修正"
-git push
 
