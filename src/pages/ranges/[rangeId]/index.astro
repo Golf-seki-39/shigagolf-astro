@@ -23,7 +23,7 @@ export async function getStaticPaths() {
 
 // 2. Props と静的変数の定義 (あなたの元のコードと同じ)
 const { range } = Astro.props;
-const { id, name, address, phone, businessHours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl, isIndoor, is_beginner_friendly, hasTracer, tracer_brand, tags, galleryImages, yardage, bays, hasApproach, hasBunker, hasPutter, hasUchihodai, price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str, approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info, rental_club_info, lefty_bays_info, managerReviewUrl } = range;
+const { id, name, address, phone, business_hours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl, isIndoor, is_beginner_friendly, hasTracer, tracer_brand, tags, galleryImages, yardage, bays, hasApproach, hasBunker, hasPutter, hasUchihodai, price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str, approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info, rental_club_info, lefty_bays_info, managerReviewUrl } = range;
 
 
 const title = `${name}の口コミ・評判 | シガゴル`;
@@ -201,7 +201,7 @@ const clientFirebaseConfig = {
                     <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
                         <table class="min-w-full text-sm">
                             <tbody class="text-slate-600">
-                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{businessHours || "情報なし"}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{business_hours || "情報なし"}</td></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{address || "情報なし"}</a></td></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${phone}`} class="text-green-700 hover:underline">{phone || "情報なし"}</a></td></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{access || "情報なし"}</td></tr>
