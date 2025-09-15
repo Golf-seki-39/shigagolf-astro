@@ -1,34 +1,41 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-// 既存の練習場詳細ページで使っているFirebaseデータ取得関数をインポートする想定
-// パスはプロジェクトの構造に合わせて修正してください
-// import { getRangeDataFromFirebase } from "../../../lib/firebase";
+// ★★★ 修正: Firebaseからデータを取得するためのモジュールをインポートします ★★★
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
 
-// ★★★ フロントマターとSEO設定 ★★★
+// ★★★ フロントマターとSEO設定 (変更なし) ★★★
 const title = "普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由 | シガゴル";
 const description = "データ派ゴルファーが期待せず訪れた大津市の石山ゴルフ練習場。そこはデータでは測れない心地よさと、衝撃的な中古クラブとの出会いがある「クラブ選びの聖地」だった。その理由を体験記として綴ります。";
 const pubDate = "2025-09-26";
 
-// ▼▼▼ Firebaseからデータを取得する処理（擬似コード） ▼▼▼
-// 実際には上記のimportを有効化し、以下の関数のコメントアウトを解除します
-// const rangeData = await getRangeDataFromFirebase('ishiyama_golf'); 
-// ▲▲▲ ここまで ▲▲▲
+// ★★★ 修正: ここからがFirebaseのデータ取得処理です ★★★
+// 1. 取得したい練習場のIDを定義します (URLと合わせるのが一般的です)
+const rangeId = 'ishiyama_gp'; 
 
-// 開発用に、データがない場合でも表示が崩れないようダミーデータを用意します
-const rangeData = {
-    name: "石山ゴルフ練習場",
-    address: "〒520-0861 滋賀県大津市石山寺辺町260",
-    phone: "077-537-1980",
-    businessHours: "【平日】9:00～22:00 【土日祝】8:00～22:00",
-    priceExample: "【1F】30分/800円 【2F】30分/700円",
-    yards: "230ヤード",
-    lanes: "72打席",
-    access: "名神高速「石山IC」から約5分",
-};
+// 2. Firestoreのドキュメント（データ）までのパスを構築します
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+
+// 3. データベースに問い合わせて、データを取得します
+const docSnap = await getDoc(docRef);
+
+let rangeData = null; // まずはデータを空（null）に設定
+
+if (docSnap.exists()) {
+    // 4. データが見つかった場合、rangeData変数に格納します
+    rangeData = docSnap.data();
+} else {
+    // 5. データが見つからなかった場合、コンソールにエラーメッセージを表示します
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+    // この場合、ページ下部の表は「読み込んでいます...」と表示されます
+}
+// ★★★ 修正はここまで ★★★
 
 ---
 
-{/* ★★★ 構造化データ(JSON-LD) ★★★ */}
+{/* ★★★ 構造化データ(JSON-LD) (変更なし) ★★★ */}
 <Fragment slot="head">
     <script
         type="application/ld+json"
@@ -72,6 +79,7 @@ const rangeData = {
             ‹ トップページに戻る
         </a>
         
+        {/* ★★★ ここから下の記事本文とHTML構造は、あなたのコードのまま一切変更ありません ★★★ */}
         <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
@@ -162,23 +170,25 @@ const rangeData = {
             <hr />
 
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">「石山ゴルフ練習場」の基本情報</h2>
+            {/* ★★★ 修正: ここで rangeData の有無をチェックし、表示を切り替えます ★★★ */}
             {rangeData ? (
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <tbody class="align-baseline">
+                            {/* ★★★ 修正: DBのフィールド名に合わせて表示内容を更新 ★★★ */}
                             <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th><td class="py-3 px-4">{rangeData.name}</td></tr>
                             <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">住所</th><td class="py-3 px-4">{rangeData.address}</td></tr>
                             <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4">{rangeData.phone}</td></tr>
-                            <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">{rangeData.businessHours}</td></tr>
-                            <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th><td class="py-3 px-4">{rangeData.priceExample}</td></tr>
-                            <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">{rangeData.yards}</td></tr>
-                            <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">{rangeData.lanes}</td></tr>
+                            <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">{rangeData.business_hours}</td></tr>
+                            <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th><td class="py-3 px-4">{rangeData.price_uchihodai_weekday_str || 'お問い合わせください'}</td></tr>
+                            <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : '-'}</td></tr>
+                            <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : '-'}</td></tr>
                             <tr><th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th><td class="py-3 px-4">{rangeData.access}</td></tr>
                         </tbody>
                     </table>
                 </div>
             ) : (
-                <p>練習場の情報を読み込んでいます...</p>
+                <p class="text-center text-slate-500 py-4">練習場の基本情報を読み込んでいます...</p>
             )}
 
             <p class="text-center font-bold text-lg mt-8">
