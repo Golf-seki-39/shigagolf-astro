@@ -1,74 +1,71 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-// ★★★ 修正: Firebaseからデータを取得するためのモジュールをインポートします ★★★
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
-// ★★★ フロントマターとSEO設定 (変更なし) ★★★
 const title =
     "普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由 | シガゴル";
 const description =
     "データ派ゴルファーが期待せず訪れた大津市の石山ゴルフ練習場。そこはデータでは測れない心地よさと、衝撃的な中古クラブとの出会いがある「クラブ選びの聖地」だった。その理由を体験記として綴ります。";
+
+// ★★★ 修正箇所(1) ★★★
+// 日付の形式をISO 8601形式に準拠させます。時間は仮で10:00に設定しています。
 const pubDate = "2025-09-26";
+const pubDateISO = "2025-09-26T10:00:00+09:00"; 
 
-// ★★★ 修正: ここからがFirebaseのデータ取得処理です ★★★
-// 1. 取得したい練習場のIDを定義します (URLと合わせるのが一般的です)
 const rangeId = "ishiyama_gp";
-
-// 2. Firestoreのドキュメント（データ）までのパスを構築します
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
 const docRef = doc(db, docPath);
-
-// 3. データベースに問い合わせて、データを取得します
 const docSnap = await getDoc(docRef);
-
-let rangeData = null; // まずはデータを空（null）に設定
-
+let rangeData = null;
 if (docSnap.exists()) {
-    // 4. データが見つかった場合、rangeData変数に格納します
     rangeData = docSnap.data();
 } else {
-    // 5. データが見つからなかった場合、コンソールにエラーメッセージを表示します
     console.error(`Error: No document found for rangeId: ${rangeId}`);
-    // この場合、ページ下部の表は「読み込んでいます...」と表示されます
 }
-// ★★★ 修正はここまで ★★★
 ---
 
-{/* ★★★ 構造化データ(JSON-LD) (変更なし) ★★★ */}
+{/* ★★★ 修正箇所(2) ★★★ ここから構造化データを丸ごと修正します */}
 <Fragment slot="head">
     <script
         type="application/ld+json"
         set:html={JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            mainEntityOfPage: {
-                "@type": "WebPage",
-                "@id": Astro.url.href,
-            },
-            headline: title.split(" | ")[0],
-            description: description,
-            image: [
-                "https://i.imgur.com/7tuB35m.jpeg", // アイキャッチ画像 (写真1を流用)
+            "@type": "Article", // "BlogPosting"でも問題ありませんが、より一般的な"Article"を使用
+            "headline": title.split(" | ")[0],
+            "description": description,
+            "image": [
+                "https://i.imgur.com/7tuB35m.jpeg",
             ],
-            author: {
-                "@type": "Organization",
-                name: "シガゴル",
+            "author": {
+                "@type": "Person",
+                "name": "関（せき）",
+                // ↓↓↓ あなたのサイトの「運営者について」のページのURLに書き換えてください
+                "url": "https://あなたのサイト.com/about", 
+                "image": "https://i.imgur.com/BOcMOf3.png",
+                "sameAs": [
+                    "https://x.com/Golf_Seki39",
+                    "https://golf-medley.com/articles/authors/seki",
+                    "https://note.com/seki_golf_39",
+                    "https://www.tiktok.com/@user2579514551181"
+                ]
             },
-            publisher: {
+            "publisher": {
                 "@type": "Organization",
-                name: "シガゴル",
-                logo: {
+                "name": "シガゴル",
+                "logo": {
                     "@type": "ImageObject",
-                    url: "https://i.imgur.com/mN0IbPS.png", // サイト共通ロゴ
-                },
+                    "url": "https://i.imgur.com/mN0IbPS.png"
+                }
             },
-            datePublished: pubDate,
-            dateModified: pubDate,
+            // 日付はタイムゾーン付きのISO形式の変数を指定します
+            "datePublished": pubDateISO,
+            "dateModified": pubDateISO
         })}
     />
 </Fragment>
+{/* ★★★ 修正はここまで ★★★ */}
 
 <BaseLayout title={title} description={description}>
     <div
@@ -82,9 +79,6 @@ if (docSnap.exists()) {
             ‹ トップページに戻る
         </a>
 
-        {
-            /* ★★★ ここから下の記事本文とHTML構造は、あなたのコードのまま一切変更ありません ★★★ */
-        }
         <article
             class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
         >
@@ -334,14 +328,10 @@ if (docSnap.exists()) {
                 「石山ゴルフ練習場」の基本情報
             </h2>
             {
-                /* ★★★ 修正: ここで rangeData の有無をチェックし、表示を切り替えます ★★★ */
-            }
-            {
                 rangeData ? (
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <tbody class="align-baseline">
-                                {/* ★★★ 修正: DBのフィールド名に合わせて表示内容を更新 ★★★ */}
                                 <tr class="border-b border-slate-200">
                                     <>
                                         <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
@@ -436,7 +426,6 @@ if (docSnap.exists()) {
                     </p>
                 )
             }
-            {/* ★★★ 修正: ここにGoogleマップを埋め込みます ★★★ */}
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
@@ -465,6 +454,7 @@ if (docSnap.exists()) {
         </article>
     </div>
 </BaseLayout>
+
 <style>
     .map-container {
         position: relative;
