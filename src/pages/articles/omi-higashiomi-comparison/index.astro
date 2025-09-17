@@ -1,31 +1,37 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 
-// ★ 修正1: 変数名を pageTitle から title に変更
 const title = "【近江八幡・東近江】ゴルフ練習場4選・徹底比較！ | シガゴル";
 const description = "近江八幡・東近江エリアの主要なゴルフ練習場4ヶ所を、料金、設備、目的別に徹底比較。あなたにピッタリの練習場が必ず見つかります。";
-const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
+
+// ★★★ 修正(1): ISO形式の日付変数を追加 ★★★
+const articlePubDate = "2025-07-24";
+const pubDateISO = "2025-07-24T10:00:00+09:00";
 ---
 
-{/* ★ 修正2: 構造化データ(JSON-LD)をこの記事用に新規追加 */}
+{/* ★★★ 修正(2): 構造化データを全面的に修正 ★★★ */}
 <Fragment slot="head">
     <script
         type="application/ld+json"
         set:html={JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": Astro.url.href, 
-            },
+            "@type": "Article",
             "headline": title.split(" | ")[0],
             "description": description,
             "image": [
                 "https://i.imgur.com/DyVr8of.jpeg"
             ],
             "author": {
-                "@type": "Organization",
-                "name": "シガゴル"
+                "@type": "Person",
+                "name": "関（せき）",
+                "url": "https://shigagolf-reviews.netlify.app/about/",
+                "image": "https://i.imgur.com/BOcMOf3.png",
+                "sameAs": [
+                    "https://x.com/Golf_Seki39",
+                    "https://golf-medley.com/articles/authors/seki",
+                    "https://note.com/seki_golf_39",
+                    "https://www.tiktok.com/@user2579514551181"
+                ]
             },
             "publisher": {
                 "@type": "Organization",
@@ -35,16 +41,14 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                     "url": "https://i.imgur.com/mN0IbPS.png"
                 }
             },
-            "datePublished": articlePubDate,
-            "dateModified": articlePubDate
+            "datePublished": pubDateISO,
+            "dateModified": pubDateISO
         })}
     />
 </Fragment>
 
 
-{/* ★ 修正1: BaseLayoutに渡す props を修正 */}
 <BaseLayout title={title} description={description}>
-    {/* ★ 修正3: PC可読性のため、白いカードDIVに max-w-4xl mx-auto を追加 */}
     <div
         id="article-omi-higashiomi-comparison-view"
         class="view bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
@@ -59,7 +63,7 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
         >
          <style>
           html {
-            scroll-behavior: auto; /* スムーズスクロールを一旦無効化 */
+            scroll-behavior: auto;
           }
           section[id] {
             scroll-margin-top: 80px;
@@ -74,7 +78,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 </p>
             </header>
 
-            {/* ★ 修正4: CLS対策 (width/height追加) */}
             <img
                 src="https://i.imgur.com/DyVr8of.jpeg"
                 alt="アイキャッチ画像：ゴルフ練習場の打席から見た風景"
@@ -183,7 +186,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
     </tr>
 </thead>
                     
-                    {/* ★★★ 復元: 省略されていたテーブルの行をすべて元に戻しました ★★★ */}
                     <tbody>
                         <tr class="bg-white border-b"
                             ><th class="px-4 py-2 border whitespace-nowrap"
@@ -328,7 +330,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 <h4 class="text-2xl font-bold text-slate-800 mt-1">
                     安土ゴルフクラブ
                 </h4>
-                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/IGsEk2z.png"
                     alt="安土ゴルフクラブの外観"
@@ -355,7 +356,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                         />ツアー経験者の入江賢プロから、本物の技術をマンツーマンで学べます。本気で上手くなりたいなら、これ以上ない最高の環境です。
                     </li>
                 </ul>
-                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/80XB6BT.png"
                     alt="安土ゴルフクラブの打席"
@@ -409,7 +409,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 <h4 class="text-2xl font-bold text-slate-800 mt-1">
                     さくらゴルフ倶楽部
                 </h4>
-                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/g7hXn4M.png"
                     alt="さくらゴルフ倶楽部の外観"
@@ -439,7 +438,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                     </li>
                 </ul>
                 <div class="grid md:grid-cols-2 gap-4 my-4">
-                    {/* ★ 修正4: CLS対策 */}
                     <img
                         src="https://i.imgur.com/meiYoKy.png"
                         alt="さくらゴルフ倶楽部の初心者向け打席"
@@ -448,7 +446,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                         width="1200"
                         height="800"
                     />
-                    {/* ★ 修正4: CLS対策 */}
                     <img
                         src="https://i.imgur.com/8MCJcvD.jpeg"
                         alt="さくらゴルフ倶楽部のアプローチ練習場"
@@ -505,7 +502,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 <h4 class="text-2xl font-bold text-slate-800 mt-1">
                     リバーサイドジャンボゴルフ
                 </h4>
-                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/0MtYdOy.jpeg"
                     alt="リバーサイドジャンボゴルフの入口"
@@ -535,7 +531,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                     </li>
                 </ul>
                 <div class="grid md:grid-cols-2 gap-4 my-4">
-                    {/* ★ 修正4: CLS対策 */}
                     <img
                         src="https://i.imgur.com/gLcQ0kd.jpeg"
                         alt="リバーサイドジャンボゴルフのパター練習場"
@@ -544,7 +539,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                         width="1200"
                         height="800"
                     />
-                    {/* ★ 修正4: CLS対策 */}
                     <img
                         src="https://i.imgur.com/IMamheh.jpeg"
                         alt="リバーサイドジャンボゴルフのヤード表示"
@@ -601,7 +595,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 <h4 class="text-2xl font-bold text-slate-800 mt-1">
                     グリーンピア近江八幡ゴルフ
                 </h4>
-                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/1A8qwY3.jpeg"
                     alt="グリーンピア近江八幡ゴルフの外観"
@@ -628,7 +621,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                         />平坦なライだけでなく、コースで遭遇する様々な傾斜を想定した練習ができるユニークな設備です。
                     </li>
                 </ul>
-                {/* ★ 修正4: CLS対策 */}
                 <img
                     src="https://i.imgur.com/GIxn7On.png"
                     alt="グリーンピア近江八幡ゴルフの傾斜マット"
@@ -759,7 +751,6 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 </h3>
                 <div class="space-y-8 mt-4">
                     
-                    {/* ★★★ 復元: Google Map iframe をすべて元に戻しました ★★★ */}
                     <div>
                         <h4 class="text-xl font-bold">A. 安土ゴルフクラブ</h4>
                         <p class="text-sm text-slate-500">
@@ -946,7 +937,5 @@ const articlePubDate = "2025-07-24"; // 記事内の日付と合わせる
                 </div>
             </section>
         </article>
-        
-    {/* この </div> が「白いカード」divの正しい閉じタグです */}
     </div>
 </BaseLayout>
