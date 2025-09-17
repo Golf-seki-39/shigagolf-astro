@@ -1,53 +1,70 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+// ★★★ 追加(1): Firebaseからデータを取得するためのモジュールをインポート ★★★
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
 
 // SEO and page metadata
 const title =
     "【KSP彦根】ゴルフの練習が劇的に変わる！全打席トップトレーサー無料の練習場が初心者の味方だった話 | シガゴル";
 const description =
     "KSP彦根を徹底レビュー！全打席無料のトップトレーサーが初心者の練習をどう変えるのか？ICカードの安心システムから270Yの開放感まで解説。";
-const pubDate = "2025-06-05"; // 記事の公開日
+
+// ★★★ 修正(1): ISO形式の日付変数を追加 ★★★
+const pubDate = "2025-06-05";
+const pubDateISO = "2025-06-05T10:00:00+09:00";
+
+// ★★★ 追加(2): ここからがFirebaseのデータ取得処理です ★★★
+const rangeId = "ksp_hikone"; // このページの練習場ID
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
 ---
 
-{/* 提案1: 構造化データ(JSON-LD) */}
+{/* ★★★ 修正(2): 構造化データを全面的に修正 ★★★ */}
 <Fragment slot="head">
     <script
         type="application/ld+json"
         set:html={JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            mainEntityOfPage: {
-                "@type": "WebPage",
-                "@id": Astro.url.href,
+            "@type": "Article",
+            "headline": title.split(" | ")[0],
+            "description": description,
+            "image": ["https://i.imgur.com/PDrCUnt.jpeg"],
+            "author": {
+                "@type": "Person",
+                "name": "関（せき）",
+                "url": "https://shigagolf-reviews.netlify.app/about/",
+                "image": "https://i.imgur.com/BOcMOf3.png",
+                "sameAs": [
+                    "https://x.com/Golf_Seki39",
+                    "https://golf-medley.com/articles/authors/seki",
+                    "https://note.com/seki_golf_39",
+                    "https://www.tiktok.com/@user2579514551181"
+                ]
             },
-            headline: title.split(" | ")[0],
-            description: description,
-            image: ["https://i.imgur.com/PDrCUnt.jpeg"],
-            author: {
+            "publisher": {
                 "@type": "Organization",
-                name: "シガゴル",
-            },
-            publisher: {
-                "@type": "Organization",
-                name: "シガゴル",
-                logo: {
+                "name": "シガゴル",
+                "logo": {
                     "@type": "ImageObject",
-                    url: "https://i.imgur.com/mN0IbPS.png",
+                    "url": "https://i.imgur.com/mN0IbPS.png",
                 },
             },
-            datePublished: pubDate,
+            "datePublished": pubDateISO,
+            "dateModified": pubDateISO
         })}
     />
 </Fragment>
 
-{/* ここから記事本文のレイアウト */}
 <BaseLayout title={title} description={description}>
-
-    {/* ★★★ 修正点 ★★★ 
-      この「白いカード」DIVが、記事の最後まで（</article>の後まで）
-      すべてを囲むように構造を修正しました。
-      クラス（max-w-4xl mx-auto）はこのままでOKです。
-    */}
     <div
         id="article-ksp-hikone-review-view"
         class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
@@ -58,12 +75,6 @@ const pubDate = "2025-06-05"; // 記事の公開日
             >‹ トップページに戻る</a
         >
 
-        {
-            /* コメント：この<article>タグの "max-w-none" は、
-              親（上記DIV）が max-w-4xl で制限されているため、
-              ここに追加（元に戻す）したままでOKです。
-            */
-        }
         <article
             class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
         >
@@ -76,7 +87,6 @@ const pubDate = "2025-06-05"; // 記事の公開日
                 </p>
             </header>
 
-            {/* CLS対策済みの画像 */}
             <img
                 src="https://i.imgur.com/PDrCUnt.jpeg"
                 alt="KSP彦根のエントランス＿一部屋根もあり雨の日も安心"
@@ -99,7 +109,6 @@ const pubDate = "2025-06-05"; // 記事の公開日
                 今回は、ハイテク設備と安心システムが融合した「KSP彦根」を、私の体験や活用術（今後の野望も！）を交えながら、徹底的にご紹介します！
             </p>
 
-            {/* 目次 */}
             <div
                 class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose"
             >
@@ -149,7 +158,6 @@ const pubDate = "2025-06-05"; // 記事の公開日
                 </ul>
             </div>
 
-            {/* 見出しスタイル + scroll-mt (アンカーずれ防止) + CLS画像 適用済み */}
             <h2
                 id="about-ksp"
                 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
@@ -430,62 +438,128 @@ const pubDate = "2025-06-05"; // 記事の公開日
             <p>
                 休憩スペースは打席後方だけでなく1階にも2ヶ所。駐車場にはEV充電器、フロントには打席の空席情報がわかる電光掲示板、1階には喫煙所、そして有料のロッカールームも完備されています。KSP彦根は、ゴルファーが練習に集中できる環境が整っています。
             </p>
-
+            
+            {/* ★★★ 修正(3): このセクションをデータベース連携のテーブルとマップに置き換え ★★★ */}
             <h2
                 id="basic-info"
                 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
             >
-                【KSP彦根の基本情報】
+                KSP彦根の基本情報
             </h2>
-            <img
-                src="https://i.imgur.com/QBprcwS.png"
-                alt="広々とした駐車場！KSP彦根へのアクセスも便利"
-                class="w-full h-auto object-cover rounded-lg my-6"
-                loading="lazy"
-                width="1600"
-                height="900"
-            />
-            <ul>
-                <li>
-                    <strong>場所：</strong> 滋賀県彦根市（名神高速「湖東三山スマートIC」から車で約15分。JR「稲枝駅」および近江鉄道「愛知川駅」から、それぞれ車で約6分）
-                </li>
-                <li><strong>駐車場：</strong> 約95台分（EV充電器あり）</li>
-                <li>
-                    <strong>営業時間：</strong>
-                    <ul>
-                        <li>平日：朝8時 ～ 深夜24時</li>
-                        <li>土日祝：朝6時 ～ 深夜24時</li>
-                        <li>年中無休（臨時休業の場合は事前にご確認ください）</li>
-                    </ul>
-                </li>
-            </ul>
-            <img
-                src="https://i.imgur.com/JV554j9.jpeg"
-                alt="営業時間が記載された店舗前看板"
-                class="w-full h-auto object-cover rounded-lg my-6"
-                loading="lazy"
-                width="1200"
-                height="800"
-            />
-            <ul>
-                <li>
-                    <strong>支払い：</strong> 打席にある打席操作パネルにてICカード決済。ICカードへのチャージは現金、クレジットカード、QRコード決済対応。
-                </li>
-                <li>
-                    <strong>料金：</strong> 入場料（打席料）は時間帯により変動。練習は1球単価と時間打ち（放題）を選択可能。女性・中学生以下は終日優待単価あり。
-                </li>
-                <li>
-                    <strong>レンタルクラブ：</strong> 小学生はゴルフセット無料（滋賀県ゴルフ練習場協会の特典）。一般の方のレンタルクラブは有料です。
-                </li>
-            </ul>
-            <img
-                src="https://i.imgur.com/J7yqD6l.jpeg"
-                alt="ジュニアゴルフセット無料貸出のポスター"
-                class="w-full h-auto object-cover rounded-lg my-6"
-                loading="lazy"
-                width="1200"
-                height="800"
-            />
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <tbody class="align-baseline">
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
+                                            練習場名
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.name}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            住所
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.address}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            電話番号
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.phone}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            営業時間
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.business_hours}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            料金（代表例）
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.price_uchihodai_weekday_str ||
+                                                "お問い合わせください"}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            ヤード数
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.yardage
+                                                ? `${rangeData.yardage}ヤード`
+                                                : "-"}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            打席数
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.bays
+                                                ? `${rangeData.bays}打席`
+                                                : "-"}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr>
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            アクセス
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.access}
+                                        </td>
+                                    </>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
+                            width="100%"
+                            height="450"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
 
             <h2
                 id="summary"
@@ -496,8 +570,6 @@ const pubDate = "2025-06-05"; // 記事の公開日
             <p>
                 KSP彦根の魅力、特に「全打席トップトレーサー無料」というデータ活用の楽しさ、伝わりましたでしょうか？
             </p>
-
-            {/* まとめボックス（装飾済み） */}
             <div
                 class="summary-box not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8"
             >
@@ -565,14 +637,11 @@ const pubDate = "2025-06-05"; // 記事の公開日
                     </li>
                 </ul>
             </div>
-
             <p>
                 一度行けば、きっとまた通いたくなるKSP彦根。「もっと早く知っていれば…！」と感じる方も多いはず。ぜひ、未来型ゴルフ練習を体感してみてくださいね！
             </p>
-
             <hr />
 
-            {/* CTAボタン（強化済み） */}
             <p class="text-center font-bold text-lg">
                 🎯
                 KSP彦根の「公式レビュー（総評）」と基本情報・口コミはこちらのページで確認できます！
@@ -585,7 +654,22 @@ const pubDate = "2025-06-05"; // 記事の公開日
                 </a>
             </p>
         </article>
-
-    {/* ★★★ この閉じタグ </div> が正しい位置（<article>の後）に来る必要があります ★★★ */}
     </div>
 </BaseLayout>
+{/* ★★★ 追加(4): Googleマップ表示用のスタイル ★★★ */}
+<style>
+    .map-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding-top: 56.25%; /* 16:9 アスペクト比 */
+    }
+    .map-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+</style>
