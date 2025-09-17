@@ -1,42 +1,65 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+// ★★★ 追加(1): Firebaseからデータを取得するためのモジュールをインポート ★★★
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
 
 // ★★★ フロントマターとSEO設定 ★★★
 const title = "【KSP希望ヶ丘 体験記】「一滴の汗」が僕を救ったコンペ前夜の小さな奇跡 | シガゴル";
 const description = "コンペ前夜、焦った僕がKSP希望ヶ丘で得たものとは？トップトレーサーの気づきと、一滴の汗が繋いだ奇跡のパット体験記。";
-const pubDate = "2025-07-11"; // noteの公開日
+
+// ★★★ 修正(1): ISO形式の日付変数を追加 ★★★
+const pubDate = "2025-07-11";
+const pubDateISO = "2025-07-11T10:00:00+09:00";
+
+// ★★★ 追加(2): ここからがFirebaseのデータ取得処理です ★★★
+const rangeId = "ksp_hope"; // このページの練習場ID
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
 ---
 
-{/* ★★★ 構造化データ(JSON-LD) - 画像1(アイキャッチ)を反映 ★★★ */}
+{/* ★★★ 修正(2): 構造化データを全面的に修正 ★★★ */}
 <Fragment slot="head">
     <script
         type="application/ld+json"
         set:html={JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": Astro.url.href, 
-            },
+            "@type": "Article",
             "headline": title.split(" | ")[0],
             "description": description,
             "image": [
-                "https://i.imgur.com/2YsTOxi.png" // 画像1 (アイキャッチ)
+                "https://i.imgur.com/2YsTOxi.png"
              ],
             "author": {
-                "@type": "Organization",
-                "name": "シガゴル"
+                "@type": "Person",
+                "name": "関（せき）",
+                "url": "https://shigagolf-reviews.netlify.app/about/",
+                "image": "https://i.imgur.com/BOcMOf3.png",
+                "sameAs": [
+                    "https://x.com/Golf_Seki39",
+                    "https://golf-medley.com/articles/authors/seki",
+                    "https://note.com/seki_golf_39",
+                    "https://www.tiktok.com/@user2579514551181"
+                ]
             },
             "publisher": {
                 "@type": "Organization",
                 "name": "シガゴル",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://i.imgur.com/mN0IbPS.png" // サイト共通ロゴ
+                    "url": "https://i.imgur.com/mN0IbPS.png"
                 }
             },
-            "datePublished": pubDate,
-            "dateModified": pubDate
+            "datePublished": pubDateISO,
+            "dateModified": pubDateISO
         })}
     />
 </Fragment>
@@ -58,6 +81,7 @@ const pubDate = "2025-07-11"; // noteの公開日
         <article
             class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
         >
+            {/* ...途中までの本文は変更なしのため省略... */}
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
                     【体験記】「一滴の汗」が僕を救った夜。KSP希望ヶ丘で起きた小さな奇跡
@@ -67,7 +91,6 @@ const pubDate = "2025-07-11"; // noteの公開日
                 </p>
             </header>
 
-            {/* 画像1 (アイキャッチ) - CLS対策済み */}
             <img 
                 src="https://i.imgur.com/2YsTOxi.png" 
                 alt="KSP希望ヶ丘 体験記アイキャッチ" 
@@ -76,7 +99,6 @@ const pubDate = "2025-07-11"; // noteの公開日
                 width="1600" height="900" 
             />
 
-            {/* お悩みボックス（修正済み） */}
             <div class="space-y-4 bg-slate-50 p-6 rounded-lg text-center">
                 <p>
                     大事なコンペ前日、僕の心は焦っていました。<br class="md:hidden" />
@@ -107,7 +129,6 @@ const pubDate = "2025-07-11"; // noteの公開日
             </p>
             <p>練習したい願望、練習を渇望していた僕が訪れた場所。今回の物語の舞台です。</p>
             
-            {/* 画像2 - CLS対策済み */}
             <img 
                 src="https://i.imgur.com/07HGpnW.png" 
                 alt="KSP希望ヶ丘の外観" 
@@ -116,13 +137,11 @@ const pubDate = "2025-07-11"; // noteの公開日
                 width="1600" height="900" 
             />
 
-            {/* 見出しスタイル ＋ アンカーリンクずれ対策 */}
             <h2 id="why-ksp" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 ✅ なぜ僕はこの練習場を選んだのか？
             </h2>
             <p class="font-semibold text-lg text-slate-800">→「安心と信頼」こそ、僕がKSPを選んだ理由</p>
 
-            {/* 画像3 - CLS対策済み */}
             <img 
                 src="https://i.imgur.com/NGVzDDG.png" 
                 alt="KSP希望ヶ丘のトップトレーサー・レンジの打席モニター" 
@@ -150,7 +169,6 @@ const pubDate = "2025-07-11"; // noteの公開日
             <p>僕は、ターゲットの旗より、意図的に「右」を向いて構え始めました。 そして、体の正面に打ち出すことだけを意識して、スイングする。すると、どうでしょう。 いつも僕を裏切ってきた左回転が、まるで計算されたかのように、ターゲット方向へとボールを運んでくれるのです。</p>
             <p>そして同日の夜。 今度は友人と一緒に、複数のショットを総合評価してくれるゲームモード「Toptracer12」をプレイ。 そこで出たデータは、昼間の僕の判断が正しかったことを、さらに裏付けてくれました。</p>
 
-            {/* 画像4 - CLS対策済み */}
             <img 
                 src="https://i.imgur.com/5gujXLe.jpeg" 
                 alt="トップトレーサー12の分析結果。安定性が低いデータ画面" 
@@ -162,7 +180,6 @@ const pubDate = "2025-07-11"; // noteの公開日
             <p>ドライバーの平均飛距離は、206ヤード、219ヤード、177ヤードと、やはり安定感ゼロ。 ショットの安定性も、3回プレイしてようやく「33%」がやっと。データに、もはや衝撃はありませんでした。 「やっぱりな…」という、確信にも似た納得感。</p>
             <p>後日談になりますが、この日見つけた「ドローを打つ」意識で練習を続けた結果、別の日のトップトレーサーの分析で、僕が最も苦手としていたはずのアプローチ（125-150yd）が、「素晴らしいショットです」と評価を受けるまでになったのです。</p>
 
-            {/* 画像5 - CLS対策済み */}
             <img 
                 src="https://i.imgur.com/AaPNhYj.jpeg" 
                 alt="トップトレーサーのアプローチ分析で高評価を得た画面" 
@@ -182,7 +199,6 @@ const pubDate = "2025-07-11"; // noteの公開日
             <p>「やっぱり、パターは目の真下にボールを置くのが基本だよな」</p>
             <p>そう僕が頷き、ボールをセットしようと屈んだ、その瞬間です。</p>
 
-            {/* 画像6 - CLS対策済み */}
             <img 
                 src="https://i.imgur.com/fiCAgIo.png" 
                 alt="KSP希望ヶ丘の屋内パター練習グリーンで練習する様子" 
@@ -209,7 +225,6 @@ const pubDate = "2025-07-11"; // noteの公開日
             <p>さて、ここまで僕の練習の様子を語ってきましたが、このKSP希望ヶ丘で、僕はもう一つ、大きな「発見」をしました。 それは、練習場の受付に掲示されていた、一枚の張り紙がきっかけでした。</p>
             <p class="italic font-semibold text-center text-lg my-4 text-slate-800">『当練習場は、野洲市ふるさと納税返礼品の提供事業者です』</p>
             
-            {/* 画像7 - CLS対策済み */}
             <img 
                 src="https://i.imgur.com/kt7QAjC.png" 
                 alt="KSP希望ヶ丘の受付にある、野洲市ふるさと納税の張り紙" 
@@ -232,7 +247,6 @@ const pubDate = "2025-07-11"; // noteの公開日
             <p>トップトレーサーが突きつけた、僕の「残念なクセ」。 一滴の汗が繋いでくれた、コンペでの奇跡のパット。 そして、一枚の張り紙が教えてくれた、ゴルフと社会の新しい関係。</p>
             <p>今回、KSP希望ヶ丘で過ごした時間は、僕にたくさんの「気づき」を与えてくれました。僕がここで得た本当の収穫。 それは、単にスイングの課題が見つかったとか、パットの構えが良くなったとか、そういうことだけではありません。</p>
 
-            {/* まとめボックス（標準スタイル） */}
             <div class="summary-box not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8">
                 <ul class="list-none p-0 m-0 space-y-3">
                     <li class="flex items-start">
@@ -254,7 +268,6 @@ const pubDate = "2025-07-11"; // noteの公開日
             
             <p>あの晩、焦っていた僕を優しく迎えてくれた入り口。今でも忘れられません。</p>
 
-            {/* 画像8 - CLS対策済み */}
             <img 
                 src="https://i.imgur.com/KSdjiMj.png" 
                 alt="夜のKSP希望ヶ丘の入り口" 
@@ -267,9 +280,130 @@ const pubDate = "2025-07-11"; // noteの公開日
 
             <hr />
 
-            {/* CTAボタン（DB ID: ksp_hope を使用） */}
-            <p class="text-center font-bold text-lg">
-                🎯 この記事の練習場「KSP希望ヶ丘」の公式情報・口コミはこちら！
+            {/* ★★★ 追加(3): ここから基本情報サマリーとGoogleマップ ★★★ */}
+            <h2
+                id="info-summary"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
+                「KSP希望ヶ丘」の基本情報
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <tbody class="align-baseline">
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
+                                            練習場名
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.name}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            住所
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.address}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            電話番号
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.phone}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            営業時間
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.business_hours}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            料金（代表例）
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.price_uchihodai_weekday_str ||
+                                                "お問い合わせください"}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            ヤード数
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.yardage
+                                                ? `${rangeData.yardage}ヤード`
+                                                : "-"}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            打席数
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.bays
+                                                ? `${rangeData.bays}打席`
+                                                : "-"}
+                                        </td>
+                                    </>
+                                </tr>
+                                <tr>
+                                    <>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            アクセス
+                                        </th>
+                                        <td class="py-3 px-4">
+                                            {rangeData.access}
+                                        </td>
+                                    </>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
+                            width="100%"
+                            height="450"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
+
+            <p class="text-center font-bold text-lg mt-8">
+                🎯 さらに詳しい情報や口コミはこちら！
                 <br />
                 <a 
                     href="/ranges/ksp_hope/"  
@@ -279,9 +413,25 @@ const pubDate = "2025-07-11"; // noteの公開日
                 </a>
             </p>
 
-            
-
         </article>
         
     </div>
 </BaseLayout>
+
+{/* ★★★ 追加(4): Googleマップ表示用のスタイル ★★★ */}
+<style>
+    .map-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding-top: 56.25%; /* 16:9 アスペクト比 */
+    }
+    .map-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+</style>
