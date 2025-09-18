@@ -1,0 +1,258 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+
+// ★★★ いただいた内容をすべて反映させました ★★★
+const title = "滋賀・安土で見つけた“ゴルフの原点”。強面店主の優しさに惚れた日 | シガゴル";
+const description = "プリカ不要の現金払いと、強面だけど優しい店主の人柄が魅力の「安土ゴルフクラブ」。最新設備はないけれど、ゴルフの原点に立ち返れる温かい練習場のリアルな体験記です。";
+const pubDate = "2025-09-18"; // 日付は本日を仮で入れています
+const pubDateISO = "2025-09-18T10:00:00+09:00";
+const rangeId = "azuchi_gc"; // 練習場のID
+
+// --- 以下は変更不要 ---
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
+---
+
+<Fragment slot="head">
+    <script
+        type="application/ld+json"
+        set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": title.split(" | ")[0],
+            "description": description,
+            "image": [
+                // アイキャッチ画像を反映
+                "https://i.imgur.com/cJBj7Sh.png"
+             ],
+            "author": {
+                "@type": "Person",
+                "name": "関（せき）",
+                "url": "https://shigagolf-reviews.netlify.app/about/",
+                "image": "https://i.imgur.com/BOcMOf3.png",
+                "sameAs": [
+                    "https://x.com/Golf_Seki39",
+                    "https://golf-medley.com/articles/authors/seki",
+                    "https://note.com/seki_golf_39",
+                    "https://www.tiktok.com/@user2579514551181"
+                ]
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "シガゴル",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://i.imgur.com/mN0IbPS.png"
+                }
+            },
+            "datePublished": pubDateISO,
+            "dateModified": pubDateISO
+        })}
+    />
+</Fragment>
+
+<BaseLayout title={title} description={description}>
+    <div
+        class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
+    >
+        <a
+            href="/"
+            class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
+            >‹ トップページに戻る</a
+        >
+        
+        <article
+            class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
+        >
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
+                    {title.split(" | ")[0]}
+                </h1>
+                <p class="text-sm text-slate-500 mt-2">
+                    公開日：{pubDate}
+                </p>
+            </header>
+
+            <img src="https://i.imgur.com/cJBj7Sh.png" alt="安土ゴルフクラブ アイキャッチ" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
+            
+            <p>家の引き出しの奥に眠る、使いかけのプリペイドカード。「あと数百円…」の残高が気になって、そわそわしながらボールを打つ。…そんな、ゴルファーなら誰もが経験する「プリカ地獄」に、あなたは疲れていませんか？</p>
+            <p>こんにちは、「ゴルフ初心者代表」の関です。滋賀のゴルフ練習場でお悩みの方へ。今回ご紹介するのは、そんな僕たちの悩みを一掃してくれる、近江八幡市にある「安土ゴルフクラブ」。ここは、僕にとって“ゴルファーの駆け込み寺”のような場所です。</p>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/zlMFn6n.jpeg" alt="施設の入り口" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">滋賀・近江八幡で見つけた、最高の“駆け込み寺”。ここから物語は始まります。</figcaption>
+            </figure>
+            
+            <p>最初に訪れた日、僕は少しだけ身構えていました。遠目に見てもわかる、強面のスキンヘッドの店主の方。（うわ…なんか取材とか、ややこしいこと言われたらどうしよう…）</p>
+            <p>そんな僕の不安は、勇気を出して「初めてです」と声をかけた瞬間、心地よく裏切られました。</p>
+            <p class="text-2xl font-bold text-center my-6">「いらっしゃい！」</p>
+            <p>その満面の笑みは、僕が今まで出会った誰よりも優しく、可愛らしくさえ見えたのです。（たぶん、女性なら惚れてしまうレベルです）</p>
+            <p>この記事は、そんな最高のギャップから始まった、僕と安土ゴルフクラブの物語。最新設備はないけれど、それ以上に大切な「何か」が、ここにはありました。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/Bnyh1ZN.png" alt="店舗受付カウンター" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+            </figure>
+
+            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">僕らが愛すべき「古き良き」と「究極の気配り」</h2>
+            <p>この練習場の魅力は、まず施設全体を包む「古き良き味」にあります。正直に言えば、建物は古くて、少し狭い。ティーアップも自分でボールをセットする、昔ながらのセルフ方式です。でも、そこがいい。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/gbVRkcv.png" alt="レンジボールやセルフ式がわかる打席の様子" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">使い込まれたボール。ここで多くのゴルファーが腕を磨いてきた証だ。</figcaption>
+            </figure>
+
+            <p>少し傷のついたティーホルダー、年季の入ったレンジボール。その一つひとつが、「ここで、数えきれないほどのゴルファー達が、悩み、笑い、上達していったんだろうな」という歴史を物語っています。</p>
+            <p>そして、最大の魅力が「現金での明朗会計」と、その裏にある「究極の気配り」です。僕のように、レビューのために多くの練習場を訪れる者にとって、プリカを使い切れない問題は死活問題。その点、ここは入場料無料で100球700円と、その都度必要な分だけを現金で支払える。このシンプルさが、どれだけ心を軽くしてくれることか。</p>
+
+            <figure class="my-6">
+                 <img src="https://i.imgur.com/ln4bRN4.png" alt="シンプルな料金表" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+            </figure>
+
+            <p>さらに、ここで僕が見つけた、とっておきの裏技を教えます。</p>
+
+            <div class="not-prose bg-yellow-50 border-l-4 border-yellow-400 p-6 my-8">
+                <p class="text-xl font-bold text-slate-800 text-center">それは、「打ち放題への、後出しジャンケン変更」です。</p>
+            </div>
+            
+            <p>例えば「今日は100球だけ」と700円で打ち始めた後、「ああ、もうちょっと打ちたいな…！」と思ったとします。そんな時、受付に行き、差額の500円を払うだけで、「2時間打ち放題（1200円）」に、途中から変更させてくれるのです！</p>
+            <p>追加で、もう一カゴ700円を頼む必要がないのです！！！</p>
+            <p>この柔軟すぎる対応。ゴルファーの気持ちを、これ以上なく汲み取ってくれる、店主の優しさそのものです。お小遣いをやりくりするサラリーマンや学生にとって、まさに「聖地」と呼ぶにふさわしい場所です。</p>
+
+            <figure class="my-6">
+                 <img src="https://i.imgur.com/gKVMuM6.jpeg" alt="打放題などの注意点が記載された掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+            </figure>
+
+            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">“できない”からこそ、僕らは賢くなる</h2>
+            <p>もちろん、この練習場に“ない”ものもあります。最新の弾道測定器も、アプローチ専用グリーンもありません。そして、最大の「影」は、「ドライバーを、心の底から満振りできないこと」かもしれません。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/aDtm6av.png" alt="アイアンのみ使用の注意書き" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">「飛ばすな」。この一言こそ、スコアメイクの本質を教えてくれる。</figcaption>
+            </figure>
+
+            <p>実はつい最近、なぜか3番ユーティリティだけが突然打てるようになり、この間測ったら平均キャリーで190ヤードも飛んでいました。（なぜか、まだ5番UTはトップばかりですが…笑）</p>
+            <p>そんな「覚醒したて」の僕にとって、安土ゴルフクラブの180ヤードという距離は、正直、少し窮屈に感じてしまうのです。「やっと打てるようになったこの一打を、ネットに突き刺したくない…！」と、無意識に体がセーブしてしまう。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/TVtZy5Y.png" alt="打席からみたフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+            </figure>
+            
+            <p>しかし、僕は気づいたのです。この「ドライバーを満振りできない」という制約こそが、最高の“恩恵”なのだと。飛ばす誘惑を強制的に断ち切られるからこそ、僕たちは自然と、スコアメイクに最も重要なアイアンの精度を高める練習に集中できるのです。</p>
+            <p>“できない”ことが、逆に僕たちを賢くしてくれる。この練習場は、そんな逆説的な真理を教えてくれます。</p>
+
+            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">なぜ、僕は独学なのに「ツアープロのレッスン情報」を載せるのか？</h2>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/Wcfi623.png" alt="ゴルフレッスンの看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+            </figure>
+
+            <p>ここで正直に告白すると、僕はレッスンに少しだけトラウマがあります。ゴルフを始めた初日、何もわからない僕を「そんなことも知らないの？」とでも言いたげな態度で扱った、あるレッスンプロがいたからです。（実際には、普通グリップやアドレスは事前に調べてわかってからレッスンに来るのが当たり前やで！と強く言われました。）</p>
+            <p>あの日以来、僕はレッスンプロから教わることから距離を置き、遠回りを承知で独学の道を選んできました。だから、安土ゴルフクラブに入江賢ツアープロがいると聞いても、僕自身が「よし、受けよう！」と即断できるわけではありません。</p>
+            <p>しかし、です。僕個人の経験はさておき、これは客観的に見て、とんでもない価値であることは断言できます。</p>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/EXfntih.png" alt="プロのレッスン詳細" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+            </figure>
+            
+            <blockquote class="text-xl font-semibold border-l-4 border-green-600 pl-4 my-6">
+                ティーチングプロではなく、ツアーで戦ってきた「本物」の技術に、マンツーマンで触れられる。
+            </blockquote>
+            <p>本気で上手くなりたい人にとって、これ以上の環境はありません。僕のように独学で遠回りするのも一つの道ですが、信頼できるプロに教わることは、間違いなく上達への最短ルートです。</p>
+
+            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【最終的な結論】僕が、この“不便な”練習場を愛する理由</h2>
+            <p>最新の設備を求める人や、綺麗なクラブハウスを重視する人には、この練習場は向かないかもしれません。でも、</p>
+            <ul class="list-disc list-inside space-y-2 my-4">
+                <li>コストを抑えて、たくさん打ち込みたい</li>
+                <li>自分の感覚と、とことん向き合いたい</li>
+                <li>アットホームな雰囲気で、ゴルフの原点に触れたい</li>
+            </ul>
+            <p>そう願うゴルファーにとって、ここは滋賀県でも随一の、最高の環境です。</p>
+            <p>そういえば、初めて訪れたあの日。強面の店主さんは、わざわざ打席までついてきてくれて、「ここが一番打ちやすいで」と、ど真ん中の打席を僕に譲ってくれました。マニュアルにはない、人と人との温かい繋がり。</p>
+            <p>僕がこの、少しだけ不便な練習場を愛する理由は、結局、それに尽きるのかもしれません。</p>
+
+            <hr />
+
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">{rangeData.address}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">{rangeData.phone}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4">{rangeData.business_hours}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
+                            width="100%" height="450" style="border:0;"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
+            <p class="text-center font-bold text-lg mt-8">
+                🎯 さらに詳しい情報や口コミはこちら！
+                <br />
+                <a
+                    href={`/ranges/${rangeId}/`}
+                    class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    {rangeData ? `「${rangeData.name}」のシガゴル公式レビューページへ` : "公式レビューページへ"}
+                </a>
+            </p>
+        </article>
+    </div>
+</BaseLayout>
+
+<style>
+    .map-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding-top: 56.25%;
+    }
+    .map-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+</style>
