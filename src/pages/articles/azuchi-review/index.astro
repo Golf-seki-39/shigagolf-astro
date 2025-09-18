@@ -84,8 +84,7 @@ if (docSnap.exists()) {
             
             <p>家の引き出しの奥に眠る、使いかけのプリペイドカード。「あと数百円…」の残高が気になって、そわそわしながらボールを打つ。…そんな、ゴルファーなら誰もが経験する「プリカ地獄」に、あなたは疲れていませんか？</p>
             <p>こんにちは、「ゴルフ初心者代表」の関です。滋賀のゴルフ練習場でお悩みの方へ。今回ご紹介するのは、そんな僕たちの悩みを一掃してくれる、近江八幡市にある「安土ゴルフクラブ」。ここは、僕にとって“ゴルファーの駆け込み寺”のような場所です。</p>
-
-            {/* ★★★ 修正: 比較記事へのリンクを追加 ★★★ */}
+            
             <div class="not-prose bg-slate-50 p-4 rounded-lg border border-slate-200 my-6 text-center">
                 <p class="m-0">この記事で紹介する安土ゴルフクラブは、<a href="https://shigagolf-reviews.netlify.app/articles/omi-higashiomi-comparison/" class="text-green-700 font-bold hover:underline">「【近江八幡・東近江】ゴルフ練習場4選・徹底比較！」</a>の記事でも紹介しています。</p>
             </div>
@@ -209,7 +208,6 @@ if (docSnap.exists()) {
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
-                                    {/* ★★★ 修正: 住所にGoogleマップへのリンクを追加 ★★★ */}
                                     <td class="py-3 px-4">
                                         <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
@@ -218,7 +216,6 @@ if (docSnap.exists()) {
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
-                                    {/* ★★★ 修正: 電話番号にtelリンクを追加 ★★★ */}
                                     <td class="py-3 px-4">
                                         <a href={`tel:${rangeData.phone.replace(/-/g, "")}`} class="text-green-700 hover:underline">
                                             {rangeData.phone}
@@ -261,9 +258,9 @@ if (docSnap.exists()) {
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
-                        {/* ★★★ 修正: GoogleマップのURLをHTTPSの正しい形式に修正 ★★★ */}
+                        {/* ★★★ 修正: GoogleマップのURLを修正 ★★★ */}
                         <iframe
-                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.address)}`}
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
                             allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                         ></iframe>
