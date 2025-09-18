@@ -100,7 +100,6 @@ if (docSnap.exists()) {
                 <img src="https://i.imgur.com/Bnyh1ZN.png" alt="店舗受付カウンター" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
             </figure>
 
-            {/* ★★★ 追加: 目次 ★★★ */}
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
@@ -165,7 +164,7 @@ if (docSnap.exists()) {
                 <img src="https://i.imgur.com/Wcfi623.png" alt="ゴルフレッスンの看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
             </figure>
 
-            <p>ここで正直に告白すると、僕はレッスンに少しだけトラマがあります。ゴルフを始めた初日、何もわからない僕を「そんなことも知らないの？」とでも言いたげな態度で扱った、あるレッスンプロがいたからです。（実際には、普通グリップやアドレスは事前に調べてわかってからレッスンに来るのが当たり前やで！と強く言われました。）</p>
+            <p>ここで正直に告白すると、僕はレッスンに少しだけトラウマがあります。ゴルフを始めた初日、何もわからない僕を「そんなことも知らないの？」とでも言いたげな態度で扱った、あるレッスンプロがいたからです。（実際には、普通グリップやアドレスは事前に調べてわかってからレッスンに来るのが当たり前やで！と強く言われました。）</p>
             <p>あの日以来、僕はレッスンプロから教わることから距離を置き、遠回りを承知で独学の道を選んできました。だから、安土ゴルフクラブに入江賢ツアープロがいると聞いても、僕自身が「よし、受けよう！」と即断できるわけではありません。</p>
             <p>しかし、です。僕個人の経験はさておき、これは客観的に見て、とんでもない価値であることは断言できます。</p>
             
@@ -190,8 +189,8 @@ if (docSnap.exists()) {
             <p>僕がこの、少しだけ不便な練習場を愛する理由は、結局、それに尽きるのかもしれません。</p>
 
             <hr />
-
-            {/* ★★★ 修正: テーブルの項目を拡張 ★★★ */}
+            
+            {/* ★★★ 新料金ルールを適用したテーブル ★★★ */}
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
             </h2>
@@ -218,7 +217,11 @@ if (docSnap.exists()) {
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
-                                    <td class="py-3 px-4">{rangeData.price_uchihodai_weekday_str || "お問い合わせください"}</td>
+                                    <td class="py-3 px-4">{
+                                        rangeData.price_uchihodai_weekday_str ||
+                                        rangeData.price_ball_weekday_str ||
+                                        "お問い合わせください"
+                                    }</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
@@ -245,7 +248,7 @@ if (docSnap.exists()) {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
                         <iframe
-                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
+                            src={`http://googleusercontent.com/maps/google.com/0{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
                             allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                         ></iframe>
