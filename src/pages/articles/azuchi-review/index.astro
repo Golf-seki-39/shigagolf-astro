@@ -3,14 +3,12 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
-// ★★★ いただいた内容をすべて反映させました ★★★
 const title = "滋賀・安土で見つけた“ゴルフの原点”。強面店主の優しさに惚れた日 | シガゴル";
 const description = "プリカ不要の現金払いと、強面だけど優しい店主の人柄が魅力の「安土ゴルフクラブ」。最新設備はないけれど、ゴルフの原点に立ち返れる温かい練習場のリアルな体験記です。";
-const pubDate = "2025-09-18"; // 日付は本日を仮で入れています
+const pubDate = "2025-09-18";
 const pubDateISO = "2025-09-18T10:00:00+09:00";
-const rangeId = "azuchi_gc"; // 練習場のID
+const rangeId = "azuchi_gc";
 
-// --- 以下は変更不要 ---
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
 const docRef = doc(db, docPath);
@@ -32,7 +30,6 @@ if (docSnap.exists()) {
             "headline": title.split(" | ")[0],
             "description": description,
             "image": [
-                // アイキャッチ画像を反映
                 "https://i.imgur.com/cJBj7Sh.png"
              ],
             "author": {
@@ -103,7 +100,19 @@ if (docSnap.exists()) {
                 <img src="https://i.imgur.com/Bnyh1ZN.png" alt="店舗受付カウンター" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
             </figure>
 
-            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">僕らが愛すべき「古き良き」と「究極の気配り」</h2>
+            {/* ★★★ 追加: 目次 ★★★ */}
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#section-1" class="text-green-700 hover:underline">僕らが愛すべき「古き良き」と「究極の気配り」</a></li>
+                    <li><a href="#section-2" class="text-green-700 hover:underline">“できない”からこそ、僕らは賢くなる</a></li>
+                    <li><a href="#section-3" class="text-green-700 hover:underline">なぜ、僕は独学なのに「ツアープロのレッスン情報」を載せるのか？</a></li>
+                    <li><a href="#section-4" class="text-green-700 hover:underline">【結論】僕が、この“不便な”練習場を愛する理由</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">「安土ゴルフクラブ」の基本情報</a></li>
+                </ul>
+            </div>
+
+            <h2 id="section-1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">僕らが愛すべき「古き良き」と「究極の気配り」</h2>
             <p>この練習場の魅力は、まず施設全体を包む「古き良き味」にあります。正直に言えば、建物は古くて、少し狭い。ティーアップも自分でボールをセットする、昔ながらのセルフ方式です。でも、そこがいい。</p>
 
             <figure class="my-6">
@@ -132,7 +141,7 @@ if (docSnap.exists()) {
                  <img src="https://i.imgur.com/gKVMuM6.jpeg" alt="打放題などの注意点が記載された掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
             </figure>
 
-            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">“できない”からこそ、僕らは賢くなる</h2>
+            <h2 id="section-2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">“できない”からこそ、僕らは賢くなる</h2>
             <p>もちろん、この練習場に“ない”ものもあります。最新の弾道測定器も、アプローチ専用グリーンもありません。そして、最大の「影」は、「ドライバーを、心の底から満振りできないこと」かもしれません。</p>
 
             <figure class="my-6">
@@ -150,13 +159,13 @@ if (docSnap.exists()) {
             <p>しかし、僕は気づいたのです。この「ドライバーを満振りできない」という制約こそが、最高の“恩恵”なのだと。飛ばす誘惑を強制的に断ち切られるからこそ、僕たちは自然と、スコアメイクに最も重要なアイアンの精度を高める練習に集中できるのです。</p>
             <p>“できない”ことが、逆に僕たちを賢くしてくれる。この練習場は、そんな逆説的な真理を教えてくれます。</p>
 
-            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">なぜ、僕は独学なのに「ツアープロのレッスン情報」を載せるのか？</h2>
+            <h2 id="section-3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">なぜ、僕は独学なのに「ツアープロのレッスン情報」を載せるのか？</h2>
             
             <figure class="my-6">
                 <img src="https://i.imgur.com/Wcfi623.png" alt="ゴルフレッスンの看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
             </figure>
 
-            <p>ここで正直に告白すると、僕はレッスンに少しだけトラウマがあります。ゴルフを始めた初日、何もわからない僕を「そんなことも知らないの？」とでも言いたげな態度で扱った、あるレッスンプロがいたからです。（実際には、普通グリップやアドレスは事前に調べてわかってからレッスンに来るのが当たり前やで！と強く言われました。）</p>
+            <p>ここで正直に告白すると、僕はレッスンに少しだけトラマがあります。ゴルフを始めた初日、何もわからない僕を「そんなことも知らないの？」とでも言いたげな態度で扱った、あるレッスンプロがいたからです。（実際には、普通グリップやアドレスは事前に調べてわかってからレッスンに来るのが当たり前やで！と強く言われました。）</p>
             <p>あの日以来、僕はレッスンプロから教わることから距離を置き、遠回りを承知で独学の道を選んできました。だから、安土ゴルフクラブに入江賢ツアープロがいると聞いても、僕自身が「よし、受けよう！」と即断できるわけではありません。</p>
             <p>しかし、です。僕個人の経験はさておき、これは客観的に見て、とんでもない価値であることは断言できます。</p>
             
@@ -169,7 +178,7 @@ if (docSnap.exists()) {
             </blockquote>
             <p>本気で上手くなりたい人にとって、これ以上の環境はありません。僕のように独学で遠回りするのも一つの道ですが、信頼できるプロに教わることは、間違いなく上達への最短ルートです。</p>
 
-            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【最終的な結論】僕が、この“不便な”練習場を愛する理由</h2>
+            <h2 id="section-4" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【最終的な結論】僕が、この“不便な”練習場を愛する理由</h2>
             <p>最新の設備を求める人や、綺麗なクラブハウスを重視する人には、この練習場は向かないかもしれません。でも、</p>
             <ul class="list-disc list-inside space-y-2 my-4">
                 <li>コストを抑えて、たくさん打ち込みたい</li>
@@ -182,6 +191,7 @@ if (docSnap.exists()) {
 
             <hr />
 
+            {/* ★★★ 修正: テーブルの項目を拡張 ★★★ */}
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
             </h2>
@@ -205,6 +215,22 @@ if (docSnap.exists()) {
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
                                     <td class="py-3 px-4">{rangeData.business_hours}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                    <td class="py-3 px-4">{rangeData.price_uchihodai_weekday_str || "お問い合わせください"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access}</td>
                                 </tr>
                             </tbody>
                         </table>
