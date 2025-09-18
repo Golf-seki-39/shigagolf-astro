@@ -208,8 +208,9 @@ if (docSnap.exists()) {
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    {/* ★★★ 修正: 住所リンクの検索クエリに練習場名を追加 ★★★ */}
                                     <td class="py-3 px-4">
-                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
                                         </a>
                                     </td>
@@ -258,7 +259,6 @@ if (docSnap.exists()) {
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
-                        {/* ★★★ 修正: GoogleマップのURLを修正 ★★★ */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
