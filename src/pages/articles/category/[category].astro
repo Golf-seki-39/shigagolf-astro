@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+
+export async function getStaticPaths() {
+    try {
+        const articlesCollection = collection(
+            db,
+            "artifacts",
+            import.meta.env.PUBLIC_FIREBASE_APP_ID,
+            "public",
+            "data",
+            "articles",
+        );
+        const querySnapshot = await getDocs(articlesCollection);
+        const allArticles = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        const articlesByCategory = {};
+
+        for (const article of allArticles) {
+            // ★★★ ここを修正 ★★★
+            // article.categoryが存在し、かつそれが空の文字列でないことを確認
+            if (article.category && typeof article.category === 'string' && article.category.trim() !== '') {
+                const categoryName = article.category.trim();
+                if (!articlesByCategory[categoryName]) {
+                    articlesByCategory[categoryName] = [];
+                }
+                articlesByCategory[categoryName].push(article);
+            }
+        }
+        
+        const recognizedCategories = Object.keys(articlesByCategory);
+        console.log("Astroが認識したカテゴリ一覧:", recognizedCategories);
+
+        if (recognizedCategories.length === 0) {
+            console.warn("有効なカテゴリを持つ記事が見つかりませんでした。");
+            return [];
+        }
+
+        return recognizedCategories.map(category => {
+            return {
+                params: { category: category },
+                props: { articles: articlesByCategory[category] }
+            };
+        });
+
+    } catch (error) {
+        console.error("getStaticPathsでエラーが発生しました:", error);
+        // エラーが発生した場合はページを生成しない
+        return [];
+    }
+}
+
+const { category } = Astro.params;
+const { articles: categoryArticles } = Astro.props;
+
+const title = `${category} | シガゴル お役立ち記事`;
+const description = `「${category}」に関するお役立ち記事一覧です。滋賀のゴルファーに役立つ情報を発信中。`;
+
+const formatUrl = (url) => {
+    if (!url) return '#';
+    return url.endsWith('/') ? url : `${url}/`;
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="container mx-auto p-4 md:p-6">
+    <div class="text-center mb-10">
+      <p class="text-sm text-slate-500">お役立ち記事</p>
+      <h1 class="text-2xl md:text-3xl font-bold mb-2">{category}</h1>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {categoryArticles && categoryArticles.length > 0 ? (
+        categoryArticles.map(article => (
+          <a href={formatUrl(article.url)} class="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+            <div class="relative">
+              <div class="w-full h-40 bg-slate-100 flex items-center justify-center">
+                <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
+              </div>
+            </div>
+            <div class="p-4 flex-grow flex flex-col">
+              <h3 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors">
+                {article.title}
+              </h3>
+              <p class="text-sm text-slate-600 mt-2 flex-grow">
+                {article.description}
+              </p>
+              <div class="mt-4 text-right text-sm font-semibold text-green-600">
+                続きを読む →
+              </div>
+            </div>
+          </a>
+        ))
+      ) : (
+        <p class="text-center col-span-full">このカテゴリの記事はまだありません。</p>
+      )}
+    </div>
+
+    <div class="text-center mt-12">
+        <a href="/articles/" class="text-green-600 font-semibold hover:underline">
+            ← お役立ち記事一覧へ戻る
+        </a>
+    </div>
+  </main>
+</BaseLayout>

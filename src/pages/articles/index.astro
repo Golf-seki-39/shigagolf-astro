@@ -6,7 +6,7 @@ import { collection, getDocs, query, orderBy } from "firebase/firestore";
 const title = "お役立ち記事一覧 | シガゴル";
 const description = "滋賀のゴルファーに役立つ情報を発信中。練習場の体験談やギアレビュー、スコアアップのコツなど、様々な角度からゴルフライフをサポートします。";
 
-// --- ▼▼▼ Firebaseから記事データを取得 ▼▼▼ ---
+// --- Firebaseから記事データを取得 ---
 let allArticles = [];
 let fetchError = false;
 
@@ -14,41 +14,44 @@ try {
     const articlesCollection = collection(
         db,
         "artifacts",
-        // ★★★ 環境変数名を変更しました ★★★
-        import.meta.env.PUBLIC_FIREBASE_APP_ID, 
+        import.meta.env.PUBLIC_FIREBASE_APP_ID,
         "public",
         "data",
         "articles",
     );
-    const q = query(articlesCollection, orderBy("createdAt", "desc")); // 新しい記事が上に来るようにソート
+    const q = query(articlesCollection, orderBy("createdAt", "desc"));
     const querySnapshot = await getDocs(q);
     
     allArticles = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
     }));
-
 } catch (error) {
     console.error("Firebase data fetching failed:", error);
     fetchError = true;
 }
-// --- ▲▲▲ Firebaseからのデータ取得はここまで ▲▲▲ ---
 
-
-// 取得したデータを元に、注目記事やカテゴリ分けを行う
-const featuredArticles = allArticles.filter(a => a.isFeatured);
+// --- 記事の仕分け ---
+const featuredArticle = allArticles.find(a => a.isFeatured);
 const regularArticles = allArticles.filter(a => !a.isFeatured);
 
 const articlesByCategory = regularArticles.reduce((acc, article) => {
-  const category = article.category;
-  if (!acc[category]) {
-    acc[category] = [];
+  if (article.category) {
+    if (!acc[article.category]) {
+      acc[article.category] = [];
+    }
+    acc[article.category].push(article);
   }
-  acc[category].push(article);
   return acc;
 }, {});
 
 const categories = Object.keys(articlesByCategory);
+
+// URLの末尾にスラッシュを強制するヘルパー関数
+const formatUrl = (url) => {
+    if (!url) return '#';
+    return url.endsWith('/') ? url : `${url}/`;
+};
 ---
 
 <BaseLayout title={title} description={description}>
@@ -66,67 +69,79 @@ const categories = Object.keys(articlesByCategory);
         <p class="text-slate-600 mt-2">時間をおいて再度お試しください。</p>
       </div>
     ) : (
-      <>
-        {/* 注目記事セクション */}
-        {featuredArticles.length > 0 && (
-          <section class="mb-12">
-            <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">注目記事</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {featuredArticles.map(article => (
-                <a href={article.url}/ class="flex flex-col sm:flex-row bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
-                  <div class="w-full sm:w-1/2 h-48 bg-slate-100 flex items-center justify-center">
-                    <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
-                  </div>
-                  <div class="p-5 flex flex-col justify-between flex-1">
-                    <div>
-                      <span class="text-sm bg-green-100 text-green-800 font-semibold px-2 py-1 rounded">{article.category}</span>
-                      <h3 class="text-xl font-bold mt-2 text-slate-800 group-hover:text-green-700 transition-colors">
-                        {article.title}
-                      </h3>
-                      <p class="text-sm text-slate-600 mt-2">
-                        {article.description}
-                      </p>
-                    </div>
-                    <div class="mt-4 text-right text-sm font-semibold text-green-600">
-                      続きを読む →
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
+      <div class="space-y-8">
+        {/* 注目記事セクション (高さを抑えたレイアウト) */}
+        {featuredArticle && (
+          <section>
+            <h2 class="text-xl font-bold border-b-4 border-green-600 pb-2 mb-4">
+              <span class="text-yellow-500">★</span> 注目記事
+            </h2>
+            <a href={formatUrl(featuredArticle.url)} class="flex bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+              <div class="w-1/3 h-32 sm:h-auto bg-slate-100">
+                <img src={featuredArticle.imageUrl} alt={featuredArticle.title} class="w-full h-full object-contain" />
+              </div>
+              <div class="w-2/3 p-3 sm:p-4 flex flex-col justify-center">
+                <div>
+                  <h3 class="text-base sm:text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors line-clamp-2">
+                    {featuredArticle.title}
+                  </h3>
+                  <p class="hidden sm:block text-sm text-slate-600 mt-2 line-clamp-2">
+                    {featuredArticle.description}
+                  </p>
+                </div>
+                <div class="mt-2 text-right text-sm font-semibold text-green-600">
+                  続きを読む →
+                </div>
+              </div>
+            </a>
           </section>
         )}
 
         {/* カテゴリ別記事セクション */}
-        {categories.map(category => (
-          <section class="mb-12">
-            <h2 class="text-2xl font-bold border-b-4 border-green-600 pb-2 mb-6">{category}</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {articlesByCategory[category].map(article => (
-                <a href={article.url}/ class="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
-                  <div class="relative">
-                    <div class="w-full h-40 bg-slate-100 flex items-center justify-center">
-                      <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
+        <div class="space-y-4">
+          {categories.map(category => (
+            <details class="group border rounded-lg overflow-hidden">
+              <summary class="cursor-pointer bg-slate-50 p-4 text-xl font-bold flex justify-between items-center list-none group-open:bg-green-50">
+                <div>
+                  {category}
+                  <span class="text-sm text-slate-500 ml-2">({articlesByCategory[category].length}件)</span>
+                </div>
+                <svg class="w-5 h-5 transition-transform duration-300 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div class="p-4">
+                <div class="flex overflow-x-auto space-x-4 pb-4 scrollbar-hide">
+                  {articlesByCategory[category].slice(0, 4).map(article => (
+                    <div class="flex-shrink-0 w-3/4 sm:w-1/2 md:w-1/3">
+                      <a href={formatUrl(article.url)} class="block bg-white rounded-lg shadow-md h-full hover:shadow-xl transition-shadow duration-300">
+                        <img src={article.imageUrl} alt={article.title} class="w-full h-32 object-contain rounded-t-lg bg-slate-100" />
+                        <div class="p-3">
+                          <h3 class="font-bold text-base line-clamp-2">{article.title}</h3>
+                          <p class="text-xs text-slate-500 mt-1 line-clamp-2">{article.description}</p>
+                        </div>
+                      </a>
                     </div>
-                  </div>
-                  <div class="p-4 flex-grow flex flex-col">
-                    <h3 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors">
-                      {article.title}
-                    </h3>
-                    <p class="text-sm text-slate-600 mt-2 flex-grow">
-                      {article.description}
-                    </p>
-                    <div class="mt-4 text-right text-sm font-semibold text-green-600">
-                      続きを読む →
+                  ))}
+                  
+                  {articlesByCategory[category].length > 4 && (
+                    <div class="flex-shrink-0 w-3/4 sm:w-1/2 md:w-1/3">
+                      <a href={`/articles/category/${category}/`} class="flex items-center justify-center bg-slate-100 rounded-lg shadow-md h-full text-green-700 font-bold hover:bg-green-100 transition-colors duration-300">
+                        もっと見る →
+                      </a>
                     </div>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
-        ))}
-      </>
+                  )}
+                </div>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
     )}
   </main>
 </BaseLayout>
 
+<style>
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
