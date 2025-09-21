@@ -8,7 +8,6 @@ const title =
 const description =
     "滋賀県東近江市にある「さくらゴルフ倶楽部」は、特に女性とジュニアに驚きの優遇措置を提供する練習場。男性ゴルファーも通い詰めるその魅力と、充実した練習環境、心温まるエピソードを徹底レポートします。";
 
-// ★★★ 修正箇所(1) ★★★
 const pubDate = "2025-05-23";
 const pubDateISO = "2025-05-23T10:00:00+09:00"; 
 const rangeId = "sakura_gc";
@@ -25,7 +24,6 @@ if (docSnap.exists()) {
 }
 ---
 
-{/* ★★★ 修正箇所(2) ★★★ */}
 <Fragment slot="head">
     <script
         type="application/ld+json"
@@ -129,12 +127,10 @@ if (docSnap.exists()) {
 
             <p>何を隠そう、筆者は男性なのですが、それでも週2～3回は通ってしまうほど、この練習場には魅力がたっぷり詰まっているんです。今回は、その秘密を余すところなくレポートします！</p>
             
-            {/* ★★★ 追加修正(1) 比較記事へのリンク ★★★ */}
             <div class="not-prose bg-slate-50 p-4 rounded-lg border border-slate-200 my-6 text-center">
                 <p class="m-0">この記事で紹介するさくらゴルフ倶楽部は、<a href="https://shigagolf-reviews.netlify.app/articles/omi-higashiomi-comparison/" class="text-green-700 font-bold hover:underline">「【近江八幡・東近江】ゴルフ練習場4選・徹底比較！」</a>の記事でも紹介しています。</p>
             </div>
 
-            {/* ★★★ 追加修正(2) 目次 ★★★ */}
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
@@ -315,79 +311,9 @@ if (docSnap.exists()) {
             
             <hr />
 
+            {/* ★★★ 構成修正：ここにデータベース情報を統合 ★★★ */}
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                「さくらゴルフ倶楽部」の基本情報
-            </h2>
-            <figure class="my-6">
-                <img src="https://i.imgur.com/tOmKJaU.jpeg" alt="近くの道路にある場所案内の看板＿さくらゴルフ倶楽部" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">近くの道路にある場所案内の看板＿さくらゴルフ倶楽部（2025年4月／筆者撮影）</figcaption>
-            </figure>
-            
-            <div class="not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 space-y-4">
-                <p><strong>アクセス：</strong> 名神高速「蒲生スマートIC」から約10分 (駐車場約50台完備)</p>
-                <p><strong>営業時間：</strong> 朝6時～深夜24時 (基本年中無休 ※年末年始等は要確認)</p>
-                <p><strong>セルフ営業：</strong> 早朝(6-9時)と深夜(22-24時)は入場料無料！(※アプローチ練習場など一部利用制限あり)</p>
-                <figure class="my-4">
-                    <img src="https://i.imgur.com/o6EPiO7.png" alt="セルフ営業時の出入り口。早朝深夜は無人営業" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">セルフ営業時の出入り口。早朝深夜は無人営業のためエントランス奥の出入り口へ（2025年4月／筆者撮影）</figcaption>
-                </figure>
-                <p><strong>支払い：</strong> 現金で購入する専用プリペイドカードが基本</p>
-                <figure class="my-4">
-                    <img src="https://i.imgur.com/9xKHqGL.png" alt="プリペイドカード購入機。フロントの横に1カ所設置" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">プリペイドカード購入機。フロントの横に1カ所設置されています（2025年4月／筆者撮影）</figcaption>
-                </figure>
-                <p><strong>ボール単価：</strong> 時間帯や曜日・階数によって変動 (詳細は現地で！)</p>
-                <figure class="my-4">
-                    <img src="https://i.imgur.com/sGx2fPN.jpeg" alt="さくらゴルフ倶楽部の料金表＿平日・土日祝記載" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">さくらゴルフ倶楽部の料金表＿平日・土日祝記載（2025年4月／筆者撮影）</figcaption>
-                </figure>
-                <p><strong>レンタルクラブ：</strong> ドライバー以外は無料！手ぶらでもOK！</p>
-                <figure class="my-4">
-                    <img src="https://i.imgur.com/Q8X3Pcd.jpeg" alt="レンタルクラブ。左が大人用。右がジュニア用" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">レンタルクラブ。左が大人用。右がジュニア用。フロント手前にあります（2025年4月／筆者撮影）</figcaption>
-                </figure>
-                <p><strong>激アツイベント：</strong> 毎月第3火曜日は「1球3円」デー！</p>
-                <figure class="my-4">
-                    <img src="https://i.imgur.com/a1Vts8G.png" alt="月に一度の激安デー！1球3円dayの告知看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">月に一度の激安デー！1球3円dayの告知看板（2025年4月／筆者撮影）</figcaption>
-                </figure>
-                <p><strong>その他：</strong> お得なメンバー会員制度もあり</p>
-                <figure class="my-4">
-                    <img src="https://i.imgur.com/oeBsfk3.png" alt="メンバー会員及びプレミアム会員の特典看板＿年会費の情報" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">メンバー会員及びプレミアム会員の特典看板＿年会費の情報（2025年4月／筆者撮影）</figcaption>
-                </figure>
-            </div>
-            
-            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                【まとめ】こんなあなたに「さくらゴルフ倶楽部」は絶対おすすめ！
-            </h2>
-            <p>東近江市の「さくらゴルフ倶楽部」。 特筆すべきは、やはり女性とジュニアへの圧倒的なホスピタリティ！ そして、実践的なアプローチ練習環境と、何より温かい人の繋がりが感じられる場所だということ。</p>
-            <p>設備は最新鋭ピカピカ！というわけではないかもしれませんが、それを補って余りあるほどの練習のしやすさと居心地の良さがここにはあります。</p>
-
-            <figure class="my-6">
-                 {/* ★★★ 要修正 ★★★
-                    ご指定の29番目のURL(blob:https://imgur.com/...)は無効でした。
-                    お手数ですが、正しい画像URLに差し替えてください。
-                 */}
-                <img src="https://i.imgur.com/KQedE3L.jpeg" alt="1Fエントランス横休憩スペースに設置されているマッサージチェア" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">マッサージチェアも置いてます笑 1Fエントランス横休憩スペースに設置されているマッサージチェア。自由に使用可能（2025年4月／筆者撮影）</figcaption>
-            </figure>
-
-            <p>特にこんな方には、自信を持っておすすめします！</p>
-            <ul class="list-disc list-inside space-y-2 my-4">
-                <li>とにかくお得にたくさん練習したい女性ゴルファーの方！</li>
-                <li>ゴルフを始めたい、または始めたばかりの初心者の方！</li>
-                <li>アプローチショットを徹底的に磨きたい方！</li>
-                <li>財布の中身を気にせず、心ゆくまで打ち込みたい方！</li>
-                <li>フレンドリーな雰囲気で、ゴルフ仲間を見つけたい方！</li>
-            </ul>
-            <p>店員さんとお客さんが和気あいあいとゴルフ談義に花を咲かせている、そんな光景が日常の練習場です。ゴルフ初心者の方も、がっつり練習したい経験者も、そして「ちょっと気になる…」くらいの人にも。 さくらゴルフ倶楽部は、すべてのゴルファーにやさしい練習場です！</p>
-            <p>気になったあなたは、ぜひ一度、その魅力を体験しに足を運んでみてくださいね！</p>
-            
-            <hr />
-
-            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                {rangeData ? `「${rangeData.name}」のデータベース情報` : "データベース情報"}
+                {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
             </h2>
             {
                 rangeData ? (
@@ -400,11 +326,19 @@ if (docSnap.exists()) {
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
-                                    <td class="py-3 px-4">{rangeData.address}</td>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            {rangeData.address}
+                                        </a>
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
-                                    <td class="py-3 px-4">{rangeData.phone}</td>
+                                    <td class="py-3 px-4">
+                                        <a href={`tel:${rangeData.phone.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                            {rangeData.phone}
+                                        </a>
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
@@ -456,6 +390,33 @@ if (docSnap.exists()) {
                     「さくらゴルフ倶楽部」のシガゴル公式レビューページへ
                 </a>
             </p>
+
+            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【まとめ】こんなあなたに「さくらゴルフ倶楽部」は絶対おすすめ！
+            </h2>
+            <p>東近江市の「さくらゴルフ倶楽部」。 特筆すべきは、やはり女性とジュニアへの圧倒的なホスピタリティ！ そして、実践的なアプローチ練習環境と、何より温かい人の繋がりが感じられる場所だということ。</p>
+            <p>設備は最新鋭ピカピカ！というわけではないかもしれませんが、それを補って余りあるほどの練習のしやすさと居心地の良さがここにはあります。</p>
+
+            <figure class="my-6">
+                 {/* ★★★ 要修正 ★★★
+                    ご指定の29番目のURL(blob:https://imgur.com/...)は無効でした。
+                    お手数ですが、正しい画像URLに差し替えてください。
+                 */}
+                <img src="https://via.placeholder.com/1280x960.png?text=Invalid+Image+URL" alt="1Fエントランス横休憩スペースに設置されているマッサージチェア" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">マッサージチェアも置いてます笑 1Fエントランス横休憩スペースに設置されているマッサージチェア。自由に使用可能（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p>特にこんな方には、自信を持っておすすめします！</p>
+            <ul class="list-disc list-inside space-y-2 my-4">
+                <li>とにかくお得にたくさん練習したい女性ゴルファーの方！</li>
+                <li>ゴルフを始めたい、または始めたばかりの初心者の方！</li>
+                <li>アプローチショットを徹底的に磨きたい方！</li>
+                <li>財布の中身を気にせず、心ゆくまで打ち込みたい方！</li>
+                <li>フレンドリーな雰囲気で、ゴルフ仲間を見つけたい方！</li>
+            </ul>
+            <p>店員さんとお客さんが和気あいあいとゴルフ談義に花を咲かせている、そんな光景が日常の練習場です。ゴルフ初心者の方も、がっつり練習したい経験者も、そして「ちょっと気になる…」くらいの人にも。 さくらゴルフ倶楽部は、すべてのゴルファーにやさしい練習場です！</p>
+            <p>気になったあなたは、ぜひ一度、その魅力を体験しに足を運んでみてくださいね！</p>
+            
         </article>
     </div>
 </BaseLayout>
