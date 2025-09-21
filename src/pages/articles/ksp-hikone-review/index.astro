@@ -467,7 +467,10 @@ if (docSnap.exists()) {
                                             住所
                                         </th>
                                         <td class="py-3 px-4">
-                                            {rangeData.address}
+                                            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                {rangeData.address}
+                            </a>
+
                                         </td>
                                     </>
                                 </tr>
@@ -477,6 +480,8 @@ if (docSnap.exists()) {
                                             電話番号
                                         </th>
                                         <td class="py-3 px-4">
+                                             <a href={`tel:${rangeData.phone.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+
                                             {rangeData.phone}
                                         </td>
                                     </>
