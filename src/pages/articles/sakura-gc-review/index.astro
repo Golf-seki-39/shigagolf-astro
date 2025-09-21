@@ -1,0 +1,478 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+
+const title =
+    "【東近江市】女性ゴルファー超優遇！「さくらゴルフ倶楽部」が安すぎて心配になるレベルだった件。 | シガゴル";
+const description =
+    "滋賀県東近江市にある「さくらゴルフ倶楽部」は、特に女性とジュニアに驚きの優遇措置を提供する練習場。男性ゴルファーも通い詰めるその魅力と、充実した練習環境、心温まるエピソードを徹底レポートします。";
+
+// ★★★ 修正箇所(1) ★★★
+const pubDate = "2025-05-23";
+const pubDateISO = "2025-05-23T10:00:00+09:00"; 
+const rangeId = "sakura_gc";
+
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
+---
+
+{/* ★★★ 修正箇所(2) ★★★ */}
+<Fragment slot="head">
+    <script
+        type="application/ld+json"
+        set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": title.split(" | ")[0],
+            "description": description,
+            "image": [
+                "https://i.imgur.com/wgDjFch.jpeg",
+                "https://i.imgur.com/ZqtS7KZ.png",
+                "https://i.imgur.com/nsHMRDX.jpeg"
+            ],
+            "author": {
+                "@type": "Person",
+                "name": "関（せき）",
+                "url": "https://shigagolf-reviews.netlify.app/about/", 
+                "image": "https://i.imgur.com/BOcMOf3.png",
+                "sameAs": [
+                    "https://x.com/Golf_Seki39",
+                    "https://golf-medley.com/articles/authors/seki",
+                    "https://note.com/seki_golf_39",
+                    "https://www.tiktok.com/@user2579514551181"
+                ]
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "シガゴル",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://i.imgur.com/mN0IbPS.png"
+                }
+            },
+            "datePublished": pubDateISO,
+            "dateModified": pubDateISO
+        })}
+    />
+</Fragment>
+
+<BaseLayout title={title} description={description}>
+    <div
+        class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
+    >
+        <a
+            href="/"
+            class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
+        >
+            ‹ トップページに戻る
+        </a>
+
+        <article
+            class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
+        >
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
+                    【東近江市】女性ゴルファー超優遇！「さくらゴルフ倶楽部」が安すぎて心配になるレベルだった件。
+                </h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <p>
+                「もっと気軽にたくさん練習したい！」<br />
+                「どのゴルフ練習場がコスパいいの？」
+            </p>
+            <p>
+                そんな悩みを抱えるゴルファーさんへ、特に女性のあなたに、とっておきのゴルフ練習場を紹介します！
+            </p>
+
+            <figure class="my-6">
+                <img
+                    src="https://i.imgur.com/wgDjFch.jpeg"
+                    alt="夕暮れ後の静けさに包まれた「さくらゴルフ倶楽部」入口の様子"
+                    class="w-full h-auto object-cover rounded-lg"
+                    loading="lazy"
+                    width="1280"
+                    height="960"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">
+                    夕暮れ後の静けさに包まれた「さくらゴルフ倶楽部」入口の様子（2025年4月／筆者撮影）
+                </figcaption>
+            </figure>
+
+            <p>
+                滋賀県東近江市に、まるで女性とジュニア（17歳以下）のために作られたかのような、驚きのゴルフ練習場があるのをご存知ですか？
+                その名も「さくらゴルフ倶楽部」。
+            </p>
+
+            <figure class="my-6">
+                <img
+                    src="https://i.imgur.com/ZqtS7KZ.png"
+                    alt="広々とした『さくらゴルフ倶楽部』の打席エリア。ナイター照明も完備"
+                    class="w-full h-auto object-cover rounded-lg"
+                    loading="lazy"
+                    width="1280"
+                    height="960"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">
+                    広々とした『さくらゴルフ倶楽部』の打席エリア。ナイター照明も完備（2025年4月／筆者撮影）
+                </figcaption>
+            </figure>
+
+            <p>何を隠そう、筆者は男性なのですが、それでも週2～3回は通ってしまうほど、この練習場には魅力がたっぷり詰まっているんです。今回は、その秘密を余すところなくレポートします！</p>
+            
+            {/* ★★★ 追加修正(1) 比較記事へのリンク ★★★ */}
+            <div class="not-prose bg-slate-50 p-4 rounded-lg border border-slate-200 my-6 text-center">
+                <p class="m-0">この記事で紹介するさくらゴルフ倶楽部は、<a href="https://shigagolf-reviews.netlify.app/articles/omi-higashiomi-comparison/" class="text-green-700 font-bold hover:underline">「【近江八幡・東近江】ゴルフ練習場4選・徹底比較！」</a>の記事でも紹介しています。</p>
+            </div>
+
+            {/* ★★★ 追加修正(2) 目次 ★★★ */}
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#benefits" class="text-green-700 hover:underline">女性＆ジュニアにうれしい特典はこちら！</a></li>
+                    <li><a href="#reasons" class="text-green-700 hover:underline">男性筆者がそれでも「さくらゴルフ倶楽部」に通い詰める理由</a></li>
+                    <li><a href="#environment" class="text-green-700 hover:underline">気になる練習環境を徹底チェック！</a></li>
+                    <li><a href="#insider-tip" class="text-green-700 hover:underline">“裏ワザ”ではなく、店員さんのご厚意です</a></li>
+                    <li><a href="#beginner-story" class="text-green-700 hover:underline">初心者だった私が「ホッ」とした瞬間。店員さんの神対応！</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">「さくらゴルフ倶楽部」基本情報</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">【まとめ】こんなあなたに「さくらゴルフ倶楽部」は絶対おすすめ！</a></li>
+                </ul>
+            </div>
+
+            <h2 id="benefits" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                ＼女性＆ジュニアにうれしい特典はこちら！／
+            </h2>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/JESF50G.jpeg" alt="メンバー特典のチラシ。女性会員はプレミアム会員相当" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">メンバー特典のチラシ。女性会員はプレミアム会員相当（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <ul class="list-none p-0 m-0 space-y-3 my-6">
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>入場料：</strong>いつでも無料！</span></li>
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>打ち放題：</strong>1時間515円（税込）※最大3時間まで</span></li>
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>アプローチ練習場：</strong>無料！（60分/回）</span></li>
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>レンタルクラブ：</strong>無料！</span></li>
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>年会費：</strong>もちろん無料！</span></li>
+            </ul>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/MxbDzQ0.png" alt="レディースパック打ち放題の詳細看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">レディースパック打ち放題の詳細看板（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p>…正直、これ本当？って思いますよね。私も最初は目を疑いました（笑）。 これならお財布を気にせず、思いっきり練習に打ち込めます！ 実際に、私のゴルフ仲間（女性）もこの特典をフル活用して、めきめき上達していますよ！</p>
+
+            <h2 id="reasons" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                男性筆者がそれでも「さくらゴルフ倶楽部」に通い詰める理由
+            </h2>
+            <p>「女性がお得なのは分かったけど、じゃあ男性のあなたは何でそんなに通ってるの？」 そう思われたかもしれません。実はお得さだけじゃない、私がこの練習場を愛してやまない理由があるんです。</p>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">ゴルフ仲間との最高の集合場所</h3>
+            <p>一緒に行くゴルフ仲間の多くが、この「さくらゴルフ倶楽部」がお気に入りなんです。 女性会員の友人は破格の安さで練習できますし、男性の友人は1回の練習で500球以上打つ猛者もいるのです。その友人はプレミアム会員なので割安に練習できる。 みんながハッピーになれる場所なんです。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">リアルな情報交換の場になる</h3>
+            <p>練習場でたまたま顔見知りになった方々と、今ではゴルフ情報を交換する仲に。 これが本当に有益で、「あのコースどうだった？」とか「新しいクラブ試した？」なんて会話が日常茶飯事。 ゴルフの輪が自然と広がっていくんです。</p>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">アットホームな店員さんと空気感</h3>
+            <p>ここの店員さん、本当に親切でゴルフ愛に溢れている方ばかり。 ゴルフの相談に乗ってくれたり、時にはお客さんと一緒にラウンド（もちろん店員さんのお休みの日に！）することもあるくらい、フレンドリーなんです。 このアットホームな雰囲気が、通うたびに心地いいんですよね。</p>
+
+            <h2 id="environment" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                気になる練習環境を徹底チェック！
+            </h2>
+            <p>もちろん、練習環境も充実していますよ！</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【打席設備】</h3>
+            <p><strong>マット：</strong> 打席によって多少の使用感はありますが、練習に支障が出るレベルではありません。</p>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/TOM6sID.jpeg" alt="昼間の打席マットの状態。ティーアップされている球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">昼間の打席マットの状態。ティーアップされている球（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p><strong>ティーアップ：</strong> 便利な自動式。高さも5段階に調整可能で操作も簡単！</p>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/EtCU4D6.jpeg" alt="ティーの高さ調整をする機械。プリカの挿入もこの一台で！" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">ティーの高さ調整をする機械。プリカの挿入もこの一台で！（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p><strong>ボール：</strong> 様々なメーカーのロストボールがミックスされています。状態は色々ですが、練習用としては十分です。</p>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/9ypbv0k.jpeg" alt="アプローチ練習場で実際にレンタルする球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場で実際にレンタルする球（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p><strong>ターゲット：</strong> 10ヤード毎のラインや多数の旗、グリーンを模した的も設置されていて、距離感が掴みやすい！奥のネット(200ヤード～)にドライバーショットが届けば気分爽快です！</p>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/7wsrA50.jpeg" alt="打席から見たフェアウェイ（ターゲットのyd表示あり）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">打席から見たフェアウェイ（星印をつけているところにターゲット（yd表示）があります）（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p><strong>無料貸し出し品：</strong> ヘッドスピード測定器、アドレス確認用ミラー、スマホホルダーも受付で無料レンタル可能。スイングチェックに役立ちます。</p>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/hfDU3SE.jpeg" alt="無料貸し出し品一覧の写真（店内貼り出し用ポスター）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">無料貸し出し品一覧の写真（店内貼り出し用ポスター）（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【初心者ゴルファーさん注目！集中できる「初心者優先スペース」】</h3>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/RYK0Lmz.png" alt="身長より高い打席横にあるパーテーション" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">身長より高い打席横にあるパーテーション。（2025年4月／筆者撮影）</figcaption>
+            </figure>
+            
+            <p>2階打席の一番奥には、6打席の「初心者優先スペース」があります。 ここが本当に素晴らしい！ 高さ約2mのしっかりしたパーテーションで区切られているので、隣の打席や周りの視線を気にせず、自分のペースで練習に集中できます。「空振りしたら恥ずかしいな…」なんて心配、もう必要ありません！ 安心して、納得いくまでクラブを振れますよ。</p>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/0vYblgK.jpeg" alt="横から見た初心者優先スペース。光差し込む昼間の打席" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">横から見た初心者優先スペース。光差し込む昼間の打席（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p>一番奥は左利き用の打席になっています。2階なので打ち下ろしで気持ちよく練習できるのも◎。 受付で空き状況を確認してみてくださいね。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/5aJXKlT.png" alt="フロントに設置されている打席の空き状況確認掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">フロントに設置されている打席の空き状況確認掲示板（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【スコアメイクの鍵！実戦力が身につく「アプローチ練習場」】</h3>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/nsHMRDX.jpeg" alt="アプローチ練習場の全体。芝の状態などがはっきりわかる昼間" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場の全体。芝の状態などがはっきりわかる昼間（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p>ゴルフのスコアを左右するショートゲーム。「さくらゴルフ倶楽部」には、約60ヤードのアプローチ練習場があり、これがまた素晴らしいんです！</p>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/POpXpCd.jpeg" alt="アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p>正直にお伝えすると、芝やバンカーの状態が常に完璧！というわけではありません。 でも、それが逆にイイ！ コースで遭遇するような、ちょっと難しいライやアゴの高いバンカーからのショットなど、より実践的な練習ができるんです。 旗も2本立っているので、目標設定もしやすいですよ。</p>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/InmvnTr.jpeg" alt="アプローチ練習場のバンカー。砂の状態やライの状態を確認できます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場のバンカー。砂の状態やライの状態を確認できます（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p>私自身、ここのアプローチ練習場で様々な打ち方を試し、練習を重ねた結果、苦手だったアプローチでのトップが激減！スコアアップを実感しています。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/7Owsnqp.jpeg" alt="目土小屋。袋の中にスコップが入っているのでそのまま使えます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">目土小屋。袋の中にはスコップが入っているのでそのまま使えます（2025年4月／筆者撮影）</figcaption>
+            </figure>
+            
+            <p>ゴルフシューズはもちろん、スニーカーでの利用もOK。 練習後にはコンプレッサーで汚れを落とせるのも嬉しいポイント。休憩用のベンチも設置されています。</p>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/GEFqCJG.jpeg" alt="アプローチ練習場に設置されている休憩用ベンチ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場に設置されている休憩用ベンチ（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【気分転換にも最適「パター練習コーナー」】</h3>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/xLzoLbP.jpeg" alt="2Fオープンスペースにあるパター練習用のミニグリーン" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">2Fオープンスペースにあるパター練習用のミニグリーン（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p>2階ホールには、パターマット2種類とフラットなミニグリーン（約2m×1m）も。 本格的なパター練習には少し物足りないかもしれませんが、打席練習の合間の気分転換や、初心者の方がパットの感覚を掴むには最適です。 気軽に利用してみてください。</p>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/DMFHH2o.jpeg" alt="2Fオープンスペースにあるパターマット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">2Fオープンスペースにあるパターマット（2025年4月／筆者撮影）</figcaption>
+            </figure>
+            
+            <h2 id="insider-tip" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                ⚠ ※注意：以下は“裏ワザ”ではなく、店員さんのご厚意です。常にOKではないので、必ず相談を！
+            </h2>
+            <p>これはオフィシャルな情報ではないのですが… 店員さんのご厚意で、こんな経験をしたことがあります。</p>
+            <p>ゴルフ未経験の友人を連れて行った時のこと。 友人は今後ゴルフを続けるか分からないのに、プリペイドカード（2,000円～）を購入するのは少し気が引ける…という状況でした。 ダメ元で店員さんに相談してみたところ、なんと私のプリペイドカードを友人と共有する形で、友人はカード購入なしで入場・練習させてもらえたのです！ （※本来は一打席一人、プリカも打席ごとに必要です）</p>
+            <p>また、別の日にはアプローチ練習場に「メインは見学で、数球だけちょっと触ってみる程度なら…」と相談したところ、無料で入場させてもらえたことも。</p>
+            <p>重ねてお伝えしますが、これらはあくまで店員さんのご厚意によるものであり、常に同様の対応を期待できるものではありません。 もし同様の状況になった場合は、必ず事前に店員さんに謙虚な姿勢で相談してみてくださいね。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/A8TfyKs.jpeg" alt="打席から見た、晴れた昼間のフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">打席から見た、晴れた昼間のフェアウェイ（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <h2 id="beginner-story" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                初心者だった私が「ホッ」とした瞬間。店員さんの神対応！
+            </h2>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/EUkMBQR.jpeg" alt="さくらゴルフ倶楽部のメンバーズカード（メンバー会員）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">さくらゴルフ倶楽部のメンバーズカード（メンバー会員）（2025年5月／筆者撮影）</figcaption>
+            </figure>
+            <p>私がまだゴルフを始めたばかりの頃。 ある日、夜9時頃から練習を始めたのですが、夜10時になった瞬間、突然プリペイドカードが打席から排出されたんです！</p>
+            <p>「え？何？故障！？」とパニックになっていると、たまたま近くを通りかかった店員さんが優しく声をかけてくれました。 「22時からは料金が安くなるので、一度カードが出てくるんですよ。早朝も同じシステムで、朝9時までは入場料不要で単価も安いので、9時になると一度排出されて受付が必要になるんです」と。</p>
+            <p>もう、本当にホッとしました…。 初めて練習場に行く時って、色々不安ですよね。 でも、「さくらゴルフ倶楽部」の店員さんは、こちらから「初めて来ました」と伝えれば、本当に丁寧に（ある意味、お節介なくらい(笑)）教えてくれるので、安心して練習を始められますよ。</p>
+            
+            <hr />
+
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                「さくらゴルフ倶楽部」の基本情報
+            </h2>
+            <figure class="my-6">
+                <img src="https://i.imgur.com/tOmKJaU.jpeg" alt="近くの道路にある場所案内の看板＿さくらゴルフ倶楽部" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">近くの道路にある場所案内の看板＿さくらゴルフ倶楽部（2025年4月／筆者撮影）</figcaption>
+            </figure>
+            
+            <div class="not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 space-y-4">
+                <p><strong>アクセス：</strong> 名神高速「蒲生スマートIC」から約10分 (駐車場約50台完備)</p>
+                <p><strong>営業時間：</strong> 朝6時～深夜24時 (基本年中無休 ※年末年始等は要確認)</p>
+                <p><strong>セルフ営業：</strong> 早朝(6-9時)と深夜(22-24時)は入場料無料！(※アプローチ練習場など一部利用制限あり)</p>
+                <figure class="my-4">
+                    <img src="https://i.imgur.com/o6EPiO7.png" alt="セルフ営業時の出入り口。早朝深夜は無人営業" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">セルフ営業時の出入り口。早朝深夜は無人営業のためエントランス奥の出入り口へ（2025年4月／筆者撮影）</figcaption>
+                </figure>
+                <p><strong>支払い：</strong> 現金で購入する専用プリペイドカードが基本</p>
+                <figure class="my-4">
+                    <img src="https://i.imgur.com/9xKHqGL.png" alt="プリペイドカード購入機。フロントの横に1カ所設置" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">プリペイドカード購入機。フロントの横に1カ所設置されています（2025年4月／筆者撮影）</figcaption>
+                </figure>
+                <p><strong>ボール単価：</strong> 時間帯や曜日・階数によって変動 (詳細は現地で！)</p>
+                <figure class="my-4">
+                    <img src="https://i.imgur.com/sGx2fPN.jpeg" alt="さくらゴルフ倶楽部の料金表＿平日・土日祝記載" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">さくらゴルフ倶楽部の料金表＿平日・土日祝記載（2025年4月／筆者撮影）</figcaption>
+                </figure>
+                <p><strong>レンタルクラブ：</strong> ドライバー以外は無料！手ぶらでもOK！</p>
+                <figure class="my-4">
+                    <img src="https://i.imgur.com/Q8X3Pcd.jpeg" alt="レンタルクラブ。左が大人用。右がジュニア用" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">レンタルクラブ。左が大人用。右がジュニア用。フロント手前にあります（2025年4月／筆者撮影）</figcaption>
+                </figure>
+                <p><strong>激アツイベント：</strong> 毎月第3火曜日は「1球3円」デー！</p>
+                <figure class="my-4">
+                    <img src="https://i.imgur.com/a1Vts8G.png" alt="月に一度の激安デー！1球3円dayの告知看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">月に一度の激安デー！1球3円dayの告知看板（2025年4月／筆者撮影）</figcaption>
+                </figure>
+                <p><strong>その他：</strong> お得なメンバー会員制度もあり</p>
+                <figure class="my-4">
+                    <img src="https://i.imgur.com/oeBsfk3.png" alt="メンバー会員及びプレミアム会員の特典看板＿年会費の情報" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">メンバー会員及びプレミアム会員の特典看板＿年会費の情報（2025年4月／筆者撮影）</figcaption>
+                </figure>
+            </div>
+            
+            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【まとめ】こんなあなたに「さくらゴルフ倶楽部」は絶対おすすめ！
+            </h2>
+            <p>東近江市の「さくらゴルフ倶楽部」。 特筆すべきは、やはり女性とジュニアへの圧倒的なホスピタリティ！ そして、実践的なアプローチ練習環境と、何より温かい人の繋がりが感じられる場所だということ。</p>
+            <p>設備は最新鋭ピカピカ！というわけではないかもしれませんが、それを補って余りあるほどの練習のしやすさと居心地の良さがここにはあります。</p>
+
+            <figure class="my-6">
+                 {/* ★★★ 要修正 ★★★
+                    ご指定の29番目のURL(blob:https://imgur.com/...)は無効でした。
+                    お手数ですが、正しい画像URLに差し替えてください。
+                 */}
+                <img src="https://i.imgur.com/KQedE3L.jpeg" alt="1Fエントランス横休憩スペースに設置されているマッサージチェア" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">マッサージチェアも置いてます笑 1Fエントランス横休憩スペースに設置されているマッサージチェア。自由に使用可能（2025年4月／筆者撮影）</figcaption>
+            </figure>
+
+            <p>特にこんな方には、自信を持っておすすめします！</p>
+            <ul class="list-disc list-inside space-y-2 my-4">
+                <li>とにかくお得にたくさん練習したい女性ゴルファーの方！</li>
+                <li>ゴルフを始めたい、または始めたばかりの初心者の方！</li>
+                <li>アプローチショットを徹底的に磨きたい方！</li>
+                <li>財布の中身を気にせず、心ゆくまで打ち込みたい方！</li>
+                <li>フレンドリーな雰囲気で、ゴルフ仲間を見つけたい方！</li>
+            </ul>
+            <p>店員さんとお客さんが和気あいあいとゴルフ談義に花を咲かせている、そんな光景が日常の練習場です。ゴルフ初心者の方も、がっつり練習したい経験者も、そして「ちょっと気になる…」くらいの人にも。 さくらゴルフ倶楽部は、すべてのゴルファーにやさしい練習場です！</p>
+            <p>気になったあなたは、ぜひ一度、その魅力を体験しに足を運んでみてくださいね！</p>
+            
+            <hr />
+
+            <h2 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」のデータベース情報` : "データベース情報"}
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <tbody class="align-baseline">
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">{rangeData.address}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">{rangeData.phone}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4">{rangeData.business_hours}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
+                            width="100%"
+                            height="450"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
+            <p class="text-center font-bold text-lg mt-8">
+                🎯 さらに詳しい情報や口コミはこちら！
+                <br />
+                <a
+                    href="/ranges/sakura_gc/"
+                    class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    「さくらゴルフ倶楽部」のシガゴル公式レビューページへ
+                </a>
+            </p>
+        </article>
+    </div>
+</BaseLayout>
+
+<style>
+    .map-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    }
+    .map-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+</style>
