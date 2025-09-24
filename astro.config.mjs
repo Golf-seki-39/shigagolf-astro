@@ -4,7 +4,7 @@ import sitemap from "@astrojs/sitemap"; // ★ 1. これをインポート（追
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://shigagolf-reviews.netlify.app',
+  site: 'https://shigagolf.com',
   
   trailingSlash: 'always', // ★ 2. この行を追加 (Netlifyの設定と合わせる)
 
