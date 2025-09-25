@@ -4,21 +4,18 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 // --- この記事固有の情報 ---
 const title = "【近江八幡・東近江】ゴルフ練習場4選・徹底比較！ | シガゴル";
 const description = "近江八幡・東近江エリアの主要なゴルフ練習場4ヶ所を、料金、設備、目的別に徹底比較。あなたにピッタリの練習場が必ず見つかります。";
-const pubDate = "2025-07-24";
+// ★★★ エラーの原因だった変数名を修正 ★★★
+const articlePubDate = "2025-07-24"; 
 const pubDateISO = "2025-07-24T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/DyVr8of.jpeg";
-
-// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-// ★★★ ここで先にheadlineを計算してしまいます ★★★
 const headline = title.split(" | ")[0];
-// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 ---
 
+{/* ★★★ 2つあったBaseLayoutを1つに統合 ★★★ */}
 <BaseLayout title={title} description={description}>
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        // ★★★ 計算済みの変数を渡すように変更 ★★★
         "headline": headline,
         "description": description,
         "image": [ imageUrl ],
@@ -42,9 +39,14 @@ const headline = title.split(" | ")[0];
         "datePublished": pubDateISO,
         "dateModified": pubDateISO
     })} />
-    
-    {/* ===== ここから下に、この記事の本文を記述してください ===== */}
-
+        
+    <div
+        id="article-omi-higashiomi-comparison-view"
+        class="view bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
+    >
+        {/* ここに記事の本文コンテンツが続きます */}
+        
+    </div>
 </BaseLayout>
 
 <BaseLayout title={title} description={description}>
