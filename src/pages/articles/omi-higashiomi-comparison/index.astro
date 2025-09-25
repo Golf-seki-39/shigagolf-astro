@@ -7,15 +7,19 @@ const description = "近江八幡・東近江エリアの主要なゴルフ練�
 const pubDate = "2025-07-24";
 const pubDateISO = "2025-07-24T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/DyVr8of.jpeg";
-// --- ここまで ---
+
+// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+// ★★★ ここで先にheadlineを計算してしまいます ★★★
+const headline = title.split(" | ")[0];
+// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 ---
 
 <BaseLayout title={title} description={description}>
-    {/* ↓↓↓ <Fragment>を削除し、直接scriptタグを配置します ↓↓↓ */}
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": title.split(" | ")[0],
+        // ★★★ 計算済みの変数を渡すように変更 ★★★
+        "headline": headline,
         "description": description,
         "image": [ imageUrl ],
         "author": {
@@ -38,11 +42,7 @@ const imageUrl = "https://i.imgur.com/DyVr8of.jpeg";
         "datePublished": pubDateISO,
         "dateModified": pubDateISO
     })} />
-    
-
-    
-    
-
+        
 
 <BaseLayout title={title} description={description}>
     <div
