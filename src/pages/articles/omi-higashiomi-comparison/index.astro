@@ -4,15 +4,14 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 // --- この記事固有の情報 ---
 const title = "【近江八幡・東近江】ゴルフ練習場4選・徹底比較！ | シガゴル";
 const description = "近江八幡・東近江エリアの主要なゴルフ練習場4ヶ所を、料金、設備、目的別に徹底比較。あなたにピッタリの練習場が必ず見つかります。";
-// ★★★ エラーの原因だった変数名を修正 ★★★
 const articlePubDate = "2025-07-24"; 
 const pubDateISO = "2025-07-24T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/DyVr8of.jpeg";
 const headline = title.split(" | ")[0];
 ---
 
-{/* ★★★ 2つあったBaseLayoutを1つに統合 ★★★ */}
 <BaseLayout title={title} description={description}>
+    
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
@@ -44,20 +43,10 @@ const headline = title.split(" | ")[0];
         id="article-omi-higashiomi-comparison-view"
         class="view bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
     >
-        {/* ここに記事の本文コンテンツが続きます */}
-        
-    </div>
-</BaseLayout>
-
-<BaseLayout title={title} description={description}>
-    <div
-        id="article-omi-higashiomi-comparison-view"
-        class="view bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
-    >
         <a
-            href="/"
+            href="/articles/"
             class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
-            >‹ トップページに戻る</a
+            >‹ お役立ち記事一覧に戻る</a
         >
         <article
             class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
@@ -72,7 +61,7 @@ const headline = title.split(" | ")[0];
         </style>
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    【近江八幡・東近江】ゴルフ練習場4選・徹底比較！料金・設備・目的で選ぶ、あなたにピッタリの場所はここだ！
+                    {headline}
                 </h1>
                 <p class="text-sm text-slate-500 mt-2">
                     最終更新日：{articlePubDate}
@@ -99,7 +88,7 @@ const headline = title.split(" | ")[0];
                 </p>
                 <p>
                     「初心者でも周りの目を気にせず、<br class="md:hidden"
-                    />のびび練習できる場所がいいな」
+                    />のびのび練習できる場所がいいな」
                 </p>
             </div>
 
