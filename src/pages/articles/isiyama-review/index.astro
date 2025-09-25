@@ -10,8 +10,8 @@ const description =
     "データ派ゴルファーが期待せず訪れた大津市の石山ゴルフ練習場。そこはデータでは測れない心地よさと、衝撃的な中古クラブとの出会いがある「クラブ選びの聖地」だった。その理由を体験記として綴ります。";
 const pubDate = "2025-09-26";
 const pubDateISO = "2025-09-26T10:00:00+09:00"; 
-const imageUrl = "https://i.imgur.com/7tuB35m.jpeg"; // この記事のメイン画像
-const rangeId = "ishiyama_gp"; // FirebaseのID
+const imageUrl = "https://i.imgur.com/7tuB35m.jpeg";
+const rangeId = "ishiyama_gp";
 // --- ここまで ---
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
@@ -39,20 +39,12 @@ if (docSnap.exists()) {
                 "name": "関（せき）",
                 "url": "https://shigagolf.com/about/",
                 "image": "https://i.imgur.com/BOcMOf3.png",
-                "sameAs": [
-                    "https://x.com/Golf_Seki39",
-                    "https://golf-medley.com/articles/authors/seki",
-                    "https://note.com/seki_golf_39",
-                    "https://www.tiktok.com/@user2579514551181"
-                ]
+                "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
             },
             "publisher": {
                 "@type": "Organization",
                 "name": "シガゴル",
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://i.imgur.com/mN0IbPS.png"
-                }
+                "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
             },
             "datePublished": pubDateISO,
             "dateModified": pubDateISO,
@@ -62,6 +54,8 @@ if (docSnap.exists()) {
                     "@type": "LocalBusiness",
                     "name": rangeData?.name,
                     "image": rangeData?.imageUrl,
+                    "telephone": rangeData?.tel,
+                    "priceRange": rangeData?.priceRange,
                     "address": {
                       "@type": "PostalAddress",
                       "streetAddress": rangeData?.address,
@@ -77,15 +71,11 @@ if (docSnap.exists()) {
                     "bestRating": "5",
                     "worstRating": "1"
                 },
-                "author": {
-                    "@type": "Person",
-                    "name": "関（せき）"
-                }
+                "author": { "@type": "Person", "name": "関（せき）" }
             }
         })} />
     </Fragment>
 
-{/* ★★★ 修正はここまで ★★★ */}
 
 <BaseLayout title={title} description={description}>
     <div

@@ -3,14 +3,14 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
-const title =
-    "【東近江市】女性ゴルファー超優遇！「さくらゴルフ倶楽部」が安すぎて心配になるレベルだった件。 | シガゴル";
-const description =
-    "滋賀県東近江市にある「さくらゴルフ倶楽部」は、特に女性とジュニアに驚きの優遇措置を提供する練習場。男性ゴルファーも通い詰めるその魅力と、充実した練習環境、心温まるエピソードを徹底レポートします。";
-
+// --- この記事固有の情報 ---
+const title = "【東近江市】女性ゴルファー超優遇！「さくらゴルフ倶楽部」が安すぎて心配になるレベルだった件。 | シガゴル";
+const description = "滋賀県東近江市にある「さくらゴルフ倶楽部」は、特に女性とジュニアに驚きの優遇措置を提供する練習場。男性ゴルファーも通い詰めるその魅力と、充実した練習環境、心温まるエピソードを徹底レポートします。";
 const pubDate = "2025-05-23";
 const pubDateISO = "2025-05-23T10:00:00+09:00"; 
+const imageUrl = "https://i.imgur.com/wgDjFch.jpeg"; // メイン画像を1つに絞るのがおすすめです
 const rangeId = "sakura_gc";
+// --- ここまで ---
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
@@ -24,44 +24,56 @@ if (docSnap.exists()) {
 }
 ---
 
-<Fragment slot="head">
-    <script
-        type="application/ld+json"
-        set:html={JSON.stringify({
+<BaseLayout title={title} description={description}>
+    <Fragment slot="head">
+        <script type="application/ld+json" set:html={JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Article",
             "headline": title.split(" | ")[0],
             "description": description,
-            "image": [
-                "https://i.imgur.com/wgDjFch.jpeg",
-                "https://i.imgur.com/ZqtS7KZ.png",
-                "https://i.imgur.com/nsHMRDX.jpeg"
-            ],
+            "image": [ imageUrl ],
             "author": {
                 "@type": "Person",
                 "name": "関（せき）",
-                "url": "https://shigagolf-reviews.netlify.app/about/", 
+                "url": "https://shigagolf.com/about/",
                 "image": "https://i.imgur.com/BOcMOf3.png",
-                "sameAs": [
-                    "https://x.com/Golf_Seki39",
-                    "https://golf-medley.com/articles/authors/seki",
-                    "https://note.com/seki_golf_39",
-                    "https://www.tiktok.com/@user2579514551181"
-                ]
+                "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
             },
             "publisher": {
                 "@type": "Organization",
                 "name": "シガゴル",
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://i.imgur.com/mN0IbPS.png"
-                }
+                "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
             },
             "datePublished": pubDateISO,
-            "dateModified": pubDateISO
-        })}
-    />
-</Fragment>
+            "dateModified": pubDateISO,
+            "review": {
+                "@type": "Review",
+                "itemReviewed": {
+                    "@type": "LocalBusiness",
+                    "name": rangeData?.name,
+                    "image": rangeData?.imageUrl,
+                    "telephone": rangeData?.tel,
+                    "priceRange": rangeData?.priceRange,
+                    "address": {
+                      "@type": "PostalAddress",
+                      "streetAddress": rangeData?.address,
+                      "addressLocality": rangeData?.city,
+                      "addressRegion": "滋賀県",
+                      "postalCode": rangeData?.postalCode,
+                      "addressCountry": "JP"
+                    }
+                },
+                "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": rangeData?.avgRating || "0",
+                    "bestRating": "5",
+                    "worstRating": "1"
+                },
+                "author": { "@type": "Person", "name": "関（せき）" }
+            }
+        })} />
+    </Fragment>
+
 
 <BaseLayout title={title} description={description}>
     <div

@@ -1,51 +1,39 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 
+// --- この記事固有の情報 ---
 const title = "【近江八幡・東近江】ゴルフ練習場4選・徹底比較！ | シガゴル";
 const description = "近江八幡・東近江エリアの主要なゴルフ練習場4ヶ所を、料金、設備、目的別に徹底比較。あなたにピッタリの練習場が必ず見つかります。";
-
-// ★★★ 修正(1): ISO形式の日付変数を追加 ★★★
-const articlePubDate = "2025-07-24";
+const pubDate = "2025-07-24";
 const pubDateISO = "2025-07-24T10:00:00+09:00";
+const imageUrl = "https://i.imgur.com/DyVr8of.jpeg";
+// --- ここまで ---
 ---
 
-{/* ★★★ 修正(2): 構造化データを全面的に修正 ★★★ */}
-<Fragment slot="head">
-    <script
-        type="application/ld+json"
-        set:html={JSON.stringify({
+<BaseLayout title={title} description={description}>
+    <Fragment slot="head">
+        <script type="application/ld+json" set:html={JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Article",
             "headline": title.split(" | ")[0],
             "description": description,
-            "image": [
-                "https://i.imgur.com/DyVr8of.jpeg"
-            ],
+            "image": [ imageUrl ],
             "author": {
                 "@type": "Person",
                 "name": "関（せき）",
-                "url": "https://shigagolf-reviews.netlify.app/about/",
+                "url": "https://shigagolf.com/about/",
                 "image": "https://i.imgur.com/BOcMOf3.png",
-                "sameAs": [
-                    "https://x.com/Golf_Seki39",
-                    "https://golf-medley.com/articles/authors/seki",
-                    "https://note.com/seki_golf_39",
-                    "https://www.tiktok.com/@user2579514551181"
-                ]
+                "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
             },
             "publisher": {
                 "@type": "Organization",
                 "name": "シガゴル",
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://i.imgur.com/mN0IbPS.png"
-                }
+                "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
             },
             "datePublished": pubDateISO,
             "dateModified": pubDateISO
-        })}
-    />
-</Fragment>
+        })} />
+    </Fragment>
 
 
 <BaseLayout title={title} description={description}>
