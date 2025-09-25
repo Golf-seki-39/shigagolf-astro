@@ -11,34 +11,35 @@ const imageUrl = "https://i.imgur.com/DyVr8of.jpeg";
 ---
 
 <BaseLayout title={title} description={description}>
-    <Fragment slot="head">
-        <script type="application/ld+json" set:html={JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": title.split(" | ")[0],
-            "description": description,
-            "image": [ imageUrl ],
-            "author": {
-                "@type": "Person",
-                "name": "関（せき）",
-                "url": "https://shigagolf.com/about/",
-                "image": "https://i.imgur.com/BOcMOf3.png",
-                "sameAs": [
-                    "https://x.com/Golf_Seki39",
-                    "https://golf-medley.com/articles/authors/seki",
-                    "https://note.com/seki_golf_39",
-                    "https://www.tiktok.com/@user2579514551181"
-                ]
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "シガゴル",
-                "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
-            },
-            "datePublished": pubDateISO,
-            "dateModified": pubDateISO
-        })} />
-    </Fragment>
+    {/* ↓↓↓ <Fragment>を削除し、直接scriptタグを配置します ↓↓↓ */}
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": title.split(" | ")[0],
+        "description": description,
+        "image": [ imageUrl ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigagolf.com/about/",
+            "image": "https://i.imgur.com/BOcMOf3.png",
+            "sameAs": [
+                "https://x.com/Golf_Seki39",
+                "https://golf-medley.com/articles/authors/seki",
+                "https://note.com/seki_golf_39",
+                "https://www.tiktok.com/@user2579514551181"
+            ]
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": pubDateISO
+    })} />
+    
+
     
     
 
