@@ -3,7 +3,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
-// --- この記事固有の情報 ---
+// --- This article's specific information ---
 const title =
     "普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由 | シガゴル";
 const description =
@@ -12,7 +12,7 @@ const pubDate = "2025-09-26";
 const pubDateISO = "2025-09-26T10:00:00+09:00"; 
 const imageUrl = "https://i.imgur.com/7tuB35m.jpeg";
 const rangeId = "ishiyama_gp";
-// --- ここまで ---
+// --- End of specific information ---
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
@@ -26,67 +26,64 @@ if (docSnap.exists()) {
 }
 ---
 
-<BaseLayout title={title} description={description}>
-    <Fragment slot="head">
-        <script type="application/ld+json" set:html={JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": title.split(" | ")[0],
-            "description": description,
-            "image": [ imageUrl ],
-            "author": {
-                "@type": "Person",
-                "name": "関（せき）",
-                "url": "https://shigagolf.com/about/",
-                "image": "https://i.imgur.com/BOcMOf3.png",
-                "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "シガゴル",
-                "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
-            },
-            "datePublished": pubDateISO,
-            "dateModified": pubDateISO,
-            "review": {
-                "@type": "Review",
-                "itemReviewed": {
-                    "@type": "LocalBusiness",
-                    "name": rangeData?.name,
-                    "image": rangeData?.imageUrl,
-                    "telephone": rangeData?.tel,
-                    "priceRange": rangeData?.priceRange,
-                    "address": {
-                      "@type": "PostalAddress",
-                      "streetAddress": rangeData?.address,
-                      "addressLocality": rangeData?.city,
-                      "addressRegion": "滋賀県",
-                      "postalCode": rangeData?.postalCode,
-                      "addressCountry": "JP"
-                    }
-                },
-                "reviewRating": {
-                    "@type": "Rating",
-                    "ratingValue": rangeData?.avgRating || "0",
-                    "bestRating": "5",
-                    "worstRating": "1"
-                },
-                "author": { "@type": "Person", "name": "関（せき）" }
-            }
-        })} />
-    </Fragment>
+<BaseLayout title={title} description={description} pubDate={pubDate}>
 
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": title.split(" | ")[0],
+        "description": description,
+        "image": [ imageUrl ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigagolf.com/about/",
+            "image": "https://i.imgur.com/BOcMOf3.png",
+            "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": pubDateISO,
+        "review": {
+            "@type": "Review",
+            "itemReviewed": {
+                "@type": "LocalBusiness",
+                "name": rangeData?.name,
+                "image": rangeData?.imageUrl,
+                "telephone": rangeData?.phone, // Corrected from 'tel' to 'phone'
+                "priceRange": rangeData?.priceRange,
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": rangeData?.address,
+                  "addressLocality": rangeData?.city,
+                  "addressRegion": "滋賀県",
+                  "postalCode": rangeData?.postalCode,
+                  "addressCountry": "JP"
+                }
+            },
+            "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": rangeData?.avgRating || "0",
+                "bestRating": "5",
+                "worstRating": "1"
+            },
+            "author": { "@type": "Person", "name": "関（せき）" }
+        }
+    })} />
 
-<BaseLayout title={title} description={description}>
     <div
         id="article-ishiyama-golf-experience-view"
         class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
     >
         <a
-            href="/"
+            href="/articles/"
             class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
         >
-            ‹ トップページに戻る
+            ‹ お役立ち記事一覧に戻る
         </a>
 
         <article
@@ -94,11 +91,11 @@ if (docSnap.exists()) {
         >
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由
+                    {title.split(" | ")[0]}
                 </h1>
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
-
+            
             <p>
                 僕は、いわゆる「データ派」のゴルファーだ。ゴルフ歴はまだ8ヶ月と浅いが、練習するならトップトレーサーは絶対に欲しい。自分の弾道を数値で把握し、効率的に上達したいからだ。だからプライベートで通うのは、決まってKSP彦根か365彦根だ。
             </p>
@@ -106,49 +103,18 @@ if (docSnap.exists()) {
                 そんな僕が、仕事で訪れたのが大津市の「石山ゴルフ練習場」。もちろん、そこには弾道測定器も、最新の設備もないことを知っていた。「仕事だから仕方ない。でもまあ、料金が安いのが救いか…」正直、期待値はゼロに近かった。
             </p>
             <p>
-                しかし、その日の帰り道、僕はこの練習場を<strong
-                    >「クラブ選びの聖地」</strong
-                >として、自分のゴルフマップに登録することになる。一体、何があったのか？
-                それは、データだけでは決して測れない<strong
-                    >“心地よさ”と、僕のゴルフ観を少しだけ変えることになる、ある“衝撃的な出会い”</strong
-                >の物語だ。
+                しかし、その日の帰り道、僕はこの練習場を<strong>「クラブ選びの聖地」</strong>として、自分のゴルフマップに登録することになる。一体、何があったのか？
+                それは、データだけでは決して測れない<strong>“心地よさ”と、僕のゴルフ観を少しだけ変えることになる、ある“衝撃的な出会い”</strong>の物語だ。
             </p>
-
-            <div
-                class="summary-box not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8"
-            >
-                <h3 class="text-xl font-bold text-slate-800 text-center mb-4">
-                    この記事のポイント
-                </h3>
-                <ul class="list-none p-0 m-0 space-y-3">
-                    <li class="flex items-start">
-                        <span
-                            class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        ><span class="flex-1"
-                            >データ派ゴルファーが期待せず訪れた練習場のリアルな感想</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span
-                            class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        ><span class="flex-1"
-                            >フリマアプリより安い？掘り出し物が見つかる中古クラブ情報</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span
-                            class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        ><span class="flex-1"
-                            >集中力が途切れない！と評判の「ズレない」打席マット体験</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span
-                            class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        ><span class="flex-1"
-                            >【40歳以下の男性必見】お得すぎる期間限定の打ち放題キャンペーン</span>
-                    </li>
+            
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#happy-betrayal" class="text-green-700 hover:underline">期待ゼロからの、嬉しい裏切り</a></li>
+                    <li><a href="#cons" class="text-green-700 hover:underline">正直に伝える、気になる点</a></li>
+                    <li><a href="#tips" class="text-green-700 hover:underline">僕が本当に伝えたかった「裏ワザ」</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">結論：僕にとっての「特別な場所」</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">「石山ゴルフ練習場」の基本情報</a></li>
                 </ul>
             </div>
 
@@ -226,8 +192,7 @@ if (docSnap.exists()) {
             </h3>
             <p>
                 そして、この日のハイライトが訪れる。クラブハウスに所狭しと並べられた中古クラブ。何気なく眺めていた僕の目に、一本のウェッジが飛び込んできた。ミズノの「SURE
-                DD 50」。新古品で、値札には<strong>「¥5,000（税込）」</strong
-                >の文字が。
+                DD 50」。新古品で、値札には<strong>「¥5,000（税込）」</strong>の文字が。
             </p>
 
             <figure class="my-6">
@@ -309,9 +274,7 @@ if (docSnap.exists()) {
             </div>
             <p>
                 信じられるだろうか？
-                女性向けの割引はよく見かけますが、男性ゴルファーがここまで優遇される練習場は、滋賀中を探しても他にない。このキャンペーンは、もはや<strong
-                    >「事件」</strong
-                >だ。
+                女性向けの割引はよく見かけますが、男性ゴルファーがここまで優遇される練習場は、滋賀中を探しても他にない。このキャンペーンは、もはや<strong>「事件」</strong>だ。
             </p>
 
             <h2
@@ -324,12 +287,10 @@ if (docSnap.exists()) {
                 僕の練習のホームグラウンドは、これからもKSP彦根や365彦根であり続けるだろう。データを見て、考えながら練習するスタイルは変えられないからだ。しかし、もし僕が「次のクラブが欲しい」と思ったら？その時は、迷わず車で1時間かけて、大津市の「石山ゴルフ練習場」へ向かう。フリマアプリの中古品より安い新古品を、自分の目で見て、触って、そして何より納得いくまで試打できるからだ。
             </p>
             <p>
-                練習の拠点にはならない。でも、クラブ購入においては、僕にとって最高の場所。ここは、僕にとってそういう<strong
-                    >「特別な目的を持った、最高の練習場」</strong
-                >になった。データ派のあなたも、そうでないあなたも、一度この「宝探し」体験をしてみてはいかがだろうか。
+                練習の拠点にはならない。でも、クラブ購入においては、僕にとって最高の場所。ここは、僕にとってそういう<strong>「特別な目的を持った、最高の練習場」</strong>になった。データ派のあなたも、そうでないあなたも、一度この「宝探し」体験をしてみてはいかがだろうか。
             </p>
 
-            <hr />
+            <hr class="my-8" />
 
             <h2
                 id="info-summary"
@@ -339,93 +300,85 @@ if (docSnap.exists()) {
             </h2>
             {
                 rangeData ? (
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto not-prose">
                         <table class="w-full text-left border-collapse">
                             <tbody class="align-baseline">
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
-                                            練習場名
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.name}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
+                                        練習場名
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.name}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            住所
-                                        </th>
-                                        <td class="py-3 px-4">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        住所
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
-                                        </td>
-                                    </>
+                                        </a>
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            電話番号
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.phone}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        電話番号
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            営業時間
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.business_hours}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        営業時間
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.business_hours}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            料金（代表例）
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.price_uchihodai_weekday_str ||
-                                                "お問い合わせください"}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        料金（代表例）
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.price_uchihodai_weekday_str ||
+                                            "お問い合わせください"}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            ヤード数
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.yardage
-                                                ? `${rangeData.yardage}ヤード`
-                                                : "-"}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        ヤード数
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.yardage
+                                            ? `${rangeData.yardage}ヤード`
+                                            : "-"}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            打席数
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.bays
-                                                ? `${rangeData.bays}打席`
-                                                : "-"}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        打席数
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.bays
+                                            ? `${rangeData.bays}打席`
+                                            : "-"}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            アクセス
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.access}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        アクセス
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.access}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -455,7 +408,7 @@ if (docSnap.exists()) {
                 🎯 さらに詳しい情報や口コミはこちら！
                 <br />
                 <a
-                    href="/ranges/ishiyama_gp/"
+                    href={`/ranges/${rangeId}/`}
                     class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
                 >
                     「石山ゴルフ練習場」のシガゴル公式レビューページへ
@@ -463,21 +416,24 @@ if (docSnap.exists()) {
             </p>
         </article>
     </div>
-</BaseLayout>
 
-<style>
-    .map-container {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-        padding-top: 56.25%; /* 16:9 アスペクト比 */
-    }
-    .map-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
-</style>
+    <style>
+        .map-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 aspect ratio */
+        }
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .scroll-mt-24 {
+            scroll-margin-top: 6rem; /* 96px */
+        }
+    </style>
+</BaseLayout>
