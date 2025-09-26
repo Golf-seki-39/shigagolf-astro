@@ -24,65 +24,62 @@ if (docSnap.exists()) {
 }
 ---
 
-<BaseLayout title={title} description={description}>
-    <Fragment slot="head">
-        <script type="application/ld+json" set:html={JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": title.split(" | ")[0],
-            "description": description,
-            "image": [ imageUrl ],
-            "author": {
-                "@type": "Person",
-                "name": "関（せき）",
-                "url": "https://shigagolf.com/about/",
-                "image": "https://i.imgur.com/BOcMOf3.png",
-                "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "シガゴル",
-                "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
-            },
-            "datePublished": pubDateISO,
-            "dateModified": pubDateISO,
-            "review": {
-                "@type": "Review",
-                "itemReviewed": {
-                    "@type": "LocalBusiness",
-                    "name": rangeData?.name,
-                    "image": rangeData?.imageUrl,
-                    "telephone": rangeData?.tel,
-                    "priceRange": rangeData?.priceRange,
-                    "address": {
-                      "@type": "PostalAddress",
-                      "streetAddress": rangeData?.address,
-                      "addressLocality": rangeData?.city,
-                      "addressRegion": "滋賀県",
-                      "postalCode": rangeData?.postalCode,
-                      "addressCountry": "JP"
-                    }
-                },
-                "reviewRating": {
-                    "@type": "Rating",
-                    "ratingValue": rangeData?.avgRating || "0",
-                    "bestRating": "5",
-                    "worstRating": "1"
-                },
-                "author": { "@type": "Person", "name": "関（せき）" }
-            }
-        })} />
-    </Fragment>
+<BaseLayout title={title} description={description} pubDate={pubDate}>
 
-
-<BaseLayout title={title} description={description}>
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": title.split(" | ")[0],
+        "description": description,
+        "image": [ imageUrl ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigagolf.com/about/",
+            "image": "https://i.imgur.com/BOcMOf3.png",
+            "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": pubDateISO,
+        "review": {
+            "@type": "Review",
+            "itemReviewed": {
+                "@type": "LocalBusiness",
+                "name": rangeData?.name,
+                "image": rangeData?.imageUrl,
+                "telephone": rangeData?.tel,
+                "priceRange": rangeData?.priceRange,
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": rangeData?.address,
+                  "addressLocality": rangeData?.city,
+                  "addressRegion": "滋賀県",
+                  "postalCode": rangeData?.postalCode,
+                  "addressCountry": "JP"
+                }
+            },
+            "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": rangeData?.avgRating || "0",
+                "bestRating": "5",
+                "worstRating": "1"
+            },
+            "author": { "@type": "Person", "name": "関（せき）" }
+        }
+    })} />
+    
     <div
         class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
     >
         <a
-            href="/"
+            href="/articles/"
             class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
-            >‹ トップページに戻る</a
+            >‹ お役立ち記事一覧に戻る</a
         >
         
         <article
@@ -103,7 +100,7 @@ if (docSnap.exists()) {
             <p>こんにちは、「ゴルフ初心者代表」の関です。滋賀のゴルフ練習場でお悩みの方へ。今回ご紹介するのは、そんな僕たちの悩みを一掃してくれる、近江八幡市にある「安土ゴルフクラブ」。ここは、僕にとって“ゴルファーの駆け込み寺”のような場所です。</p>
             
             <div class="not-prose bg-slate-50 p-4 rounded-lg border border-slate-200 my-6 text-center">
-                <p class="m-0">この記事で紹介する安土ゴルフクラブは、<a href="https://shigagolf-reviews.netlify.app/articles/omi-higashiomi-comparison/" class="text-green-700 font-bold hover:underline">「【近江八幡・東近江】ゴルフ練習場4選・徹底比較！」</a>の記事でも紹介しています。</p>
+                <p class="m-0">この記事で紹介する安土ゴルフクラブは、<a href="/articles/omi-higashiomi-comparison/" class="text-green-700 font-bold hover:underline">「【近江八幡・東近江】ゴルフ練習場4選・徹底比較！」</a>の記事でも紹介しています。</p>
             </div>
             
             <figure class="my-6">
@@ -209,14 +206,14 @@ if (docSnap.exists()) {
             <p>そういえば、初めて訪れたあの日。強面の店主さんは、わざわざ打席までついてきてくれて、「ここが一番打ちやすいで」と、ど真ん中の打席を僕に譲ってくれました。マニュアルにはない、人と人との温かい繋がり。</p>
             <p>僕がこの、少しだけ不便な練習場を愛する理由は、結局、それに尽きるのかもしれません。</p>
 
-            <hr />
+            <hr class="my-8" />
             
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
             </h2>
             {
                 rangeData ? (
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto not-prose">
                         <table class="w-full text-left border-collapse">
                             <tbody>
                                 <tr class="border-b border-slate-200">
@@ -225,9 +222,8 @@ if (docSnap.exists()) {
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
-                                    {/* ★★★ 修正: 住所リンクの検索クエリに練習場名を追加 ★★★ */}
                                     <td class="py-3 px-4">
-                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
                                         </a>
                                     </td>
@@ -235,21 +231,19 @@ if (docSnap.exists()) {
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
                                     <td class="py-3 px-4">
-                                        <a href={`tel:${rangeData.phone.replace(/-/g, "")}`} class="text-green-700 hover:underline">
-                                            {rangeData.phone}
+                                        <a href={`tel:${rangeData.tel.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                            {rangeData.tel}
                                         </a>
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
-                                    <td class="py-3 px-4">{rangeData.business_hours}</td>
+                                    <td class="py-3 px-4">{rangeData.businessHours}</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
                                     <td class="py-3 px-4">{
-                                        rangeData.price_uchihodai_weekday_str ||
-                                        rangeData.price_ball_weekday_str ||
-                                        "お問い合わせください"
+                                        rangeData.priceExample || "お問い合わせください"
                                     }</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
@@ -296,21 +290,24 @@ if (docSnap.exists()) {
             </p>
         </article>
     </div>
-</BaseLayout>
 
-<style>
-    .map-container {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-        padding-top: 56.25%;
-    }
-    .map-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
-</style>
+    <style>
+        .map-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .scroll-mt-24 {
+            scroll-margin-top: 6rem; /* 96px */
+        }
+    </style>
+</BaseLayout>
