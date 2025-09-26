@@ -1,13 +1,44 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
 
 // --- この記事固有の情報 ---
 const title = "【滋賀・徹底比較】近江八幡・東近江のゴルフ練習場5選｜アプローチ＆バンカー練習ができるのはここ！ | シガゴル";
-const description = "「アプローチ練習ができる場所は？」「バンカー練習に集中できるのはどこ？」近江八幡・東近江エリアの全5施設を徹底調査し、あなたのレベルや目的に合った最高の練習環境を提案します。";
-const articlePubDate = "2025-09-27"; // 公開日を修正
+const description = "「アプローチ練習ができる場所は？」「バンカー練習に集中できるのはどこ？」近江八幡・東近江エリアの全5施設をシガゴル運営者が実際に訪問して徹底調査。あなたに合った練習場が必ず見つかります。";
+const articlePubDate = "2025-09-27";
 const pubDateISO = "2025-09-27T10:00:00+09:00";
-const imageUrl = "https://i.imgur.com/jOTBh4U.jpeg"; // 記事全体のアイキャッチ画像
+const imageUrl = "https://i.imgur.com/jOTBh4U.jpeg";
 const headline = title.split(" | ")[0];
+
+// --- Firebaseから各練習場の情報を取得 ---
+const rangeIds = ['riverside_jumbo', 'sakura_gc', 'greenpia_oh', 'azuchi_gc', 'garage_park'];
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+
+const rangePromises = rangeIds.map(id => {
+    const docPath = `artifacts/${appId}/public/data/practice_ranges/${id}`;
+    const docRef = doc(db, docPath);
+    return getDoc(docRef);
+});
+
+const rangeDocs = await Promise.all(rangePromises);
+
+const rangesData = rangeDocs.reduce((acc, docSnap, index) => {
+    if (docSnap.exists()) {
+        acc[rangeIds[index]] = docSnap.data();
+    } else {
+        console.error(`Error: No document found for rangeId: ${rangeIds[index]}`);
+        acc[rangeIds[index]] = null;
+    }
+    return acc;
+}, {});
+
+// 各練習場のデータを変数に格納
+const riverside = rangesData.riverside_jumbo;
+const sakura = rangesData.sakura_gc;
+const greenpia = rangesData.greenpia_oh;
+const azuchi = rangesData.azuchi_gc;
+const garage = rangesData.garage_park;
 ---
 
 <BaseLayout title={title} description={description} pubDate={articlePubDate}>
@@ -22,13 +53,7 @@ const headline = title.split(" | ")[0];
             "@type": "Person",
             "name": "関（せき）",
             "url": "https://shigagolf.com/about/",
-            "image": "https://i.imgur.com/BOcMOf3.png",
-            "sameAs": [
-                "https://x.com/Golf_Seki39",
-                "https://golf-medley.com/articles/authors/seki",
-                "https://note.com/seki_golf_39",
-                "https://www.tiktok.com/@user2579514551181"
-            ]
+            "image": "https://i.imgur.com/BOcMOf3.png"
         },
         "publisher": {
             "@type": "Organization",
@@ -36,53 +61,52 @@ const headline = title.split(" | ")[0];
             "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
         },
         "datePublished": pubDateISO,
-        "dateModified": pubDateISO
+        "dateModified": pubDateISO,
+        "review": {
+            "@type": "Review",
+            "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5", "worstRating": "1" },
+            "author": { "@type": "Person", "name": "関（せき）" },
+            "itemReviewed": [
+                { "@type": "SportsActivityLocation", "name": riverside?.name, "address": riverside?.address },
+                { "@type": "SportsActivityLocation", "name": sakura?.name, "address": sakura?.address },
+                { "@type": "SportsActivityLocation", "name": greenpia?.name, "address": greenpia?.address },
+                { "@type": "SportsActivityLocation", "name": azuchi?.name, "address": azuchi?.address },
+                { "@type": "SportsActivityLocation", "name": garage?.name, "address": garage?.address }
+            ]
+        }
     })} />
 
     <div
         id="article-omi-higashiomi-comparison-view"
         class="view bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
     >
-        <a
-            href="/articles/"
-            class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
-            >‹ お役立ち記事一覧に戻る</a
-        >
-        <article
-            class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
-        >
-         <style>
-          html {
-            scroll-behavior: smooth;
-          }
-          section[id] {
-            scroll-margin-top: 80px;
-          }
-        </style>
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            <style>
+              html { scroll-behavior: smooth; }
+              section[id] { scroll-margin-top: 80px; }
+              .cta-icon { width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: text-bottom; }
+            </style>
             <header>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {headline}
-                </h1>
-                <p class="text-sm text-slate-500 mt-2">
-                    最終更新日：{articlePubDate}
-                </p>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">最終更新日：{articlePubDate}</p>
             </header>
 
-            <img
-                src={imageUrl}
-                alt="ゴルフ練習場でアプローチ練習をするゴルファー"
-                class="w-full h-auto object-cover rounded-lg my-6"
-                loading="lazy"
-                width="1200"
-                height="800"
-            />
+            <img src={imageUrl} alt="ゴルフ練習場でアプローチ練習をするゴルファー" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
 
             <p>「練習場では快音を響かせるドライバー。でも、なぜかスコアは縮まらない…」</p>
             <p>多くのゴルファーが抱えるこの悩みの原因は、スコアの約7割を占めると言われる100ヤード以内のショートゲームにあるのかもしれません。</p>
+            
+            <div class="not-prose bg-slate-50 p-4 my-6 rounded-lg border border-l-4 border-green-600">
+                <p class="font-bold text-slate-800 m-0">この記事は、シガゴル運営者が実際に近江八幡・東近江エリアの全5施設に足を運んで執筆しています。</p>
+            </div>
+
             <p>普段の練習マットの上からでは決して養えない、本番のコースに近い芝からの距離感や打感。これを磨くことこそ、100切り、90切りへの一番の近道です。</p>
             <p>「近江八幡でアプローチ練習ができる場所はないかな？」</p>
             <p>「東近江でバンカー練習に集中できるゴルフ練習場はどこだろう？」</p>
-            <p>この記事では、そんなあなたの疑問に答えるべく、シガゴルが近江八幡・東近江エリアの全5施設を徹底調査。あなたのレベルや目的に合った最高の練習環境を提案します。</p>
+            <p>この記事では、そんなあなたの疑問に答えるべく、あなたのレベルや目的に合った最高の練習環境を提案します。</p>
 
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
@@ -104,13 +128,9 @@ const headline = title.split(" | ")[0];
 
             <h2 id="summary-table" class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200 scroll-mt-24">まずは結論から！近江八幡・東近江 ショートゲーム環境 早見表</h2>
             <p>忙しいあなたのために、まずは各練習場の特徴を一覧でまとめました。</p>
-            <p class="text-center text-sm text-slate-500 md:hidden mt-2 mb-2">
-                ← スワイプして全体が見れます →
-            </p>
-            <div class="overflow-x-auto my-4 not-prose">
-                <table
-                    class="w-full text-sm text-left border border-slate-300 min-w-[800px]"
-                >
+            
+            <div class="overflow-x-auto my-4 not-prose hidden md:block">
+                 <table class="w-full text-sm text-left border border-slate-300 min-w-[800px]">
                     <thead class="bg-slate-50">
                         <tr>
                             <th scope="col" class="px-4 py-3 border border-slate-300 align-middle text-center whitespace-nowrap text-base font-semibold normal-case">練習場名</th>
@@ -121,36 +141,36 @@ const headline = title.split(" | ")[0];
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="bg-white border-b">
-                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/riverside_jumbo/" class="text-blue-600 hover:underline">リバーサイドジャンボゴルフ (東近江市)</a></td>
+                         <tr class="bg-white border-b">
+                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/riverside_jumbo/" class="text-blue-600 hover:underline">{riverside?.name} (東近江市)</a></td>
                             <td class="px-4 py-2 border text-center">◎<br>(約50yd)</td>
                             <td class="px-4 py-2 border text-center">◎</td>
                             <td class="px-4 py-2 border">芝の管理が圧倒的。実践的な練習環境。</td>
                             <td class="px-4 py-2 border">本気でスコアを求める中〜上級者</td>
                         </tr>
                         <tr class="bg-slate-50 border-b">
-                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/sakura_gc/" class="text-blue-600 hover:underline">さくらゴルフ倶楽部 (東近江市)</a></td>
+                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/sakura_gc/" class="text-blue-600 hover:underline">{sakura?.name} (東近江市)</a></td>
                             <td class="px-4 py-2 border text-center">◯<br>(約60yd)</td>
                             <td class="px-4 py-2 border text-center">◯</td>
                             <td class="px-4 py-2 border">女性無料！広くて開放的な練習エリア。</td>
                             <td class="px-4 py-2 border">女性、コスパ重視のゴルファー</td>
                         </tr>
                         <tr class="bg-white border-b">
-                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡 (近江八幡市)</a></td>
+                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">{greenpia?.name} (近江八幡市)</a></td>
                             <td class="px-4 py-2 border text-center">◯<br>(約20yd)</td>
                             <td class="px-4 py-2 border text-center">◯</td>
                             <td class="px-4 py-2 border">人目につきにくい、初心者向け穴場。</td>
                             <td class="px-4 py-2 border">初心者、こっそり練習したい人</td>
                         </tr>
                         <tr class="bg-slate-50 border-b">
-                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ (近江八幡市)</a></td>
+                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">{azuchi?.name} (近江八幡市)</a></td>
                             <td class="px-4 py-2 border text-center">×</td>
                             <td class="px-4 py-2 border text-center">◯</td>
                             <td class="px-4 py-2 border">打席利用者は無料でバンカー練習が可能。</td>
                             <td class="px-4 py-2 border">バンカーが苦手な人</td>
                         </tr>
                         <tr class="bg-white">
-                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/garage_park/" class="text-blue-600 hover:underline">がれーじぱーく東近江 (東近江市)</a></td>
+                            <td class="px-4 py-2 border whitespace-nowrap"><a href="/ranges/garage_park/" class="text-blue-600 hover:underline">{garage?.name} (東近江市)</a></td>
                             <td class="px-4 py-2 border text-center">×<br>(インドア)</td>
                             <td class="px-4 py-2 border text-center">×</td>
                             <td class="px-4 py-2 border">弾道測定器でデータを元にした練習が可能。</td>
@@ -159,27 +179,29 @@ const headline = title.split(" | ")[0];
                     </tbody>
                 </table>
             </div>
-            <p class="text-center text-sm text-slate-500 md:hidden -mt-2 mb-2">
-                ← スワイプして全体が見れます →
-            </p>
 
-            <h2 id="top3-ranking" class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200 scroll-mt-24">【目的別】あなたにピッタリの練習場はここだ！TOP3</h2>
+            <div class="space-y-4 my-4 not-prose md:hidden">
+                <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href="/ranges/riverside_jumbo/" class="text-blue-600 hover:underline">{riverside?.name}</a></h3><p class="text-sm text-slate-500 m-0">東近江市</p><table class="w-full mt-2 text-sm"><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1">◎ (約50yd)</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1">◎</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">芝の管理が圧倒的。実践的な練習環境。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">本気でスコアを求める中〜上級者</td></tr></table></div>
+                <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href="/ranges/sakura_gc/" class="text-blue-600 hover:underline">{sakura?.name}</a></h3><p class="text-sm text-slate-500 m-0">東近江市</p><table class="w-full mt-2 text-sm"><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1">◯ (約60yd)</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1">◯</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">女性無料！広くて開放的な練習エリア。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">女性、コスパ重視のゴルファー</td></tr></table></div>
+                <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">{greenpia?.name}</a></h3><p class="text-sm text-slate-500 m-0">近江八幡市</p><table class="w-full mt-2 text-sm"><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1">◯ (約20yd)</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1">◯</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">人目につきにくい、初心者向け穴場。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">初心者、こっそり練習したい人</td></tr></table></div>
+                <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">{azuchi?.name}</a></h3><p class="text-sm text-slate-500 m-0">近江八幡市</p><table class="w-full mt-2 text-sm"><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1">×</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1">◯</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">打席利用者は無料でバンカー練習が可能。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">バンカーが苦手な人</td></tr></table></div>
+                <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href="/ranges/garage_park/" class="text-blue-600 hover:underline">{garage?.name}</a></h3><p class="text-sm text-slate-500 m-0">東近江市</p><table class="w-full mt-2 text-sm"><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1">× (インドア)</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1">×</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">弾道測定器でデータを元にした練習が可能。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">データ派、天候を気にせず練習したい人</td></tr></table></div>
+            </div>
+
+             <h2 id="top3-ranking" class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200 scroll-mt-24">【目的別】あなたにピッタリの練習場はここだ！TOP3</h2>
             <p>数ある練習場の中から、今回は「芝からのアプローチ」という観点で、特におすすめの3つのゴルフ練習場をランキング形式でご紹介します。</p>
 
             <section id="riverside-jumbo" class="scroll-mt-24">
-                <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8">1. 本格派向け：<a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ（東近江市）</a></h3>
-                <img src="https://i.imgur.com/Zmub1Dn.jpeg" alt="リバーサイドジャンボゴルフのアプローチエリア全体" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8">1. 本格派向け：<a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">{riverside?.name}（東近江市）</a></h3>
+                 <img src="https://i.imgur.com/Zmub1Dn.jpeg" alt="リバーサイドジャンボゴルフのアプローチエリア全体" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <p>東近江市で最も質の高いアプローチ練習を望むなら、迷わずここを選ぶべきでしょう。</p>
                 <p>有料会員（年会費2,000円）だけが足を踏み入れることを許されるこのエリアは、他の練習場とは一線を画すクオリティを誇ります。</p>
-
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：圧倒的な芝の管理クオリティ</h4>
                 <p>毎週木曜の午前中にメンテナンスが入る芝は、常に最高のコンディション。約50ヤードのエリア内には、フェアウェイ、ラフ、そして深いラフが意図的に作り分けられており、コースで出くわすあらゆるライを想定した、極めて実践的なアプローチ練習が可能です。</p>
                 <img src="https://i.imgur.com/XPz9zeH.jpeg" alt="リバーサイドジャンボゴルフのアプローチ練習場の芝の刈り方の違い" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由②：コースさながらの難易度設定</h4>
                 <p>ここのバンカー練習は、まさに実戦そのもの。アゴが高く、グリーンまでが近いため、中途半端なショットではすぐホームラン。しっかりと砂を爆発させる**「エクスプロージョンショット」**でなければ脱出できない、絶妙な難易度設定です。</p>
                 <img src="https://i.imgur.com/yXxbsTu.jpeg" alt="リバーサイドジャンボゴルフの本格的なバンカー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-
                 <h4 class="text-lg md:text-xl font-bold mt-6">こんな人におすすめ！</h4>
                 <ul class="list-disc list-inside space-y-2 mt-2 pl-4">
                     <li>東近江で質の高い環境を求める中〜上級者</li>
@@ -187,28 +209,23 @@ const headline = title.split(" | ")[0];
                     <li>実践的なアプローチやバンカー練習をしたい人</li>
                 </ul>
                 <div class="not-prose text-center my-6">
-                    <a
-                        href="/ranges/riverside_jumbo/"
-                        class="nav-link inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
-                    >
+                    <a href="/ranges/riverside_jumbo/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                       <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                         この練習場の施設詳細ページへ
                     </a>
                 </div>
             </section>
-
+            
             <section id="sakura-gc" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                <h3 class="text-xl md:text-2xl font-bold text-slate-800">2. 女性・コスパ重視派向け：<a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">さくらゴルフ倶楽部（東近江市）</a></h3>
-                <img src="https://i.imgur.com/SMDA2hS.png" alt="さくらゴルフ倶楽部のアプローチエリア全体" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <h3 class="text-xl md:text-2xl font-bold text-slate-800">2. 女性・コスパ重視派向け：<a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">{sakura?.name}（東近江市）</a></h3>
+                 <img src="https://i.imgur.com/SMDA2hS.png" alt="さくらゴルフ倶楽部のアプローチエリア全体" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <p>東近江エリアで、楽しさとお得さを両立させたいなら、さくらゴルフ倶楽部は最高の選択肢です。</p>
-
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：女性は無料！圧倒的なコストパフォーマンス</h4>
                 <p>信じられないかもしれませんが、プレミアム会員と女性は、アプローチ練習場の利用料が1時間無料になります。実際に受付で申し出て、1円も払わずに1時間みっちり練習できることを確認済み。男性ビジターでも1時間515円と、非常に良心的な価格でアプローチ練習ができます。</p>
                 <img src="https://i.imgur.com/TNUPBdk.png" alt="さくらゴルフ倶楽部の料金表" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由②：広々とした開放的な練習環境</h4>
                 <p>約60ヤードと、東近江エリア内でも屈指の広さを誇るアプローチエリアには、3本のピンが立てられており、様々な距離を打ち分ける練習ができます。もちろんバンカー練習も可能です。</p>
                 <img src="https://i.imgur.com/vcbiMO7.png" alt="さくらゴルフ倶楽部のバンカー練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-
                 <h4 class="text-lg md:text-xl font-bold mt-6">こんな人におすすめ！</h4>
                 <ul class="list-disc list-inside space-y-2 mt-2 pl-4">
                     <li>東近江で練習したい女性ゴルファー</li>
@@ -216,34 +233,27 @@ const headline = title.split(" | ")[0];
                     <li>広々とした環境で、のびのびと練習したい人</li>
                 </ul>
                 <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
-                    <a
-                        href="/articles/sakura-gc-review/"
-                        class="nav-link inline-block bg-orange-500 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline"
-                    >
+                    <a href="/articles/sakura-gc-review/" class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                        <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
                         管理人の詳細体験レポートを読む
                     </a>
-                     <a
-                        href="/ranges/sakura_gc/"
-                        class="nav-link inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
-                    >
+                     <a href="/ranges/sakura_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                       <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                         この練習場の施設詳細ページへ
                     </a>
                 </div>
             </section>
-
+            
             <section id="greenpia-oh" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                <h3 class="text-xl md:text-2xl font-bold text-slate-800">3. 初心者向け：<a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">グリーンピア近江八幡（近江八幡市）</a></h3>
-                <img src="https://i.imgur.com/TXXAJEo.jpeg" alt="グリーンピア近江八幡のGoogleマップ写真" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <h3 class="text-xl md:text-2xl font-bold text-slate-800">3. 初心者向け：<a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">{greenpia?.name}（近江八幡市）</a></h3>
+                 <img src="https://i.imgur.com/TXXAJEo.jpeg" alt="グリーンピア近江八幡のGoogleマップ写真" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <p>近江八幡市で、初心者が気兼ねなくアプローチ練習を始められる場所として、私たちが推薦するのがグリーンピア近江八幡です。</p>
-
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：人目を気にせず練習できる「隠れ家」感</h4>
                 <p>上の地図を見てわかる通り、アプローチ練習場は練習場の建物や駐車場から道を一本挟んだ反対側にあります。多くの人の動線から外れているため、人目を気にすることなく、自分のペースで練習に集中できるのが最大の魅力です。</p>
                 <img src="https://i.imgur.com/NjWzRzC.png" alt="グリーンピア近江八幡のアプローチエリア" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由②：初心者に十分な練習環境</h4>
                 <p>さくらゴルフ倶楽部と比べると広さはありませんが、芝の管理状態はこちらの方が良好な印象。近江八幡で初心者が芝からのショットを試すには十分すぎる環境です。バンカー練習もできますが、雨の後は水が溜まっていることもあるので、利用前に確認するのが良いでしょう。</p>
                 <img src="https://i.imgur.com/zt0CxX9.png" alt="グリーンピア近江八幡の水が溜まったバンカー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-
                 <h4 class="text-lg md:text-xl font-bold mt-6">こんな人におすすめ！</h4>
                 <ul class="list-disc list-inside space-y-2 mt-2 pl-4">
                     <li>近江八幡でこっそり練習を始めたい初心者</li>
@@ -251,49 +261,41 @@ const headline = title.split(" | ")[0];
                     <li>打席練習とセットでお得にアプローチも試してみたい人</li>
                 </ul>
                 <div class="not-prose text-center my-6">
-                    <a
-                        href="/ranges/greenpia_oh/"
-                        class="nav-link inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
-                    >
+                    <a href="/ranges/greenpia_oh/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                       <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                         この練習場の施設詳細ページへ
                     </a>
                 </div>
             </section>
 
             <section id="azuchi-gc" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                <h3 class="text-xl md:text-2xl font-bold text-slate-800">番外編：近江八幡でバンカー練習に特化するなら「<a href="/ranges/azuchi_gc/" class="text-green-700 hover:underline">安土ゴルフクラブ</a>」</h3>
-                <img src="https://i.imgur.com/sLV8cIE.jpeg" alt="安土ゴルフクラブのバンカー練習場入口" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <h3 class="text-xl md:text-2xl font-bold text-slate-800">番外編：近江八幡でバンカー練習に特化するなら「<a href="/ranges/azuchi_gc/" class="text-green-700 hover:underline">{azuchi?.name}</a>」</h3>
+                 <img src="https://i.imgur.com/sLV8cIE.jpeg" alt="安土ゴルフクラブのバンカー練習場入口" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <p>「近江八幡でアプローチ練習はできないけど、バンカーだけは徹底的に練習したい！」</p>
                 <p>そんなニッチな要望に応えてくれるのが、安土ゴルフクラブです。</p>
                 <p>ここの最大の特徴は、打席利用者は追加料金なしでバンカー練習場が使えること。ボール代だけで、苦手なバンカーショットを心ゆくまで練習できるのは、非常にありがたいポイントです。近江八幡エリアでは貴重なバンカー練習ができるゴルフ練習場と言えるでしょう。</p>
                 <img src="https://i.imgur.com/CJaVyC3.jpeg" alt="安土ゴルフクラブの2階から見たバンカー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <p>設備は手作り感があり、最新とは言えませんが、そのぶん気兼ねなく使える雰囲気があります。バンカー克服を目標に、一度訪れてみてはいかがでしょうか。</p>
                 <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
-                    <a
-                        href="/articles/azuchi-review/"
-                        class="nav-link inline-block bg-orange-500 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline"
-                    >
+                    <a href="/articles/azuchi-review/" class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                       <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
                         管理人の詳細体験レポートを読む
                     </a>
-                    <a
-                        href="/ranges/azuchi_gc/"
-                        class="nav-link inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
-                    >
+                    <a href="/ranges/azuchi_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                       <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                         この練習場の施設詳細ページへ
                     </a>
                 </div>
             </section>
 
             <section id="garage-park" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                <h3 class="text-xl md:text-2xl font-bold text-slate-800">雨の日やデータ分析派にはこちら：<a href="/ranges/garage_park/" class="text-green-700 hover:underline">がれーじぱーく東近江（東近江市）</a></h3>
+                <h3 class="text-xl md:text-2xl font-bold text-slate-800">雨の日やデータ分析派にはこちら：<a href="/ranges/garage_park/" class="text-green-700 hover:underline">{garage?.name}（東近江市）</a></h3>
                 <img src="https://i.imgur.com/KqgvACX.png" alt="がれーじぱーく東近江のインドア打席" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <p>最後に、インドアゴルフ練習場のがれーじぱーく東近江にも触れておきましょう。</p>
                 <p>もちろんインドアなので芝からのアプローチ練習はできませんが、高性能な弾道測定器を完備しており、スイングのデータ分析や、天候を気にしない快適な練習が可能です。「なぜトップするのか」「スピン量は足りているか」など、データを元に課題を解決したいゴルファーには最適な環境と言えるでしょう。</p>
                  <div class="not-prose text-center my-6">
-                    <a
-                        href="/ranges/garage_park/"
-                        class="nav-link inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
-                    >
+                    <a href="/ranges/garage_park/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                       <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                         この練習場の施設詳細ページへ
                     </a>
                 </div>
@@ -303,123 +305,94 @@ const headline = title.split(" | ")[0];
                 <h2 class="text-2xl md:text-3xl font-bold text-slate-800">まとめ</h2>
                 <p>今回は近江八幡市と東近江市のゴルフ練習場を、アプローチ練習やバンカー練習という切り口でご紹介しました。一口に練習場と言っても、それぞれに全く違う個性と魅力があります。</p>
                 <ul class="list-disc list-inside space-y-2 my-4">
-                    <li>本気で上達を目指すなら、質実剛健な「<a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a>」</li>
-                    <li>楽しさとお得さを両立するなら、懐の深い「<a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">さくらゴルフ倶楽部</a>」</li>
-                    <li>最初の一歩を踏み出すなら、気兼ねのいらない「<a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">グリーンピア近江八幡</a>」</li>
+                    <li>本気で上達を目指すなら、質実剛健な「<a href="#riverside-jumbo" class="text-green-700 hover:underline">{riverside?.name}</a>」</li>
+                    <li>楽しさとお得さを両立するなら、懐の深い「<a href="#sakura-gc" class="text-green-700 hover:underline">{sakura?.name}</a>」</li>
+                    <li>最初の一歩を踏み出すなら、気兼ねのいらない「<a href="#greenpia-oh" class="text-green-700 hover:underline">{greenpia?.name}</a>」</li>
                 </ul>
                 <p>ドライバーの練習も大切ですが、次の週末はこの記事を参考に、スコアに直結する芝の上からのショートゲーム練習に出かけてみませんか？</p>
                 <p>あなたのゴルフライフが、より一層充実することを願っています。</p>
             </section>
 
             <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">
-                    各施設の基本情報まとめ
-                </h2>
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">各施設の基本情報まとめ</h2>
                 <div class="space-y-8 mt-4">
-                    <div>
-                        <h3 class="text-xl font-bold">リバーサイドジャンボゴルフ</h3>
+                    {riverside && <div>
+                        <h3 class="text-xl font-bold">{riverside.name}</h3>
                         <div class="not-prose overflow-x-auto mt-4">
-                            <table class="w-full text-left border-collapse">
-                                <tbody>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href="https://maps.google.com/?q=リバーサイドジャンボゴルフ 滋賀県東近江市建部下野町16" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">東近江市建部下野町16</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href="tel:0748222399" class="text-blue-600 hover:underline">0748-22-2399</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">6:00 - 24:00 (木曜は12:00から)</td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">250ヤード</td></tr>
-                                    <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">72打席</td></tr>
-                                </tbody>
-                            </table>
+                            <table class="w-full text-left border-collapse"><tbody>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/embed/v1/place?key=$1 ${encodeURIComponent(riverside.address)}`} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{riverside.address}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href={`tel:${riverside.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{riverside.phone}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">{riverside.business_hours}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">{riverside.yardage}ヤード</td></tr>
+                                <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">{riverside.bays}打席</td></tr>
+                            </tbody></table>
                         </div>
                         <div class="not-prose mt-4 map-container">
-                            <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent("リバーサイドジャンボゴルフ 滋賀県東近江市建部下野町16")}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(riverside.name + ", " + riverside.address)}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold">さくらゴルフ倶楽部</h3>
-                         <div class="not-prose overflow-x-auto mt-4">
-                            <table class="w-full text-left border-collapse">
-                                <tbody>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href="https://maps.google.com/?q=さくらゴルフ倶楽部 滋賀県東近江市上平木町1977" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">東近江市上平木町1977</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href="tel:0748237770" class="text-blue-600 hover:underline">0748-23-7770</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">6:00 - 24:00</td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">230ヤード</td></tr>
-                                    <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">60打席</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="not-prose mt-4 map-container">
-                            <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent("さくらゴルフ倶楽部 滋賀県東近江市上平木町1977")}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold">グリーンピア近江八幡ゴルフ</h3>
+                    </div>}
+                    {sakura && <div>
+                        <h3 class="text-xl font-bold">{sakura.name}</h3>
                         <div class="not-prose overflow-x-auto mt-4">
-                            <table class="w-full text-left border-collapse">
-                                <tbody>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href="https://maps.google.com/?q=グリーンピア近江八幡ゴルフ 滋賀県近江八幡市倉橋部町146-5" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">近江八幡市倉橋部町146-5</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href="tel:0748371886" class="text-blue-600 hover:underline">0748-37-1886</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">6:00 - 23:00</td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">180ヤード</td></tr>
-                                    <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">52打席</td></tr>
-                                </tbody>
-                            </table>
+                            <table class="w-full text-left border-collapse"><tbody>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/embed/v1/place?key=$2 ${encodeURIComponent(sakura.address)}`} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{sakura.address}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href={`tel:${sakura.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{sakura.phone}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">{sakura.business_hours}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">{sakura.yardage}ヤード</td></tr>
+                                <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">{sakura.bays}打席</td></tr>
+                            </tbody></table>
                         </div>
                         <div class="not-prose mt-4 map-container">
-                            <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent("グリーンピア近江八幡ゴルフ 滋賀県近江八幡市倉橋部町146-5")}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                             <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(sakura.name + ", " + sakura.address)}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold">安土ゴルフクラブ</h3>
+                    </div>}
+                     {greenpia && <div>
+                        <h3 class="text-xl font-bold">{greenpia.name}</h3>
                         <div class="not-prose overflow-x-auto mt-4">
-                            <table class="w-full text-left border-collapse">
-                                <tbody>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href="https://maps.google.com/?q=安土ゴルフクラブ 滋賀県近江八幡市安土町上出992-33" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">近江八幡市安土町上出992-33</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href="tel:0748466262" class="text-blue-600 hover:underline">0748-46-6262</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">平日 9:00 - 21:30 / 土日祝 8:00 - 21:30</td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">180ヤード</td></tr>
-                                    <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">24打席</td></tr>
-                                </tbody>
-                            </table>
+                            <table class="w-full text-left border-collapse"><tbody>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/embed/v1/place?key=$3 ${encodeURIComponent(greenpia.address)}`} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{greenpia.address}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href={`tel:${greenpia.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{greenpia.phone}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">{greenpia.business_hours}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">{greenpia.yardage}ヤード</td></tr>
+                                <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">{greenpia.bays}打席</td></tr>
+                            </tbody></table>
                         </div>
                         <div class="not-prose mt-4 map-container">
-                            <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent("安土ゴルフクラブ 滋賀県近江八幡市安土町上出992-33")}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                             <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(greenpia.name + ", " + greenpia.address)}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
-                    </div>
-                     <div>
-                        <h3 class="text-xl font-bold">がれーじぱーく東近江</h3>
+                    </div>}
+                     {azuchi && <div>
+                        <h3 class="text-xl font-bold">{azuchi.name}</h3>
                         <div class="not-prose overflow-x-auto mt-4">
-                            <table class="w-full text-left border-collapse">
-                                <tbody>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href="https://maps.google.com/?q=がれーじぱーく東近江 滋賀県東近江市東沖野4丁目4−27" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">東近江市東沖野4丁目4−27</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href="tel:0748293414" class="text-blue-600 hover:underline">0748-29-3414</a></td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">24時間営業</td></tr>
-                                    <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">インドア</td></tr>
-                                    <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">5打席</td></tr>
-                                </tbody>
-                            </table>
+                            <table class="w-full text-left border-collapse"><tbody>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/embed/v1/place?key=$4 ${encodeURIComponent(azuchi.address)}`} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{azuchi.address}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href={`tel:${azuchi.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{azuchi.phone}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">{azuchi.business_hours}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">{azuchi.yardage}ヤード</td></tr>
+                                <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">{azuchi.bays}打席</td></tr>
+                            </tbody></table>
                         </div>
                         <div class="not-prose mt-4 map-container">
-                            <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent("がれーじぱーく東近江 滋賀県東近江市東沖野4丁目4−27")}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                             <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(azuchi.name + ", " + azuchi.address)}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
-                    </div>
+                    </div>}
+                     {garage && <div>
+                        <h3 class="text-xl font-bold">{garage.name}</h3>
+                        <div class="not-prose overflow-x-auto mt-4">
+                            <table class="w-full text-left border-collapse"><tbody>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/embed/v1/place?key=$5 ${encodeURIComponent(garage.address)}`} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{garage.address}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4"><a href={`tel:${garage.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{garage.phone}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4">{garage.business_hours}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">インドア</td></tr>
+                                <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">{garage.bays}打席</td></tr>
+                            </tbody></table>
+                        </div>
+                        <div class="not-prose mt-4 map-container">
+                             <iframe src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(garage.name + ", " + garage.address)}`} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        </div>
+                    </div>}
                 </div>
             </section>
         </article>
     </div>
-
-    <style>
-        .map-container {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
-        }
-        .map-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-    </style>
 </BaseLayout>
