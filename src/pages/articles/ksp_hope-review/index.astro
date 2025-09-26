@@ -1,19 +1,16 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-// ★★★ 追加(1): Firebaseからデータを取得するためのモジュールをインポート ★★★
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
-// ★★★ フロントマターとSEO設定 ★★★
+// --- This article's specific information ---
 const title = "【KSP希望ヶ丘 体験記】「一滴の汗」が僕を救ったコンペ前夜の小さな奇跡 | シガゴル";
 const description = "コンペ前夜、焦った僕がKSP希望ヶ丘で得たものとは？トップトレーサーの気づきと、一滴の汗が繋いだ奇跡のパット体験記。";
-
-// ★★★ 修正(1): ISO形式の日付変数を追加 ★★★
 const pubDate = "2025-07-11";
 const pubDateISO = "2025-07-11T10:00:00+09:00";
+const rangeId = "ksp_hope";
+// --- End of specific information ---
 
-// ★★★ 追加(2): ここからがFirebaseのデータ取得処理です ★★★
-const rangeId = "ksp_hope"; // このページの練習場ID
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
 const docRef = doc(db, docPath);
@@ -26,9 +23,10 @@ if (docSnap.exists()) {
 }
 ---
 
-{/* ★★★ 修正(2): 構造化データを全面的に修正 ★★★ */}
-<Fragment slot="head">
+<BaseLayout title={title} description={description} pubDate={pubDate}>
+
     <script
+        slot="head"
         type="application/ld+json"
         set:html={JSON.stringify({
             "@context": "https://schema.org",
@@ -41,7 +39,7 @@ if (docSnap.exists()) {
             "author": {
                 "@type": "Person",
                 "name": "関（せき）",
-                "url": "https://shigagolf-reviews.netlify.app/about/",
+                "url": "https://shigagolf.com/about/",
                 "image": "https://i.imgur.com/BOcMOf3.png",
                 "sameAs": [
                     "https://x.com/Golf_Seki39",
@@ -62,29 +60,23 @@ if (docSnap.exists()) {
             "dateModified": pubDateISO
         })}
     />
-</Fragment>
 
-
-<BaseLayout title={title} description={description}>
-
-    {/* PCレイアウト対応済みの白いカード */}
     <div
         id="article-ksp-hope-experience-view"
         class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
     >
         <a
-            href="/"
+            href="/articles/"
             class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
-            >‹ トップページに戻る</a
+            >‹ お役立ち記事一覧に戻る</a
         >
         
         <article
             class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
         >
-            {/* ...途中までの本文は変更なしのため省略... */}
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    【体験記】「一滴の汗」が僕を救った夜。KSP希望ヶ丘で起きた小さな奇跡
+                    {title.split(" | ")[0]}
                 </h1>
                 <p class="text-sm text-slate-500 mt-2">
                     公開日：{pubDate}
@@ -127,8 +119,19 @@ if (docSnap.exists()) {
             <p>
                 この記事は、単なる練習場のレビューではありません。コンペ前夜、焦りに満ちた一人のゴルファーが、KSP希望ヶ丘で何を感じ、何に気づいたのか。その全てが、翌日の本番にどう繋がっていったのか──そんな僕自身のパーソナルな体験記です。
             </p>
-            <p>練習したい願望、練習を渇望していた僕が訪れた場所。今回の物語の舞台です。</p>
-            
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#why-ksp" class="text-green-700 hover:underline">なぜ僕はこの練習場を選んだのか？</a></li>
+                    <li><a href="#data-analysis" class="text-green-700 hover:underline">データが肯定した「残念なクセ」と、逆転の発想</a></li>
+                    <li><a href="#sweat-miracle" class="text-green-700 hover:underline">一滴の汗が繋いだ、奇跡のパット</a></li>
+                    <li><a href="#furusato-tax" class="text-green-700 hover:underline">ふるさと納税で、ゴルフが上達する！！？</a></li>
+                    <li><a href="#summary" class="text-green-700 hover:underline">まとめ：僕がKSP希望ヶ丘で得た、本当の収穫</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">「KSP希望ヶ丘」の基本情報</a></li>
+                </ul>
+            </div>
+
             <img 
                 src="https://i.imgur.com/07HGpnW.png" 
                 alt="KSP希望ヶ丘の外観" 
@@ -278,9 +281,8 @@ if (docSnap.exists()) {
             
             <p>あなたの「150ヤード」は、本当に飛んでいますか？ もし、少しでも不安があるのなら、一度、ご自身のゴルフの“健康診断”をしに、足を運んでみてはいかがでしょうか。きっと、スコア以上の「大切な何か」が見つかるはずです。</p>
 
-            <hr />
+            <hr class="my-8" />
 
-            {/* ★★★ 追加(3): ここから基本情報サマリーとGoogleマップ ★★★ */}
             <h2
                 id="info-summary"
                 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
@@ -289,93 +291,85 @@ if (docSnap.exists()) {
             </h2>
             {
                 rangeData ? (
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto not-prose">
                         <table class="w-full text-left border-collapse">
                             <tbody class="align-baseline">
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
-                                            練習場名
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.name}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
+                                        練習場名
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.name}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            住所
-                                        </th>
-                                        <td class="py-3 px-4">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        住所
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
-                                        </td>
-                                    </>
+                                        </a>
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            電話番号
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.phone}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        電話番号
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            営業時間
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.business_hours}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        営業時間
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.business_hours}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            料金（代表例）
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.price_uchihodai_weekday_str ||
-                                                "お問い合わせください"}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        料金（代表例）
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.price_uchihodai_weekday_str ||
+                                            "お問い合わせください"}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            ヤード数
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.yardage
-                                                ? `${rangeData.yardage}ヤード`
-                                                : "-"}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        ヤード数
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.yardage
+                                            ? `${rangeData.yardage}ヤード`
+                                            : "-"}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            打席数
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.bays
-                                                ? `${rangeData.bays}打席`
-                                                : "-"}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        打席数
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.bays
+                                            ? `${rangeData.bays}打席`
+                                            : "-"}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <>
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                            アクセス
-                                        </th>
-                                        <td class="py-3 px-4">
-                                            {rangeData.access}
-                                        </td>
-                                    </>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        アクセス
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.access}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -406,7 +400,7 @@ if (docSnap.exists()) {
                 🎯 さらに詳しい情報や口コミはこちら！
                 <br />
                 <a 
-                    href="/ranges/ksp_hope/"  
+                    href={`/ranges/${rangeId}/`}  
                     class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
                 >
                     「KSP希望ヶ丘」のシガゴル公式レビューページへ
@@ -416,22 +410,24 @@ if (docSnap.exists()) {
         </article>
         
     </div>
-</BaseLayout>
 
-{/* ★★★ 追加(4): Googleマップ表示用のスタイル ★★★ */}
-<style>
-    .map-container {
-        position: relative;
-        width: 100%;
-        overflow: hidden;
-        padding-top: 56.25%; /* 16:9 アスペクト比 */
-    }
-    .map-container iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
-</style>
+    <style>
+        .map-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .scroll-mt-24 {
+            scroll-margin-top: 6rem; /* 96px */
+        }
+    </style>
+</BaseLayout>
