@@ -52,7 +52,7 @@ if (docSnap.exists()) {
                 "@type": "LocalBusiness",
                 "name": rangeData?.name,
                 "image": rangeData?.imageUrl,
-                "telephone": rangeData?.tel,
+                "telephone": rangeData?.phone, // tel -> phone に修正
                 "priceRange": rangeData?.priceRange,
                 "address": {
                   "@type": "PostalAddress",
@@ -231,19 +231,25 @@ if (docSnap.exists()) {
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
                                     <td class="py-3 px-4">
-                                        <a href={`tel:${rangeData.tel.replace(/-/g, "")}`} class="text-green-700 hover:underline">
-                                            {rangeData.tel}
-                                        </a>
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
-                                    <td class="py-3 px-4">{rangeData.businessHours}</td>
+                                    <td class="py-3 px-4">{rangeData.business_hours}</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
                                     <td class="py-3 px-4">{
-                                        rangeData.priceExample || "お問い合わせください"
+                                        rangeData.price_uchihodai_weekday_str ||
+                                        rangeData.price_ball_weekday_str ||
+                                        "お問い合わせください"
                                     }</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
