@@ -105,6 +105,7 @@ const itemListElements = rangeIds.map((id, index) => {
               section[id] { scroll-margin-top: 80px; }
               .cta-icon { width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: text-bottom; }
             </style>
+            {/* (記事本文は変更ないため省略) */}
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
                 <p class="text-sm text-slate-500 mt-2">最終更新日：{articlePubDate}</p>
@@ -196,7 +197,7 @@ const itemListElements = rangeIds.map((id, index) => {
                 </table>
             </div>
 
-            <div class="space-y-4 my-4 not-prose md:hidden">
+            <div class="space-y-4 my-4 not-prose md-hidden">
                 <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href="/ranges/riverside_jumbo/" class="text-blue-600 hover:underline">{riverside?.name}</a></h3><p class="text-sm text-slate-500 m-0">東近江市</p><table class="w-full mt-2 text-sm"><tbody><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1" aria-label="アプローチの評価は二重丸">◎ (約50yd)</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1" aria-label="バンカーの評価は二重丸">◎</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">芝の管理が圧倒的。実践的な練習環境。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">本気でスコアを求める中〜上級者</td></tr></tbody></table></div>
                 <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href="/ranges/sakura_gc/" class="text-blue-600 hover:underline">{sakura?.name}</a></h3><p class="text-sm text-slate-500 m-0">東近江市</p><table class="w-full mt-2 text-sm"><tbody><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1" aria-label="アプローチの評価は丸">◯ (約60yd)</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1" aria-label="バンカーの評価は丸">◯</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">女性無料！広くて開放的な練習エリア。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">女性、コスパ重視のゴルファー</td></tr></tbody></table></div>
                 <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">{greenpia?.name}</a></h3><p class="text-sm text-slate-500 m-0">近江八幡市</p><table class="w-full mt-2 text-sm"><tbody><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1" aria-label="アプローチの評価は丸">◯ (約20yd)</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1" aria-label="バンカーの評価は丸">◯</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">人目につきにくい、初心者向け穴場。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">初心者、こっそり練習したい人</td></tr></tbody></table></div>
@@ -337,11 +338,13 @@ const itemListElements = rangeIds.map((id, index) => {
                         if (!range) return null;
                         
                         // ★★★ 修正箇所 ★★★
-                        // 検索用と埋め込み用で、クエリ（検索キーワード）を共通化
                         const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
                         
-                        const mapsSearchUrl = `https://www.google.com/maps/embed/v1/place?key=$6{searchQuery}`;
-                        const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=$7{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${searchQuery}`;
+                        // 1. 住所クリック用のリンク (正しいGoogle Maps検索URL)
+                        const mapsSearchUrl = `https://www.google.com/maps/embed/v1/place?key=$21{searchQuery}`;
+                        
+                        // 2. 埋め込み用のリンク (正しいGoogle Maps Embed API URL)
+                        const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=$22{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${searchQuery}`;
 
                         return (
                             <div>
