@@ -38,6 +38,15 @@ const summaryData = summaryConfig.map(item => ({
     name: rangesData[item.id]?.name || '練習場名'
 }));
 
+// ★ 各施設のアイキャッチ画像URLを定義
+const rangeImages = {
+    azuchi_gc: 'https://i.imgur.com/LSkRor1.jpeg',
+    garage_park: 'https://i.imgur.com/0rkZCzV.jpeg',
+    riverside_jumbo: 'https://i.imgur.com/jAuddU2.jpeg',
+    sakura_gc: 'https://i.imgur.com/nMH3jlD.png',
+    greenpia_oh: 'https://i.imgur.com/ki7elev.png'
+};
+
 // --- 構造化データ(JSON-LD)の生成 ---
 const itemListElements = rangeIds.map((id, index) => {
     const range = rangesData[id];
@@ -48,7 +57,9 @@ const itemListElements = rangeIds.map((id, index) => {
     return {
         "@type": "ListItem", "position": index + 1,
         "item": {
-            "@type": "SportsActivityLocation", "name": range.name, "url": `${baseUrl}/ranges/${id}/`, "telephone": range.phone, "priceRange": range.priceRange || "¥1000-¥3000",
+            "@type": "SportsActivityLocation", "name": range.name, "url": `${baseUrl}/ranges/${id}/`, 
+            "image": rangeImages[id], // ★ "image"項目を追加
+            "telephone": range.phone, "priceRange": range.priceRange || "¥1000-¥3000",
             "address": { "@type": "PostalAddress", "streetAddress": range.address, "addressLocality": range.city, "addressRegion": "滋賀県", "postalCode": range.postalCode, "addressCountry": "JP" },
             "geo": { "@type": "GeoCoordinates", "latitude": range.lat, "longitude": range.lng },
             "openingHoursSpecification": openingHours,
@@ -178,7 +189,6 @@ const itemListElements = rangeIds.map((id, index) => {
             <h2 id="top3-ranking" class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200 scroll-mt-24">【目的別】近江八幡・東近江のおすすめアプローチ練習場TOP3</h2>
             <p>数ある練習場の中から、今回は「芝からのアプローチ」という観点で、特におすすめの3つのゴルフ練習場をランキング形式でご紹介します。</p>
 
-            {/* ★ 変数 `riverside` 等を `rangesData.riverside_jumbo` に変更 */}
             <section id="riverside-jumbo" class="scroll-mt-24">
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8">1. 本格派向け：<a href={`${baseUrl}/ranges/riverside_jumbo/`} class="text-green-700 hover:underline">{rangesData.riverside_jumbo?.name}（東近江市）</a></h3>
                  <img src="https://i.imgur.com/Zmub1Dn.jpeg" alt="リバーサイドジャンボゴルフのアプローチエリア全体の風景" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
