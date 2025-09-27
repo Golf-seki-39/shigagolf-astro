@@ -5,17 +5,13 @@ import { doc, getDoc } from "firebase/firestore";
 
 // --- この記事固有の情報 ---
 const baseUrl = "https://shigagolf.com";
-const articleUrl = `${baseUrl}/articles/omi-higashiomi-approach-bunker/`; // この記事の正規URL
-const publicationDate = "2025-09-27"; // 日付情報を一元化
+// ★ 1. シェア用URLを正しいパスに修正
+const articleUrl = `${baseUrl}/articles/omi-higashiomi-approach/`; 
+const publicationDate = "2025-09-27";
 
 const title = "【滋賀・徹底比較】近江八幡・東近江のゴルフ練習場5選｜アプローチ＆バンカー練習ができるのはここ！ | シガゴル";
-
-// descriptionの繰り返し感をなくし、より具体的に
 const description = "近江八幡・東近江エリアの全5施設を実際に訪問調査。アプローチ練習場やバンカー打席を徹底比較し、あなたのレベルや目的に合った練習環境を紹介します。";
-
-// 構造化データ用に、より検索結果で魅力的なheadlineを定義
 const headline = "近江八幡・東近江のゴルフ練習場5選｜アプローチ＆バンカー徹底比較";
-
 const imageUrl = "https://i.imgur.com/jOTBh4U.jpeg";
 
 // --- Firebaseから各練習場の情報を取得 ---
@@ -40,7 +36,6 @@ const sakura = rangesData.sakura_gc;
 const greenpia = rangesData.greenpia_oh;
 const azuchi = rangesData.azuchi_gc;
 const garage = rangesData.garage_park;
-
 
 // --- 構造化データ(JSON-LD)の生成 ---
 const itemListElements = rangeIds.map((id, index) => {
@@ -133,6 +128,7 @@ const itemListElements = rangeIds.map((id, index) => {
             <h2 id="summary-table" class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200 scroll-mt-24">結論から！近江八幡・東近江のショートゲーム環境 早見表</h2>
             <p>忙しいあなたのために、まずは各練習場の特徴を一覧でまとめました。</p>
             
+            {/* ★ 2. PC版の早見表を再構築 */}
             <div class="overflow-x-auto my-4 not-prose hidden md:block">
                  <table class="w-full text-sm text-left border border-slate-300 min-w-[800px]">
                     <thead class="bg-slate-50">
@@ -184,6 +180,7 @@ const itemListElements = rangeIds.map((id, index) => {
                 </table>
             </div>
 
+            {/* ★ 2. モバイル版の早見表を再構築 */}
             <div class="space-y-4 my-4 not-prose md:hidden">
                 <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href={`${baseUrl}/ranges/riverside_jumbo/`} class="text-blue-600 hover:underline">{riverside?.name}</a></h3><p class="text-sm text-slate-500 m-0">東近江市</p><table class="w-full mt-2 text-sm"><tbody><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1" aria-label="アプローチの評価は二重丸">◎ (約50yd)</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1" aria-label="バンカーの評価は二重丸">◎</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">芝の管理が圧倒的。実践的な練習環境。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">本気でスコアを求める中〜上級者</td></tr></tbody></table></div>
                 <div class="border rounded-lg p-4"><h3 class="text-lg font-bold m-0"><a href={`${baseUrl}/ranges/sakura_gc/`} class="text-blue-600 hover:underline">{sakura?.name}</a></h3><p class="text-sm text-slate-500 m-0">東近江市</p><table class="w-full mt-2 text-sm"><tbody><tr><td class="font-semibold pr-2 py-1 w-1/3">アプローチ</td><td class="py-1" aria-label="アプローチの評価は丸">◯ (約60yd)</td></tr><tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1" aria-label="バンカーの評価は丸">◯</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">女性無料！広くて開放的な練習エリア。</td></tr><tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">女性、コスパ重視のゴルファー</td></tr></tbody></table></div>
@@ -336,9 +333,10 @@ const itemListElements = rangeIds.map((id, index) => {
                         メールで送る
                     </a>
                 </div>
-                <p class="mt-6">他のエリアのゴルフ練習場情報もチェック！</p>
+                <p class="mt-6">こちらの記事も読まれています</p>
                 <div class="mt-2">
-                    <a href="/articles/koka-konan-comparison/" class="text-blue-600 hover:underline">甲賀・湖南エリアの練習場比較記事へ</a>
+                    {/* ★ 1. 関連記事のリンク先とテキストを修正 */}
+                    <a href={`${baseUrl}/articles/omi-higashiomi-comparison/`} class="text-blue-600 hover:underline">【近江八幡・東近江】ゴルフ練習場4選・徹底比較！</a>
                 </div>
             </section>
 
