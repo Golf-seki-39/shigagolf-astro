@@ -335,8 +335,13 @@ const itemListElements = rangeIds.map((id, index) => {
                     {rangeIds.map(id => {
                         const range = rangesData[id];
                         if (!range) return null;
-                        const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(range.address)}`;
-                        const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(range.name + ", " + range.address)}`;
+                        
+                        // ★★★ 修正箇所 ★★★
+                        // 検索用と埋め込み用で、クエリ（検索キーワード）を共通化
+                        const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
+                        
+                        const mapsSearchUrl = `https://www.google.com/maps/embed/v1/place?key=$6{searchQuery}`;
+                        const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=$7{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${searchQuery}`;
 
                         return (
                             <div>
