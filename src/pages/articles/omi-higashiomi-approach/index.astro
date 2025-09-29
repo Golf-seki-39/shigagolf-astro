@@ -7,6 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 const baseUrl = "https://shigagolf.com";
 const articleUrl = `${baseUrl}/articles/omi-higashiomi-approach/`;
 const publicationDate = "2025-09-27";
+const lastModified = new Date();
 
 const title = "【滋賀・徹底比較】近江八幡・東近江のゴルフ練習場5選｜アプローチ＆バンカー練習ができるのはここ！ | シガゴル";
 const description = "近江八幡・東近江エリアの全5施設を実際に訪問調査。アプローチ練習場やバンカー打席を徹底比較し、あなたのレベルや目的に合った練習環境を紹介します。";
@@ -25,20 +26,20 @@ const rangesData = rangeDocs.reduce((acc, docSnap, index) => {
     return acc;
 }, {});
 
-// ★ 早見表のデータをループ処理用に整理
+// --- 早見表のデータをループ処理用に整理 ---
 const summaryConfig = [
-    { id: 'riverside_jumbo', city: '東近江市', approach: { symbol: '◎', text: '(約50yd)', label: '評価: 二重丸' }, bunker: { symbol: '◎', label: '評価: 二重丸'}, feature: '芝の管理が圧倒的。実践的な練習環境。', recommend: '本気でスコアを求める中〜上級者' },
-    { id: 'sakura_gc',       city: '東近江市', approach: { symbol: '◯', text: '(約60yd)', label: '評価: 丸' }, bunker: { symbol: '◯', label: '評価: 丸'}, feature: '女性無料！広くて開放的な練習エリア。', recommend: '女性、コスパ重視のゴルファー' },
-    { id: 'greenpia_oh',     city: '近江八幡市', approach: { symbol: '◯', text: '(約20yd)', label: '評価: 丸' }, bunker: { symbol: '◯', label: '評価: 丸'}, feature: '人目につきにくい、初心者向け穴場。', recommend: '初心者、こっそり練習したい人' },
-    { id: 'azuchi_gc',       city: '近江八幡市', approach: { symbol: '×', text: '', label: '評価: 不可' }, bunker: { symbol: '◯', label: '評価: 丸'}, feature: '打席利用者は無料でバンカー練習が可能。', recommend: 'バンカーが苦手な人' },
-    { id: 'garage_park',     city: '東近江市', approach: { symbol: '×', text: '(インドア)', label: '評価: 不可' }, bunker: { symbol: '×', label: '評価: 不可'}, feature: '弾道測定器でデータを元にした練習が可能。', recommend: 'データ派、天候を気にせず練習したい人' }
+    { id: 'riverside_jumbo', city: '東近江市', approach: { symbol: '◎', text: '(約50yd)', label: '評価: 二重丸' }, bunker: { symbol: '◎', label: '評価: 二重丸'}, feature: '<span class="whitespace-nowrap">芝の管理が圧倒的。</span><br /><span class="whitespace-nowrap">実践的な練習環境。</span>', recommend: '本気でスコアを求める中〜上級者' },
+    { id: 'sakura_gc',       city: '東近江市', approach: { symbol: '◯', text: '(約60yd)', label: '評価: 丸' }, bunker: { symbol: '◯', label: '評価: 丸'}, feature: '<span class="whitespace-nowrap">女性無料！</span><br /><span class="whitespace-nowrap">広くて開放的な練習エリア。</span>', recommend: '女性、コスパ重視のゴルファー' },
+    { id: 'greenpia_oh',     city: '近江八幡市', approach: { symbol: '◯', text: '(約20yd)', label: '評価: 丸' }, bunker: { symbol: '◯', label: '評価: 丸'}, feature: '<span class="whitespace-nowrap">人目につきにくい、</span><br /><span class="whitespace-nowrap">初心者向け穴場。</span>', recommend: '初心者、こっそり練習したい人' },
+    { id: 'azuchi_gc',       city: '近江八幡市', approach: { symbol: '×', text: '', label: '評価: 不可' }, bunker: { symbol: '◯', label: '評価: 丸'}, feature: '<span class="whitespace-nowrap">打席利用者は無料で</span><br /><span class="whitespace-nowrap">バンカー練習が可能。</span>', recommend: 'バンカーが苦手な人' },
+    { id: 'garage_park',     city: '東近江市', approach: { symbol: '×', text: '(インドア)', label: '評価: 不可' }, bunker: { symbol: '×', label: '評価: 不可'}, feature: '<span class="whitespace-nowrap">弾道測定器でデータを</span><br /><span class="whitespace-nowrap">元にした練習が可能。</span>', recommend: 'データ派、天候を気にせず練習したい人' }
 ];
 const summaryData = summaryConfig.map(item => ({
     ...item,
     name: rangesData[item.id]?.name || '練習場名'
 }));
 
-// ★ 各施設のアイキャッチ画像URLを定義
+// --- 各施設のアイキャッチ画像URLを定義 ---
 const rangeImages = {
     azuchi_gc: 'https://i.imgur.com/LSkRor1.jpeg',
     garage_park: 'https://i.imgur.com/0rkZCzV.jpeg',
@@ -58,7 +59,7 @@ const itemListElements = rangeIds.map((id, index) => {
         "@type": "ListItem", "position": index + 1,
         "item": {
             "@type": "SportsActivityLocation", "name": range.name, "url": `${baseUrl}/ranges/${id}/`, 
-            "image": rangeImages[id], // ★ "image"項目を追加
+            "image": rangeImages[id],
             "telephone": range.phone, "priceRange": range.priceRange || "¥1000-¥3000",
             "address": { "@type": "PostalAddress", "streetAddress": range.address, "addressLocality": range.city, "addressRegion": "滋賀県", "postalCode": range.postalCode, "addressCountry": "JP" },
             "geo": { "@type": "GeoCoordinates", "latitude": range.lat, "longitude": range.lng },
@@ -66,19 +67,47 @@ const itemListElements = rangeIds.map((id, index) => {
         }
     };
 }).filter(Boolean);
----
 
+const faqElements = {
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "ゴルフ練習場のアプローチエリアで効果的に練習する方法は？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "効果的な練習には3つのポイントがあります。まず、10ヤード、30ヤード、50ヤードなど、具体的な距離を決めて打ち分ける練習を繰り返します。次に、もしフェアウェイやラフなど複数のライがあれば、それぞれの状況から打つことで実戦感覚を養います。最後に、スイングの大きさや力感を変えず、一定のリズムで打つことを意識すると安定性が増します。"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "バンカーショットが苦手です。どんな練習をすればいいですか？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "バンカーショットの基本は、ボールを直接打つのではなく、手前の砂を爆発させる「エクスプロージョンショット」です。練習場では、ボールの3cmほど手前に線を引いて、その線ごと砂を飛ばすイメージで繰り返しスイングしましょう。フェースを開き、スタンスを少しオープンに構えるのが基本です。まずはボールを出すことを目標に、砂をしっかり叩く感覚を掴むことが重要です。"
+            }
+        }
+    ]
+};
+---
 <BaseLayout title={title} description={description} pubDate={publicationDate}>
 
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
-        "@type": "Article",
+        "@type": "BlogPosting",
         "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
         "headline": headline, "description": description, "image": [ imageUrl ],
         "author": { "@type": "Person", "name": "関（せき）", "url": `${baseUrl}/about/`, "image": "https://i.imgur.com/BOcMOf3.png" },
-        "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" } },
-        "datePublished": new Date(publicationDate).toISOString(), "dateModified": new Date(publicationDate).toISOString(),
+        "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { 
+            "@type": "ImageObject", 
+            "url": "https://i.imgur.com/mN0IbPS.png",
+            "width": 600,
+            "height": 60
+        }},
+        "datePublished": new Date(publicationDate).toISOString(),
+        "dateModified": lastModified.toISOString(),
         "hasPart": { "@type": "ItemList", "itemListElement": itemListElements },
+        "mainEntity": faqElements,
         "about": [ { "@type": "Thing", "name": "ゴルフ アプローチ練習" }, { "@type": "Thing", "name": "ゴルフ バンカー練習" }, { "@type": "Thing", "name": "滋賀 ゴルフ練習場" } ]
     })} />
 
@@ -95,10 +124,15 @@ const itemListElements = rangeIds.map((id, index) => {
             
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{title.split(" | ")[0]}</h1>
-                <p class="text-sm text-slate-500 mt-2">最終更新日：{publicationDate}</p>
+                <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>
             </header>
 
-            <img src={imageUrl} alt="滋賀県のゴルフ練習場でアプローチ練習をするゴルファー" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" fetchpriority="high" />
+            <img src={imageUrl} alt="滋賀県のゴルフ練習場でアプローチ練習をするゴルファー" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width="1200" height="800" fetchpriority="high" />
+
+            <div class="not-prose bg-blue-50 p-4 my-6 rounded-lg border border-l-4 border-blue-500">
+                <p class="font-bold text-slate-800 text-lg">結論：本格的な練習なら<a href="#riverside-jumbo" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a>、コスパ重視なら<a href="#sakura-gc" class="text-green-700 hover:underline">さくらゴルフ倶楽部</a>がおすすめです。</p>
+                <p class="text-slate-700 m-0">この記事では、各練習場のショートゲーム環境をランキング形式で詳しく解説します。</p>
+            </div>
 
             <p>「練習場では快音を響かせるドライバー。でも、なぜかスコアは縮まらない…」</p>
             <p>多くのゴルファーが抱えるこの悩みの原因は、スコアの約7割を占めると言われる100ヤード以内のショートゲームにあるのかもしれません。</p>
@@ -116,6 +150,7 @@ const itemListElements = rangeIds.map((id, index) => {
                     </li>
                     <li><a href="#azuchi-gc" class="text-green-700 hover:underline">番外編：バンカー練習特化なら安土ゴルフクラブ</a></li>
                     <li><a href="#garage-park" class="text-green-700 hover:underline">雨の日・データ派向け：がれーじぱーく東近江</a></li>
+                    <li><a href="#faq" class="text-green-700 hover:underline">アプローチ・バンカー練習のよくある質問</a></li>
                     <li><a href="#conclusion" class="text-green-700 hover:underline">まとめ</a></li>
                     <li><a href="#info-summary" class="text-green-700 hover:underline">各施設の基本情報まとめ</a></li>
                 </ul>
@@ -140,7 +175,7 @@ const itemListElements = rangeIds.map((id, index) => {
                             <th scope="col" class="px-4 py-3 border border-slate-300 align-middle text-center whitespace-nowrap text-base font-semibold normal-case">練習場名</th>
                             <th scope="col" class="px-4 py-3 border border-slate-300 text-center">アプローチ</th>
                             <th scope="col" class="px-4 py-3 border border-slate-300 text-center">バンカー</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300">最大の特徴</th>
+                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center">最大の特徴</th>
                             <th scope="col" class="px-4 py-3 border border-slate-300">こんな人におすすめ</th>
                         </tr>
                     </thead>
@@ -157,7 +192,7 @@ const itemListElements = rangeIds.map((id, index) => {
                                 <td class="px-4 py-2 border text-center" aria-label={item.bunker.label}>
                                     {item.bunker.symbol}
                                 </td>
-                                <td class="px-4 py-2 border">{item.feature}</td>
+                                <td class="px-4 py-2 border text-center" set:html={item.feature} />
                                 <td class="px-4 py-2 border">{item.recommend}</td>
                             </tr>
                         ))}
@@ -179,7 +214,7 @@ const itemListElements = rangeIds.map((id, index) => {
                                 <td class="font-semibold pr-2 py-1">バンカー</td>
                                 <td class="py-1" aria-label={`バンカー ${item.bunker.label}`}>{item.bunker.symbol}</td>
                             </tr>
-                            <tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">{item.feature}</td></tr>
+                            <tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1" set:html={item.feature.replace(/<br \/>/g, ' ')} /></tr>
                             <tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">{item.recommend}</td></tr>
                         </tbody></table>
                     </div>
@@ -192,7 +227,7 @@ const itemListElements = rangeIds.map((id, index) => {
             <section id="riverside-jumbo" class="scroll-mt-24">
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8">1. 本格派向け：<a href={`${baseUrl}/ranges/riverside_jumbo/`} class="text-green-700 hover:underline">{rangesData.riverside_jumbo?.name}（東近江市）</a></h3>
                  <img src="https://i.imgur.com/Zmub1Dn.jpeg" alt="リバーサイドジャンボゴルフのアプローチエリア全体の風景" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-                <p>東近江市で最も質の高いアプローチ練習を望むなら、迷わずここを選ぶべきでしょう。</p>
+                <p>東近江市で最も質の高いアプローチ練習を望むなら、迷わず<a href={`${baseUrl}/ranges/riverside_jumbo/`} class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a>を選ぶべきでしょう。</p>
                 <p>有料会員（年会費2,000円）だけが足を踏み入れることを許されるこのエリアは、他の練習場とは一線を画すクオリティを誇ります。</p>
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：圧倒的な芝の管理クオリティ</h4>
                 <p>毎週木曜の午前中にメンテナンスが入る芝は、常に最高のコンディション。約50ヤードのエリア内には、フェアウェイ、ラフ、そして深いラフが意図的に作り分けられており、コースで出くわすあらゆるライを想定した、極めて実践的なアプローチ練習が可能です。</p>
@@ -217,7 +252,7 @@ const itemListElements = rangeIds.map((id, index) => {
             <section id="sakura-gc" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800">2. 女性・コスパ重視派向け：<a href={`${baseUrl}/ranges/sakura_gc/`} class="text-green-700 hover:underline">{rangesData.sakura_gc?.name}（東近江市）</a></h3>
                  <img src="https://i.imgur.com/SMDA2hS.png" alt="さくらゴルフ倶楽部の広々としたアプローチエリア全体" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-                <p>東近江エリアで、楽しさとお得さを両立させたいなら、さくらゴルフ倶楽部は最高の選択肢です。</p>
+                <p>東近江エリアで、楽しさとお得さを両立させたいなら、<a href={`${baseUrl}/ranges/sakura_gc/`} class="text-green-700 hover:underline">さくらゴルフ倶楽部</a>は最高の選択肢です。</p>
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：女性は無料！圧倒的なコストパフォーマンス</h4>
                 <p>信じられないかもしれませんが、プレミアム会員と女性は、アプローチ練習場の利用料が1時間無料になります。実際に受付で申し出て、1円も払わずに1時間みっちり練習できることを確認済み。男性ビジターでも1時間515円と、非常に良心的な価格でアプローチ練習ができます。</p>
                 <img src="https://i.imgur.com/TNUPBdk.png" alt="さくらゴルフ倶楽部の女性向け料金表" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
@@ -245,7 +280,7 @@ const itemListElements = rangeIds.map((id, index) => {
             <section id="greenpia-oh" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800">3. 初心者向け：<a href={`${baseUrl}/ranges/greenpia_oh/`} class="text-green-700 hover:underline">{rangesData.greenpia_oh?.name}（近江八幡市）</a></h3>
                  <img src="https://i.imgur.com/TXXAJEo.jpeg" alt="グリーンピア近江八幡のアプローチ練習場の場所を示す地図" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-                <p>近江八幡市で、初心者が気兼ねなくアプローチ練習を始められる場所として、私たちが推薦するのがグリーンピア近江八幡です。</p>
+                <p>近江八幡市で、初心者が気兼ねなくアプローチ練習を始められる場所として、私たちが推薦するのが<a href={`${baseUrl}/ranges/greenpia_oh/`} class="text-green-700 hover:underline">グリーンピア近江八幡</a>です。</p>
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：人目を気にせず練習できる「隠れ家」感</h4>
                 <p>上の地図を見てわかる通り、アプローチ練習場は練習場の建物や駐車場から道を一本挟んだ反対側にあります。多くの人の動線から外れているため、人目を気にすることなく、自分のペースで練習に集中できるのが最大の魅力です。</p>
                 <img src="https://i.imgur.com/NjWzRzC.png" alt="グリーンピア近江八幡の隠れ家的なアプローチエリア" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
@@ -270,7 +305,7 @@ const itemListElements = rangeIds.map((id, index) => {
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800">番外編：近江八幡でバンカー練習に特化するなら「<a href={`${baseUrl}/ranges/azuchi_gc/`} class="text-green-700 hover:underline">{rangesData.azuchi_gc?.name}</a>」</h3>
                  <img src="https://i.imgur.com/sLV8cIE.jpeg" alt="安土ゴルフクラブのバンカー練習場への入り口" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <p>「近江八幡でアプローチ練習はできないけど、バンカーだけは徹底的に練習したい！」</p>
-                <p>そんなニッチな要望に応えてくれるのが、安土ゴルフクラブです。</p>
+                <p>そんなニッチな要望に応えてくれるのが、<a href={`${baseUrl}/ranges/azuchi_gc/`} class="text-green-700 hover:underline">安土ゴルフクラブ</a>です。</p>
                 <p>ここの最大の特徴は、打席利用者は追加料金なしでバンカー練習場が使えること。ボール代だけで、苦手なバンカーショットを心ゆくまで練習できるのは、非常にありがたいポイントです。近江八幡エリアでは貴重なバンカー練習ができるゴルフ練習場と言えるでしょう。</p>
                 <img src="https://i.imgur.com/CJaVyC3.jpeg" alt="安土ゴルフクラブの2階打席から見下ろしたバンカー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <p>設備は手作り感があり、最新とは言えませんが、そのぶん気兼ねなく使える雰囲気があります。バンカー克服を目標に、一度訪れてみてはいかがでしょうか。</p>
@@ -289,7 +324,7 @@ const itemListElements = rangeIds.map((id, index) => {
             <section id="garage-park" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800">雨の日やデータ分析派にはこちら：<a href={`${baseUrl}/ranges/garage_park/`} class="text-green-700 hover:underline">{rangesData.garage_park?.name}（東近江市）</a></h3>
                 <img src="https://i.imgur.com/KqgvACX.png" alt="がれーじぱーく東近江の弾道測定器が設置されたインドア打席" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-                <p>最後に、インドアゴルフ練習場のがれーじぱーく東近江にも触れておきましょう。</p>
+                <p>最後に、インドアゴルフ練習場の<a href={`${baseUrl}/ranges/garage_park/`} class="text-green-700 hover:underline">がれーじぱーく東近江</a>にも触れておきましょう。</p>
                 <p>もちろんインドアなので芝からのアプローチ練習はできませんが、高性能な弾道測定器を完備しており、スイングのデータ分析や、天候を気にしない快適な練習が可能です。「なぜトップするのか」「スピン量は足りているか」など、データを元に課題を解決したいゴルファーには最適な環境と言えるでしょう。</p>
                  <div class="not-prose text-center my-6">
                     <a href={`${baseUrl}/ranges/garage_park/`} class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
