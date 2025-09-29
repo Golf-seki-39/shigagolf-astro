@@ -35,13 +35,13 @@ const rangeImages = {
     azuchi_gc: "https://i.imgur.com/xBrBYhE.jpeg"
 };
 
-// --- 早見表のデータをループ処理用に整理 ---
+// --- 早見表のデータをループ処理用に整理 (★改行制御を強化) ---
 const summaryConfig = [
-    { id: 'riverside_jumbo', location: '半屋外', evaluation: { symbol: '◎', label: '評価: 特に優れている'}, feature: '起伏のある本格グリーン。<br />雨天・夜間もOK。', fee: '無料' },
-    { id: 'greenpia_oh',     location: '屋内',   evaluation: { symbol: '◯', label: '評価: 良い'}, feature: '広く清潔な屋内グリーン。<br />ただし注意点も。', fee: '打席利用者<br />無料' },
-    { id: 'sakura_gc',       location: '屋内',   evaluation: { symbol: '△', label: '評価: 簡易的'}, feature: '複数タイプの練習器具が置かれ、<br />手軽に試せる。', fee: '打席利用者<br />無料' },
-    { id: 'garage_park',     location: '屋内',   evaluation: { symbol: '△', label: '評価: 簡易的'}, feature: 'DIY感のあるエリア。<br />速く、少し凸凹した個性派。', fee: '打席利用者<br />無料' },
-    { id: 'azuchi_gc',       location: '屋内',   evaluation: { symbol: '△', label: '評価: 簡易的'}, feature: '受付裏の簡易マット。<br />ストローク確認に。', fee: '無料' }
+    { id: 'riverside_jumbo', location: '半屋外', evaluation: { symbol: '◎', label: '評価: 特に優れている'}, feature: '<span class="whitespace-nowrap">起伏のある本格グリーン。</span><br /><span class="whitespace-nowrap">雨天・夜間もOK。</span>', fee: '無料' },
+    { id: 'greenpia_oh',     location: '屋内',   evaluation: { symbol: '◯', label: '評価: 良い'}, feature: '<span class="whitespace-nowrap">広く清潔な屋内グリーン。</span><br /><span class="whitespace-nowrap">ただし注意点も。</span>', fee: '<span class="whitespace-nowrap">打席利用者</span><br />無料' },
+    { id: 'sakura_gc',       location: '屋内',   evaluation: { symbol: '△', label: '評価: 簡易的'}, feature: '<span class="whitespace-nowrap">複数タイプの練習器具が置かれ、</span><br /><span class="whitespace-nowrap">手軽に試せる。</span>', fee: '<span class="whitespace-nowrap">打席利用者</span><br />無料' },
+    { id: 'garage_park',     location: '屋内',   evaluation: { symbol: '△', label: '評価: 簡易的'}, feature: '<span class="whitespace-nowrap">DIY感のあるエリア。</span><br /><span class="whitespace-nowrap">速く、少し凸凹した個性派。</span>', fee: '<span class="whitespace-nowrap">打席利用者</span><br />無料' },
+    { id: 'azuchi_gc',       location: '屋内',   evaluation: { symbol: '△', label: '評価: 簡易的'}, feature: '<span class="whitespace-nowrap">受付裏の簡易マット。</span><br /><span class="whitespace-nowrap">ストローク確認に。</span>', fee: '無料' }
 ];
 const summaryData = summaryConfig.map(item => ({
     ...item,
