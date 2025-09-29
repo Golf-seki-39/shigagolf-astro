@@ -282,7 +282,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <a
                             href="#summary-table"
                             class="text-green-700 hover:underline"
-                            >結論から！比較早見表</a>
+                            >結論から！比較早見表</a
+                        >
                     </li>
                     <li>
                         <a
@@ -295,43 +296,49 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <a
                                     href="#article-azuchi"
                                     class="text-slate-600 hover:underline"
-                                    >A. 安土ゴルフクラブ</a>
+                                    >A. 安土ゴルフクラブ</a
+                                >
                             </li>
                             <li>
                                 <a
                                     href="#article-sakura"
                                     class="text-slate-600 hover:underline"
-                                    >B. さくらゴルフ倶楽部</a>
+                                    >B. さくらゴルフ倶楽部</a
+                                >
                             </li>
                             <li>
                                 <a
                                     href="#article-riverside"
                                     class="text-slate-600 hover:underline"
-                                    >C. リバーサイドジャンボゴルフ</a>
+                                    >C. リバーサイドジャンボゴルフ</a
+                                >
                             </li>
                             <li>
                                 <a
                                     href="#article-greenpia"
                                     class="text-slate-600 hover:underline"
-                                    >D. グリーンピア近江八幡ゴルフ</a>
+                                    >D. グリーンピア近江八幡ゴルフ</a
+                                >
                             </li>
                         </ul>
                     </li>
                     <li>
                         <a
                             href="#conclusion-summary"
-                            class="text-green-700 hover:underline"
-                            >結論まとめ</a>
+                            class="text-green-700 hover:underline">結論まとめ</a
+                        >
                     </li>
                     <li>
                         <a href="#faq" class="text-green-700 hover:underline"
-                            >ゴルフ練習場選びのよくある質問</a>
+                            >ゴルフ練習場選びのよくある質問</a
+                        >
                     </li>
                     <li>
                         <a
                             href="#info-summary"
                             class="text-green-700 hover:underline"
-                            >各施設の基本情報まとめ</a>
+                            >各施設の基本情報まとめ</a
+                        >
                     </li>
                 </ul>
             </div>
@@ -417,7 +424,9 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                         </a>
                                     </td>
                                     <td class="px-4 py-2 border align-middle">
-                                        {item.recommend}
+                                        <span class="whitespace-nowrap">
+                                            {item.recommend}
+                                        </span>
                                     </td>
                                     <td class="px-4 py-2 border text-center align-middle font-bold text-lg">
                                         {item.approach}
