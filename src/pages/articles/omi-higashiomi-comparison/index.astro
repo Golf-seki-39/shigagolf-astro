@@ -15,7 +15,8 @@ const headline = "【徹底比較】近江八幡・東近江エリアのゴル�
 const imageUrl = "https://i.imgur.com/DyVr8of.jpeg";
 
 // --- Firebaseから各練習場の情報を取得 ---
-const rangeIds = ['azuchi_gc', 'sakura_gc', 'riverside_jumbo', 'greenpia_oh'];
+// ★ がれーじぱーくの情報を追加取得
+const rangeIds = ['azuchi_gc', 'sakura_gc', 'riverside_jumbo', 'greenpia_oh', 'garage_park'];
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const rangePromises = rangeIds.map(id => getDoc(doc(db, `artifacts/${appId}/public/data/practice_ranges/${id}`)));
 const rangeDocs = await Promise.all(rangePromises);
@@ -37,9 +38,9 @@ const rangeImages = {
 // --- 早見表のデータをループ処理用に整理 ---
 const summaryConfig = [
     { id: 'azuchi_gc',       recommend: '初心者・安心感重視',           approach: '×', bunker: '◯', putter: '△', feature: 'プリカ不要で手軽！<br>優しい店主がお出迎え。' },
-    { id: 'sakura_gc',       recommend: '女性・ジュニア・お得好き',     approach: '◎', bunker: '◎', putter: '◯', feature: '女性・ジュニアの天国！<br>特典がとにかく凄い。' },
+    { id: 'sakura_gc',       recommend: '女性・ジュニア・お得好き',     approach: '◎', bunker: '◯', putter: '◯', feature: '女性・ジュニアの天国！<br>特典がとにかく凄い。' }, // ★ バンカーを◯に修正
     { id: 'riverside_jumbo', recommend: 'スコアアップを目指す中級者〜', approach: '◎', bunker: '◎', putter: '◎', feature: 'ショートゲーム施設の質は随一！<br>本気で上手くなりたいならここ。' },
-    { id: 'greenpia_oh',     recommend: '価格最優先の練習の虫',       approach: '◯', bunker: '◯', putter: '◯', feature: 'SDカード持参で衝撃価格！<br>施設の古さはご愛嬌。' }
+    { id: 'greenpia_oh',     recommend: '価格最優先で打ち込みたいゴルファー', approach: '◯', bunker: '◯', putter: '◯', feature: 'SDカード持参で衝撃価格！<br>施設の古さはご愛嬌。' } // ★ おすすめ文言を修正
 ];
 const summaryData = summaryConfig.map(item => ({
     ...item,
@@ -48,7 +49,7 @@ const summaryData = summaryConfig.map(item => ({
 }));
 
 // --- 構造化データ(JSON-LD)の生成 ---
-const itemListElements = rangeIds.map((id, index) => {
+const itemListElements = rangeIds.slice(0, 4).map((id, index) => { // 記事本体の4選のみを対象
     const range = rangesData[id];
     if (!range) return null;
     const openingHours = range.business_hours_structured?.map(item => ({
@@ -163,15 +164,15 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             <p>忙しいあなたのために、まずは各練習場の特徴を一覧でまとめました。</p>
 
             <div class="overflow-x-auto my-4 not-prose hidden md:block">
-                 <table class="w-full text-sm text-left border border-slate-300 min-w-[800px]">
+                 <table class="w-full text-sm text-left border border-slate-300 min-w-[900px]">
                     <thead class="bg-slate-50">
                         <tr>
                             <th scope="col" class="px-4 py-3 border border-slate-300 align-middle text-center whitespace-nowrap text-base font-semibold normal-case">練習場名</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center">こんな人におすすめ</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center">アプローチ</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center">バンカー</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center">パター</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center">一言メモ</th>
+                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">こんな人におすすめ</th>
+                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">アプローチ</th>
+                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">バンカー</th>
+                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">パター</th>
+                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">一言メモ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -181,9 +182,9 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                     <a href={`${baseUrl}/ranges/${item.id}/`} class="text-blue-600 hover:underline">{item.name} ({item.city})</a>
                                 </td>
                                 <td class="px-4 py-2 border align-middle">{item.recommend}</td>
-                                <td class="px-4 py-2 border text-center align-middle">{item.approach}</td>
-                                <td class="px-4 py-2 border text-center align-middle">{item.bunker}</td>
-                                <td class="px-4 py-2 border text-center align-middle">{item.putter}</td>
+                                <td class="px-4 py-2 border text-center align-middle font-bold text-lg">{item.approach}</td>
+                                <td class="px-4 py-2 border text-center align-middle font-bold text-lg">{item.bunker}</td>
+                                <td class="px-4 py-2 border text-center align-middle font-bold text-lg">{item.putter}</td>
                                 <td class="px-4 py-2 border text-center align-middle" set:html={item.feature} />
                             </tr>
                         ))}
@@ -199,10 +200,10 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <p class="text-sm text-slate-500 m-0">{item.city}</p>
                         <table class="w-full mt-2 text-sm"><tbody>
                             <tr><td class="font-semibold pr-2 py-1 align-top w-1/3">おすすめ</td><td class="py-1">{item.recommend}</td></tr>
-                            <tr><td class="font-semibold pr-2 py-1">アプローチ</td><td class="py-1">{item.approach}</td></tr>
-                            <tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1">{item.bunker}</td></tr>
-                            <tr><td class="font-semibold pr-2 py-1">パター</td><td class="py-1">{item.putter}</td></tr>
-                            <tr><td class="font-semibold pr-2 py-1 align-top">一言メモ</td><td class="py-1" set:html={item.feature.replace(/<br>/g, ' ')} /></tr>
+                            <tr><td class="font-semibold pr-2 py-1">アプローチ</td><td class="py-1 font-bold text-lg">{item.approach}</td></tr>
+                            <tr><td class="font-semibold pr-2 py-1">バンカー</td><td class="py-1 font-bold text-lg">{item.bunker}</td></tr>
+                            <tr><td class="font-semibold pr-2 py-1">パター</td><td class="py-1 font-bold text-lg">{item.putter}</td></tr>
+                            <tr><td class="font-semibold pr-2 py-1 align-top">一言メモ</td><td class="py-1" set:html={item.feature.replace(/<br\s*\/?>/g, ' ')} /></tr>
                         </tbody></table>
                     </div>
                 ))}
@@ -228,7 +229,11 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <li>アプローチやパターの専用グリーンはありません。</li>
                         <li>自動ティーアップや弾道測定器はなく、昔ながらのスタイルです。</li>
                     </ul>
-                    <div class="not-prose text-center my-6">
+                    <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                        <a href="/articles/azuchi-review/" class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                            管理人の詳細体験レポートを読む
+                        </a>
                         <a href={`${baseUrl}/ranges/azuchi_gc/`} class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                             この練習場の施設詳細ページへ
@@ -252,7 +257,11 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <li>アプローチ練習場の芝は、逆にコースの難しいライを想定した実践的な練習になります。</li>
                         <li>男性ビジターの料金は標準的です。</li>
                     </ul>
-                    <div class="not-prose text-center my-6">
+                    <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                        <a href="/articles/sakura-gc-review/" class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                            管理人の詳細体験レポートを読む
+                        </a>
                         <a href={`${baseUrl}/ranges/sakura_gc/`} class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                             この練習場の施設詳細ページへ
@@ -285,7 +294,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 </section>
 
                 <section class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24" id="article-greenpia">
-                    <p class="text-lg font-semibold text-green-700">D. [割引対象者限定] 環境は問わない！価格最優先の練習の虫なら</p>
+                    <p class="text-lg font-semibold text-green-700">D. [割引対象者限定] 環境は問わない！価格最優先なら</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-1">{rangesData.greenpia_oh?.name}</h3>
                     <img src={rangeImages.greenpia_oh} alt={`${rangesData.greenpia_oh?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                     <h4 class="text-xl font-bold mt-4">ここがスゴい！3つの魅力</h4>
@@ -364,6 +373,13 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         </div>
                     </a>
 
+                    <a href="/articles/garege-park-review/" class="block flex-shrink-0 w-64 border rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden no-underline group">
+                        <img src="https://i.imgur.com/0rkZCzV.jpeg" alt="がれーじぱーく東近江の体験レポート" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h4 class="text-sm font-bold text-slate-800 group-hover:text-green-700">{rangesData.garage_park?.name} 体験レポート</h4>
+                        </div>
+                    </a>
+
                     <div class="flex-shrink-0 w-64 border rounded-lg bg-slate-50 flex flex-col items-center justify-center">
                         <img src="https://i.imgur.com/jAuddU2.jpeg" alt="準備中の体験レポート" class="w-full h-32 object-cover opacity-30">
                         <div class="p-3 text-center">
@@ -418,7 +434,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                 <h2 class="text-2xl md:text-3xl font-bold text-slate-800">各施設の基本情報まとめ</h2>
                 <div class="space-y-8 mt-4">
-                    {rangeIds.map(id => {
+                    {rangeIds.slice(0, 4).map(id => { // 記事本体の4選のみを対象
                         const range = rangesData[id];
                         if (!range) return null;
                         
