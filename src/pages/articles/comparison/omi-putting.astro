@@ -7,6 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 const baseUrl = "https://shigagolf.com";
 const articleUrl = `${baseUrl}/articles/comparison/omi-putting/`;
 const publicationDate = "2025-09-29";
+const lastModified = new Date(); // ★ビルド時の日時を自動取得
 
 const title = "【滋賀・徹底比較】パター練習が充実しているゴルフ練習場5選｜近江八幡・東近江エリア | シガゴル";
 const description = "近江八幡・東近江エリアの全5施設のゴルフ練習場を実地調査！スコアメイクの鍵を握るパター練習場の環境を徹底比較。本格グリーンから、屋内で快適に練習できる穴場まで、あなたの目的に合った練習場が必ず見つかります。";
@@ -106,7 +107,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             "width": 600,
             "height": 60
         }},
-        "datePublished": new Date(publicationDate).toISOString(), "dateModified": new Date(publicationDate).toISOString(),
+        "datePublished": new Date(publicationDate).toISOString(),
+        "dateModified": lastModified.toISOString(), // ★自動取得した日付を使用
         "hasPart": { "@type": "ItemList", "itemListElement": itemListElements },
         "mainEntity": faqElements,
         "about": [ { "@type": "Thing", "name": "ゴルフ パター練習" }, { "@type": "Thing", "name": "滋賀 ゴルフ練習場" } ]
@@ -125,7 +127,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{title.split(" | ")[0]}</h1>
-                <p class="text-sm text-slate-500 mt-2">最終更新日：{publicationDate}</p>
+                <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>
             </header>
 
             <img src={imageUrl} alt="滋賀県のゴルフ練習場でパター練習に集中するゴルファー" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width="1200" height="800" fetchpriority="high" />
