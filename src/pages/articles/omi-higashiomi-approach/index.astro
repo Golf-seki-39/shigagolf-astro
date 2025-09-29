@@ -147,7 +147,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <ul class="pl-6 mt-2 space-y-1 list-disc list-inside">
                             <li><a href="#riverside-jumbo" class="text-slate-600 hover:underline">1. 本格派向け：リバーサイドジャンボゴルフ</a></li>
                             <li><a href="#sakura-gc" class="text-slate-600 hover:underline">2. 女性・コスパ重視派向け：さくらゴルフ倶楽部</a></li>
-                            <li><a href="#greenpia-oh" class="text-slate-600 hover:underline">3. 初心者向け：グリーンピア近江八幡</a></li>
+                            <li><a href="#greenpia-oh" class="text-slate-600 hover:underline">3. 初心者向け：グリーンピア近江八幡ゴルフ</a></li>
                         </ul>
                     </li>
                     <li><a href="#azuchi-gc" class="text-green-700 hover:underline">番外編：バンカー練習特化なら安土ゴルフクラブ</a></li>
@@ -184,18 +184,22 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                     <tbody>
                         {summaryData.map((item, index) => (
                             <tr class={(index % 2 !== 0) ? 'bg-slate-50 border-b' : 'bg-white border-b'}>
-                                <td class="px-4 py-2 border whitespace-nowrap">
-                                    <a href={`${baseUrl}/ranges/${item.id}/`} class="text-blue-600 hover:underline">{item.name} ({item.city})</a>
+                                <td class="px-4 py-2 border align-middle">
+                                    <a href={`${baseUrl}/ranges/${item.id}/`} class="text-blue-600 hover:underline">
+                                        <span class="whitespace-nowrap">{item.name}</span>
+                                        <br />
+                                        <span class="text-xs text-slate-500">({item.city})</span>
+                                    </a>
                                 </td>
-                                <td class="px-4 py-2 border text-center" aria-label={item.approach.label}>
+                                <td class="px-4 py-2 border text-center align-middle" aria-label={item.approach.label}>
                                     {item.approach.symbol}
-                                    {item.approach.text && <><br/><span>{item.approach.text}</span></>}
+                                    {item.approach.text && <><br/><span class="text-xs">{item.approach.text}</span></>}
                                 </td>
-                                <td class="px-4 py-2 border text-center" aria-label={item.bunker.label}>
+                                <td class="px-4 py-2 border text-center align-middle" aria-label={item.bunker.label}>
                                     {item.bunker.symbol}
                                 </td>
-                                <td class="px-4 py-2 border text-center" set:html={item.feature} />
-                                <td class="px-4 py-2 border">{item.recommend}</td>
+                                <td class="px-4 py-2 border text-center align-middle" set:html={item.feature} />
+                                <td class="px-4 py-2 border align-middle">{item.recommend}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -216,7 +220,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <td class="font-semibold pr-2 py-1">バンカー</td>
                                 <td class="py-1" aria-label={`バンカー ${item.bunker.label}`}>{item.bunker.symbol}</td>
                             </tr>
-                            <tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1" set:html={item.feature.replace(/<br \/>/g, ' ')} /></tr>
+                            <tr><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1" set:html={item.feature.replace(/<br\s*\/?>/g, ' ')} /></tr>
                             <tr><td class="font-semibold pr-2 py-1 align-top">おすすめ</td><td class="py-1">{item.recommend}</td></tr>
                         </tbody></table>
                     </div>
@@ -281,14 +285,14 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             
             <section id="greenpia-oh" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800">3. 初心者向け：<a href={`${baseUrl}/ranges/greenpia_oh/`} class="text-green-700 hover:underline">{rangesData.greenpia_oh?.name}（近江八幡市）</a></h3>
-                 <img src="https://i.imgur.com/TXXAJEo.jpeg" alt="グリーンピア近江八幡のアプローチ練習場の場所を示す地図" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
-                <p>近江八幡市で、初心者が気兼ねなくアプローチ練習を始められる場所として、私たちが推薦するのが<a href={`${baseUrl}/ranges/greenpia_oh/`} class="text-green-700 hover:underline">グリーンピア近江八幡</a>です。</p>
+                 <img src="https://i.imgur.com/TXXAJEo.jpeg" alt="グリーンピア近江八幡ゴルフのアプローチ練習場の場所を示す地図" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <p>近江八幡市で、初心者が気兼ねなくアプローチ練習を始められる場所として、私たちが推薦するのが<a href={`${baseUrl}/ranges/greenpia_oh/`} class="text-green-700 hover:underline">グリーンピア近江八幡ゴルフ</a>です。</p>
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：人目を気にせず練習できる「隠れ家」感</h4>
                 <p>上の地図を見てわかる通り、アプローチ練習場は練習場の建物や駐車場から道を一本挟んだ反対側にあります。多くの人の動線から外れているため、人目を気にすることなく、自分のペースで練習に集中できるのが最大の魅力です。</p>
-                <img src="https://i.imgur.com/NjWzRzC.png" alt="グリーンピア近江八幡の隠れ家的なアプローチエリア" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <img src="https://i.imgur.com/NjWzRzC.png" alt="グリーンピア近江八幡ゴルフの隠れ家的なアプローチエリア" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由②：初心者に十分な練習環境</h4>
                 <p>さくらゴルフ倶楽部と比べると広さはありませんが、芝の管理状態はこちらの方が良好な印象。近江八幡で初心者が芝からのショットを試すには十分すぎる環境です。バンカー練習もできますが、雨の後は水が溜まっていることもあるので、利用前に確認するのが良いでしょう。</p>
-                <img src="https://i.imgur.com/zt0CxX9.png" alt="雨の後に水が溜まったグリーンピア近江八幡のバンカー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <img src="https://i.imgur.com/zt0CxX9.png" alt="雨の後に水が溜まったグリーンピア近江八幡ゴルフのバンカー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <h4 class="text-lg md:text-xl font-bold mt-6">こんな人におすすめ！</h4>
                 <ul class="list-disc list-inside space-y-2 mt-2 pl-4">
                     <li>近江八幡でこっそり練習を始めたい初心者</li>
@@ -328,8 +332,12 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <img src="https://i.imgur.com/KqgvACX.png" alt="がれーじぱーく東近江の弾道測定器が設置されたインドア打席" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <p>最後に、インドアゴルフ練習場の<a href={`${baseUrl}/ranges/garage_park/`} class="text-green-700 hover:underline">がれーじぱーく東近江</a>にも触れておきましょう。</p>
                 <p>もちろんインドアなので芝からのアプローチ練習はできませんが、高性能な弾道測定器を完備しており、スイングのデータ分析や、天候を気にしない快適な練習が可能です。「なぜトップするのか」「スピン量は足りているか」など、データを元に課題を解決したいゴルファーには最適な環境と言えるでしょう。</p>
-                 <div class="not-prose text-center my-6">
-                    <a href="/articles/garege-park-review/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                 <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                    <a href="/articles/garege-park-review/" class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                        <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                        管理人の詳細体験レポートを読む
+                    </a>
+                    <a href={`${baseUrl}/ranges/garage_park/`} class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                        <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                         この練習場の施設詳細ページへ
                     </a>

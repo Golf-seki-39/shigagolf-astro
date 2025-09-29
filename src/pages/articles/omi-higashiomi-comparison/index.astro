@@ -16,7 +16,6 @@ const headline = "【徹底比較】近江八幡・東近江エリアのゴル�
 const imageUrl = "https://i.imgur.com/DyVr8of.jpeg";
 
 // --- Firebaseから各練習場の情報を取得 ---
-// ★ がれーじぱーくの情報を追加取得
 const rangeIds = [
     "azuchi_gc",
     "sakura_gc",
@@ -39,6 +38,11 @@ const rangesData = rangeDocs.reduce((acc, docSnap, index) => {
     return acc;
 }, {});
 
+// ★ データソースの問題をコード側で上書き修正
+if (rangesData.greenpia_oh) {
+    rangesData.greenpia_oh.name = "グリーンピア近江八幡ゴルフ";
+}
+
 // --- 各施設のアイキャッチ画像URLを定義 ---
 const rangeImages = {
     azuchi_gc: "https://i.imgur.com/IGsEk2z.png",
@@ -55,7 +59,7 @@ const summaryConfig = [
         approach: "×",
         bunker: "◯",
         putter: "△",
-        feature: "プリカ不要で手軽！<br>優しい店主がお出迎え。",
+        feature: ["プリカ不要で手軽！", "優しい店主がお出迎え。"],
     },
     {
         id: "sakura_gc",
@@ -63,16 +67,18 @@ const summaryConfig = [
         approach: "◎",
         bunker: "◯",
         putter: "◯",
-        feature: "女性・ジュニアの天国！<br>特典がとにかく凄い。",
-    }, // ★ バンカーを◯に修正
+        feature: ["女性・ジュニアの天国！", "特典がとにかく凄い。"],
+    },
     {
         id: "riverside_jumbo",
         recommend: "スコアアップを目指す中・上級者",
         approach: "◎",
         bunker: "◎",
         putter: "◎",
-        feature:
-            "ショートゲーム施設の質は随一！<br>本気で上手くなりたいならここ。",
+        feature: [
+            "ショートゲーム施設の質は随一！",
+            "本気で上手くなりたいならここ。",
+        ],
     },
     {
         id: "greenpia_oh",
@@ -80,8 +86,8 @@ const summaryConfig = [
         approach: "◯",
         bunker: "◯",
         putter: "◯",
-        feature: "SDカード持参で衝撃価格！<br>施設の古さはご愛嬌。",
-    }, // ★ おすすめ文言を修正
+        feature: ["SDカード持参で衝撃価格！", "施設の古さはご愛嬌。"],
+    },
 ];
 const summaryData = summaryConfig.map((item) => ({
     ...item,
@@ -93,7 +99,6 @@ const summaryData = summaryConfig.map((item) => ({
 const itemListElements = rangeIds
     .slice(0, 4)
     .map((id, index) => {
-        // 記事本体の4選のみを対象
         const range = rangesData[id];
         if (!range) return null;
         const openingHours = range.business_hours_structured?.map((item) => ({
@@ -277,8 +282,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <a
                             href="#summary-table"
                             class="text-green-700 hover:underline"
-                            >結論から！比較早見表</a
-                        >
+                            >結論から！比較早見表</a>
                     </li>
                     <li>
                         <a
@@ -291,49 +295,43 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <a
                                     href="#article-azuchi"
                                     class="text-slate-600 hover:underline"
-                                    >A. 安土ゴルフクラブ</a
-                                >
+                                    >A. 安土ゴルフクラブ</a>
                             </li>
                             <li>
                                 <a
                                     href="#article-sakura"
                                     class="text-slate-600 hover:underline"
-                                    >B. さくらゴルフ倶楽部</a
-                                >
+                                    >B. さくらゴルフ倶楽部</a>
                             </li>
                             <li>
                                 <a
                                     href="#article-riverside"
                                     class="text-slate-600 hover:underline"
-                                    >C. リバーサイドジャンボゴルフ</a
-                                >
+                                    >C. リバーサイドジャンボゴルフ</a>
                             </li>
                             <li>
                                 <a
                                     href="#article-greenpia"
                                     class="text-slate-600 hover:underline"
-                                    >D. グリーンピア近江八幡ゴルフ</a
-                                >
+                                    >D. グリーンピア近江八幡ゴルフ</a>
                             </li>
                         </ul>
                     </li>
                     <li>
                         <a
                             href="#conclusion-summary"
-                            class="text-green-700 hover:underline">結論まとめ</a
-                        >
+                            class="text-green-700 hover:underline"
+                            >結論まとめ</a>
                     </li>
                     <li>
                         <a href="#faq" class="text-green-700 hover:underline"
-                            >ゴルフ練習場選びのよくある質問</a
-                        >
+                            >ゴルフ練習場選びのよくある質問</a>
                     </li>
                     <li>
                         <a
                             href="#info-summary"
                             class="text-green-700 hover:underline"
-                            >各施設の基本情報まとめ</a
-                        >
+                            >各施設の基本情報まとめ</a>
                     </li>
                 </ul>
             </div>
@@ -430,10 +428,13 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                     <td class="px-4 py-2 border text-center align-middle font-bold text-lg">
                                         {item.putter}
                                     </td>
-                                    <td
-                                        class="px-4 py-2 border text-center align-middle"
-                                        set:html={item.feature}
-                                    />
+                                    <td class="px-4 py-2 border text-center align-middle">
+                                        {item.feature.map((line) => (
+                                            <span class="block whitespace-nowrap">
+                                                {line}
+                                            </span>
+                                        ))}
+                                    </td>
                                 </tr>
                             ))
                         }
@@ -506,13 +507,9 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                             <td class="font-semibold pr-2 py-1 align-top">
                                                 一言メモ
                                             </td>
-                                            <td
-                                                class="py-1"
-                                                set:html={item.feature.replace(
-                                                    /<br\s*\/?>/g,
-                                                    " ",
-                                                )}
-                                            />
+                                            <td class="py-1">
+                                                {item.feature.join(" ")}
+                                            </td>
                                         </>
                                     </tr>
                                 </tbody>
@@ -1092,23 +1089,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                     </h3>
                     <div class="grid md:grid-cols-2 gap-6">
                         <a
-                            href="/articles/omi-higashiomi-approach/"
-                            class="block border rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden no-underline group"
-                        >
-                            <img
-                                src="https://i.imgur.com/jOTBh4U.jpeg"
-                                alt="アプローチ練習の記事"
-                                class="w-full h-40 object-cover"
-                            />
-                            <div class="p-4">
-                                <h4
-                                    class="text-base font-bold text-slate-800 group-hover:text-green-700"
-                                >
-                                    アプローチ＆バンカー練習ができる練習場5選
-                                </h4>
-                            </div>
-                        </a>
-                        <a
                             href="/articles/comparison/omi-putting/"
                             class="block border rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden no-underline group"
                         >
@@ -1121,7 +1101,24 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <h4
                                     class="text-base font-bold text-slate-800 group-hover:text-green-700"
                                 >
-                                    パター練習が充実しているゴルフ練習場5選
+                                    【滋賀・徹底比較】パター練習が充実しているゴルフ練習場5選
+                                </h4>
+                            </div>
+                        </a>
+                        <a
+                            href="/articles/omi-higashiomi-comparison/"
+                            class="block border rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden no-underline group"
+                        >
+                            <img
+                                src="https://i.imgur.com/jOTBh4U.jpeg"
+                                alt="ゴルフ練習場比較の記事"
+                                class="w-full h-40 object-cover"
+                            />
+                            <div class="p-4">
+                                <h4
+                                    class="text-base font-bold text-slate-800 group-hover:text-green-700"
+                                >
+                                    【近江八幡・東近江】ゴルフ練習場4選・徹底比較！
                                 </h4>
                             </div>
                         </a>
@@ -1138,8 +1135,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 </h2>
                 <div class="space-y-8 mt-4">
                     {
-                        rangeIds.slice(0, 4).map((id) => {
-                            // 記事本体の4選のみを対象
+                        rangeIds.map((id) => {
                             const range = rangesData[id];
                             if (!range) return null;
 
@@ -1158,70 +1154,84 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                         <table class="w-full text-left border-collapse">
                                             <tbody>
                                                 <tr class="border-b border-slate-200">
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
-                                                        住所
-                                                    </th>
-                                                    <td class="py-3 px-4">
-                                                        <a
-                                                            href={mapsSearchUrl}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            class="text-blue-600 hover:underline"
-                                                        >
-                                                            {range.address}
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr class="border-b border-slate-200">
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                                        電話番号
-                                                    </th>
-                                                    <td class="py-3 px-4">
-                                                        {range.phone ? (
+                                                    <>
+                                                        <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
+                                                            住所
+                                                        </th>
+                                                        <td class="py-3 px-4">
                                                             <a
-                                                                href={`tel:${range.phone.replace(/-/g, "")}`}
+                                                                href={
+                                                                    mapsSearchUrl
+                                                                }
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
                                                                 class="text-blue-600 hover:underline"
                                                             >
-                                                                {range.phone}
+                                                                {range.address}
                                                             </a>
-                                                        ) : (
-                                                            "-"
-                                                        )}
-                                                    </td>
+                                                        </td>
+                                                    </>
                                                 </tr>
                                                 <tr class="border-b border-slate-200">
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                                        営業時間
-                                                    </th>
-                                                    <td
-                                                        class="py-3 px-4"
-                                                        set:html={
-                                                            range.business_hours?.replace(
-                                                                /\n/g,
-                                                                "<br />",
-                                                            ) || "-"
-                                                        }
-                                                    />
+                                                    <>
+                                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                                            電話番号
+                                                        </th>
+                                                        <td class="py-3 px-4">
+                                                            {range.phone ? (
+                                                                <a
+                                                                    href={`tel:${range.phone.replace(/-/g, "")}`}
+                                                                    class="text-blue-600 hover:underline"
+                                                                >
+                                                                    {
+                                                                        range.phone
+                                                                    }
+                                                                </a>
+                                                            ) : (
+                                                                "-"
+                                                            )}
+                                                        </td>
+                                                    </>
                                                 </tr>
                                                 <tr class="border-b border-slate-200">
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                                        ヤード数
-                                                    </th>
-                                                    <td class="py-3 px-4">
-                                                        {range.yardage
-                                                            ? `${range.yardage}ヤード`
-                                                            : "インドア"}
-                                                    </td>
+                                                    <>
+                                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                                            営業時間
+                                                        </th>
+                                                        <td
+                                                            class="py-3 px-4"
+                                                            set:html={
+                                                                range.business_hours?.replace(
+                                                                    /\n/g,
+                                                                    "<br />",
+                                                                ) || "-"
+                                                            }
+                                                        />
+                                                    </>
+                                                </tr>
+                                                <tr class="border-b border-slate-200">
+                                                    <>
+                                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                                            ヤード数
+                                                        </th>
+                                                        <td class="py-3 px-4">
+                                                            {range.yardage
+                                                                ? `${range.yardage}ヤード`
+                                                                : "インドア"}
+                                                        </td>
+                                                    </>
                                                 </tr>
                                                 <tr>
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                                        打席数
-                                                    </th>
-                                                    <td class="py-3 px-4">
-                                                        {range.bays
-                                                            ? `${range.bays}打席`
-                                                            : "-"}
-                                                    </td>
+                                                    <>
+                                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                                            打席数
+                                                        </th>
+                                                        <td class="py-3 px-4">
+                                                            {range.bays
+                                                                ? `${range.bays}打席`
+                                                                : "-"}
+                                                        </td>
+                                                    </>
                                                 </tr>
                                             </tbody>
                                         </table>
