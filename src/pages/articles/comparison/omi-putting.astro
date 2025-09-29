@@ -188,7 +188,9 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <td class="px-4 py-2 border text-center align-middle font-bold text-lg">{item.approach}</td>
                                 <td class="px-4 py-2 border text-center align-middle font-bold text-lg">{item.bunker}</td>
                                 <td class="px-4 py-2 border text-center align-middle font-bold text-lg">{item.putter}</td>
-                                <td class="px-4 py-2 border text-center align-middle" set:html={item.feature} />
+                                <td class="px-4 py-2 border text-center align-middle">    <div class="inline-block text-left" set:html={item.feature}></div></td>
+
+
                             </tr>
                         ))}
                     </tbody>
