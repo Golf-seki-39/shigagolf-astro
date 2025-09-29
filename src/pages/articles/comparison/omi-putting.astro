@@ -51,7 +51,7 @@ const itemListElements = rangeIds.map((id, index) => {
 // --- 早見表のデータ ---
 const summaryData = [
     { id: 'riverside_jumbo', name: 'リバーサイドジャンボゴルフ', location: '半屋外', evaluation: '◎', feature: '起伏のある本格グリーン。雨天・夜間もOK。', fee: '無料' },
-    { id: 'greenpia_oh', name: 'グリーンピア近江八幡', location: '屋内', evaluation: '◯', feature: '広く清潔な屋内グリーン。ただし注意点も。', fee: '打席利用者無料' },
+    { id: 'greenpia_oh', name: 'グリーンピア近江八幡ゴルフ', location: '屋内', evaluation: '◯', feature: '広く清潔な屋内グリーン。ただし注意点も。', fee: '打席利用者無料' },
     { id: 'sakura_gc', name: 'さくらゴルフ倶楽部', location: '屋内', evaluation: '△', feature: '複数タイプの練習器具が置かれ、手軽に試せる。', fee: '利用者無料' },
     { id: 'garage_park', name: 'がれーじぱーく東近江', location: '屋内', evaluation: '△', feature: 'DIY感のあるエリア。速く、少し凸凹した個性派。', fee: '打席利用者無料' },
     { id: 'azuchi_gc', name: '安土ゴルフクラブ', location: '屋内', evaluation: '△', feature: '受付裏の簡易マット。ストローク確認に。', fee: '無料' }
@@ -99,7 +99,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                     <li><a href="#top3-ranking" class="text-green-700 hover:underline">【目的別】おすすめ練習場ランキング TOP3</a>
                         <ul class="pl-6 mt-2 space-y-1 list-disc list-inside">
                             <li><a href="#riverside_jumbo" class="text-slate-600 hover:underline">1. リバーサイドジャンボゴルフ</a></li>
-                            <li><a href="#greenpia_oh" class="text-slate-600 hover:underline">2. グリーンピア近江八幡</a></li>
+                            <li><a href="#greenpia_oh" class="text-slate-600 hover:underline">2. グリーンピア近江八幡ゴルフ</a></li>
                             <li><a href="#sakura_gc" class="text-slate-600 hover:underline">3. さくらゴルフ倶楽部</a></li>
                         </ul>
                     </li>
@@ -178,13 +178,19 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             </section>
 
             <section id="greenpia_oh" class="mt-12 pt-6 border-t border-slate-200">
-                <h3 class="text-xl md:text-2xl font-bold text-slate-800">🥈 第2位：<a href="/ranges/greenpia_oh/" class="text-slate-800 hover:underline">グリーンピア近江八幡</a>｜天候不問！広々とした綺麗な屋内グリーン</h3>
-                <p class="mt-2">グリーンピア近江八幡の強みは、なんといってもこの広々とした屋内パターグリーンです。ただし、施設全体が新しいわけではなく、このエリアがリニューアルされていると捉えるのが実態に近いでしょう。</p>
-                <img src="https://i.imgur.com/28znno9.png" alt="グリーンピア近江八幡の屋内パターグリーン" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <h3 class="text-xl md:text-2xl font-bold text-slate-800">🥈 第2位：<a href="/ranges/greenpia_oh/" class="text-slate-800 hover:underline">グリーンピア近江八幡ゴルフ</a>｜天候不問！広々とした綺麗な屋内グリーン</h3>
+                <p class="mt-2">グリーンピア近江八幡ゴルフの強みは、なんといってもこの広々とした屋内パターグリーンです。ただし、施設全体が新しいわけではなく、このエリアがリニューアルされていると捉えるのが実態に近いでしょう。</p>
+                <img src="https://i.imgur.com/28znno9.png" alt="グリーンピア近江八幡ゴルフの屋内パターグリーン" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：広々とした屋内スペース</h4>
                 <p>屋内練習場にありがちな窮屈さはなく、短い距離のパットを繰り返し練習し、方向性を確認するには十分な広さです。天候や季節を問わず、快適な室温で練習できる点は大きなメリットです。</p>
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由②：知っておくべき注意点</h4>
                 <p>一方で、正直にお伝えすべき点もあります。このグリーンは受付の真横にあり、時間帯によっては人の往来が気になるかもしれません。また、管理人の実体験として、芝の下に少し空気が入って浮いているように感じる箇所もありました。完璧に整備されたグリーンを求める方よりは、「屋内でまとまったスペースで練習できる」という点に価値を感じる方向けと言えます。</p>
+                <div class="not-prose text-center my-6">
+                    <a href="https://shigagolf.com/ranges/greenpia_oh/" class="inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                        この練習場の施設詳細ページへ
+                    </a>
+                </div>
             </section>
 
             <section id="sakura_gc" class="mt-12 pt-6 border-t border-slate-200">
@@ -246,7 +252,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p>今回は近江八幡・東近江エリアの練習場を、パター練習という視点で比較しました。</p>
                  <ul class="list-disc list-inside space-y-2 my-4">
                     <li><strong>実践を求めるなら</strong> → <a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a></li>
-                    <li><strong>屋内での広さを求めるなら</strong> → <a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">グリーンピア近江八幡</a></li>
+                    <li><strong>屋内での広さを求めるなら</strong> → <a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">グリーンピア近江八幡ゴルフ</a></li>
                     <li><strong>手軽さを求めるなら</strong> → <a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">さくらゴルフ倶楽部</a></li>
                 </ul>
                 <p>ドライバーの練習も爽快ですが、スコアに直結するのは、こうした地道な練習です。次の練習では、ぜひこの記事を参考に、あなたの目的に合った練習場でパターと向き合う時間を作ってみてはいかがでしょうか。</p>
@@ -274,7 +280,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         if (!range) return null;
                         
                         const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                        const mapsEmbedUrl = `http://googleusercontent.com/maps/google.com/1{gmapsApiKey}&q=${searchQuery}`;
+                        const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
 
                         return (
                             <div id={id} class="scroll-mt-24">
