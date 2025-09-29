@@ -361,6 +361,56 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p>ドライバーの練習も大切ですが、次の週末はこの記事を参考に、スコアに直結する芝の上からのショートゲーム練習に出かけてみませんか？</p>
                 <p>あなたのゴルフライフが、より一層充実することを願っています。</p>
             </section>
+            {/* ▼▼▼ このブロックをまるごと追加 ▼▼▼ */}
+            <section id="experience-reports" class="mt-12 pt-6 border-t border-slate-200 not-prose">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 text-center">管理人の“ガチ”体験レポート</h2>
+                <div class="flex space-x-4 overflow-x-auto p-4 -mx-4">
+                    
+                    {/* カード1: さくらゴルフ倶楽部 */}
+                    <a href="https://shigagolf.com/articles/sakura-gc-review/" class="block flex-shrink-0 w-64 border rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden no-underline group">
+                        <img src="https://i.imgur.com/SMDA2hS.png" alt="さくらゴルフ倶楽部の体験レポート" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h4 class="text-sm font-bold text-slate-800 group-hover:text-green-700">{rangesData.sakura_gc?.name} 体験レポート</h4>
+                        </div>
+                    </a>
+
+                    {/* カード2: がれーじぱーく東近江 */}
+                    <a href="https://shigagolf.com/articles/garege-park-review/" class="block flex-shrink-0 w-64 border rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden no-underline group">
+                        <img src="https://i.imgur.com/KqgvACX.png" alt="がれーじぱーく東近江の体験レポート" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h4 class="text-sm font-bold text-slate-800 group-hover:text-green-700">{rangesData.garage_park?.name} 体験レポート</h4>
+                        </div>
+                    </a>
+
+                    {/* カード3: 安土ゴルフクラブ */}
+                    <a href="https://shigagolf.com/articles/azuchi-review/" class="block flex-shrink-0 w-64 border rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden no-underline group">
+                        <img src="https://i.imgur.com/sLV8cIE.jpeg" alt="安土ゴルフクラブの体験レポート" class="w-full h-32 object-cover">
+                        <div class="p-3">
+                            <h4 class="text-sm font-bold text-slate-800 group-hover:text-green-700">{rangesData.azuchi_gc?.name} 体験レポート</h4>
+                        </div>
+                    </a>
+
+                    {/* カード4: Coming Soon */}
+                    <div class="flex-shrink-0 w-64 border rounded-lg bg-slate-50 flex flex-col items-center justify-center">
+                        <img src="https://i.imgur.com/Zmub1Dn.jpeg" alt="準備中の体験レポート" class="w-full h-32 object-cover opacity-30">
+                        <div class="p-3 text-center">
+                             <h4 class="text-sm font-bold text-slate-400">{rangesData.riverside_jumbo?.name}</h4>
+                             <p class="text-xs text-slate-400 mt-1">レポート準備中</p>
+                        </div>
+                    </div>
+
+                    {/* カード5: Coming Soon */}
+                    <div class="flex-shrink-0 w-64 border rounded-lg bg-slate-50 flex flex-col items-center justify-center">
+                        <img src="https://i.imgur.com/TXXAJEo.jpeg" alt="準備中の体験レポート" class="w-full h-32 object-cover opacity-30">
+                        <div class="p-3 text-center">
+                             <h4 class="text-sm font-bold text-slate-400">{rangesData.greenpia_oh?.name}</h4>
+                             <p class="text-xs text-slate-400 mt-1">レポート準備中</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {/* ▲▲▲ ここまで ▲▲▲ */}
+
             
             <section id="next-action" class="mt-12 pt-6 border-t border-slate-200 text-center">
                 <h2 class="text-2xl md:text-3xl font-bold text-slate-800">次のアクション</h2>
