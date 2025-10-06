@@ -6,6 +6,7 @@ import { doc, getDoc } from "firebase/firestore";
 // --- この記事固有の情報 ---
 const title = "滋賀・安土で見つけた“ゴルフの原点”。強面店主の優しさに惚れた日 | シガゴル";
 const description = "プリカ不要の現金払いと、強面だけど優しい店主の人柄が魅力の「安土ゴルフクラブ」。最新設備はないけれど、ゴルフの原点に立ち返れる温かい練習場のリアルな体験記です。";
+const category = "体験談";
 const pubDate = "2025-09-18";
 const pubDateISO = "2025-09-18T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/cJBj7Sh.png";
@@ -207,6 +208,55 @@ if (docSnap.exists()) {
             <p>僕がこの、少しだけ不便な練習場を愛する理由は、結局、それに尽きるのかもしれません。</p>
 
             <hr class="my-8" />
+
+            ---
+// この---で囲まれた部分は、各記事ファイルの既存の---の中に追記・統合してください。
+
+// --- 3つの部品(コンポーネント)をインポート ---
+import ArticleSlider from '~/components/ArticleSlider.astro';
+import ShareButtons from '~/components/ShareButtons.astro';
+import AuthorProfile from '~/components/AuthorProfile.astro';
+
+// --- 表示したい記事リストの定義 (これは全記事共通でOK) ---
+const experienceReports = [
+    // ここに体験談記事の情報をすべて書く
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
+    // ... 他の体験談記事も同様に追加 ...
+];
+const comparisonArticles = [
+    // ここに比較記事の情報をすべて書く
+    { url: '/articles/comparison/omi-priceRank/', title: '料金で徹底比較！安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
+    { url: '/articles/comparison/omi-putting/', title: 'パター練習が充実している練習場比較', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
+    // ... 他の比較記事も同様に追加 ...
+];
+
+// 既存のheadlineとarticleUrlもここで定義されているはず
+// const headline = "...";
+// const articleUrl = "...";
+// const category = "...";
+---
+
+{/* --- 関連記事セクション --- */}
+{category === '体験談' && (
+    <>
+        {/* 【Bパターン】 "体験談"記事の場合は、「比較記事」が先 */}
+        <ArticleSlider title="関連の比較記事" articles={comparisonArticles} />
+        <ArticleSlider title="他の練習場の体験レポート" articles={experienceReports} />
+    </>
+)}
+
+{category === '比較記事' && (
+    <>
+        {/* 【Aパターン】 "比較記事"の場合は、「体験談」が先 */}
+        <ArticleSlider title="管理人の”ガチ”体験レポート" articles={experienceReports} />
+        <ArticleSlider title="他の比較記事" articles={comparisonArticles} />
+    </>
+)}
+
+{/* --- シェアと著者紹介（ここは共通） --- */}
+<ShareButtons articleUrl={articleUrl} headline={headline} />
+<AuthorProfile />
             
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}

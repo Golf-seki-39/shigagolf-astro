@@ -1,0 +1,18 @@
+---
+// Astro.propsからページのURLとタイトルを受け取る
+const { articleUrl, headline } = Astro.props;
+---
+<section id="next-action" class="mt-12 pt-6 border-t border-slate-200 text-center">
+    <h2 class="text-2xl md:text-3xl font-bold text-slate-800">次のアクション</h2>
+    <p class="mt-4">この記事が役に立ったと感じたら、ぜひゴルフ仲間にシェアしてください！</p>
+    <div class="flex justify-center items-center space-x-4 my-4">
+        <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(headline)}`} target="_blank" rel="noopener noreferrer" class="nav-link inline-flex items-center bg-black text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-800 transition no-underline">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 16 16" fill="currentColor"><path d="M9.294 6.928L14.357 1h-1.2L8.762 6.147L5.25 1H1.2l5.31 7.643L1 15h1.2l4.59-5.437L10.75 15h4.05l-5.506-8.072zM7.65 8.825l-.742-1.06L2.65 2.11h2.1l3.5 5.013l.742 1.06l4.473 6.4h-2.1l-3.8-5.437z"></path></svg>
+            Xでシェア
+        </a>
+        <a href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(articleUrl)}`} target="_blank" rel="noopener noreferrer" class="nav-link inline-flex items-center bg-[#06C755] text-white font-bold py-2 px-6 rounded-lg hover:bg-[#05a546] transition no-underline">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8s8-3.58 8-8s-3.58-8-8-8zm4.13 11.32c-.14.43-.58.68-1.01.54l-1.93-.6c-.23-.07-.38-.28-.38-.52v-.02c0-.07 0-.15.02-.22l.6-2.02c.07-.22 0-.46-.17-.59l-.3-.23c-.16-.13-.23-.33-.16-.52s.27-.33.48-.36l2.3-.34c.43-.06.82.26.88.69l.48 3.03c.06.43-.26.82-.69.88zM4.31 8.52c0-.55.45-1 1-1h1.5c.55 0 1 .45 1 1v1.5c0 .55-.45 1-1 1h-1.5c-.55 0-1-.45-1-1-V8.52z"></path></svg>
+            LINEでシェア
+        </a>
+    </div>
+</section>
