@@ -4,10 +4,11 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
-// --- [2] 3つの共通コンポーネントをインポート ---
-import ArticleSlider from '~/components/ArticleSlider.astro';
-import ShareButtons from '~/components/ShareButtons.astro';
-import AuthorProfile from '~/components/AuthorProfile.astro';
+// ▼▼▼ 修正点：ここのパスの書き方を変更しました ▼▼▼
+import ArticleSlider from '../../../components/ArticleSlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+// ▲▲▲ ここまで ▲▲▲
 
 // --- [3] この記事固有の情報 ---
 const title = "滋賀・安土で見つけた“ゴルフの原点”。強面店主の優しさに惚れた日 | シガゴル";
@@ -19,7 +20,7 @@ const imageUrl = "https://i.imgur.com/cJBj7Sh.png";
 const rangeId = "azuchi_gc";
 
 // --- [4] シェアボタン用の変数を定義 ---
-const baseUrl = "https://shigagolf.com";
+const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/azuchi-review/`;
 const headline = title.split(" | ")[0];
 
