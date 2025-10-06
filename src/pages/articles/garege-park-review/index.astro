@@ -3,6 +3,11 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
+// ▼▼▼ 修正点1：3つの共通コンポーネントをインポート ▼▼▼
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
 // --- この記事固有の情報 ---
 const title = "データ派の僕が、東近江の“秘密基地”「がれーじぱーく」でゴルフ観をひっくり返された日 | シガゴル";
 const description = "滋賀のインドアゴルフはコスパが悪い？そんな偏見を覆す、東近江市の「がれーじぱーく」。データ派ゴルファーが、その圧倒的な魅力とオーナーの人柄に惚れ込んだリアルな体験記です。";
@@ -12,6 +17,11 @@ const pubDateISO = "2025-09-28T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/TQmlJFb.jpeg"; // メインのアイキャッチ画像
 const rangeId = "garage_park";
 // --- ここまで ---
+
+// ▼▼▼ 修正点2：シェアボタン用の変数を定義 ▼▼▼
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/garege-park-review/`; // この記事のURLに合わせて修正
+const headline = title.split(" | ")[0];
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
@@ -23,6 +33,20 @@ if (docSnap.exists()) {
 } else {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
+
+// ▼▼▼ 修正点3：全記事共通の「関連記事リスト」を定義 ▼▼▼
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶た部 体験レポー', img: 'https://i.imgur.com/nMH3jlD.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/0rkZCzV.jpeg' },
+    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://i.imgur.com/Rwj2hi0.png' },
+];
+const comparisonArticles = [
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
+    { url: '/articles/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+];
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate}>
@@ -43,7 +67,7 @@ if (docSnap.exists()) {
         "author": {
             "@type": "Person",
             "name": "関（せき）",
-            "url": "https://shigagolf.com/about/",
+            "url": "https://shigolf.com/about/",
             "image": "https://i.imgur.com/BOcMOf3.png"
         },
         "publisher": {
@@ -101,9 +125,6 @@ if (docSnap.exists()) {
             <p>広々とした屋外練習場が豊富な滋賀でなら、なおさらそう思いませんか？ 実は僕も、つい最近までそう信じて疑いませんでした。</p>
             <p>X（旧Twitter）で<strong>「がれーじぱーく東近江」</strong>の存在を知った時も、正直なところ半信半疑。<strong>「インドアなのに、驚くほど安い」「完全会員制」</strong>という言葉に、「一見さんお断りだったら、どうしよう…」と、少しだけ身構えていました。</p>
             
-            <div class="not-prose bg-slate-50 p-4 rounded-lg border border-slate-200 my-6 text-center">
-                <p class="m-0">この記事で紹介する「がれーじぱーく東近江」は、<a href="https://shigagolf.com/articles/omi-higashiomi-approach/" class="text-green-700 font-bold hover:underline">「【滋賀・徹底比較】近江八幡・東近江のゴルフ練習場5選」</a>の記事でも紹介しています。</p>
-            </div>
 
             <p>確かめるため、僕はあえて予約なしで直接その場所へ。駐車場に着き、建物を前にして、一瞬足が止まります。</p>
             <p>ダーツ、卓球、ラジコンサーキット…。ゴルフとは少し違うカルチャーの気配が漂う、少し薄暗い入り口。</p>
@@ -197,8 +218,30 @@ if (docSnap.exists()) {
             <p>僕が、少しくらい暑くてもここに通い続けてしまう理由。それは、練習の質の高さだけではありません。「店番よろしく！」と屈託なく笑い、僕を仲間として信頼してくれるオーナーの存在。ここは、僕にとって<strong>「ゴルフが上手くなるための、最高の秘密基地」</strong>なのです。</p>
             <p class="font-bold mt-6">もしあなたが、今の練習方法に少しでも伸び悩みを感じているなら。あるいは、ただ純粋にゴルフを楽しめる隠れ家を探しているなら。一度、この“秘密基地”の扉を叩いてみてください。きっと、僕のようにゴルフ観がひっくり返されるはずですから。</p>
 
-            <hr class="my-8" />
             
+            {/* ▼▼▼ 修正点4：ここからが追加・変更箇所です ▼▼▼ */}
+            <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' ? (
+                    <>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    </>
+                ) 
+                : category === '比較記事' ? (
+                    <>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                    </>
+                ) 
+                : null
+            }
+            </div>
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            {/* ▲▲▲ ここまで ▲▲▲ */}
+
+
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 「がれーじぱーく東近江」の基本情報
             </h2>
@@ -278,19 +321,14 @@ if (docSnap.exists()) {
                 🎯 さらに詳しい情報や口コミはこちら！
                 <br />
                 <a
-                    href="https://shigagolf.com/ranges/garage_park/"
+                    href="https://shigolf.com/ranges/garage_park/"
                     class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
                 >
                     {rangeData ? `「${rangeData.name}」のシガゴル公式レビューページへ →` : "公式レビューページへ →"}
                 </a>
             </p>
             
-            <section id="related-articles" class="mt-12 pt-6 border-t border-slate-200">
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 text-center">関連記事</h2>
-                <div class="mt-4 text-center">
-                    <a href="https://shigagolf.com/articles/omi-higashiomi-comparison/" class="text-blue-600 hover:underline">【近江八幡・東近江】ゴルフ練習場4選・徹底比較！</a>
-                </div>
-            </section>
+            {/* 元の<section id="related-articles">は削除しました */}
         </article>
     </div>
 
