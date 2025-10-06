@@ -95,6 +95,15 @@ const images = {
     garage_park: { full: "https://i.imgur.com/l96uWba.jpeg", detail: "https://i.imgur.com/ORPAjkC.jpeg" }
 };
 
+// --- 構造化データ用の画像URLを定義 ---
+const structuredDataImages = {
+    garage_park: "https://i.imgur.com/0rkZCzV.jpeg",
+    greenpia_oh: "https://i.imgur.com/ki7elev.png",
+    riverside_jumbo: "https://i.imgur.com/jAuddU2.jpeg",
+    sakura_gc: "https://i.imgur.com/nMH3jlD.png",
+    azuchi_gc: "https://i.imgur.com/LSkRor1.jpeg"
+};
+
 // --- 総合比較表のデータ ---
 const overallSummaryData = rangeIds.map(id => {
     const range = rangesData[id];
@@ -149,6 +158,7 @@ const itemListElements = rangeIds.map((id, index) => {
             "@type": "SportsActivityLocation",
             "name": range.name,
             "url": `${baseUrl}/ranges/${id}/`,
+            "image": [structuredDataImages[id]], // <-- imageプロパティを追加
             "telephone": range.phone,
             "priceRange": calculatePriceRange(id),
             "address": {
@@ -601,4 +611,3 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         </article>
     </div>
 </BaseLayout>
-
