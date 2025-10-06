@@ -52,7 +52,9 @@ const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       popupAnchor: [0, -40]
     });
 
-    const markers = L.markerClusterGroup();
+    const markers = L.markerClusterGroup({
+  maxClusterRadius: 40 // この行を追加 (数値は40や30など、お好みで調整してください)
+});
 
     ranges.forEach(range => {
       if (range.lat && range.lng) {
