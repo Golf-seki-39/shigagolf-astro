@@ -53,7 +53,7 @@ const ranges = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     });
 
     const markers = L.markerClusterGroup({
-  maxClusterRadius: 40 // この行を追加 (数値は40や30など、お好みで調整してください)
+  maxClusterRadius: 30 // この行を追加 (数値は40や30など、お好みで調整してください)
 });
 
     ranges.forEach(range => {
