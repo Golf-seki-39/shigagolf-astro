@@ -3,14 +3,25 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
+// ▼▼▼ 修正点1：3つの共通コンポーネントをインポート ▼▼▼
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
 // --- This article's specific information ---
 const title = "【東近江市】女性ゴルファー超優遇！「さくらゴルフ倶楽部」が安すぎて心配になるレベルだった件。 | シガゴル";
 const description = "滋賀県東近江市にある「さくらゴルフ倶楽部」は、特に女性とジュニアに驚きの優遇措置を提供する練習場。男性ゴルファーも通い詰めるその魅力と、充実した練習環境、心温まるエピソードを徹底レポートします。";
+const category = "体験談";
 const pubDate = "2025-05-23";
 const pubDateISO = "2025-05-23T10:00:00+09:00"; 
 const imageUrl = "https://i.imgur.com/wgDjFch.jpeg";
 const rangeId = "sakura_gc";
 // --- End of specific information ---
+
+// ▼▼▼ 修正点2：シェアボタン用の変数を定義 ▼▼▼
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/sakura-gc-review/`;
+const headline = title.split(" | ")[0];
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
@@ -22,6 +33,20 @@ if (docSnap.exists()) {
 } else {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
+
+// ▼▼▼ 修正点3：全記事共通の「関連記事リスト」を定義 ▼▼▼
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/0rkZCzV.jpeg' },
+    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://i.imgur.com/Rwj2hi0.png' },
+];
+const comparisonArticles = [
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
+    { url: '/articles/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+];
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate}>
@@ -35,7 +60,7 @@ if (docSnap.exists()) {
         "author": {
             "@type": "Person",
             "name": "関（せき）",
-            "url": "https://shigagolf.com/about/",
+            "url": "https://shigolf.com/about/",
             "image": "https://i.imgur.com/BOcMOf3.png",
             "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
         },
@@ -52,7 +77,7 @@ if (docSnap.exists()) {
                 "@type": "LocalBusiness",
                 "name": rangeData?.name,
                 "image": rangeData?.imageUrl,
-                "telephone": rangeData?.phone, // Corrected from 'tel' to 'phone'
+                "telephone": rangeData?.phone,
                 "priceRange": rangeData?.priceRange,
                 "address": {
                   "@type": "PostalAddress",
@@ -318,7 +343,27 @@ if (docSnap.exists()) {
             <p>「え？何？故障！？」とパニックになっていると、たまたま近くを通りかかった店員さんが優しく声をかけてくれました。 「22時からは料金が安くなるので、一度カードが出てくるんですよ。早朝も同じシステムで、朝9時までは入場料不要で単価も安いので、9時になると一度排出されて受付が必要になるんです」と。</p>
             <p>もう、本当にホッとしました…。 初めて練習場に行く時って、色々不安ですよね。 でも、「さくらゴルフ倶楽部」の店員さんは、こちらから「初めて来ました」と伝えれば、本当に丁寧に（ある意味、お節介なくらい(笑)）教えてくれるので、安心して練習を始められますよ。</p>
             
-            <hr class="my-8" />
+            {/* ▼▼▼ 修正点4：ここからが追加・変更箇所です ▼▼▼ */}
+            <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' ? (
+                    <>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    </>
+                ) 
+                : category === '比較記事' ? (
+                    <>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                    </>
+                ) 
+                : null
+            }
+            </div>
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            {/* ▲▲▲ ここまで ▲▲▲ */}
 
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
