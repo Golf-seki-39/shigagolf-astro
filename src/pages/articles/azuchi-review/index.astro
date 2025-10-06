@@ -1,18 +1,29 @@
 ---
+// --- [1] AstroとFirebaseの基本設定 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
-// --- この記事固有の情報 ---
+// --- [2] 3つの共通コンポーネントをインポート ---
+import ArticleSlider from '~/components/ArticleSlider.astro';
+import ShareButtons from '~/components/ShareButtons.astro';
+import AuthorProfile from '~/components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報 ---
 const title = "滋賀・安土で見つけた“ゴルフの原点”。強面店主の優しさに惚れた日 | シガゴル";
 const description = "プリカ不要の現金払いと、強面だけど優しい店主の人柄が魅力の「安土ゴルフクラブ」。最新設備はないけれど、ゴルフの原点に立ち返れる温かい練習場のリアルな体験記です。";
-const category = "体験談";
+const category = "体験談"; // この記事の種類を定義
 const pubDate = "2025-09-18";
 const pubDateISO = "2025-09-18T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/cJBj7Sh.png";
 const rangeId = "azuchi_gc";
-// --- ここまで ---
 
+// --- [4] シェアボタン用の変数を定義 ---
+const baseUrl = "https://shigagolf.com";
+const articleUrl = `${baseUrl}/articles/azuchi-review/`;
+const headline = title.split(" | ")[0];
+
+// --- [5] Firebaseから練習場データを取得 ---
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
 const docRef = doc(db, docPath);
@@ -23,6 +34,20 @@ if (docSnap.exists()) {
 } else {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
+
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/0rkZCzV.jpeg' },
+    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://i.imgur.com/Rwj2hi0.png' }, // 仮画像
+];
+const comparisonArticles = [
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
+    { url: '/articles/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+];
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate}>
@@ -30,7 +55,7 @@ if (docSnap.exists()) {
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": title.split(" | ")[0],
+        "headline": headline,
         "description": description,
         "image": [ imageUrl ],
         "author": {
@@ -53,7 +78,7 @@ if (docSnap.exists()) {
                 "@type": "LocalBusiness",
                 "name": rangeData?.name,
                 "image": rangeData?.imageUrl,
-                "telephone": rangeData?.phone, // tel -> phone に修正
+                "telephone": rangeData?.phone,
                 "priceRange": rangeData?.priceRange,
                 "address": {
                   "@type": "PostalAddress",
@@ -74,28 +99,19 @@ if (docSnap.exists()) {
         }
     })} />
     
-    <div
-        class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
-    >
-        <a
-            href="/articles/"
-            class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
-            >‹ お役立ち記事一覧に戻る</a
-        >
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
         
-        <article
-            class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
-        >
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
             <header>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {title.split(" | ")[0]}
-                </h1>
-                <p class="text-sm text-slate-500 mt-2">
-                    公開日：{pubDate}
-                </p>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
 
-            <img src="https://i.imgur.com/cJBj7Sh.png" alt="安土ゴルフクラブ アイキャッチ" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
+            <img src={imageUrl} alt="安土ゴルフクラブ アイキャッチ" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
             
             <p>家の引き出しの奥に眠る、使いかけのプリペイドカード。「あと数百円…」の残高が気になって、そわそわしながらボールを打つ。…そんな、ゴルファーなら誰もが経験する「プリカ地獄」に、あなたは疲れていませんか？</p>
             <p>こんにちは、「ゴルフ初心者代表」の関です。滋賀のゴルフ練習場でお悩みの方へ。今回ご紹介するのは、そんな僕たちの悩みを一掃してくれる、近江八幡市にある「安土ゴルフクラブ」。ここは、僕にとって“ゴルファーの駆け込み寺”のような場所です。</p>
@@ -207,59 +223,23 @@ if (docSnap.exists()) {
             <p>そういえば、初めて訪れたあの日。強面の店主さんは、わざわざ打席までついてきてくれて、「ここが一番打ちやすいで」と、ど真ん中の打席を僕に譲ってくれました。マニュアルにはない、人と人との温かい繋がり。</p>
             <p>僕がこの、少しだけ不便な練習場を愛する理由は、結局、それに尽きるのかもしれません。</p>
 
-            <hr class="my-8" />
+            {category === '体験談' && (
+                <>
+                    {/* 【Bパターン】 "体験談"記事なので、「比較記事」が先 */}
+                    <ArticleSlider title="関連の比較記事" articles={comparisonArticles} />
+                    <ArticleSlider title="他の練習場の体験レポート" articles={experienceReports} />
+                </>
+            )}
+            {category === '比較記事' && (
+                <>
+                    {/* 【Aパターン】 "比較記事"の場合は、「体験談」が先 */}
+                    <ArticleSlider title="管理人の”ガチ”体験レポート" articles={experienceReports} />
+                    <ArticleSlider title="他の比較記事" articles={comparisonArticles} />
+                </>
+            )}
 
-// この---で囲まれた部分は、各記事ファイルの既存の---の中に追記・統合してください。
-
-// --- 3つの部品(コンポーネント)をインポート ---
-import ArticleSlider from '~/components/ArticleSlider.astro';
-import ShareButtons from '~/components/ShareButtons.astro';
-import AuthorProfile from '~/components/AuthorProfile.astro';
-
-// --- 表示したい記事リストの定義 (これは全記事共通でOK) ---
-const experienceReports = [
-    // ここに体験談記事の情報をすべて書く
-    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/0rkZCzV.jpeg' },
-    // ... 他の体験談記事も同様に追加 ...
-];
-const comparisonArticles = [
-    // ここに比較記事の情報をすべて書く
-    { url: '/articles/comparison/omi-priceRank/', title: '料金で徹底比較！安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: 'パター練習が充実している練習場比較', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
-    { url: '/articles/omi-higashiomi-approach/', title: 'パター練習が充実している練習場比較', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/omi-higashiomi-comparison/', title: 'パター練習が充実している練習場比較', img: 'https://i.imgur.com/DyVr8of.jpeg' },
-    // ... 他の比較記事も同様に追加 ...
-];
-
-// 既存のheadlineとarticleUrlもここで定義されているはず
-// const headline = "...";
-// const articleUrl = "...";
-// const category = "...";
----
-
-{/* --- 関連記事セクション --- */}
-{category === '体験談' && (
-    <>
-        {/* 【Bパターン】 "体験談"記事の場合は、「比較記事」が先 */}
-        <ArticleSlider title="関連の比較記事" articles={comparisonArticles} />
-        <ArticleSlider title="他の練習場の体験レポート" articles={experienceReports} />
-    </>
-)}
-
-{category === '比較記事' && (
-    <>
-        {/* 【Aパターン】 "比較記事"の場合は、「体験談」が先 */}
-        <ArticleSlider title="管理人の”ガチ”体験レポート" articles={experienceReports} />
-        <ArticleSlider title="他の比較記事" articles={comparisonArticles} />
-    </>
-)}
-
-{/* --- シェアと著者紹介（ここは共通） --- */}
-<ShareButtons articleUrl={articleUrl} headline={headline} />
-<AuthorProfile />
-            
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
             </h2>
