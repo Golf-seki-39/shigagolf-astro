@@ -4,11 +4,10 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 
-// ▼▼▼ 修正点：ここのパスの書き方を変更しました ▼▼▼
-import ArticleSlider from '../../../components/ArticleSlider.astro';
+// --- [2] 3つの共通コンポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
-// ▲▲▲ ここまで ▲▲▲
 
 // --- [3] この記事固有の情報 ---
 const title = "滋賀・安土で見つけた“ゴルフの原点”。強面店主の優しさに惚れた日 | シガゴル";
@@ -224,23 +223,50 @@ const comparisonArticles = [
             <p>そういえば、初めて訪れたあの日。強面の店主さんは、わざわざ打席までついてきてくれて、「ここが一番打ちやすいで」と、ど真ん中の打席を僕に譲ってくれました。マニュアルにはない、人と人との温かい繋がり。</p>
             <p>僕がこの、少しだけ不便な練習場を愛する理由は、結局、それに尽きるのかもしれません。</p>
 
-            {category === '体験談' && (
-                <>
-                    {/* 【Bパターン】 "体験談"記事なので、「比較記事」が先 */}
-                    <ArticleSlider title="関連の比較記事" articles={comparisonArticles} />
-                    <ArticleSlider title="他の練習場の体験レポート" articles={experienceReports} />
-                </>
-            )}
-            {category === '比較記事' && (
-                <>
-                    {/* 【Aパターン】 "比較記事"の場合は、「体験談」が先 */}
-                    <ArticleSlider title="管理人の”ガチ”体験レポート" articles={experienceReports} />
-                    <ArticleSlider title="他の比較記事" articles={comparisonArticles} />
-                </>
-            )}
+            
+            {/* ▼▼▼ ここからが修正箇所です ▼▼▼ */}
+<div class="not-prose my-12 space-y-12">
+{
+    // 現在の記事が「体験談」の場合
+    category === '体験談' ? (
+        <>
+            {/* 1番目に「比較記事」のスライダーを表示 */}
+            <MySlider 
+                articles={comparisonArticles} 
+                title="あわせて読みたい「比較記事」"
+            />
+            {/* 2番目に「体験談」のスライダーを表示 */}
+            <MySlider 
+                articles={experienceReports} 
+                title="あわせて読みたい「体験談」"
+            />
+        </>
+    ) 
+    // 現在の記事が「比較記事」の場合
+    : category === '比較記事' ? (
+        <>
+            {/* 1番目に「体験談」のスライダーを表示 */}
+            <MySlider 
+                articles={experienceReports} 
+                title="あわせて読みたい「体験談」"
+            />
+            {/* 2番目に「比較記事」のスライダーを表示 */}
+            <MySlider 
+                articles={comparisonArticles} 
+                title="あわせて読みたい「比較記事」"
+            />
+        </>
+    ) 
+    // どちらでもない場合は何も表示しない
+    : null
+}
+</div>
 
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
+            {/* ▲▲▲ ここまでが修正箇所です ▲▲▲ */}
+
+
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
             </h2>

@@ -1,0 +1,42 @@
+---
+// 1. Astro.props を使って、呼び出し元から渡されたデータを受け取ります
+const { articles, title } = Astro.props;
+
+// articlesが空、または存在しない場合は何も表示しないようにする（安全対策）
+if (!articles || articles.length === 0) {
+    return null;
+}
+---
+
+<div class="my-12">
+    <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">{title}</h2>
+    <div class="slider-container flex overflow-x-auto gap-4 pb-4">
+        {/* 3. mapを使って、記事の数だけカードを繰り返し表示します */}
+        {articles.map(article => (
+            <a href={article.url} class="related-article-card flex-shrink-0 w-64 bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 no-underline">
+                <img src={article.img} alt={article.title} class="w-full h-32 object-cover rounded-t-lg" loading="lazy" />
+                <div class="p-4">
+                    <p class="text-slate-700 font-semibold leading-snug">{article.title}</p>
+                </div>
+            </a>
+        ))}
+    </div>
+</div>
+
+<style>
+    /* スクロールバーを少しスタイリッシュに見せる（オプション） */
+    .slider-container::-webkit-scrollbar {
+        height: 8px;
+    }
+    .slider-container::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+    .slider-container::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+    .slider-container::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+</style>
