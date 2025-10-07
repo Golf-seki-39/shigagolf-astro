@@ -101,7 +101,7 @@ const comparisonArticles = [
 
 const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 ---
-<BaseLayout title={title} description={description} pubDate={publicationDate}>
+<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl}>
 
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",

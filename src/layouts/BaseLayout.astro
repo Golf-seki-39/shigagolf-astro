@@ -18,23 +18,31 @@ const q = query(rangesCollection, orderBy("name"));
 const querySnapshot = await getDocs(q);
 const ranges = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
+// ▼▼▼【変更点1】Astro.propsからogImageを受け取る ▼▼▼
 const {
     title = "シガゴル | 滋賀のリアルなゴルフ練習場レビューサイト",
     description = "シガゴルは、滋賀県内のゴルフ練習場のリアルな口コミ・レビューサイト。測定器の有無、アプローチ・バンカー練習場の併設など、あなたの目的に合った練習場探しをサポートします。",
+    ogImage, // 記事ページから渡される画像URL用のプロパティを追加
     noindex = false,
 } = Astro.props;
+
+// ▼▼▼【変更点2】デフォルトのOGP画像URLを定義 ▼▼▼
+const defaultOgImage = "https://i.imgur.com/mN0IbPS.png"; // サイトのロゴなど
+
+// ▼▼▼【変更点3】ogImageが渡された場合はそれ、なければデフォルト画像を使うロジック ▼▼▼
+const imageToUse = ogImage || defaultOgImage;
 ---
 
 <html lang="ja">
     <head>
         <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-S7JPWMHPVS"></script>
-<script is:inline>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+        <script is:inline>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
 
-  gtag('config', 'G-S7JPWMHPVS');
-</script>
+          gtag('config', 'G-S7JPWMHPVS');
+        </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
        
@@ -44,9 +52,17 @@ const {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={Astro.url} />
-        <meta property="og:image" content="https://i.imgur.com/mN0IbPS.png" />
+        
+        {/* ▼▼▼【変更点4】og:imageのcontentを変数に置き換え ▼▼▼ */}
+        <meta property="og:image" content={imageToUse} />
+        
         <meta property="og:site_name" content="シガゴル" />
         <meta property="og:type" content="website" />
+
+        {/* ▼▼▼【改善提案】Twitterカード用の設定を追加 ▼▼▼ */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={imageToUse} />
+
         {noindex && <meta name="robots" content="noindex" />}
         <link rel="apple-touch-icon" href="https://i.imgur.com/mN0IbPS.png" />
         <link rel="icon" href="https://i.imgur.com/mN0IbPS.png" />

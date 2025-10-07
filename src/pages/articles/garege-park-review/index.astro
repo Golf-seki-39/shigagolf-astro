@@ -49,7 +49,7 @@ const comparisonArticles = [
 ];
 ---
 
-<BaseLayout title={title} description={description} pubDate={pubDate}>
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
