@@ -80,7 +80,7 @@ const comparisonArticles = [
                 "name": rangeData?.name,
                 "image": rangeData?.imageUrl,
                 "telephone": rangeData?.phone,
-                "priceRange": rangeData?.priceRange,
+                "priceRange": rangeData?.priceRange || "500円〜2,000円",
                 "address": {
                   "@type": "PostalAddress",
                   "streetAddress": rangeData?.address,
