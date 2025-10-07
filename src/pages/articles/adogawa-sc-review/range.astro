@@ -1,0 +1,324 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+
+// --- [2] 3つの共通コンポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報 ---
+const title = "【正直レビュー】安曇川スポーツセンター（滋賀・高島）｜300ヤードの開放感とリアルな注意点 | シガゴル";
+const description = "滋賀県高島市の安曇川スポーツセンターを体験レビュー。300ヤードの開放感が圧巻、設備の古さや受付対応などリアルな注意点も正直に紹介。";
+const category = "体験談"; // この記事の種類を定義
+const pubDate = "2025-10-07";
+const pubDateISO = "2025-10-07T17:00:00+09:00";
+const imageUrl = "https://i.imgur.com/F0kERMr.jpeg";
+const rangeId = "adogawa_sc"; // ★練習場のIDをFirebaseに合わせて設定してください
+
+// --- [4] シェアボタン用の変数を定義 ---
+const baseUrl = "https://shigolf.com";
+// ★記事のURLパスをサイトの構成に合わせて設定してください
+const articleUrl = `${baseUrl}/articles/adogawa-sc-review/range/`; 
+const headline = title.split(" | ")[0];
+
+// --- [5] Firebaseから練習場データを取得 ---
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
+
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/0rkZCzV.jpeg' },
+    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://i.imgur.com/Rwj2hi0.png' },
+];
+const comparisonArticles = [
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
+    { url: '/articles/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+];
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": headline,
+        "description": description,
+        "image": [ imageUrl ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigolf.com/about/",
+            "image": "https://i.imgur.com/BOcMOf3.png",
+            "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": pubDateISO,
+        "review": {
+            "@type": "Review",
+            "itemReviewed": {
+                "@type": "LocalBusiness",
+                "name": rangeData?.name,
+                "image": rangeData?.imageUrl,
+                "telephone": rangeData?.phone,
+                "priceRange": rangeData?.priceRange,
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": rangeData?.address,
+                  "addressLocality": rangeData?.city,
+                  "addressRegion": "滋賀県",
+                  "postalCode": rangeData?.postalCode,
+                  "addressCountry": "JP"
+                }
+            },
+            "reviewRating": {
+                "@type": "Rating",
+                "ratingValue": rangeData?.avgRating || "0",
+                "bestRating": "5",
+                "worstRating": "1"
+            },
+            "author": { "@type": "Person", "name": "関（せき）" }
+        }
+    })} />
+    
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <p>目の前に広がる、どこまでも続くかのような緑の絨毯。ボールを遮るネットはなく、澄み渡った青空だけが広がっています。</p>
+            <p>ここはゴルフコースのティーイングエリアか？――思わずそう錯覚してしまうほど、圧倒的な開放感。滋賀県高島市にある打ちっぱなし、「安曇川スポーツセンター」は、「ドライバーを心の底から思いっきり振り抜きたい」というゴルファーの願いを叶えてくれる練習場です。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/Nm3ngEQ.jpeg" alt="安曇川スポーツセンターの広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+            </figure>
+            
+            <p>しかし、その大きな魅力の裏には、施設の歴史を感じさせる側面や、訪れる前に知っておきたい注意点も存在します。この記事では、私が実際に体験したことを元に、その魅力とリアルな姿を正直にお伝えします。</p>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#section-1" class="text-green-700 hover:underline">安曇川スポーツセンターの2つの魅力</a></li>
+                    <li><a href="#section-2" class="text-green-700 hover:underline">訪れる前に知っておきたい2つの注意点</a></li>
+                    <li><a href="#section-3" class="text-green-700 hover:underline">【関の深掘り】安曇川を120%使いこなす3つの視点</a></li>
+                    <li><a href="#section-4" class="text-green-700 hover:underline">【コラム】取材時に起きた、個人的なハプニング</a></li>
+                    <li><a href="#section-5" class="text-green-700 hover:underline">結論：どんなゴルファーにおすすめできるか？</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">「安曇川スポーツセンター」の基本情報</a></li>
+                </ul>
+            </div>
+
+            <h2 id="section-1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">安曇川スポーツセンターの2つの魅力</h2>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">① 何物にも代えがたい、滋賀県最大級300ヤードの開放感</h3>
+            <p>この練習場の最大の魅力は、言うまでもなく滋賀県最大級を誇る300ヤードのスケール感です。</p>
+            <p>多くの練習場にある「鳥かご感」が一切なく、自分の打球の弾道を最後までしっかりと目で追える。これは、よりコースに近い実践的な感覚で、飛距離と方向性を磨ける、非常に価値のある練習環境と言えるでしょう。</p>
+            <p>ただ練習するという以上に、この景色の中でドライバーを振り抜くこと自体が、最高のストレス発散になります。難しいことを考えず、ただひたすらに気持ちよくボールを打ちたい。そんな日にこそ、訪れたい場所です。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/gsDMZjj.png" alt="ヤード表示と広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+            </figure>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 練習場で生まれた、一期一会の出会い</h3>
+            <p>私が訪れた日は、幸運にも他のゴルファーの方々とお話しする機会がありました。</p>
+            <p>隣の打席には、ゴルフ歴2年弱で250ヤードを軽々と飛ばす60代の紳士が。その背景には、週に5〜6回はクラブを握るという圧倒的な練習量と、自身の体の動きを深く理解しようとする探究心がありました。その姿は、ゴルフ上達のヒントに満ちており、純粋に「かっこいい」と感じさせられるものでした。</p>
+            <p>また、休憩中にお話しした常連の方々は、練習場の歴史や地域のゴルフ事情を気さくに教えてくれる、魅力的な方々でした。 もちろん、毎回このような出会いがあるわけではないでしょう。しかし、この開放的な空間が、ゴルファー同士の自然な交流を生む土壌になっているのかもしれません。</p>
+
+            <h2 id="section-2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">訪れる前に知っておきたい2つの注意点</h2>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">① 施設の歴史を感じさせるリアルな姿</h3>
+            <p>素晴らしい魅力がある一方で、事前に知っておくべき点もあります。第一に、施設の歴史は深く、最新設備が整っているわけではありません。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/6ib3tNo.png" alt="使い込まれて凹んだ打席マット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">長年の歴史を感じさせる打席マット。場所によっては凹みも。</figcaption>
+            </figure>
+
+            <p>写真のように、打席マットは場所によってかなり使い込まれています。弾道測定器などもなく、昔ながらのシンプルな練習環境です。この「味」を楽しめるかどうかは、好みが分かれるポイントでしょう。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 芝の上から打てるアプローチ練習場はない</h3>
+            <p>もちろん、各打席のマットの上からアプローチショットの練習は可能です。しかし、フェアウェイやラフ、様々な傾斜といった、より実践的な状況を想定したアプローチ練習がしたい場合は、隣接するショートコースを利用する必要があります。</p>
+
+            <h2 id="section-3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【関の深掘り】安曇川を120%使いこなす3つの視点</h2>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">視点①：「2円デー」との向き合い方</h3>
+            <p>月に2回の「球単価2円デー」は破格ですが、常連さん曰く「打席待ちができるほど混雑する」とのこと。「後ろに待っている人がいる」というプレッシャーで集中できないのであれば、あえて通常料金の空いている時間帯を狙うのも賢い選択です。</p>
+
+            <figure class="my-6">
+                <img src="https://i.imgur.com/Ov8534m.png" alt="2円デーの詳細が書かれた張り紙" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">人気のイベントデー。時間と打席を確認してから訪れたい。</figcaption>
+            </figure>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">視点②：「ここはドライバーやフェアウェイウッド特化」と割り切る</h3>
+            <p>施設の特性上、ここは「ドライバー練習に特化した場所」と考えるのが最適です。飛距離アップやスイングフォームの確認など、明確な目的を持って訪れることで、満足度は大きく向上するはずです。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">視点③：湖西エリアの冬のゴルフ事情</h3>
+            <p>常連さんの話では、冬は打席周りやフェアウェイに雪が積もり、打ったボールが見えなくなるなど、練習が困難になる日も多いそうです。湖西エリアでゴルフを楽しむには、天候という抗えない要素も考慮に入れる必要があります。</p>
+
+            <h2 id="section-4" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【コラム】取材時に起きた、個人的なハプニング</h2>
+            <p>ここで少し、余談を。 実は今回、事前に支配人の許可を得て取材に伺ったのですが、受付で事情を知らないスタッフの方に「帰れ！」と一喝される出来事がありました。</p>
+            <p>もちろん、連携が取れていなかったことや、昨今の特殊詐欺などを警戒してのことなど、店の受付を任されている立場としての、彼なりの責任感から来た行動だったのかもしれません。しかし、理由も聞かずに頭ごなしに拒絶する姿勢は、社会人として正直、疑問に感じました。</p>
+            <p>これはあくまで取材という特殊な状況での出来事であり、一般の利用者が同じ経験をすることはないと思います。ただ、施設の顔である受付の対応には、改善の余地があると感じたのもまた事実です。</p>
+            
+            <figure class="my-6">
+                <img src="https://i.imgur.com/OQutn0l.png" alt="安曇川スポーツセンターの受付外観" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+            </figure>
+
+            <h2 id="section-5" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">結論：どんなゴルファーにおすすめできるか？</h2>
+            <p>安曇川スポーツセンターは、「ネットのない広大な練習場で、とにかくドライバーを打ち込みたい」というゴルファーにとって、最高の環境であることは間違いありません。</p>
+            <p>一方で、施設の古さや、芝から打てるアプローチ練習場がない点など、明確なウィークポイントも存在します。</p>
+            <p>私の個人的な話をすれば、自宅から車で2時間と遠いこと、そしてコラムで触れた出来事もあり、頻繁に通うことはないでしょう。 しかし、「今日はドライバーをとことん練習したい」と思い立った日には、あの開放感が恋しくなり、有力な選択肢の一つとして頭に浮かぶ。</p>
+            <p>安曇川スポーツセンターは、そんな不思議な魅力を持った打ちっぱなしです。</p>
+            <p class="font-bold">きっと、次にドライバーが暴れた日、私はまたこの場所を思い出すでしょう。</p>
+
+
+            <div class="not-prose my-12 space-y-12">
+            {
+                // 指示通り、体験談カテゴリでは「比較記事」のみ表示
+                category === '体験談' && (
+                    <MySlider 
+                        articles={comparisonArticles} 
+                        title="あわせて読みたい「比較記事」"
+                    />
+                )
+            }
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto not-prose">
+                        <table class="w-full text-left border-collapse">
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            {rangeData.address}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4">{rangeData.business_hours}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                    <td class="py-3 px-4">{
+                                        
+                                        rangeData.price_ball_weekday_str ||
+                                        rangeData.price_uchihodai_weekday_str ||
+                                        "お問い合わせください"
+                                    }</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
+                            width="100%" height="450" style="border:0;"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
+            <p class="text-center font-bold text-lg mt-8">
+                🎯 さらに詳しい情報や口コミはこちら！
+                <br />
+                <a
+                    href={`/ranges/${rangeId}/`}
+                    class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    {rangeData ? `「${rangeData.name}」のシガゴル公式レビューページへ` : "公式レビューページへ"}
+                </a>
+            </p>
+        </article>
+    </div>
+
+    <style>
+        .map-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .scroll-mt-24 {
+            scroll-margin-top: 6rem; /* 96px */
+        }
+    </style>
+</BaseLayout>
