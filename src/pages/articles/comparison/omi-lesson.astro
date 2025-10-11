@@ -1,0 +1,352 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+
+// --- 共通コンポーネント ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- この記事固有の情報 ---
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/comparison/omi-lesson/`;
+const publicationDate = "2025-10-12";
+const lastModified = new Date();
+
+// --- SEOコピー ---
+const title = "【2025年最新版】滋賀のゴルフレッスン比較｜初心者が絶対に失敗しない4スクール【近江八幡・東近江】 | シガゴル";
+const description = "「初心者レッスンで失敗した…」そんな経験から生まれた滋賀・近江八幡／東近江エリアのレッスン徹底比較。無料スクールから本格マンツーマンまで、目的別に最適な教室をわかりやすく解説！";
+const category = "比較記事"; 
+const headline = "【実体験】レッスンで挫折した僕が本気で分析！滋賀のゴルフ初心者が見るべきレッスン選びの”防衛マニュアル”";
+const imageUrl = "https://i.imgur.com/XXlXJbL.jpeg";
+
+// --- Firebaseから各練習場の情報を取得 ---
+const rangeIds = ['riverside_jumbo', 'greenpia_oh', 'sakura_gc', 'azuchi_gc'];
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const rangePromises = rangeIds.map(id => getDoc(doc(db, `artifacts/${appId}/public/data/practice_ranges/${id}`)));
+const rangeDocs = await Promise.all(rangePromises);
+
+const rangesData = rangeDocs.reduce((acc, docSnap, index) => {
+    if (docSnap.exists()) { acc[rangeIds[index]] = docSnap.data(); }
+    else { acc[rangeIds[index]] = null; }
+    return acc;
+}, {});
+
+if (rangesData.greenpia_oh) {
+    rangesData.greenpia_oh.name = "グリーンピア近江八幡ゴルフ";
+}
+
+// --- 比較表のデータ ---
+const summaryData = [
+    { type: '無料で基本を学びたい', id: 'riverside_jumbo', format: 'グループ', fee: '<strong>実質200円</strong>', feature: '挫折しようがない、初心者のための最高の入口。' },
+    { type: '無料で始めたい', id: 'greenpia_oh', format: 'グループ', fee: '<strong>実質200円</strong>', feature: '申し込み月のスケジュールに注意が必要だが、選択肢の一つ。' },
+    { type: '本気で上達したい', id: 'azuchi_gc', format: '<strong>マンツーマン</strong>', fee: '4,000円', feature: '遠方からも人が集う質の高いレッスン。自己流から脱却したいならココ。' },
+    { type: '女性プロに安心して習いたい', id: 'sakura_gc', format: 'グループ or<br/>マンツーマン', fee: '1,000円〜', feature: '女性プロが2名在籍。初回割引もあり、女性や初心者が試しやすい環境。' },
+    { type: '多くのプロ・形式から選びたい', id: 'greenpia_oh', format: '多種多様', fee: '1,200円〜', feature: 'まさに「レッスンのデパート」。どんなニーズにも応える圧倒的な選択肢。' }
+];
+
+// --- 各施設の追加情報 ---
+const additionalData = {
+    azuchi_gc: { reviewUrl: '/articles/azuchi-review/', access: 'JR安土駅から車で5分' },
+    greenpia_oh: { reviewUrl: null, access: '名神竜王ICから車で10分' },
+    sakura_gc: { reviewUrl: '/articles/sakura-gc-review/', access: '名神竜王ICから車で15分' },
+    riverside_jumbo: { reviewUrl: null, access: '名神八日市ICから車で10分' },
+};
+
+// --- JSON-LD構造化データ ---
+const mainEntity = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline, "description": description, "image": [imageUrl],
+    "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+    "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }},
+    "datePublished": new Date(publicationDate).toISOString(), "dateModified": lastModified.toISOString(),
+    "review": {
+        "@type": "Review",
+        "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+        "author": { "@type": "Person", "name": "関（シガゴル運営者）" },
+        "reviewBody": "自身のレッスン失敗談を元に、滋賀県内の4つのゴルフスクールを初心者目線で徹底比較。各スクールの長所と注意点を正直にレビューしました。"
+    }
+};
+
+const faqElements = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": articleUrl + "#faq",
+  "mainEntity": [
+    { "@type": "Question", "name": "初心者が失敗しないゴルフレッスンの選び方は？", "acceptedAnswer": { "@type": "Answer", "text": "無料体験で雰囲気を確認し、初心者専用クラスがあるスクールを選ぶのが最も安心です。特に滋賀ではリバーサイドジャンボゴルフの初心者スクールが人気です。" } },
+    { "@type": "Question", "name": "滋賀でおすすめのマンツーマンレッスンは？", "acceptedAnswer": { "@type": "Answer", "text": "安土ゴルフクラブの入江プロによるマンツーマンレッスンが質・評判ともに高く、県外から通う人も多いです。" } }
+  ]
+};
+
+// --- 全記事共通の「関連記事リスト」を定義 ---
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/0rkZCzV.jpeg' },
+];
+const comparisonArticles = [
+    { url: '/articles/comparison/omi-pricerank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
+];
+
+const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
+---
+
+<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl}>
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(mainEntity)} />
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqElements)} />
+    
+    <div id="article-view" class="view bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            <style>
+              html { scroll-behavior: smooth; }
+              section[id] { scroll-margin-top: 80px; }
+              .cta-icon { width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: text-bottom; }
+            </style>
+                        
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>
+            </header>
+
+            <img src={imageUrl} alt="滋賀のゴルフ初心者に向けたレッスン選びの防衛マニュアル" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width="1200" height="675" fetchpriority="high" decoding="async" />
+
+            <div class="not-prose bg-blue-50 p-4 my-6 rounded-lg border border-l-4 border-blue-500">
+                <h4 class="text-lg font-bold text-slate-800 m-0">結論：あなたの目的で選ぶべきレッスンは決まります。</h4>
+                <p class="text-slate-700 mt-2 mb-0"><strong>とにかく無料で始めたいなら</strong><a href="#riverside_jumbo" class="text-green-700 hover:underline"><strong>リバーサイドジャンボゴルフ</strong></a>、<strong>じっくりマンツーマンで習いたいなら</strong><a href="#azuchi_gc" class="text-green-700 hover:underline"><strong>安土ゴルフクラブ</strong></a>、<strong>たくさんの選択肢から選びたいなら</strong><a href="#greenpia_oh" class="text-green-700 hover:underline"><strong>グリーンピア近江八幡ゴルフ</strong></a>。この記事を読めば、もうレッスン選びで失敗しません。</p>
+            </div>
+
+            <p><strong>【告白】私は一度、ゴルフレッスンで心を折られました。</strong></p>
+            <p>ゴルフを始めてすぐの頃、「そんなことも知らないの？」と言いたげなプロの態度に、私の心はポッキリと折れました。「グリップの握り方すら分からないのに…」そう感じたあの日以来、私はレッスンから距離を置き、遠回りを承知で独学の道を選んできたのです。</p>
+            <p>だからこそ、この記事は単なる情報の羅列ではありません。過去の私と同じように、レッスン選びに不安を感じているあなたが、<strong>お金と時間を無駄にせず、最高のゴルフライフの第一歩を踏み出すための「防衛マニュアル」</strong>です。</p>
+            <p class="text-sm text-slate-600">※近江八幡・東近江エリアには5つのゴルフ練習場がありますが、この記事ではレッスンを開講している4施設に絞って徹底比較します。「がれーじぱーく東近江」は現在レッスンを開講していないため、今回は比較の対象外としています。</p>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#summary-table" class="text-green-700 hover:underline">【比較表】滋賀で自分に合うゴルフレッスンを探す診断表</a></li>
+                    <li><a href="#review-details" class="text-green-700 hover:underline">【実体験】滋賀県内4つのゴルフレッスン徹底レビュー</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">【初心者必見】ゴルフレッスンで後悔しない選び方まとめ</a></li>
+                    <li><a href="#author-pick" class="text-green-700 hover:underline">【筆者の本音】目的別”推し”スクールまとめ</a></li>
+                    <li><a href="#faq" class="text-green-700 hover:underline">ゴルフレッスンに関するよくある質問</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">各施設の基本情報まとめ</a></li>
+                </ul>
+            </div>
+
+            <section id="summary-table">
+                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【比較表】滋賀で自分に合うゴルフレッスンを探す診断表</h2>
+                <p>👇 まずは全体像から。あなたの目的にピッタリの練習場がひと目で分かります。</p>
+                
+                <div class="overflow-x-auto my-4 not-prose hidden md:block">
+                    <style>.no-wrap { white-space: nowrap; }</style>
+                    <table class="w-full text-sm text-left border border-slate-300 min-w-table">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="px-4 py-3 border border-slate-300 align-middle">あなたの目的</th>
+                                <th class="px-4 py-3 border border-slate-300 align-middle">おすすめ練習場</th>
+                                <th class="px-4 py-3 border border-slate-300 text-center">形式</th>
+                                <th class="px-4 py-3 border border-slate-300 text-center no-wrap">初回料金目安</th>
+                                <th class="px-4 py-3 border border-slate-300 align-middle">最大の特徴</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {summaryData.map((item, index) => (
+                                <tr class={(index % 2 !== 0) ? 'bg-slate-50' : 'bg-white'}>
+                                    <td class="px-4 py-2 border align-middle font-semibold no-wrap">{item.type}</td>
+                                    <td class="px-4 py-2 border align-middle font-semibold no-wrap"><a href={`#${item.id}`} class="text-blue-600 hover:underline">{rangesData[item.id]?.name}</a></td>
+                                    <td class="px-4 py-2 border text-center align-middle no-wrap" set:html={item.format} />
+                                    <td class="px-4 py-2 border text-center align-middle no-wrap" set:html={item.fee} />
+                                    <td class="px-4 py-2 border align-middle text-xs">{item.feature}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="space-y-4 my-4 not-prose md:hidden">
+                    {summaryData.map(item => (
+                        <div class="border rounded-lg p-4">
+                            <h3 class="text-base font-bold m-0 text-blue-600">{item.type}</h3>
+                            <h4 class="text-lg font-bold mt-1 mb-2"><a href={`#${item.id}`} class="text-slate-800 hover:underline">{rangesData[item.id]?.name}</a></h4>
+                            <table class="w-full mt-2 text-sm"><tbody>
+                                <tr class="border-t"><td class="font-semibold pr-2 py-1 w-1/4">形式</td><td class="py-1" set:html={item.format.replace(/<br\/>/g, ' ')} /></tr>
+                                <tr class="border-t"><td class="font-semibold pr-2 py-1">料金目安</td><td class="py-1" set:html={item.fee} /></tr>
+                                <tr class="border-t"><td class="font-semibold pr-2 py-1 align-top">特徴</td><td class="py-1">{item.feature}</td></tr>
+                            </tbody></table>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section id="review-details">
+                 <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【実体験】滋賀県内4つのゴルフレッスン徹底レビュー</h2>
+                 
+                 <div id="riverside_jumbo" class="mt-8 border-t border-slate-200 pt-6 scroll-mt-24">
+                     <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a></h3>
+                     <h4 class="text-xl font-semibold text-slate-600">挫折した僕が、あの日の自分に教えたい最高の”入口”</h4>
+                     <p>東近江エリアで「これからゴルフを始めたい」「何から手をつけていいか全く分からない」という方に、私が心の底からお勧めするのが、このリバーサイドジャンボゴルフの<strong>「初心者スクール」</strong>です。初心者でも通いやすい雰囲気で、安心してゴルフを始められます。</p>
+                     <img src="https://i.imgur.com/S5JuYdV.jpeg" alt="リバーサイドジャンボゴルフの初心者向けゴルフレッスン案内" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" decoding="async" />
+                     <h5 class="text-lg font-bold">最大の魅力：実質200円！？常識破りの「初心者スクール」</h5>
+                     <p>関西ゴルフ振興が実施するこのプログラムは、まさに初心者の救世主。レッスン料・ボール代・クラブレンタル代が全て無料で、4回（1回60分）のレッスンを受けられます。かかるのは登録料2,200円のみで、4回終了後には2,000円分のプリペイドカードが戻ってくるため、<strong>実質200円、缶ジュース2本分ほどの値段</strong>でプロに基礎を教えてもらえる計算です。</p>
+                     <h5 class="text-lg font-bold">【要確認】申し込み方法と注意点</h5>
+                     <p>申し込みは練習場に来店し、担当の砂川英昭プロがいる時に直接行います。コーチの定休日は月曜日です。他の平日は朝からいらっしゃることが多いようですが、夕方には不在の場合もあるため、確実に会いたい方は<strong>週末に訪れるか、事前に電話で確認する</strong>のがおすすめです。（特に金曜日はラウンドレッスンのため、練習場に来られるのが15時以降になることが多いそうです）</p>
+                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                         <a href="/ranges/riverside_jumbo/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                             この練習場の施設詳細ページへ
+                         </a>
+                     </div>
+                 </div>
+
+                 <div id="greenpia_oh" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+                     <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">グリーンピア近江八幡ゴルフ</a></h3>
+                     <h4 class="text-xl font-semibold text-slate-600">プロ6名以上！レッスンのデパートで”あなただけ”のコーチを見つける</h4>
+                     <p>「自分に合うプロを見つけたい」「いろんなレッスン形式を試してみたい」そんな中〜上級者の方には、このグリーンピア近江八幡ゴルフが最適です。LPGA所属の女性プロからPGAトーナメントプロまで、実に6名以上のプロが在籍しており、まさに「レッスンの総合デパート」です。「スイング解析」も可能な最新機器を使った個人レッスンも選べます。</p>
+                     <img src="https://i.imgur.com/WcDqIqT.jpeg" alt="グリーンピア近江八幡ゴルフの多彩な個人レッスン紹介" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" decoding="async" />
+                     <h5 class="text-lg font-bold">魅力：圧倒的な選択肢</h5>
+                     <p>10分1,200円のワンポイントレッスンから、月謝制のスクール、最新機器トラックマンを使ったデータ分析レッスンまで、考えられるほぼ全てのレッスン形式がここにあります。予算や目的に合わせて、自分だけの最適なプランを組み立てられるのが最大の強みです。</p>
+                     <h5 class="text-lg font-bold text-red-600">【超重要】初心者スクールの注意点</h5>
+                     <p>こちらでも「初心者スクール」が実施されていますが、プリカ還元には注意が必要です。申し込み手続きは、受付でコーチのスケジュールを確認しながらその場で予約を取る流れになります。そのため、「今月は4回受講できない」ということはその場で判明します。万が一、足を運ぶ前に確認しておきたいという慎重な方は、事前に練習場へ電話で問い合わせておくとより安心です。</p>
+                     <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                         <a href="/ranges/greenpia_oh/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                             この練習場の施設詳細ページへ
+                         </a>
+                     </div>
+                 </div>
+
+                 <div id="sakura_gc" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+                     <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">さくらゴルフ倶楽部</a></h3>
+                     <h4 class="text-xl font-semibold text-slate-600">バランス型の優等生。特に女性ゴルファーにおすすめ</h4>
+                     <p>複数のプロから自分に合ったレッスンを選びたい、でも選択肢が多すぎても困る…。そんな方にフィットするのが、このさくらゴルフ倶楽部です。4名のプロが在籍し、グループレッスンとマンツーマンの両方を選べる、バランスの取れた練習場です。</p>
+                     <img src="https://i.imgur.com/ULQKBpI.jpeg" alt="さくらゴルフ倶楽部の女性インストラクターによるレッスン風景" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" decoding="async" />
+                     <h5 class="text-lg font-bold">魅力：試しやすい料金設定と女性インストラクターの在籍</h5>
+                     <p>瀬古えりなプロのマンツーマンレッスンは初回1,000円、鎮西まゆみプロのグループレッスンは初回1,500円と、気軽に試せる料金設定が魅力です。特に2名の女性インストラクターが在籍している点は、女性ゴルファーにとって大きな安心材料になるでしょう。不定期で無料のワンポイントレッスンが開催されることもあります。</p>
+                     <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                         {additionalData['sakura_gc']?.reviewUrl && (
+                             <a href={additionalData['sakura_gc'].reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                                 <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                                 管理人の詳細体験レポートを読む
+                             </a>
+                         )}
+                         <a href="/ranges/sakura_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                             この練習場の施設詳細ページへ
+                         </a>
+                     </div>
+                 </div>
+
+                 <div id="azuchi_gc" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+                     <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/azuchi_gc/" class="text-green-700 hover:underline">安土ゴルフクラブ</a></h3>
+                     <h4 class="text-xl font-semibold text-slate-600">遠方からも人が集う、本格派マンツーマン専門塾</h4>
+                     <p>「自己流の限界を感じている」「本気でスコアアップしたい」そんな熱意あるゴルファーに最適なのが、安土ゴルフクラブの入江賢プロによる個人レッスンです。</p>
+                     <img src="https://i.imgur.com/B0ozXOC.png" alt="安土ゴルフクラブでのマンツーマン指導の様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" decoding="async" />
+                     <h5 class="text-lg font-bold">魅力：質の高い50分のマンツーマンレッスン</h5>
+                     <p>レッスンは1回50分。料金は都度払いで4,000円（4回チケットなら1回あたり3,500円）と非常にシンプルです。PGA所属のツアー経験もある入江プロのマンツーマン指導は評判が高く、大津市や他府県からわざわざ通ってくる人もいるほど。質の高い個人レッスンを求めるなら、ここが最有力候補となるでしょう。予約はプロの携帯電話へ直接行います。</p>
+                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                         {additionalData['azuchi_gc']?.reviewUrl && (
+                             <a href={additionalData['azuchi_gc'].reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                                 <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                                 管理人の詳細体験レポートを読む
+                             </a>
+                         )}
+                         <a href="/ranges/azuchi_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                             この練習場の施設詳細ページへ
+                         </a>
+                     </div>
+                 </div>
+            </section>
+            
+            <section id="conclusion" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+                 <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【初心者必見】ゴルフレッスンで後悔しない選び方まとめ</h2>
+                 <p>ここまで4つの施設のレッスンを紹介してきましたが、最後に「もし、ゴルフを始めたあの日の僕にアドバイスできるなら、どこを勧めるか？」という問いに、正直にお答えします。</p>
+                 <p>答えは、<strong>迷わず「リバーサイドジャンボゴルフの初心者スクールに行け！」</strong>です。</p>
+                 <p>専門的な指導の前に、まず初心者に必要なのはゴルフの楽しさに触れる機会と、安心して「何も分かりません」と言える環境です。その点で、実質無料で基本の「き」から教えてくれるあのスクールは、現時点で僕が知る限り最高の選択肢だと言えます。</p>
+                 <p>この記事が、あなたが最高のゴルフライフの第一歩を踏み出すきっかけになることを、心から願っています。</p>
+            </section>
+            
+            <section id="author-pick" class="not-prose scroll-mt-24">
+                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【筆者の本音】もし私が今から始めるなら？目的別”推し”スクール</h2>
+                <div class="space-y-4 mt-4">
+                    <div class="bg-slate-50 border-l-4 border-green-600 p-4 rounded-r-lg">
+                        <h5 class="font-bold text-slate-800 mt-0">⛳️ まったくの未経験・初心者の私なら…</h5>
+                        <p class="m-0 text-slate-700">迷わず <a href="#riverside_jumbo" class="text-green-700 hover:underline"><strong>リバーサイドジャンボゴルフ</strong></a> に行きます。あの日の私に必要だったのは、難しい理論より「ゴルフって楽しい！」と思える安心感でした。実質無料の初心者スクールは、その最高の入口です。</p>
+                    </div>
+                    <div class="bg-slate-50 border-l-4 border-blue-600 p-4 rounded-r-lg">
+                        <h5 class="font-bold text-slate-800 mt-0">👩‍🦰 女性で、一人で始める私なら…</h5>
+                        <p class="m-0 text-slate-700"><a href="#sakura_gc" class="text-green-700 hover:underline"><strong>さくらゴルフ倶楽部</strong></a> を選びます。女性インストラクターがいる安心感と、初回割引で気軽に試せる雰囲気は、女性が一人で始めるハードルを大きく下げてくれます。</p>
+                    </div>
+                     <div class="bg-slate-50 border-l-4 border-orange-600 p-4 rounded-r-lg">
+                        <h5 class="font-bold text-slate-800 mt-0">🏌️‍♂️ 自己流から本気で抜け出したい私なら…</h5>
+                        <p class="m-0 text-slate-700">少し勇気を出して <a href="#azuchi_gc" class="text-green-700 hover:underline"><strong>安土ゴルフクラブ</strong></a> の門を叩きます。遠回りして独学で苦労したからこそ、質の高いマンツーマンレッスンで基礎から学び直す価値を痛感しています。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="faq" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+                 <h2 class="text-2xl font-bold text-slate-800">ゴルフレッスンに関するよくある質問</h2>
+                 <div class="space-y-6 mt-4">
+                     <div>
+                         <h3 class="text-lg font-bold">Q. 全くの初心者ですが、レッスンに何を持っていけばいいですか？</h3>
+                         <p>A. 多くのスクールではクラブを無料でレンタルできます。動きやすい服装とスニーカー、そしてゴルフグローブ（片手用でOK）があれば十分です。まずは手ぶらに近い感覚で、体験レッスンに申し込んでみるのがおすすめです。<br><strong>ワンポイントアドバイス：</strong>もしご自身のゴルフクラブをお持ちなら、有料レッスンにはぜひ持参しましょう。たとえ古いクラブでも、プロがあなたのクラブを見て「次はこういう特徴のクラブがいいですよ」といったように、今後のクラブ選びに関する貴重なアドバイスをくれることもありますよ。</p>
+                     </div>
+                     <div>
+                         <h3 class="text-lg font-bold">Q. グループレッスンとマンツーマン、どちらがいいですか？</h3>
+                         <p>A. それぞれにメリットがあります。<strong>グループレッスン</strong>は料金が比較的安く、他の生徒さんと交流できる楽しさがあります。<strong>マンツーマンレッスン</strong>は料金は高めですが、自分の課題に特化して集中的に指導してもらえます。まずはグループレッスンの体験から始めて、雰囲気を感じてみるのが良いでしょう。</p>
+                     </div>
+                 </div>
+            </section>
+            
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+            </div>
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+            <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+                 <h2 class="text-2xl md:text-3xl font-bold text-slate-800">各施設の基本情報まとめ</h2>
+                 <div class="space-y-8 mt-4">
+                     {rangeIds.map(id => {
+                         const range = rangesData[id];
+                         if (!range) return null;
+
+                         const avgRating = range.avgRating || 0;
+                         const reviewCount = range.reviewCount || 0;
+                         const starRating = '★'.repeat(Math.round(avgRating)) + '☆'.repeat(5 - Math.round(avgRating));
+
+                         const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
+                         const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
+
+                         return (
+                             <div id={id} class="scroll-mt-24">
+                                 <h3 class="text-xl font-bold">{range.name} <a href={`/ranges/${id}/`} class="text-lg text-amber-500 no-underline hover:opacity-75" title={`${range.name}のレビューを見る`}>{starRating}</a><span class="text-sm text-slate-500 ml-2">({avgRating > 0 ? avgRating.toFixed(1) : '-'} / {reviewCount}件)</span></h3>
+                                 <div class="not-prose overflow-x-auto mt-4">
+                                     <table class="w-full text-left border-collapse"><tbody>
+                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{range.address}</a></td></tr>
+                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th><td class="py-3 px-4">{additionalData?.[id]?.access || '-'}</td></tr>
+                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4">{range.phone ? <a href={`tel:${range.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{range.phone}</a> : '-'}</td></tr>
+                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4" set:html={range.business_hours?.replace(/\n/g, '<br />') || '-'} /></tr>
+                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th><td class="py-3 px-4">{range.yardage ? `${range.yardage}yd` : 'インドア'}</td></tr>
+                                         <tr><th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th><td class="py-3 px-4">{range.bays ? `${range.bays}席` : '-'}</td></tr>
+                                     </tbody></table>
+                                 </div>
+                                 <div class="not-prose mt-4">
+                                     <iframe src={mapsEmbedUrl} width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title={`${range.name}の地図`}></iframe>
+                                 </div>
+                             </div>
+                         )
+                     })}
+                 </div>
+            </section>
+        </article>
+    </div>
+</BaseLayout>
