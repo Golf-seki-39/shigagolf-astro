@@ -62,18 +62,8 @@ const mainEntity = {
     "headline": headline, "description": description, "image": [imageUrl],
     "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
     "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }},
-    "datePublished": new Date(publicationDate).toISOString(), "dateModified": lastModified.toISOString(),
-    "review": {
-        "@type": "Review",
-        // ★★★ 修正点：レビュー対象を明記 ★★★
-        "itemReviewed": {
-            "@type": "WebPage",
-            "name": headline
-        },
-        "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
-        "author": { "@type": "Person", "name": "関（シガゴル運営者）" },
-        "reviewBody": "自身のレッスン失敗談を元に、滋賀県内の4つのゴルフスクールを初心者目線で徹底比較。各スクールの長所と注意点を正直にレビューしました。"
-    }
+    "datePublished": new Date(publicationDate).toISOString(), "dateModified": lastModified.toISOString()
+    // ★★★ 修正点：エラーの原因となるreview項目を削除 ★★★
 };
 
 const faqElements = {
@@ -92,7 +82,6 @@ const experienceReports = [
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
     { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/0rkZCzV.jpeg' },
 ];
-// ★★★ 修正点：今回の記事を含む5件のリストに修正 ★★★
 const comparisonArticles = [
     { url: '/articles/comparison/omi-pricerank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
