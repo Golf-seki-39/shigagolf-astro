@@ -221,89 +221,92 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         </a>
         <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
             {/* ▼▼▼【CSS修正】ここから全修正 ▼▼▼ */}
-            <style>
-              html { scroll-behavior: smooth; }
-              section[id] { scroll-margin-top: 80px; }
-              .cta-icon { width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: text-bottom; }
-              .diagnosis-card { background-color: #f8fafc; border-left: 5px solid #16a34a; padding: 1rem; margin-bottom: 1rem; border-radius: 0.25rem; }
-              .diagnosis-card h5 { margin-top: 0; }
-              .table-wrapper { overflow-x: auto; }
-              .min-w-table { min-width: 600px; }
-              .table-wrapper th:first-child, .table-wrapper td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
-              .table-wrapper thead th:first-child { background-color: #f1f5f9; }
-              .table-wrapper tbody tr.bg-white td:first-child { background-color: #ffffff; }
-              .table-wrapper tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+           <style>
+  html { scroll-behavior: smooth; }
+  section[id] { scroll-margin-top: 80px; }
+  .cta-icon { width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: text-bottom; }
+  .diagnosis-card { background-color: #f8fafc; border-left: 5px solid #16a34a; padding: 1rem; margin-bottom: 1rem; border-radius: 0.25rem; }
+  .diagnosis-card h5 { margin-top: 0; }
+  .table-wrapper { overflow-x: auto; }
+  .min-w-table { min-width: 600px; }
+  .table-wrapper th:first-child, .table-wrapper td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
+  .table-wrapper thead th:first-child { background-color: #f1f5f9; }
+  .table-wrapper tbody tr.bg-white td:first-child { background-color: #ffffff; }
+  .table-wrapper tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
 
-              /* ▼▼▼【スマホ用レスポンシブ対応】ここから追記 ▼▼▼ */
-              @media (max-width: 767px) {
-                /* デフォルトはカード表示にする */
-                .responsive-table thead {
-                  display: none;
-                }
-                .responsive-table tr {
-                  display: block;
-                  margin-bottom: 1.5rem;
-                  border: 1px solid #cbd5e1;
-                  border-radius: 0.5rem;
-                  overflow: hidden;
-                  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-                }
-                .responsive-table td {
-                  display: block;
-                  text-align: right;
-                  position: relative;
-                  padding-left: 50%;
-                  border-bottom: 1px solid #e2e8f0;
-                }
-                .responsive-table td:last-child {
-                  border-bottom: none;
-                }
-                .responsive-table td::before {
-                  content: attr(data-label);
-                  position: absolute;
-                  left: 0.75rem;
-                  top: 50%;
-                  transform: translateY(-50%);
-                  width: 45%;
-                  font-weight: 600;
-                  text-align: left;
-                  color: #475569;
-                }
-                .responsive-table td:first-child {
-                  background-color: #f1f5f9;
-                  font-weight: bold;
-                  text-align: center;
-                  padding-left: 0.75rem;
-                }
-                .responsive-table td:first-child::before {
-                   content: '';
-                }
+  /* ▼▼▼【スマホ用レスポンシブ対応】ここから修正 ▼▼▼ */
+  /* 【変更点1】「かつ縦向き(portrait)の時」という条件を追加 */
+  @media (max-width: 767px) and (orientation: portrait) {
+    /* デフォルトはカード表示にする */
+    .responsive-table thead {
+      display: none;
+    }
+    .responsive-table tr {
+      display: block;
+      margin-bottom: 1.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+    .responsive-table td {
+      display: block;
+      text-align: right;
+      position: relative;
+      border-bottom: 1px solid #e2e8f0;
+      /* 【変更点2】padding-leftを固定値に変更して無駄な空白をなくす */
+      padding: 0.75rem;
+      padding-left: 130px; /* ラベル用のスペースを確保 */
+    }
+    .responsive-table td:last-child {
+      border-bottom: none;
+    }
+    .responsive-table td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-weight: 600;
+      text-align: left;
+      color: #475569;
+       /* 【変更点2】ラベルの幅を固定値にする */
+      width: 110px;
+    }
+    .responsive-table td:first-child {
+      background-color: #f1f5f9;
+      font-weight: bold;
+      text-align: center;
+      padding-left: 0.75rem;
+    }
+    .responsive-table td:first-child::before {
+       content: '';
+    }
 
-                /* .show-table-view が付与されたら、テーブル表示に戻す */
-                .show-table-view .responsive-table thead {
-                    display: table-header-group;
-                }
-                .show-table-view .responsive-table tr,
-                .show-table-view .responsive-table td {
-                    display: table-cell;
-                    margin-bottom: 0;
-                    border: 1px solid #cbd5e1;
-                    border-radius: 0;
-                    box-shadow: none;
-                    text-align: center;
-                    padding-left: 1rem;
-                    position: static;
-                }
-                .show-table-view .responsive-table td:first-child {
-                    text-align: left;
-                }
-                .show-table-view .responsive-table td::before {
-                    content: none;
-                }
-              }
-              /* ▲▲▲【スマホ用レスポンシブ対応】ここまで追記 ▲▲▲ */
-            </style>
-            {/* ▲▲▲【CSS修正】ここまで全修正 ▲▲▲ */}
+    /* .show-table-view が付与されたら、テーブル表示に戻す */
+    .show-table-view .responsive-table thead {
+        display: table-header-group;
+    }
+    .show-table-view .responsive-table tr,
+    .show-table-view .responsive-table td {
+        display: table-cell;
+        margin-bottom: 0;
+        border: 1px solid #cbd5e1;
+        border-radius: 0;
+        box-shadow: none;
+        text-align: center;
+        padding: 0.5rem; /* テーブル表示の時のpaddingを調整 */
+        position: static;
+    }
+    .show-table-view .responsive-table td:first-child {
+        text-align: left;
+    }
+    .show-table-view .responsive-table td::before {
+        content: none;
+    }
+  }
+  /* ▲▲▲【スマホ用レスポンシブ対応】ここまで修正 ▲▲▲ */
+</style>
             
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
