@@ -2,8 +2,9 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
 
-// ▼▼▼ 修正点1：3つの共通コンポーネントをインポート ▼▼▼
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
@@ -18,7 +19,6 @@ const imageUrl = "https://i.imgur.com/wgDjFch.jpeg";
 const rangeId = "sakura_gc";
 // --- End of specific information ---
 
-// ▼▼▼ 修正点2：シェアボタン用の変数を定義 ▼▼▼
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/sakura-gc-review/`;
 const headline = title.split(" | ")[0];
@@ -34,7 +34,6 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// ▼▼▼ 修正点3：全記事共通の「関連記事リスト」を定義 ▼▼▼
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
@@ -55,9 +54,37 @@ const comparisonArticles = [
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": title.split(" | ")[0],
+        // [修正点4] mainEntityOfPage を追加
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleUrl
+        },
+        "headline": headline,
         "description": description,
-        "image": [ imageUrl ],
+        "image": [ 
+            imageUrl,
+            "https://i.imgur.com/ZqtS7KZ.png",
+            "https://i.imgur.com/JESF50G.jpeg",
+            "https://i.imgur.com/MxbDzQ0.png",
+            "https://i.imgur.com/TOM6sID.jpeg",
+            "https://i.imgur.com/EtCU4D6.jpeg",
+            "https://i.imgur.com/9ypbv0k.jpeg",
+            "https://i.imgur.com/7wsrA50.jpeg",
+            "https://i.imgur.com/hfDU3SE.jpeg",
+            "https://i.imgur.com/RYK0Lmz.png",
+            "https://i.imgur.com/0vYblgK.jpeg",
+            "https://i.imgur.com/5aJXKlT.png",
+            "https://i.imgur.com/nsHMRDX.jpeg",
+            "https://i.imgur.com/POpXpCd.jpeg",
+            "https://i.imgur.com/InmvnTr.jpeg",
+            "https://i.imgur.com/7Owsnqp.jpeg",
+            "https://i.imgur.com/GEFqCJG.jpeg",
+            "https://i.imgur.com/xLzoLbP.jpeg",
+            "https://i.imgur.com/DMFHH2o.jpeg",
+            "https://i.imgur.com/A8TfyKs.jpeg",
+            "https://i.imgur.com/EUkMBQR.jpeg",
+            "https://i.imgur.com/P2cOPEX.jpeg"
+        ],
         "author": {
             "@type": "Person",
             "name": "関（せき）",
@@ -114,7 +141,7 @@ const comparisonArticles = [
         >
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {title.split(" | ")[0]}
+                    {headline}
                 </h1>
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
@@ -128,13 +155,15 @@ const comparisonArticles = [
             </p>
 
             <figure class="my-6">
-                <img
+                <Image
                     src="https://i.imgur.com/wgDjFch.jpeg"
                     alt="夕暮れ後の静けさに包まれた「さくらゴルフ倶楽部」入口の様子"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
-                    width="1280"
-                    height="960"
+                    width={1280}
+                    height={960}
+                    format="webp"
+                    quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
                     夕暮れ後の静けさに包まれた「さくらゴルフ倶楽部」入口の様子（2025年4月／筆者撮影）
@@ -147,13 +176,15 @@ const comparisonArticles = [
             </p>
 
             <figure class="my-6">
-                <img
+                 <Image
                     src="https://i.imgur.com/ZqtS7KZ.png"
                     alt="広々とした『さくらゴルフ倶楽部』の打席エリア。ナイター照明も完備"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
-                    width="1280"
-                    height="960"
+                    width={1280}
+                    height={960}
+                    format="webp"
+                    quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
                     広々とした『さくらゴルフ倶楽部』の打席エリア。ナイター照明も完備（2025年4月／筆者撮影）
@@ -184,7 +215,7 @@ const comparisonArticles = [
             </h2>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/JESF50G.jpeg" alt="メンバー特典のチラシ。女性会員はプレミアム会員相当" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                 <Image src="https://i.imgur.com/JESF50G.jpeg" alt="メンバー特典のチラシ。女性会員はプレミアム会員相当" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">メンバー特典のチラシ。女性会員はプレミアム会員相当（2025年4月／筆者撮影）</figcaption>
             </figure>
 
@@ -197,7 +228,7 @@ const comparisonArticles = [
             </ul>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/MxbDzQ0.png" alt="レディースパック打ち放題の詳細看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                 <Image src="https://i.imgur.com/MxbDzQ0.png" alt="レディースパック打ち放題の詳細看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">レディースパック打ち放題の詳細看板（2025年4月／筆者撮影）</figcaption>
             </figure>
 
@@ -225,98 +256,98 @@ const comparisonArticles = [
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【打席設備】</h3>
             <p><strong>マット：</strong> 打席によって多少の使用感はありますが、練習に支障が出るレベルではありません。</p>
             <figure class="my-6">
-                <img src="https://i.imgur.com/TOM6sID.jpeg" alt="昼間の打席マットの状態。ティーアップされている球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/TOM6sID.jpeg" alt="昼間の打席マットの状態。ティーアップされている球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">昼間の打席マットの状態。ティーアップされている球（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p><strong>ティーアップ：</strong> 便利な自動式。高さも5段階に調整可能で操作も簡単！</p>
             <figure class="my-6">
-                <img src="https://i.imgur.com/EtCU4D6.jpeg" alt="ティーの高さ調整をする機械。プリカの挿入もこの一台で！" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/EtCU4D6.jpeg" alt="ティーの高さ調整をする機械。プリカの挿入もこの一台で！" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">ティーの高さ調整をする機械。プリカの挿入もこの一台で！（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p><strong>ボール：</strong> 様々なメーカーのロストボールがミックスされています。状態は色々ですが、練習用としては十分です。</p>
             <figure class="my-6">
-                <img src="https://i.imgur.com/9ypbv0k.jpeg" alt="アプローチ練習場で実際にレンタルする球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/9ypbv0k.jpeg" alt="アプローチ練習場で実際にレンタルする球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場で実際にレンタルする球（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p><strong>ターゲット：</strong> 10ヤード毎のラインや多数の旗、グリーンを模した的も設置されていて、距離感が掴みやすい！奥のネット(200ヤード～)にドライバーショットが届けば気分爽快です！</p>
             <figure class="my-6">
-                <img src="https://i.imgur.com/7wsrA50.jpeg" alt="打席から見たフェアウェイ（ターゲットのyd表示あり）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/7wsrA50.jpeg" alt="打席から見たフェアウェイ（ターゲットのyd表示あり）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">打席から見たフェアウェイ（星印をつけているところにターゲット（yd表示）があります）（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p><strong>無料貸し出し品：</strong> ヘッドスピード測定器、アドレス確認用ミラー、スマホホルダーも受付で無料レンタル可能。スイングチェックに役立ちます。</p>
             <figure class="my-6">
-                <img src="https://i.imgur.com/hfDU3SE.jpeg" alt="無料貸し出し品一覧の写真（店内貼り出し用ポスター）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                 <Image src="https://i.imgur.com/hfDU3SE.jpeg" alt="無料貸し出し品一覧の写真（店内貼り出し用ポスター）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">無料貸し出し品一覧の写真（店内貼り出し用ポスター）（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【初心者ゴルファーさん注目！集中できる「初心者優先スペース」】</h3>
             <figure class="my-6">
-                <img src="https://i.imgur.com/RYK0Lmz.png" alt="身長より高い打席横にあるパーテーション" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                 <Image src="https://i.imgur.com/RYK0Lmz.png" alt="身長より高い打席横にあるパーテーション" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">身長より高い打席横にあるパーテーション。（2025年4月／筆者撮影）</figcaption>
             </figure>
             
             <p>2階打席の一番奥には、6打席の「初心者優先スペース」があります。 ここが本当に素晴らしい！ 高さ約2mのしっかりしたパーテーションで区切られているので、隣の打席や周りの視線を気にせず、自分のペースで練習に集中できます。「空振りしたら恥ずかしいな…」なんて心配、もう必要ありません！ 安心して、納得いくまでクラブを振れますよ。</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/0vYblgK.jpeg" alt="横から見た初心者優先スペース。光差し込む昼間の打席" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/0vYblgK.jpeg" alt="横から見た初心者優先スペース。光差し込む昼間の打席" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">横から見た初心者優先スペース。光差し込む昼間の打席（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>一番奥は左利き用の打席になっています。2階なので打ち下ろしで気持ちよく練習できるのも◎。 受付で空き状況を確認してみてくださいね。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/5aJXKlT.png" alt="フロントに設置されている打席の空き状況確認掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                 <Image src="https://i.imgur.com/5aJXKlT.png" alt="フロントに設置されている打席の空き状況確認掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">フロントに設置されている打席の空き状況確認掲示板（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【スコアメイクの鍵！実戦力が身につく「アプローチ練習場」】</h3>
             <figure class="my-6">
-                <img src="https://i.imgur.com/nsHMRDX.jpeg" alt="アプローチ練習場の全体。芝の状態などがはっきりわかる昼間" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/nsHMRDX.jpeg" alt="アプローチ練習場の全体。芝の状態などがはっきりわかる昼間" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場の全体。芝の状態などがはっきりわかる昼間（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>ゴルフのスコアを左右するショートゲーム。「さくらゴルフ倶楽部」には、約60ヤードのアプローチ練習場があり、これがまた素晴らしいんです！</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/POpXpCd.jpeg" alt="アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                 <Image src="https://i.imgur.com/POpXpCd.jpeg" alt="アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>正直にお伝えすると、芝やバンカーの状態が常に完璧！というわけではありません。 でも、それが逆にイイ！ コースで遭遇するような、ちょっと難しいライやアゴの高いバンカーからのショットなど、より実践的な練習ができるんです。 旗も2本立っているので、目標設定もしやすいですよ。</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/InmvnTr.jpeg" alt="アプローチ練習場のバンカー。砂の状態やライの状態を確認できます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/InmvnTr.jpeg" alt="アプローチ練習場のバンカー。砂の状態やライの状態を確認できます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場のバンカー。砂の状態やライの状態を確認できます（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>私自身、ここのアプローチ練習場で様々な打ち方を試し、練習を重ねた結果、苦手だったアプローチでのトップが激減！スコアアップを実感しています。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/7Owsnqp.jpeg" alt="目土小屋。袋の中にスコップが入っているのでそのまま使えます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/7Owsnqp.jpeg" alt="目土小屋。袋の中にスコップが入っているのでそのまま使えます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">目土小屋。袋の中にはスコップが入っているのでそのまま使えます（2025年4月／筆者撮影）</figcaption>
             </figure>
             
             <p>ゴルフシューズはもちろん、スニーカーでの利用もOK。 練習後にはコンプレッサーで汚れを落とせるのも嬉しいポイント。休憩用のベンチも設置されています。</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/GEFqCJG.jpeg" alt="アプローチ練習場に設置されている休憩用ベンチ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/GEFqCJG.jpeg" alt="アプローチ練習場に設置されている休憩用ベンチ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場に設置されている休憩用ベンチ（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【気分転換にも最適「パター練習コーナー」】</h3>
             <figure class="my-6">
-                <img src="https://i.imgur.com/xLzoLbP.jpeg" alt="2Fオープンスペースにあるパター練習用のミニグリーン" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/xLzoLbP.jpeg" alt="2Fオープンスペースにあるパター練習用のミニグリーン" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">2Fオープンスペースにあるパター練習用のミニグリーン（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>2階ホールには、パターマット2種類とフラットなミニグリーン（約2m×1m）も。 本格的なパター練習には少し物足りないかもしれませんが、打席練習の合間の気分転換や、初心者の方がパットの感覚を掴むには最適です。 気軽に利用してみてください。</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/DMFHH2o.jpeg" alt="2Fオープンスペースにあるパターマット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/DMFHH2o.jpeg" alt="2Fオープンスペースにあるパターマット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">2Fオープンスペースにあるパターマット（2025年4月／筆者撮影）</figcaption>
             </figure>
             
@@ -329,7 +360,7 @@ const comparisonArticles = [
             <p>重ねてお伝えしますが、これらはあくまで店員さんのご厚意によるものであり、常に同様の対応を期待できるものではありません。 もし同様の状況になった場合は、必ず事前に店員さんに謙虚な姿勢で相談してみてくださいね。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/A8TfyKs.jpeg" alt="打席から見た、晴れた昼間のフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/A8TfyKs.jpeg" alt="打席から見た、晴れた昼間のフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">打席から見た、晴れた昼間のフェアウェイ（2025年4月／筆者撮影）</figcaption>
             </figure>
 
@@ -337,14 +368,13 @@ const comparisonArticles = [
                 初心者だった私が「ホッ」とした瞬間。店員さんの神対応！
             </h2>
             <figure class="my-6">
-                <img src="https://i.imgur.com/EUkMBQR.jpeg" alt="さくらゴルフ倶楽部のメンバーズカード（メンバー会員）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/EUkMBQR.jpeg" alt="さくらゴルフ倶楽部のメンバーズカード（メンバー会員）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">さくらゴルフ倶楽部のメンバーズカード（メンバー会員）（2025年5月／筆者撮影）</figcaption>
             </figure>
             <p>私がまだゴルフを始めたばかりの頃。 ある日、夜9時頃から練習を始めたのですが、夜10時になった瞬間、突然プリペイドカードが打席から排出されたんです！</p>
             <p>「え？何？故障！？」とパニックになっていると、たまたま近くを通りかかった店員さんが優しく声をかけてくれました。 「22時からは料金が安くなるので、一度カードが出てくるんですよ。早朝も同じシステムで、朝9時までは入場料不要で単価も安いので、9時になると一度排出されて受付が必要になるんです」と。</p>
             <p>もう、本当にホッとしました…。 初めて練習場に行く時って、色々不安ですよね。 でも、「さくらゴルフ倶楽部」の店員さんは、こちらから「初めて来ました」と伝えれば、本当に丁寧に（ある意味、お節介なくらい(笑)）教えてくれるので、安心して練習を始められますよ。</p>
             
-            {/* ▼▼▼ 修正点4：ここからが追加・変更箇所です ▼▼▼ */}
             <div class="not-prose my-12 space-y-12">
             {
                 category === '体験談' ? (
@@ -364,7 +394,6 @@ const comparisonArticles = [
             </div>
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
-            {/* ▲▲▲ ここまで ▲▲▲ */}
 
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
@@ -378,6 +407,21 @@ const comparisonArticles = [
                                     <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
                                     <td class="py-3 px-4">{rangeData.name}</td>
                                 </tr>
+                                 {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
                                     <td class="py-3 px-4">
@@ -426,6 +470,7 @@ const comparisonArticles = [
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
@@ -456,7 +501,7 @@ const comparisonArticles = [
             <p>設備は最新鋭ピカピカ！というわけではないかもしれませんが、それを補って余りあるほどの練習のしやすさと居心地の良さがここにはあります。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/P2cOPEX.jpeg" alt="1Fエントランス横休憩スペースに設置されているマッサージチェア" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1280" height="960" />
+                 <Image src="https://i.imgur.com/P2cOPEX.jpeg" alt="1Fエントランス横休憩スペースに設置されているマッサージチェア" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">マッサージチェアも置いてます笑 1Fエントランス横休憩スペースに設置されているマッサージチェア。自由に使用可能（2025年4月／筆者撮影）</figcaption>
             </figure>
 
