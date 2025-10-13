@@ -2,8 +2,9 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
 
-// ▼▼▼ 修正点1：3つの共通コンポーネントをインポート ▼▼▼
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
@@ -16,11 +17,10 @@ const pubDate = "2025-09-28";
 const pubDateISO = "2025-09-28T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/TQmlJFb.jpeg"; // メインのアイキャッチ画像
 const rangeId = "garage_park";
-// --- ここまで ---
 
-// ▼▼▼ 修正点2：シェアボタン用の変数を定義 ▼▼▼
+// --- シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
-const articleUrl = `${baseUrl}/articles/garege-park-review/`; // この記事のURLに合わせて修正
+const articleUrl = `${baseUrl}/articles/garege-park-review/`;
 const headline = title.split(" | ")[0];
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
@@ -34,7 +34,7 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// ▼▼▼ 修正点3：全記事共通の「関連記事リスト」を定義 ▼▼▼
+// --- 全記事共通の「関連記事リスト」を定義 ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポー', img: 'https://i.imgur.com/nMH3jlD.png' },
@@ -55,6 +55,11 @@ const comparisonArticles = [
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
+        // [修正点4] mainEntityOfPage を追加
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": articleUrl
+        },
         "headline": title.split(" | ")[0],
         "description": description,
         "image": [ 
@@ -113,25 +118,24 @@ const comparisonArticles = [
         <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {title.split(" | ")[0]}
+                    {headline}
                 </h1>
                 <p class="text-sm text-slate-500 mt-2">
                     公開日：{pubDate}
                 </p>
             </header>
 
-            <img src={imageUrl} alt="がれーじぱーく東近江のインドア打席" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" fetchpriority="high" />
+            <Image src={imageUrl} alt="がれーじぱーく東近江のインドア打席" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width={1200} height={800} fetchpriority="high" format="webp" quality={80} />
             
             <p class="text-xl font-bold text-green-700">「インドアゴルフって、結局コスパ悪くない？」</p>
             <p>広々とした屋外練習場が豊富な滋賀でなら、なおさらそう思いませんか？ 実は僕も、つい最近までそう信じて疑いませんでした。</p>
             <p>X（旧Twitter）で<strong>「がれーじぱーく東近江」</strong>の存在を知った時も、正直なところ半信半疑。<strong>「インドアなのに、驚くほど安い」「完全会員制」</strong>という言葉に、「一見さんお断りだったら、どうしよう…」と、少しだけ身構えていました。</p>
             
-
             <p>確かめるため、僕はあえて予約なしで直接その場所へ。駐車場に着き、建物を前にして、一瞬足が止まります。</p>
             <p>ダーツ、卓球、ラジコンサーキット…。ゴルフとは少し違うカルチャーの気配が漂う、少し薄暗い入り口。</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/B7gBUds.jpeg" alt="少し薄暗く秘密基地感のある施設の入り口" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/B7gBUds.jpeg" alt="少し薄暗く秘密基地感のある施設の入り口" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">本当にここでいいのか？期待と不安が入り混じる瞬間。</figcaption>
             </figure>
             
@@ -157,7 +161,7 @@ const comparisonArticles = [
             <p>ここの心臓部は、弾道測定器<strong>「スカイトラック」</strong>。僕にとっての最高の価値は、ショット直後に<strong>正面と後方の2視点から自分のスイング映像を即座に確認できる</strong>ことでした。</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/9y19TD3.jpeg" alt="スカイトラックの弾道データと2方向のスイング映像が映る画面" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/9y19TD3.jpeg" alt="スカイトラックの弾道データと2方向のスイング映像が映る画面" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">感覚と現実のズレを、データと映像が埋めてくれる。</figcaption>
             </figure>
 
@@ -175,12 +179,12 @@ const comparisonArticles = [
             <p>練習の合間に休憩室を覗くと、また衝撃が。ジュースやアイス、缶ビールまで並ぶ冷蔵庫の横に、ポツンと置かれた箱。そう、ここは欲しいものを自分で取り、お金を貯金箱のような缶にいれる、完全な信頼で成り立つ“無人販売所”なのです。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/sKj3RRU.jpeg" alt="賽銭箱のような料金箱が置かれたユニークな休憩室" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/sKj3RRU.jpeg" alt="賽銭箱のような料金箱が置かれたユニークな休憩室" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">このアナログ感が、心を和ませる。</figcaption>
             </figure>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/fekvfgx.png" alt="ドリンクや軽食の料金表" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/fekvfgx.png" alt="ドリンクや軽食の料金表" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">良心的な価格設定に、オーナーの人柄が滲み出る。</figcaption>
             </figure>
             
@@ -204,7 +208,7 @@ const comparisonArticles = [
             <p>データの蓄積ができないなら、スマホで画面を録画すればOK。僕は気になる番手の平均データをスマホで検索し、自分のデータと見比べながら練習します。まるで、ネットという名のコーチと二人三脚でスイングを改造していく感覚です。</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/rSZgLB9.jpeg" alt="スマホでデータを調べながら練習する様子" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/rSZgLB9.jpeg" alt="スマホでデータを調べながら練習する様子" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">活用術②：仲間と「ゴルフ合宿」でコスパ最強</h3>
@@ -219,8 +223,6 @@ const comparisonArticles = [
             <p>僕が、少しくらい暑くてもここに通い続けてしまう理由。それは、練習の質の高さだけではありません。「店番よろしく！」と屈託なく笑い、僕を仲間として信頼してくれるオーナーの存在。ここは、僕にとって<strong>「ゴルフが上手くなるための、最高の秘密基地」</strong>なのです。</p>
             <p class="font-bold mt-6">もしあなたが、今の練習方法に少しでも伸び悩みを感じているなら。あるいは、ただ純粋にゴルフを楽しめる隠れ家を探しているなら。一度、この“秘密基地”の扉を叩いてみてください。きっと、僕のようにゴルフ観がひっくり返されるはずですから。</p>
 
-            
-            {/* ▼▼▼ 修正点4：ここからが追加・変更箇所です ▼▼▼ */}
             <div class="not-prose my-12 space-y-12">
             {
                 category === '体験談' ? (
@@ -240,8 +242,6 @@ const comparisonArticles = [
             </div>
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
-            {/* ▲▲▲ ここまで ▲▲▲ */}
-
 
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 「がれーじぱーく東近江」の基本情報
@@ -255,6 +255,21 @@ const comparisonArticles = [
                                     <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">施設名</th>
                                     <td class="py-3 px-4">{rangeData.name}</td>
                                 </tr>
+                                {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
                                     <td class="py-3 px-4">
@@ -310,6 +325,7 @@ const comparisonArticles = [
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
@@ -328,8 +344,6 @@ const comparisonArticles = [
                     {rangeData ? `「${rangeData.name}」のシガゴル公式レビューページへ →` : "公式レビューページへ →"}
                 </a>
             </p>
-            
-            {/* 元の<section id="related-articles">は削除しました */}
         </article>
     </div>
 
