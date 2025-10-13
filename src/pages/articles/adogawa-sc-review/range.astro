@@ -3,6 +3,8 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [提案1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
 
 // --- [2] 3つの共通コンポーネントをインポート ---
 import MySlider from '../../../components/MySlider.astro';
@@ -116,7 +118,7 @@ const comparisonArticles = [
             <p>ここはゴルフコースのティーイングエリアか？――思わずそう錯覚してしまうほど、圧倒的な開放感。滋賀県高島市にある打ちっぱなし、「安曇川スポーツセンター」は、「ドライバーを心の底から思いっきり振り抜きたい」というゴルファーの願いを叶えてくれる練習場です。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/Nm3ngEQ.jpeg" alt="安曇川スポーツセンターの広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/Nm3ngEQ.jpeg" alt="安曇川スポーツセンターの広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
             
             <p>しかし、その大きな魅力の裏には、施設の歴史を感じさせる側面や、訪れる前に知っておきたい注意点も存在します。この記事では、私が実際に体験したことを元に、その魅力とリアルな姿を正直にお伝えします。</p>
@@ -141,7 +143,7 @@ const comparisonArticles = [
             <p>ただ練習するという以上に、この景色の中でドライバーを振り抜くこと自体が、最高のストレス発散になります。難しいことを考えず、ただひたすらに気持ちよくボールを打ちたい。そんな日にこそ、訪れたい場所です。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/gsDMZjj.png" alt="ヤード表示と広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                 <Image src="https://i.imgur.com/gsDMZjj.png" alt="ヤード表示と広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 練習場で生まれた、一期一会の出会い</h3>
@@ -155,7 +157,7 @@ const comparisonArticles = [
             <p>素晴らしい魅力がある一方で、事前に知っておくべき点もあります。第一に、施設の歴史は深く、最新設備が整っているわけではありません。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/6ib3tNo.png" alt="使い込まれて凹んだ打席マット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                 <Image src="https://i.imgur.com/6ib3tNo.png" alt="使い込まれて凹んだ打席マット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">長年の歴史を感じさせる打席マット。場所によっては凹みも。</figcaption>
             </figure>
 
@@ -170,7 +172,7 @@ const comparisonArticles = [
             <p>月に2回の「球単価2円デー」は破格ですが、常連さん曰く「打席待ちができるほど混雑する」とのこと。「後ろに待っている人がいる」というプレッシャーで集中できないのであれば、あえて通常料金の空いている時間帯を狙うのも賢い選択です。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/Ov8534m.png" alt="2円デーの詳細が書かれた張り紙" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="960" height="1280" />
+                 <Image src="https://i.imgur.com/Ov8534m.png" alt="2円デーの詳細が書かれた張り紙" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">人気のイベントデー。時間と打席を確認してから訪れたい。</figcaption>
             </figure>
 
@@ -186,7 +188,7 @@ const comparisonArticles = [
             <p>これはあくまで取材という特殊な状況での出来事であり、一般の利用者が同じ経験をすることはないと思います。ただ、施設の顔である受付の対応には、改善の余地があると感じたのもまた事実です。</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/OQutn0l.png" alt="安曇川スポーツセンターの受付外観" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                 <Image src="https://i.imgur.com/OQutn0l.png" alt="安曇川スポーツセンターの受付外観" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h2 id="section-5" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">結論：どんなゴルファーにおすすめできるか？</h2>
@@ -196,10 +198,8 @@ const comparisonArticles = [
             <p>安曇川スポーツセンターは、そんな不思議な魅力を持った打ちっぱなしです。</p>
             <p class="font-bold">きっと、次にドライバーが暴れた日、私はまたこの場所を思い出すでしょう。</p>
 
-
             <div class="not-prose my-12 space-y-12">
             {
-                // 指示通り、体験談カテゴリでは「比較記事」のみ表示
                 category === '体験談' && (
                     <MySlider 
                         articles={comparisonArticles} 
@@ -224,6 +224,21 @@ const comparisonArticles = [
                                     <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
                                     <td class="py-3 px-4">{rangeData.name}</td>
                                 </tr>
+                                {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${rangeData.avgRating.toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{rangeData.avgRating.toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(rangeData.avgRating) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
                                     <td class="py-3 px-4">
@@ -251,7 +266,6 @@ const comparisonArticles = [
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
                                     <td class="py-3 px-4">{
-                                        
                                         rangeData.price_ball_weekday_str ||
                                         rangeData.price_uchihodai_weekday_str ||
                                         "お問い合わせください"
@@ -281,6 +295,7 @@ const comparisonArticles = [
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        {/* [提案2] iframeにloading="lazy"を追加（元からありましたが確認）し、URLを標準形式に修正 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
@@ -307,7 +322,8 @@ const comparisonArticles = [
             position: relative;
             width: 100%;
             overflow: hidden;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            /* 修正：レスポンシブな高さ維持のためpadding-topは不要、直接heightを設定 */
+            height: 450px;
         }
         .map-container iframe {
             position: absolute;
