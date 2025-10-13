@@ -3,6 +3,8 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
 
 // --- [2] 3つの共通コンポーネントをインポート ---
 import MySlider from '../../../components/MySlider.astro';
@@ -12,7 +14,7 @@ import AuthorProfile from '../../../components/AuthorProfile.astro';
 // --- [3] この記事固有の情報 ---
 const title = "滋賀・安土で見つけた“ゴルフの原点”。強面店主の優しさに惚れた日 | シガゴル";
 const description = "プリカ不要の現金払いと、強面だけど優しい店主の人柄が魅力の「安土ゴルフクラブ」。最新設備はないけれど、ゴルフの原点に立ち返れる温かい練習場のリアルな体験記です。";
-const category = "体験談"; // この記事の種類を定義
+const category = "体験談";
 const pubDate = "2025-09-18";
 const pubDateISO = "2025-09-18T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/cJBj7Sh.png";
@@ -40,7 +42,7 @@ const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
     { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/0rkZCzV.jpeg' },
-    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://i.imgur.com/Rwj2hi0.png' }, // 仮画像
+    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://i.imgur.com/Rwj2hi0.png' },
 ];
 const comparisonArticles = [
     { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
@@ -56,9 +58,25 @@ const comparisonArticles = [
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
+        // [修正点4] mainEntityOfPage を追加
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleUrl
+        },
         "headline": headline,
         "description": description,
-        "image": [ imageUrl ],
+        "image": [ 
+            imageUrl,
+            "https://i.imgur.com/zlMFn6n.jpeg",
+            "https://i.imgur.com/Bnyh1ZN.png",
+            "https://i.imgur.com/gbVRkcv.png",
+            "https://i.imgur.com/ln4bRN4.png",
+            "https://i.imgur.com/gKVMuM6.jpeg",
+            "https://i.imgur.com/aDtm6av.png",
+            "https://i.imgur.com/TVtZy5Y.png",
+            "https://i.imgur.com/Wcfi623.png",
+            "https://i.imgur.com/EXfntih.png"
+        ],
         "author": {
             "@type": "Person",
             "name": "関（せき）",
@@ -112,7 +130,7 @@ const comparisonArticles = [
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
 
-            <img src={imageUrl} alt="安土ゴルフクラブ アイキャッチ" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width="1200" height="800" />
+            <Image src={imageUrl} alt="安土ゴルフクラブ アイキャッチ" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             
             <p>家の引き出しの奥に眠る、使いかけのプリペイドカード。「あと数百円…」の残高が気になって、そわそわしながらボールを打つ。…そんな、ゴルファーなら誰もが経験する「プリカ地獄」に、あなたは疲れていませんか？</p>
             <p>こんにちは、「ゴルフ初心者代表」の関です。滋賀のゴルフ練習場でお悩みの方へ。今回ご紹介するのは、そんな僕たちの悩みを一掃してくれる、近江八幡市にある「安土ゴルフクラブ」。ここは、僕にとって“ゴルファーの駆け込み寺”のような場所です。</p>
@@ -122,7 +140,7 @@ const comparisonArticles = [
             </div>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/zlMFn6n.jpeg" alt="施設の入り口" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/zlMFn6n.jpeg" alt="施設の入り口" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">滋賀・近江八幡で見つけた、最高の“駆け込み寺”。ここから物語は始まります。</figcaption>
             </figure>
             
@@ -133,7 +151,7 @@ const comparisonArticles = [
             <p>この記事は、そんな最高のギャップから始まった、僕と安土ゴルフクラブの物語。最新設備はないけれど、それ以上に大切な「何か」が、ここにはありました。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/Bnyh1ZN.png" alt="店舗受付カウンター" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/Bnyh1ZN.png" alt="店舗受付カウンター" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
@@ -151,7 +169,7 @@ const comparisonArticles = [
             <p>この練習場の魅力は、まず施設全体を包む「古き良き味」にあります。正直に言えば、建物は古くて、少し狭い。ティーアップも自分でボールをセットする、昔ながらのセルフ方式です。でも、そこがいい。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/gbVRkcv.png" alt="レンジボールやセルフ式がわかる打席の様子" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/gbVRkcv.png" alt="レンジボールやセルフ式がわかる打席の様子" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">使い込まれたボール。ここで多くのゴルファーが腕を磨いてきた証だ。</figcaption>
             </figure>
 
@@ -159,7 +177,7 @@ const comparisonArticles = [
             <p>そして、最大の魅力が「現金での明朗会計」と、その裏にある「究極の気配り」です。僕のように、レビューのために多くの練習場を訪れる者にとって、プリカを使い切れない問題は死活問題。その点、ここは入場料無料で100球700円と、その都度必要な分だけを現金で支払える。このシンプルさが、どれだけ心を軽くしてくれることか。</p>
 
             <figure class="my-6">
-                 <img src="https://i.imgur.com/ln4bRN4.png" alt="シンプルな料金表" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                 <Image src="https://i.imgur.com/ln4bRN4.png" alt="シンプルな料金表" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <p>さらに、ここで僕が見つけた、とっておきの裏技を教えます。</p>
@@ -173,14 +191,14 @@ const comparisonArticles = [
             <p>この柔軟すぎる対応。ゴルファーの気持ちを、これ以上なく汲み取ってくれる、店主の優しさそのものです。お小遣いをやりくりするサラリーマンや学生にとって、まさに「聖地」と呼ぶにふさわしい場所です。</p>
 
             <figure class="my-6">
-                 <img src="https://i.imgur.com/gKVMuM6.jpeg" alt="打放題などの注意点が記載された掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                 <Image src="https://i.imgur.com/gKVMuM6.jpeg" alt="打放題などの注意点が記載された掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h2 id="section-2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">“できない”からこそ、僕らは賢くなる</h2>
             <p>もちろん、この練習場に“ない”ものもあります。最新の弾道測定器も、アプローチ専用グリーンもありません。そして、最大の「影」は、「ドライバーを、心の底から満振りできないこと」かもしれません。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/aDtm6av.png" alt="アイアンのみ使用の注意書き" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/aDtm6av.png" alt="アイアンのみ使用の注意書き" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">「飛ばすな」。この一言こそ、スコアメイクの本質を教えてくれる。</figcaption>
             </figure>
 
@@ -188,7 +206,7 @@ const comparisonArticles = [
             <p>そんな「覚醒したて」の僕にとって、安土ゴルフクラブの180ヤードという距離は、正直、少し窮屈に感じてしまうのです。「やっと打てるようになったこの一打を、ネットに突き刺したくない…！」と、無意識に体がセーブしてしまう。</p>
 
             <figure class="my-6">
-                <img src="https://i.imgur.com/TVtZy5Y.png" alt="打席からみたフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/TVtZy5Y.png" alt="打席からみたフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
             
             <p>しかし、僕は気づいたのです。この「ドライバーを満振りできない」という制約こそが、最高の“恩恵”なのだと。飛ばす誘惑を強制的に断ち切られるからこそ、僕たちは自然と、スコアメイクに最も重要なアイアンの精度を高める練習に集中できるのです。</p>
@@ -197,7 +215,7 @@ const comparisonArticles = [
             <h2 id="section-3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">なぜ、僕は独学なのに「ツアープロのレッスン情報」を載せるのか？</h2>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/Wcfi623.png" alt="ゴルフレッスンの看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/Wcfi623.png" alt="ゴルフレッスンの看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <p>ここで正直に告白すると、僕はレッスンに少しだけトラウマがあります。ゴルフを始めた初日、何もわからない僕を「そんなことも知らないの？」とでも言いたげな態度で扱った、あるレッスンプロがいたからです。（実際には、普通グリップやアドレスは事前に調べてわかってからレッスンに来るのが当たり前やで！と強く言われました。）</p>
@@ -205,7 +223,7 @@ const comparisonArticles = [
             <p>しかし、です。僕個人の経験はさておき、これは客観的に見て、とんでもない価値であることは断言できます。</p>
             
             <figure class="my-6">
-                <img src="https://i.imgur.com/EXfntih.png" alt="プロのレッスン詳細" class="w-full h-auto object-cover rounded-lg" loading="lazy" width="1200" height="800" />
+                <Image src="https://i.imgur.com/EXfntih.png" alt="プロのレッスン詳細" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
             
             <blockquote class="text-xl font-semibold border-l-4 border-green-600 pl-4 my-6">
@@ -224,49 +242,25 @@ const comparisonArticles = [
             <p>そういえば、初めて訪れたあの日。強面の店主さんは、わざわざ打席までついてきてくれて、「ここが一番打ちやすいで」と、ど真ん中の打席を僕に譲ってくれました。マニュアルにはない、人と人との温かい繋がり。</p>
             <p>僕がこの、少しだけ不便な練習場を愛する理由は、結局、それに尽きるのかもしれません。</p>
 
-            
-            {/* ▼▼▼ ここからが修正箇所です ▼▼▼ */}
-<div class="not-prose my-12 space-y-12">
-{
-    // 現在の記事が「体験談」の場合
-    category === '体験談' ? (
-        <>
-            {/* 1番目に「比較記事」のスライダーを表示 */}
-            <MySlider 
-                articles={comparisonArticles} 
-                title="あわせて読みたい「比較記事」"
-            />
-            {/* 2番目に「体験談」のスライダーを表示 */}
-            <MySlider 
-                articles={experienceReports} 
-                title="あわせて読みたい「体験談」"
-            />
-        </>
-    ) 
-    // 現在の記事が「比較記事」の場合
-    : category === '比較記事' ? (
-        <>
-            {/* 1番目に「体験談」のスライダーを表示 */}
-            <MySlider 
-                articles={experienceReports} 
-                title="あわせて読みたい「体験談」"
-            />
-            {/* 2番目に「比較記事」のスライダーを表示 */}
-            <MySlider 
-                articles={comparisonArticles} 
-                title="あわせて読みたい「比較記事」"
-            />
-        </>
-    ) 
-    // どちらでもない場合は何も表示しない
-    : null
-}
-</div>
-
+            <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' ? (
+                    <>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    </>
+                ) 
+                : category === '比較記事' ? (
+                    <>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                    </>
+                ) 
+                : null
+            }
+            </div>
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
-            {/* ▲▲▲ ここまでが修正箇所です ▲▲▲ */}
-
 
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
@@ -280,6 +274,21 @@ const comparisonArticles = [
                                     <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
                                     <td class="py-3 px-4">{rangeData.name}</td>
                                 </tr>
+                                 {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
                                     <td class="py-3 px-4">
@@ -336,6 +345,7 @@ const comparisonArticles = [
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
