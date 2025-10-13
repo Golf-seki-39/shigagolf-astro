@@ -2,6 +2,8 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
 
 // --- 共通コンポーネント ---
 import MySlider from '../../../components/MySlider.astro';
@@ -59,11 +61,18 @@ const mainEntity = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
-    "headline": headline, "description": description, "image": [imageUrl],
+    "headline": headline, "description": description, 
+    // [修正点4] 記事内の全画像を追加
+    "image": [
+        imageUrl,
+        "https://i.imgur.com/S5JuYdV.jpeg",
+        "https://i.imgur.com/WcDqIqT.jpeg",
+        "https://i.imgur.com/ULQKBpI.jpeg",
+        "https://i.imgur.com/B0ozXOC.png"
+    ],
     "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
     "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }},
     "datePublished": new Date(publicationDate).toISOString(), "dateModified": lastModified.toISOString()
-    // ★★★ 修正点：エラーの原因となるreview項目を削除 ★★★
 };
 
 const faqElements = {
@@ -113,7 +122,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>
             </header>
 
-            <img src={imageUrl} alt="滋賀のゴルフ初心者に向けたレッスン選びの防衛マニュアル" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width="1200" height="675" fetchpriority="high" decoding="async" />
+            <Image src={imageUrl} alt="滋賀のゴルフ初心者に向けたレッスン選びの防衛マニュアル" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={675} fetchpriority="high" decoding="async" format="webp" quality={80} />
 
             <div class="not-prose bg-blue-50 p-4 my-6 rounded-lg border border-l-4 border-blue-500">
                 <h4 class="text-lg font-bold text-slate-800 m-0">結論：あなたの目的で選ぶべきレッスンは決まります。</h4>
@@ -188,7 +197,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600">挫折した僕が、あの日の自分に教えたい最高の”入口”</h4>
                      <p>東近江エリアで「これからゴルフを始めたい」「何から手をつけていいか全く分からない」という方に、私が心の底からお勧めするのが、このリバーサイドジャンボゴルフの<strong>「初心者スクール」</strong>です。初心者でも通いやすい雰囲気で、安心してゴルフを始められます。</p>
-                     <img src="https://i.imgur.com/S5JuYdV.jpeg" alt="リバーサイドジャンボゴルフの初心者向けゴルフレッスン案内" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" decoding="async" />
+                     <Image src="https://i.imgur.com/S5JuYdV.jpeg" alt="リバーサイドジャンボゴルフの初心者向けゴルフレッスン案内" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <h5 class="text-lg font-bold">最大の魅力：実質200円！？常識破りの「初心者スクール」</h5>
                      <p>関西ゴルフ振興が実施するこのプログラムは、まさに初心者の救世主。レッスン料・ボール代・クラブレンタル代が全て無料で、4回（1回60分）のレッスンを受けられます。かかるのは登録料2,200円のみで、4回終了後には2,000円分のプリペイドカードが戻ってくるため、<strong>実質200円、缶ジュース2本分ほどの値段</strong>でプロに基礎を教えてもらえる計算です。</p>
                      <h5 class="text-lg font-bold">【要確認】申し込み方法と注意点</h5>
@@ -205,7 +214,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">グリーンピア近江八幡ゴルフ</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600">プロ6名以上！レッスンのデパートで”あなただけ”のコーチを見つける</h4>
                      <p>「自分に合うプロを見つけたい」「いろんなレッスン形式を試してみたい」そんな中〜上級者の方には、このグリーンピア近江八幡ゴルフが最適です。LPGA所属の女性プロからPGAトーナメントプロまで、実に6名以上のプロが在籍しており、まさに「レッスンの総合デパート」です。「スイング解析」も可能な最新機器を使った個人レッスンも選べます。</p>
-                     <img src="https://i.imgur.com/WcDqIqT.jpeg" alt="グリーンピア近江八幡ゴルフの多彩な個人レッスン紹介" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" decoding="async" />
+                     <Image src="https://i.imgur.com/WcDqIqT.jpeg" alt="グリーンピア近江八幡ゴルフの多彩な個人レッスン紹介" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <h5 class="text-lg font-bold">魅力：圧倒的な選択肢</h5>
                      <p>10分1,200円のワンポイントレッスンから、月謝制のスクール、最新機器トラックマンを使ったデータ分析レッスンまで、考えられるほぼ全てのレッスン形式がここにあります。予算や目的に合わせて、自分だけの最適なプランを組み立てられるのが最大の強みです。</p>
                      <h5 class="text-lg font-bold text-red-600">【超重要】初心者スクールの注意点</h5>
@@ -222,7 +231,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">さくらゴルフ倶楽部</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600">バランス型の優等生。特に女性ゴルファーにおすすめ</h4>
                      <p>複数のプロから自分に合ったレッスンを選びたい、でも選択肢が多すぎても困る…。そんな方にフィットするのが、このさくらゴルフ倶楽部です。4名のプロが在籍し、グループレッスンとマンツーマンの両方を選べる、バランスの取れた練習場です。</p>
-                     <img src="https://i.imgur.com/ULQKBpI.jpeg" alt="さくらゴルフ倶楽部の女性インストラクターによるレッスン風景" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" decoding="async" />
+                     <Image src="https://i.imgur.com/ULQKBpI.jpeg" alt="さくらゴルフ倶楽部の女性インストラクターによるレッスン風景" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <h5 class="text-lg font-bold">魅力：試しやすい料金設定と女性インストラクターの在籍</h5>
                      <p>瀬古えりなプロのマンツーマンレッスンは初回1,000円、鎮西まゆみプロのグループレッスンは初回1,500円と、気軽に試せる料金設定が魅力です。特に2名の女性インストラクターが在籍している点は、女性ゴルファーにとって大きな安心材料になるでしょう。不定期で無料のワンポイントレッスンが開催されることもあります。</p>
                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
@@ -243,7 +252,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/azuchi_gc/" class="text-green-700 hover:underline">安土ゴルフクラブ</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600">遠方からも人が集う、本格派マンツーマン専門塾</h4>
                      <p>「自己流の限界を感じている」「本気でスコアアップしたい」そんな熱意あるゴルファーに最適なのが、安土ゴルフクラブの入江賢プロによる個人レッスンです。</p>
-                     <img src="https://i.imgur.com/B0ozXOC.png" alt="安土ゴルフクラブでのマンツーマン指導の様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" decoding="async" />
+                     <Image src="https://i.imgur.com/B0ozXOC.png" alt="安土ゴルフクラブでのマンツーマン指導の様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <h5 class="text-lg font-bold">魅力：質の高い50分のマンツーマンレッスン</h5>
                      <p>レッスンは1回50分。料金は都度払いで4,000円（4回チケットなら1回あたり3,500円）と非常にシンプルです。PGA所属のツアー経験もある入江プロのマンツーマン指導は評判が高く、大津市や他府県からわざわざ通ってくる人もいるほど。質の高い個人レッスンを求めるなら、ここが最有力候補となるでしょう。予約はプロの携帯電話へ直接行います。</p>
                       <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
@@ -317,18 +326,29 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 
                          const avgRating = range.avgRating || 0;
                          const reviewCount = range.reviewCount || 0;
-                         const starRating = '★'.repeat(Math.round(avgRating)) + '☆'.repeat(5 - Math.round(avgRating));
 
                          const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
                          const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+                         // [修正点2] Google Maps Embed URLを標準形式に修正
                          const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
 
                          return (
                              <div id={id} class="scroll-mt-24">
-                                 <h3 class="text-xl font-bold">{range.name} <a href={`/ranges/${id}/`} class="text-lg text-amber-500 no-underline hover:opacity-75" title={`${range.name}のレビューを見る`}>{starRating}</a><span class="text-sm text-slate-500 ml-2">({avgRating > 0 ? avgRating.toFixed(1) : '-'} / {reviewCount}件)</span></h3>
+                                 <h3 class="text-xl font-bold flex items-center flex-wrap gap-x-2 gap-y-1">
+                                    <span>{range.name}</span>
+                                    {/* [修正点3] SVG星評価をここに追加 */}
+                                    <div class="flex items-center" role="img" aria-label={`評価 ${avgRating.toFixed(1)}/5`}>
+                                        {Array.from({ length: 5 }).map((_, i) => (
+                                            <svg class={`w-5 h-5 ${i < Math.round(avgRating) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        ))}
+                                    </div>
+                                    <span class="text-sm text-slate-500 font-normal">({avgRating > 0 ? avgRating.toFixed(1) : '-'} / {reviewCount}件)</span>
+                                 </h3>
                                  <div class="not-prose overflow-x-auto mt-4">
                                      <table class="w-full text-left border-collapse"><tbody>
-                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{range.address}</a></td></tr>
+                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href={mapsSearchUrl.replace('{searchQuery}', searchQuery)} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{range.address}</a></td></tr>
                                          <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th><td class="py-3 px-4">{additionalData?.[id]?.access || '-'}</td></tr>
                                          <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4">{range.phone ? <a href={`tel:${range.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{range.phone}</a> : '-'}</td></tr>
                                          <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4" set:html={range.business_hours?.replace(/\n/g, '<br />') || '-'} /></tr>
