@@ -3,7 +3,6 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
-// [提案1] AstroのImageコンポーネントをインポート
 import { Image } from "astro:assets";
 
 // --- [2] 3つの共通コンポーネントをインポート ---
@@ -14,15 +13,14 @@ import AuthorProfile from '../../../components/AuthorProfile.astro';
 // --- [3] この記事固有の情報 ---
 const title = "【正直レビュー】安曇川スポーツセンター（滋賀・高島）｜300ヤードの開放感とリアルな注意点 | シガゴル";
 const description = "滋賀県高島市の安曇川スポーツセンターを体験レビュー。300ヤードの開放感が圧巻、設備の古さや受付対応などリアルな注意点も正直に紹介。";
-const category = "体験談"; // この記事の種類を定義
+const category = "体験談";
 const pubDate = "2025-10-07";
 const pubDateISO = "2025-10-07T17:00:00+09:00";
 const imageUrl = "https://i.imgur.com/F0kERMr.jpeg";
-const rangeId = "adogawa_sc"; // ★練習場のIDをFirebaseに合わせて設定してください
+const rangeId = "adogawa_sc";
 
 // --- [4] シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
-// ★記事のURLパスをサイトの構成に合わせて設定してください
 const articleUrl = `${baseUrl}/articles/adogawa-sc-review/range/`; 
 const headline = title.split(" | ")[0];
 
@@ -58,10 +56,10 @@ const comparisonArticles = [
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-          "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": articleUrl
-    },
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": articleUrl
+        },
         "headline": headline,
         "description": description,
         "image": [ imageUrl ],
@@ -147,7 +145,7 @@ const comparisonArticles = [
             <p>ただ練習するという以上に、この景色の中でドライバーを振り抜くこと自体が、最高のストレス発散になります。難しいことを考えず、ただひたすらに気持ちよくボールを打ちたい。そんな日にこそ、訪れたい場所です。</p>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/gsDMZjj.png" alt="ヤード表示と広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://i.imgur.com/gsDMZjj.png" alt="ヤード表示と広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 練習場で生まれた、一期一会の出会い</h3>
@@ -161,14 +159,16 @@ const comparisonArticles = [
             <p>素晴らしい魅力がある一方で、事前に知っておくべき点もあります。第一に、施設の歴史は深く、最新設備が整っているわけではありません。</p>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/6ib3tNo.png" alt="使い込まれて凹んだ打席マット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://i.imgur.com/6ib3tNo.png" alt="使い込まれて凹んだ打席マット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">長年の歴史を感じさせる打席マット。場所によっては凹みも。</figcaption>
             </figure>
 
             <p>写真のように、打席マットは場所によってかなり使い込まれています。弾道測定器などもなく、昔ながらのシンプルな練習環境です。この「味」を楽しめるかどうかは、好みが分かれるポイントでしょう。</p>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 芝の上から打てるアプローチ練習場はない</h3>
-            <p>もちろん、各打席のマットの上からアプローチショットの練習は可能です。しかし、フェアウェイやラフ、様々な傾斜といった、より実践的な状況を想定したアプローチ練習がしたい場合は、隣接するショートコースを利用する必要があります。</p>
+            <p>もちろん、各打席のマットの上からアプローチショットの練習は可能です。しかし、フェアウェイやラフ、様々な傾斜といった、より実践的な状況を想定したアプローチ練習がしたい場合は、隣接するショートコースを利用する必要があります。
+            {/* ▼ [自然な形で追加] ショートコース記事へのリンク */}
+            そのショートコースについても、<a href="https://shigolf.com/articles/adogawa-sc-review/short-course/" class="text-green-700 hover:underline">実際にラウンドした体験談を別の記事で詳しく紹介しています。</a></p>
 
             <h2 id="section-3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【関の深掘り】安曇川を120%使いこなす3つの視点</h2>
 
@@ -176,7 +176,7 @@ const comparisonArticles = [
             <p>月に2回の「球単価2円デー」は破格ですが、常連さん曰く「打席待ちができるほど混雑する」とのこと。「後ろに待っている人がいる」というプレッシャーで集中できないのであれば、あえて通常料金の空いている時間帯を狙うのも賢い選択です。</p>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/Ov8534m.png" alt="2円デーの詳細が書かれた張り紙" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+                <Image src="https://i.imgur.com/Ov8534m.png" alt="2円デーの詳細が書かれた張り紙" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">人気のイベントデー。時間と打席を確認してから訪れたい。</figcaption>
             </figure>
 
@@ -192,12 +192,12 @@ const comparisonArticles = [
             <p>これはあくまで取材という特殊な状況での出来事であり、一般の利用者が同じ経験をすることはないと思います。ただ、施設の顔である受付の対応には、改善の余地があると感じたのもまた事実です。</p>
             
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/OQutn0l.png" alt="安曇川スポーツセンターの受付外観" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://i.imgur.com/OQutn0l.png" alt="安曇川スポーツセンターの受付外観" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h2 id="section-5" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">結論：どんなゴルファーにおすすめできるか？</h2>
             <p>安曇川スポーツセンターは、「ネットのない広大な練習場で、とにかくドライバーを打ち込みたい」というゴルファーにとって、最高の環境であることは間違いありません。</p>
-            <p>一方で、施設の古さや、芝から打てるアプローチ練習場がない点など、明確なウィークポイントも存在します。</p>
+            <p>一方で、施設の古さや、<a href="https://shigolf.com/articles/adogawa-sc-review/short-course/" class="text-green-700 hover:underline">より実践的なアプローチ練習をしたい場合はショートコースの利用が前提となる点</a>など、明確なウィークポイントも存在します。</p>
             <p>私の個人的な話をすれば、自宅から車で2時間と遠いこと、そしてコラムで触れた出来事もあり、頻繁に通うことはないでしょう。 しかし、「今日はドライバーをとことん練習したい」と思い立った日には、あの開放感が恋しくなり、有力な選択肢の一つとして頭に浮かぶ。</p>
             <p>安曇川スポーツセンターは、そんな不思議な魅力を持った打ちっぱなしです。</p>
             <p class="font-bold">きっと、次にドライバーが暴れた日、私はまたこの場所を思い出すでしょう。</p>
@@ -299,7 +299,6 @@ const comparisonArticles = [
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
-                        {/* [提案2] iframeにloading="lazy"を追加（元からありましたが確認）し、URLを標準形式に修正 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
@@ -326,7 +325,6 @@ const comparisonArticles = [
             position: relative;
             width: 100%;
             overflow: hidden;
-            /* 修正：レスポンシブな高さ維持のためpadding-topは不要、直接heightを設定 */
             height: 450px;
         }
         .map-container iframe {
