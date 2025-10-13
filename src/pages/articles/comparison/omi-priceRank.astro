@@ -292,7 +292,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p>👇 まずは全体像から。料金だけでなく、打席数や駐車場の広さまで含めて一目で比較できます。</p>
                 <div class="not-prose my-4 text-center">
                     <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="summary-table-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
+                        <svg xmlns="http://www.w.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
                         画面を横にして一覧表で見る
                     </button>
                 </div>
@@ -300,7 +300,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                     <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
                         <thead class="bg-slate-100">
                             <tr>
-                                <th class="px-4 py-3 border border-slate-300 align-middle text-center">練習場名</th>
+                                <th class="px-4 py-3 border border-slate-300 align-middle text-center whitespace-nowrap">練習場名</th>
                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">打席/ヤード</th>
                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">駐車場(目安)</th>
                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">料金体系</th>
@@ -366,7 +366,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="early-morning-table-container" class="table-wrapper my-4 not-prose">
                      <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
-                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">平日</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">土日祝</th></tr></thead>
+                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">平日</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">土日祝</th></tr></thead>
                          <tbody>
                              <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="平日" class="px-4 py-2 border text-center">7円/球 ※</td><td data-label="土日祝" class="px-4 py-2 border text-center">7円/球 ※</td></tr>
                              <tr class="bg-slate-50"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td><td data-label="平日" class="px-4 py-2 border text-center bg-yellow-100"><strong>6円/球</strong></td><td data-label="土日祝" class="px-4 py-2 border text-center bg-yellow-100"><strong>6円/球</strong></td></tr>
@@ -388,7 +388,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="daytime-table-container" class="table-wrapper my-4 not-prose">
                      <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
-                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">平日 (入場料+球単価)</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">土日祝 (入場料+球単価)</th></tr></thead>
+                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">平日 (入場料+球単価)</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">土日祝 (入場料+球単価)</th></tr></thead>
                          <tbody>
                              <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="平日" class="px-4 py-2 border text-center">0円 + 7円 ※</td><td data-label="土日祝" class="px-4 py-2 border text-center">0円 + 7円 ※</td></tr>
                              <tr class="bg-slate-50"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td><td data-label="平日" class="px-4 py-2 border text-center">300円 + 5円(2F)</td><td data-label="土日祝" class="px-4 py-2 border text-center">300円 + 7円(2F)</td></tr>
@@ -410,7 +410,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="night-table-container" class="table-wrapper my-4 not-prose">
                      <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
-                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">平日</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">土日祝</th></tr></thead>
+                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">平日</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">土日祝</th></tr></thead>
                          <tbody>
                              <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="平日" class="px-4 py-2 border text-center" colspan="2">ナイターサービス: 1,200円/300球 (実質4円/球)</td></tr>
                              <tr class="bg-slate-50"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td><td data-label="平日" class="px-4 py-2 border text-center">入場料300円 + 5円/球(2F)</td><td data-label="土日祝" class="px-4 py-2 border text-center">入場料300円 + 7円/球(2F)</td></tr>
@@ -435,7 +435,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="sim-weekday-day-container" class="table-wrapper my-4 not-prose">
                      <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
-                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center">順位</th><th class="px-4 py-3 border border-slate-300 text-center">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center">支払いプラン（計算内訳）</th><th class="px-4 py-3 border border-slate-300 text-center">総額</th></tr></thead>
+                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">順位</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">支払いプラン（計算内訳）</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">総額</th></tr></thead>
                          <tbody>
                              <tr class="bg-white"><td data-label="順位" class="px-4 py-2 border text-center font-bold">1位</td><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="プラン" class="px-4 py-2 border text-xs text-center">1カゴ (100球)</td><td data-label="総額" class="px-4 py-2 border text-center font-bold text-red-600">700円</td></tr>
                              <tr class="bg-slate-50"><td data-label="順位" class="px-4 py-2 border text-center font-bold">2位</td><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td><td data-label="プラン" class="px-4 py-2 border text-xs text-center">入場料300円 + 2F単価 (5円×100球)</td><td data-label="総額" class="px-4 py-2 border text-center font-bold">800円</td></tr>
@@ -457,7 +457,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="sim-weekday-night-container" class="table-wrapper my-4 not-prose">
                       <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
-                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300">順位</th><th class="px-4 py-3 border border-slate-300">練習場名</th><th class="px-4 py-3 border border-slate-300">支払いプラン（計算内訳）</th><th class="px-4 py-3 border border-slate-300">総額</th></tr></thead>
+                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 whitespace-nowrap">順位</th><th class="px-4 py-3 border border-slate-300 whitespace-nowrap">練習場名</th><th class="px-4 py-3 border border-slate-300 whitespace-nowrap">支払いプラン（計算内訳）</th><th class="px-4 py-3 border border-slate-300 whitespace-nowrap">総額</th></tr></thead>
                          <tbody>
                              <tr class="bg-white"><td data-label="順位" class="px-4 py-2 border text-center font-bold">1位</td><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="プラン" class="px-4 py-2 border text-xs text-center">1カゴ (100球)</td><td data-label="総額" class="px-4 py-2 border text-center font-bold text-red-600">700円</td></tr>
                              <tr class="bg-slate-50"><td data-label="順位" class="px-4 py-2 border text-center font-bold">2位</td><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td><td data-label="プラン" class="px-4 py-2 border text-xs text-center">入場料300円 + 2F単価 (5円×100球)</td><td data-label="総額" class="px-4 py-2 border text-center font-bold">800円</td></tr>
@@ -479,7 +479,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="sim-weekend-container" class="table-wrapper my-4 not-prose">
                       <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
-                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300">順位</th><th class="px-4 py-3 border border-slate-300">練習場名</th><th class="px-4 py-3 border border-slate-300">支払いプラン（計算内訳）</th><th class="px-4 py-3 border border-slate-300">総額</th></tr></thead>
+                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 whitespace-nowrap">順位</th><th class="px-4 py-3 border border-slate-300 whitespace-nowrap">練習場名</th><th class="px-4 py-3 border border-slate-300 whitespace-nowrap">支払いプラン（計算内訳）</th><th class="px-4 py-3 border border-slate-300 whitespace-nowrap">総額</th></tr></thead>
                          <tbody>
                              <tr class="bg-white"><td data-label="順位" class="px-4 py-2 border text-center font-bold">1位</td><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="プラン" class="px-4 py-2 border text-xs text-center">1カゴ (100球)</td><td data-label="総額" class="px-4 py-2 border text-center font-bold text-red-600">700円</td></tr>
                              <tr class="bg-slate-50"><td data-label="順位" class="px-4 py-2 border text-center font-bold">2位</td><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td><td data-label="プラン" class="px-4 py-2 border text-xs text-center">入場料300円 + 2F単価 (7円×100球)</td><td data-label="総額" class="px-4 py-2 border text-center font-bold">1,000円</td></tr>
@@ -504,13 +504,13 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="buffet-table-container" class="table-wrapper my-4 not-prose">
                      <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
-                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center">プラン内容</th><th class="px-4 py-3 border border-slate-300 text-center">ポイント</th></tr></thead>
+                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">プラン内容</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">ポイント</th></tr></thead>
                          <tbody>
-                             <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="プラン内容" class="px-4 py-2 border"><strong>2F: 1,200円/3時間</strong><br>1F: 1,200円/2時間</td><td data-label="ポイント" class="px-4 py-2 border">同じ値段で2Fなら3時間打てる。</td></tr>
-                             <tr class="bg-slate-50"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td><td data-label="プラン内容" class="px-4 py-2 border">平日: 1,980円/3時間<br>土日祝: 2,200円/3時間</td><td data-label="ポイント" class="px-4 py-2 border">3,000円以上のプリペイドカード購入が条件。</td></tr>
-                             <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/sakura_gc/" class="text-blue-600 hover:underline">さくらゴルフ倶楽部</a></td><td data-label="プラン内容" class="px-4 py-2 border">平日: 1,854円/3時間<br>土日祝: 2,060円/3時間</td><td data-label="ポイント" class="px-4 py-2 border">バランスの取れた価格設定。</td></tr>
+                             <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="プラン内容" class="px-4 py-2 border whitespace-nowrap"><strong>2F: 1,200円/3時間</strong><br>1F: 1,200円/2時間</td><td data-label="ポイント" class="px-4 py-2 border">同じ値段で2Fなら3時間打てる。</td></tr>
+                             <tr class="bg-slate-50"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td><td data-label="プラン内容" class="px-4 py-2 border whitespace-nowrap">平日: 1,980円/3時間<br>土日祝: 2,200円/3時間</td><td data-label="ポイント" class="px-4 py-2 border">3,000円以上のプリペイドカード購入が条件。</td></tr>
+                             <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/sakura_gc/" class="text-blue-600 hover:underline">さくらゴルフ倶楽部</a></td><td data-label="プラン内容" class="px-4 py-2 border whitespace-nowrap">平日: 1,854円/3時間<br>土日祝: 2,060円/3時間</td><td data-label="ポイント" class="px-4 py-2 border">バランスの取れた価格設定。</td></tr>
                              <tr class="bg-slate-50"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/riverside_jumbo/" class="text-blue-600 hover:underline">リバーサイドジャンボゴルフ</a></td><td data-label="プラン内容" class="px-4 py-2 border text-center"><strong>（該当なし）</strong></td><td data-label="ポイント" class="px-4 py-2 border text-center">-</td></tr>
-                             <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/garage_park/" class="text-blue-600 hover:underline">がれーじぱーく東近江</a></td><td data-label="プラン内容" class="px-4 py-2 border"><strong>1,000円/1時間</strong><br><strong>2,500円/3時間</strong><br><strong>月額5,000円/通い放題</strong></td><td data-label="ポイント" class="px-4 py-2 border">通う頻度が高いなら最強。</td></tr>
+                             <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/garage_park/" class="text-blue-600 hover:underline">がれーじぱーく東近江</a></td><td data-label="プラン内容" class="px-4 py-2 border whitespace-nowrap"><strong>1,000円/1時間</strong><br><strong>2,500円/3時間</strong><br><strong>月額5,000円/通い放題</strong></td><td data-label="ポイント" class="px-4 py-2 border">通う頻度が高いなら最強。</td></tr>
                          </tbody>
                      </table>
                  </div>
@@ -528,7 +528,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="membership-table-container" class="table-wrapper my-4 not-prose">
                      <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
-                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center">年会費</th><th class="px-4 py-3 border border-slate-300 text-center">主な特典</th><th class="px-4 py-3 border border-slate-300 text-center">元が取れる目安</th></tr></thead>
+                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">年会費</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">主な特典</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">元が取れる目安</th></tr></thead>
                          <tbody>
                             <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="年会費" class="px-4 py-2 border text-center whitespace-nowrap">3,000円</td><td data-label="主な特典" class="px-4 py-2 border text-xs">1カゴ100円、打放題200円引き</td><td data-label="元が取れる目安" class="px-4 py-2 border text-center whitespace-nowrap">打放題なら年15回</td></tr>
                             <tr class="bg-slate-50"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td><td data-label="年会費" class="px-4 py-2 border text-center whitespace-nowrap">2,000円〜</td><td data-label="主な特典" class="px-4 py-2 border text-xs">準会員:入場料無料など</td><td data-label="元が取れる目安" class="px-4 py-2 border text-center whitespace-nowrap">準会員:年7回以上</td></tr>
@@ -548,7 +548,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="women-junior-table-container" class="table-wrapper my-4 not-prose">
                       <table class="w-full text-sm text-left border border-slate-300 min-w-table responsive-table">
-                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center">特典内容</th></tr></thead>
+                         <thead class="bg-slate-100"><tr><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th><th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">特典内容</th></tr></thead>
                          <tbody>
                              <tr class="bg-white"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/sakura_gc/" class="text-blue-600 hover:underline">さくらゴルフ倶楽部</a></td><td data-label="特典内容" class="px-4 py-2 border"><strong>【エリア最強】</strong> 入場料<strong>無料</strong> / アプローチ練習場<strong>無料</strong> / 打ち放題<strong>1時間515円〜</strong></td></tr>
                              <tr class="bg-slate-50"><td data-label="練習場名" class="px-4 py-2 border font-semibold whitespace-nowrap"><a href="/ranges/azuchi_gc/" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td><td data-label="特典内容" class="px-4 py-2 border"><strong>【レディースデーが超強力】</strong> 月・水・金(〜17時)は全メニュー<strong>600円</strong></td></tr>
