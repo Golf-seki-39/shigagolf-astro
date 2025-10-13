@@ -2,6 +2,12 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
+
+// --- 共通コンポーネントをインポート ---
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
 
 // --- This article's specific information ---
 const title = "【KSP彦根】ゴルフの練習が劇的に変わる！全打席トップトレーサー無料の練習場が初心者の味方だった話 | シガゴル";
@@ -12,6 +18,11 @@ const pubDateISO = "2025-06-05T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/byFwaTT.png";
 const rangeId = "ksp_hikone";
 // --- End of specific information ---
+
+// --- シェアボタンと構造化データ用の変数を定義 ---
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/ksp-hikone-review/`;
+const headline = title.split(" | ")[0];
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
@@ -30,9 +41,32 @@ if (docSnap.exists()) {
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        "headline": title.split(" | ")[0],
+        // [修正点4] mainEntityOfPage を追加
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": articleUrl
+        },
+        "headline": headline,
         "description": description,
-        "image": [ imageUrl ],
+        "image": [ 
+            imageUrl,
+            "https://i.imgur.com/PDrCUnt.jpeg",
+            "https://i.imgur.com/G38XdaX.jpeg",
+            "https://i.imgur.com/ShEkmpS.jpeg",
+            "https://i.imgur.com/XrDi68G.jpeg",
+            "https://i.imgur.com/s5crBVH.jpeg",
+            "https://i.imgur.com/Y6ZxhBH.jpeg",
+            "https://i.imgur.com/JcoaLeo.jpeg",
+            "https://i.imgur.com/vV8AdPB.jpeg",
+            "https://i.imgur.com/PwoIX2h.png",
+            "https://i.imgur.com/JwF5u69.jpeg",
+            "https://i.imgur.com/KqHmPT9.jpeg",
+            "https://i.imgur.com/fkJp5qJ.jpeg",
+            "https://i.imgur.com/hgtCXuv.jpeg",
+            "https://i.imgur.com/qT99DHd.jpeg",
+            "https://i.imgur.com/X4J0sjl.jpeg",
+            "https://i.imgur.com/zBepEJZ.jpeg"
+        ],
         "author": {
             "@type": "Person",
             "name": "関（せき）",
@@ -53,7 +87,7 @@ if (docSnap.exists()) {
                 "@type": "LocalBusiness",
                 "name": rangeData?.name,
                 "image": rangeData?.imageUrl,
-                "telephone": rangeData?.phone, // Corrected from 'tel' to 'phone'
+                "telephone": rangeData?.phone,
                 "priceRange": rangeData?.priceRange,
                 "address": {
                   "@type": "PostalAddress",
@@ -89,20 +123,22 @@ if (docSnap.exists()) {
         >
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {title.split(" | ")[0]}
+                    {headline}
                 </h1>
                 <p class="text-sm text-slate-500 mt-2">
                     公開日：{pubDate}
                 </p>
             </header>
 
-            <img
+            <Image
                 src="https://i.imgur.com/PDrCUnt.jpeg"
                 alt="KSP彦根のエントランス＿一部屋根もあり雨の日も安心"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
 
             <p>
@@ -125,45 +161,13 @@ if (docSnap.exists()) {
                     この記事の目次
                 </h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li>
-                        <a href="#about-ksp" class="text-green-700 hover:underline"
-                            >KSP彦根ってどんなところ？</a
-                        >
-                    </li>
-                    <li>
-                        <a href="#toptracer" class="text-green-700 hover:underline"
-                            >【最大の推しポイント】全打席トップトレーサーが無料！</a
-                        >
-                    </li>
-                    <li>
-                        <a href="#ic-card" class="text-green-700 hover:underline"
-                            >【これはスゴイ！】安心便利なICカードシステム</a
-                        >
-                    </li>
-                    <li>
-                        <a
-                            href="#driving-range"
-                            class="text-green-700 hover:underline"
-                            >【快適練習環境】広々270ヤード＆選べる料金プラン</a
-                        >
-                    </li>
-                    <li>
-                        <a
-                            href="#facility-info"
-                            class="text-green-700 hover:underline"
-                            >知っておくとちょっと便利？施設情報</a
-                        >
-                    </li>
-                    <li>
-                        <a href="#basic-info" class="text-green-700 hover:underline"
-                            >KSP彦根の基本情報</a
-                        >
-                    </li>
-                    <li>
-                        <a href="#summary" class="text-green-700 hover:underline"
-                            >まとめ：データで楽しむゴルフ練習！</a
-                        >
-                    </li>
+                    <li><a href="#about-ksp" class="text-green-700 hover:underline">KSP彦根ってどんなところ？</a></li>
+                    <li><a href="#toptracer" class="text-green-700 hover:underline">【最大の推しポイント】全打席トップトレーサーが無料！</a></li>
+                    <li><a href="#ic-card" class="text-green-700 hover:underline">【これはスゴイ！】安心便利なICカードシステム</a></li>
+                    <li><a href="#driving-range" class="text-green-700 hover:underline">【快適練習環境】広々270ヤード＆選べる料金プラン</a></li>
+                    <li><a href="#facility-info" class="text-green-700 hover:underline">知っておくとちょっと便利？施設情報</a></li>
+                    <li><a href="#basic-info" class="text-green-700 hover:underline">KSP彦根の基本情報</a></li>
+                    <li><a href="#summary" class="text-green-700 hover:underline">まとめ：データで楽しむゴルフ練習！</a></li>
                 </ul>
             </div>
 
@@ -173,13 +177,15 @@ if (docSnap.exists()) {
             >
                 KSP彦根ってどんなところ？〜最新技術と安心システムの融合〜
             </h2>
-            <img
+            <Image
                 src="https://i.imgur.com/G38XdaX.jpeg"
                 alt="ハイテク練習＿トップトレーサーの実際の画面"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
             <p>
                 KSP彦根は、滋賀県彦根市にある、最新技術と安心のシステムでゴルファーの上達をスマートにサポートしてくれるゴルフ練習場です。その最大の魅力は、なんといっても全打席に無料で使える「トップトレーサー・レンジ」が備わっていること！そして、利用者を考えた便利なシステムが充実している点も見逃せません。「彦根
@@ -192,24 +198,28 @@ if (docSnap.exists()) {
             >
                 【最大の推しポイント】全打席トップトレーサー・レンジが無料で使い放題！
             </h2>
-            <img
+             <Image
                 src="https://i.imgur.com/ShEkmpS.jpeg"
                 alt="KSP彦根の打席。全打席にモニター完備"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
             <p>
                 KSP彦根の心臓部とも言えるのが、全80打席に標準装備された「トップトレーサー・レンジ」！これがなんと、追加料金なしで利用可能なのです。打席に立つだけで、あなたのショットの飛距離、弾道、ボール初速といった詳細なデータが、目の前のモニターにリアルタイムで表示されます。これは本当に画期的です！
             </p>
-            <img
+             <Image
                 src="https://i.imgur.com/XrDi68G.jpeg"
                 alt="弾道測定器＿トップトレーサーのモニター表示画面"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
             <p>
                 つまり、KSP彦根は「ハイテク」と「安心」が詰まった次世代型練習場なのです。
@@ -218,13 +228,15 @@ if (docSnap.exists()) {
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
                 🔰初心者ゴルファーの救世主！〜私の「トップトレーサー」活用術と叶えたい夢〜
             </h3>
-            <img
+             <Image
                 src="https://i.imgur.com/s5crBVH.jpeg"
                 alt="クラブごとの飛距離をデータで把握"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
             <p>
                 私自身、初心者なので各番手ごとの正確な飛距離や弾道の傾向をまだ完全に把握できていません。そんな私にとって、このKSP彦根のトップトレーサーはまさに「救世主」！
@@ -243,28 +255,22 @@ if (docSnap.exists()) {
             <h4 class="text-lg font-semibold text-slate-800 mt-6 mb-2">
                 💡トップトレーサーの分析力とは？〜“飛距離・球筋・打ち出し角”まで丸わかり！〜
             </h4>
-            <img
+             <Image
                 src="https://i.imgur.com/Y6ZxhBH.jpeg"
                 alt="トップトレーサーのモニター画面＿総飛距離やボール速度などの詳細"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
             <p>トップトレーサーは、ただ飛距離が分かるだけじゃありません。</p>
             <ul class="list-disc pl-5">
-                <li>
-                    <strong>弾道追跡：</strong> 自分の球筋が視覚的に分かります。（スライス、フック、ストレートなど）
-                </li>
-                <li>
-                    <strong>ボール初速・打ち出し角・最高到達点：</strong> より専門的な分析も可能に。
-                </li>
-                <li>
-                    <strong>データの記録・分析：</strong> 専用アプリと連携すれば、練習データをスマートフォンに記録・蓄積し、後から見返して分析したり、過去の自分と比較したりできます。
-                </li>
-                <li>
-                    <strong>今日のハイライト機能：</strong> その日のベストショットなどを自動でまとめてくれるので、練習のモチベーションも上がりますよ！
-                </li>
+                <li><strong>弾道追跡：</strong> 自分の球筋が視覚的に分かります。（スライス、フック、ストレートなど）</li>
+                <li><strong>ボール初速・打ち出し角・最高到達点：</strong> より専門的な分析も可能に。</li>
+                <li><strong>データの記録・分析：</strong> 専用アプリと連携すれば、練習データをスマートフォンに記録・蓄積し、後から見返して分析したり、過去の自分と比較したりできます。</li>
+                <li><strong>今日のハイライト機能：</strong> その日のベストショットなどを自動でまとめてくれるので、練習のモチベーションも上がりますよ！</li>
             </ul>
             <p>
                 つまり、トップトレーサーは”感覚頼り”の練習から卒業させてくれる”最強の相棒”なんです。初心者の方でも操作は簡単なので、ぜひKSP彦根で臆せず触ってみてください！
@@ -276,39 +282,35 @@ if (docSnap.exists()) {
             >
                 【これはスゴイ！】ICカードシステム〜安心便利なシステムでもうプリカを失くして泣かない！〜
             </h2>
-            <img
+             <Image
                 src="https://i.imgur.com/JcoaLeo.jpeg"
                 alt="KSP彦根のICカード"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
             <p>
                 KSP彦根は、チャージ式のICカードシステムを採用しています。「プリペイドカードって、失くしちゃったらどうしよう…」という心配、ありますよね？特に私のようなうっかり者には…（笑）。でも、KSP彦根のICカードなら大丈夫です！
             </p>
             <p><strong>▶︎KSP彦根ICカードは、ここが便利！</strong></p>
             <ul class="list-disc pl-5">
-                <li>
-                    <strong>カード紛失してもデータ復旧OK：</strong> 最初に無料のカード登録（名前など簡単な情報）をしておけば、万が一カードを紛失しても、残高や貯まったポイントはサーバーで管理されているため、しっかりと引き継がれます。
-                </li>
-                <li>
-                    <strong>チャージ方法が多彩：</strong> 現金だけでなく、クレジットカードや各種QRコード決済にも対応しています！
-                </li>
-                <li>
-                    <strong>打つたびにポイントが貯まる！：</strong> 打球ごとにもポイントが付与され、貯まったポイントはボール代として利用可能です。
-                </li>
-                <li>
-                    <strong>共通利用OK：</strong> KSP希望ヶ丘ゴルフ倶部と共通で使えます。
-                </li>
+                <li><strong>カード紛失してもデータ復旧OK：</strong> 最初に無料のカード登録（名前など簡単な情報）をしておけば、万が一カードを紛失しても、残高や貯まったポイントはサーバーで管理されているため、しっかりと引き継がれます。</li>
+                <li><strong>チャージ方法が多彩：</strong> 現金だけでなく、クレジットカードや各種QRコード決済にも対応しています！</li>
+                <li><strong>打つたびにポイントが貯まる！：</strong> 打球ごとにもポイントが付与され、貯まったポイントはボール代として利用可能です。</li>
+                <li><strong>共通利用OK：</strong> KSP希望ヶ丘ゴルフ倶部と共通で使えます。</li>
             </ul>
-            <img
+             <Image
                 src="https://i.imgur.com/vV8AdPB.jpeg"
                 alt="ICカードチャージ機"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
             <p>
                 実際に私もプリカをよく忘れたりするので、このシステムは最高にありがたいと感じています。「彦根
@@ -321,13 +323,15 @@ if (docSnap.exists()) {
             >
                 【快適練習環境】KSP彦根の広々270ヤード！〜選べる料金プランで集中力アップ〜
             </h2>
-            <img
+             <Image
                 src="https://i.imgur.com/PwoIX2h.png"
                 alt="270ヤードの開放感！KSP彦根"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1600"
-                height="900"
+                width={1600}
+                height={900}
+                format="webp"
+                quality={80}
             />
             <p>
                 KSP彦根のドライビングレンジは、奥行きなんと270ヤード！開放感たっぷりで、思いっきりドライバーを振れます。打席は1階・2階合わせて全80打席と十分な数があり、そのうち左利き用打席も6打席用意されています。駐車場も約95台分と広いので、私が行く時間帯では（早朝以外）「打席待ちで練習できなかった…」という経験は今のところありません。行きたい時にふらっと立ち寄れるのは、練習を継続する上でとても重要ですよね。
@@ -337,41 +341,43 @@ if (docSnap.exists()) {
                 ✅ 使いやすい打席設備
             </h3>
             <ul class="list-disc pl-5">
-                <li>
-                    <strong>ティーアップ：</strong> 便利なオート式。高さ調整は、打席横にあるボール型のスイッチを足で踏むことで電動で微調整が可能！これが直感的で非常に使いやすいです。
-                </li>
+                <li><strong>ティーアップ：</strong> 便利なオート式。高さ調整は、打席横にあるボール型のスイッチを足で踏むことで電動で微調整が可能！これが直感的で非常に使いやすいです。</li>
             </ul>
-            <img
+             <Image
                 src="https://i.imgur.com/JwF5u69.jpeg"
                 alt="ティーアップの高さを調整するスイッチ"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
             <ul class="list-disc pl-5">
                 <li><strong>ボール：</strong> レンジボールで統一されています。</li>
             </ul>
-            <img
+             <Image
                 src="https://i.imgur.com/KqHmPT9.jpeg"
                 alt="ロゴ入りレンジボール"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
             <ul class="list-disc pl-5">
-                <li>
-                    <strong>ターゲット：</strong> 遠くにグリーンや旗も見えますが、やはり各打席のトップトレーサーモニターに表示される詳細な距離情報と自分の弾道が、より実践的で正確な練習を可能にしてくれます。
-                </li>
+                <li><strong>ターゲット：</strong> 遠くにグリーンや旗も見えますが、やはり各打席のトップトレーサーモニターに表示される詳細な距離情報と自分の弾道が、より実践的で正確な練習を可能にしてくれます。</li>
             </ul>
-            <img
+             <Image
                 src="https://i.imgur.com/fkJp5qJ.jpeg"
                 alt="トップトレーサーのモニター画面＿ヤード表示"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
 
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
@@ -380,13 +386,15 @@ if (docSnap.exists()) {
             <p>
                 自分の練習時間や目的に合わせて、1球単価と時間打ち（放題）を選べるのも嬉しいポイント。じっくり打ち込みたい時、たくさん球数を打ちたい時など、状況に合わせて選べます。女性と中学生以下は終日お得な優待単価でプレーできるのも◎
             </p>
-            <img
+             <Image
                 src="https://i.imgur.com/hgtCXuv.jpeg"
                 alt="ICカード挿入機＿打席で単価打ちと時間打ちを選択"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
 
             <h2
@@ -395,13 +403,15 @@ if (docSnap.exists()) {
             >
                 知っておくとちょっと便利？施設情報
             </h2>
-            <img
+             <Image
                 src="https://i.imgur.com/qT99DHd.jpeg"
                 alt="パター練習場所＿1Fフロント横"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
 
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
@@ -410,13 +420,15 @@ if (docSnap.exists()) {
             <p>
                 1階フロント横には無料のパター練習スペースがあります。人工芝に移動式カップが置かれ、ボールも用意されています。本格的なグリーンとは言えませんが、打席練習の合間の気分転換や、スタート前のちょっとした調整には便利です。横には、なぜかレトロなパターゲーム機（有料）もあって、ちょっとした遊び心も。
             </p>
-            <img
+             <Image
                 src="https://i.imgur.com/X4J0sjl.jpeg"
                 alt="レトロなパター練習マシーン"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
 
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
@@ -432,13 +444,15 @@ if (docSnap.exists()) {
             <p>
                 各種ゴルフスクールやプロによるレッスンも開催されているようです（予約・詳細はフロントにてご確認ください）
             </p>
-            <img
+             <Image
                 src="https://i.imgur.com/zBepEJZ.jpeg"
                 alt="ゴルフスクールの詳細案内"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
             />
 
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
@@ -447,6 +461,9 @@ if (docSnap.exists()) {
             <p>
                 休憩スペースは打席後方だけでなく1階にも2ヶ所。駐車場にはEV充電器、フロントには打席の空席情報がわかる電光掲示板、1階には喫煙所、そして有料のロッカールームも完備されています。KSP彦根は、ゴルファーが練習に集中できる環境が整っています。
             </p>
+            
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
             
             <h2
                 id="basic-info"
@@ -460,17 +477,26 @@ if (docSnap.exists()) {
                         <table class="w-full text-left border-collapse">
                             <tbody class="align-baseline">
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
-                                        練習場名
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.name}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
                                 </tr>
+                                {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        住所
-                                    </th>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
                                     <td class="py-3 px-4">
                                         <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
@@ -478,9 +504,7 @@ if (docSnap.exists()) {
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        電話番号
-                                    </th>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
                                     <td class="py-3 px-4">
                                         {rangeData.phone ? (
                                             <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
@@ -492,49 +516,24 @@ if (docSnap.exists()) {
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        営業時間
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.business_hours}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4">{rangeData.business_hours}</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        料金（代表例）
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.price_uchihodai_weekday_str ||
-                                            "お問い合わせください"}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                    <td class="py-3 px-4">{rangeData.price_uchihodai_weekday_str || "お問い合わせください"}</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        ヤード数
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.yardage
-                                            ? `${rangeData.yardage}ヤード`
-                                            : "-"}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        打席数
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.bays
-                                            ? `${rangeData.bays}打席`
-                                            : "-"}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
                                 </tr>
                                 <tr>
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        アクセス
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.access}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -548,6 +547,7 @@ if (docSnap.exists()) {
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
@@ -580,60 +580,32 @@ if (docSnap.exists()) {
                 </h3>
                 <ul class="list-none p-0 m-0 space-y-3">
                     <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        >
-                        <span class="flex-1"
-                            >自分のショットをデータで見える化して効率よく練習したい人</span
-                        >
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">自分のショットをデータで見える化して効率よく練習したい人</span>
                     </li>
                     <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        >
-                        <span class="flex-1"
-                            >練習場選びで失敗したくない初心者ゴルファー</span
-                        >
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">練習場選びで失敗したくない初心者ゴルファー</span>
                     </li>
                     <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        >
-                        <span class="flex-1"
-                            >各番手の正確な飛距離や課題を客観的に把握したい人</span
-                        >
-                    </li>
-li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        >
-                        <span class="flex-1"
-                            >混雑を避けて、ふらっと気軽に立ち寄れる環境を探している人</span
-                        >
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">各番手の正確な飛距離や課題を客観的に把握したい人</span>
                     </li>
                     <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        >
-                        <span class="flex-1"
-                            >打ちっぱなしにハマり始めたばかりで、これからゴルフを本格的に始めたい人</span
-                        >
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">混雑を避けて、ふらっと気軽に立ち寄れる環境を探している人</span>
                     </li>
                     <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        >
-                        <span class="flex-1"
-                            >目標設定やゲーム感覚で、楽しく練習のモチベーションを維持したい人</span
-                        >
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">打ちっぱなしにハマり始めたばかりで、これからゴルフを本格的に始めたい人</span>
                     </li>
                     <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0"
-                            >✅</span
-                        >
-                        <span class="flex-1"
-                            >プリペイドカードの管理が苦手な、私のようなうっかりさん！</span
-                        >
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">目標設定やゲーム感覚で、楽しく練習のモチベーションを維持したい人</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">プリペイドカードの管理が苦手な、私のようなうっかりさん！</span>
                     </li>
                 </ul>
             </div>
