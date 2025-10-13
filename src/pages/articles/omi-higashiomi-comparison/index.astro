@@ -2,8 +2,10 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
 
-// ▼▼▼ 改善点1：共通コンポーネントをインポート ▼▼▼
+// --- 共通コンポーネント ---
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
@@ -44,7 +46,6 @@ const rangesData = rangeDocs.reduce((acc, docSnap, index) => {
     return acc;
 }, {});
 
-// ★ データソースの問題をコード側で上書き修正
 if (rangesData.greenpia_oh) {
     rangesData.greenpia_oh.name = "グリーンピア近江八幡ゴルフ";
 }
@@ -95,7 +96,7 @@ const faqElements = {
     ],
 };
 
-// ▼▼▼ 改善点2：全記事共通の「関連記事リスト」を定義 ▼▼▼
+// --- 関連記事リスト ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
@@ -123,7 +124,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
             headline: headline,
             description: description,
-            image: [imageUrl],
+            // [修正点4] 記事内の全画像を追加
+            image: [imageUrl, ...Object.values(rangeImages)],
             author: { "@type": "Person", name: "関（せき）", url: `${baseUrl}/about/`, image: "https://i.imgur.com/BOcMOf3.png" },
             publisher: {
                 "@type": "Organization",
@@ -156,14 +158,15 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 </p>
             </header>
 
-            <img
+            <Image
                 src={imageUrl}
                 alt="滋賀県（近江八幡・東近江）のゴルフ練習場"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="eager"
-                width="1200"
-                height="800"
+                width={1200}
+                height={800}
                 fetchpriority="high"
+                format="webp" quality={80}
             />
 
             <div class="not-prose bg-blue-50 p-4 my-6 rounded-lg border border-l-4 border-blue-500">
@@ -222,7 +225,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         {summaryData.map((item, index) => (
                                 <tr class={index % 2 !== 0 ? "bg-slate-50 border-b" : "bg-white border-b"}>
                                     <td class="px-4 py-2 border align-middle">
-                                        {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                                         <a href={`/ranges/${item.id}/`} class="text-blue-600 hover:underline">
                                             <span class="whitespace-nowrap">{item.name}</span><br />
                                             <span class="text-xs text-slate-500">({item.city})</span>
@@ -248,7 +250,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 {summaryData.map((item) => (
                         <div class="border rounded-lg p-4">
                             <h3 class="text-lg font-bold m-0">
-                                {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                                 <a href={`/ranges/${item.id}/`} class="text-blue-600 hover:underline">{item.name}</a>
                             </h3>
                             <p class="text-sm text-slate-500 m-0">{item.city}</p>
@@ -289,7 +290,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <section class="mt-8 scroll-mt-24" id="article-azuchi">
                     <p class="text-lg font-semibold text-green-700">A. 初心者・安心感重視ならここ！</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-1">{rangesData.azuchi_gc?.name}</h3>
-                    <img src={rangeImages.azuchi_gc} alt={`${rangesData.azuchi_gc?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1600" height="900" />
+                    <Image src={rangeImages.azuchi_gc} alt={`${rangesData.azuchi_gc?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1600} height={900} format="webp" quality={80} />
                     <h4 class="text-xl font-bold mt-4">ここがスゴい！3つの魅力</h4>
                     <ul class="list-none space-y-2 mt-2 pl-2">
                         <li><span class="text-green-600 font-bold">✔</span> <strong>プリカ不要！現金払いの究極の手軽さ</strong><br />「今日は100球だけ」と700円を握りしめて行ける気軽さが最高！差額を払えば打ち放題に変更してくれる”神対応”も。</li>
@@ -307,7 +308,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
                             管理人の詳細体験レポートを読む
                         </a>
-                        {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                         <a href="/ranges/azuchi_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                             この練習場の施設詳細ページへ
@@ -318,7 +318,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <section class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24" id="article-sakura">
                     <p class="text-lg font-semibold text-green-700">B. コスパ最強！女性・ジュニアなら断然ここ！</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-1">{rangesData.sakura_gc?.name}</h3>
-                    <img src={rangeImages.sakura_gc} alt={`${rangesData.sakura_gc?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1600" height="900" />
+                    <Image src={rangeImages.sakura_gc} alt={`${rangesData.sakura_gc?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1600} height={900} format="webp" quality={80} />
                     <h4 class="text-xl font-bold mt-4">ここがスゴい！3つの魅力</h4>
                     <ul class="list-none space-y-2 mt-2 pl-2">
                         <li><span class="text-green-600 font-bold">✔</span> <strong>異次元の女性・ジュニア特典</strong><br />簡単な登録だけで、打ち放題が1時間515円、入場料もアプローチ練習場も無料に。東近江エリアでここまで安い場所は他にありません。</li>
@@ -336,7 +336,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
                             管理人の詳細体験レポートを読む
                         </a>
-                        {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                         <a href="/ranges/sakura_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                             この練習場の施設詳細ページへ
@@ -347,7 +346,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <section class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24" id="article-riverside">
                     <p class="text-lg font-semibold text-green-700">C. スコアアップ！ショートゲーム練習の聖地</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-1">{rangesData.riverside_jumbo?.name}</h3>
-                    <img src={rangeImages.riverside_jumbo} alt={`${rangesData.riverside_jumbo?.name}の入口`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                    <Image src={rangeImages.riverside_jumbo} alt={`${rangesData.riverside_jumbo?.name}の入口`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                     <h4 class="text-xl font-bold mt-4">ここがスゴい！3つの魅力</h4>
                     <ul class="list-none space-y-2 mt-2 pl-2">
                         <li><span class="text-green-600 font-bold">✔</span> <strong>無料で使える、超本格パター練習場</strong><br />まるで本コースのような複雑な傾斜と広大なグリーンが無料。「パターイズマネー」を極めたいなら、ここ以外に選択肢はありません。</li>
@@ -361,7 +360,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <li>パター練習場のすぐ横が喫煙所のため、煙が気になる場合も。</li>
                     </ul>
                     <div class="not-prose text-center my-6">
-                        {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                         <a href="/ranges/riverside_jumbo/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                             この練習場の施設詳細ページへ
@@ -372,7 +370,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <section class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24" id="article-greenpia">
                     <p class="text-lg font-semibold text-green-700">D. [割引対象者限定] 環境は問わない！価格最優先なら</p>
                     <h3 class="text-2xl font-bold text-slate-800 mt-1">{rangesData.greenpia_oh?.name}</h3>
-                    <img src={rangeImages.greenpia_oh} alt={`${rangesData.greenpia_oh?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                    <Image src={rangeImages.greenpia_oh} alt={`${rangesData.greenpia_oh?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                     <h4 class="text-xl font-bold mt-4">ここがスゴい！3つの魅力</h4>
                     <ul class="list-none space-y-2 mt-2 pl-2">
                         <li><span class="text-green-600 font-bold">✔</span> <strong>衝撃の1球3円！特定の割引が超強力</strong><br />SDカードやJAF会員証など、対象カードでボール単価が一律2円引きに。平日2階なら1球3円という衝撃価格で練習できます。</li>
@@ -386,7 +384,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <li>良くも悪も、昔ながらのローカルな雰囲気です。</li>
                     </ul>
                     <div class="not-prose text-center my-6">
-                        {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                         <a href="/ranges/greenpia_oh/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                             この練習場の施設詳細ページへ
@@ -440,10 +437,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 </div>
             </section>
 
-            {/* ▼▼▼ 改善点3：古い関連記事セクションを削除し、新しい統一コンポーネントをここに配置 ▼▼▼ */}
             <div class="not-prose my-12 space-y-12">
             {
-                // この記事は「比較記事」なので、「体験談」が先に表示されます
                 category === '比較記事' ? (
                     <>
                         <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
@@ -469,19 +464,29 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                             const range = rangesData[id];
                             if (!range) return null;
                             
-                            // ▼▼▼ 改善点4：星評価のロジックを追加 ▼▼▼
                             const avgRating = range.avgRating || 0;
                             const reviewCount = range.reviewCount || 0;
-                            const starRating = '★'.repeat(Math.round(avgRating)) + '☆'.repeat(5 - Math.round(avgRating));
 
                             const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
                             const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
                             const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
 
                             return (
-                                <div id={id} class="scroll-mt-24">
-                                    {/* ▼▼▼ 改善点5：星評価を表示 ▼▼▼ */}
-                                    <h3 class="text-xl font-bold">{range.name} <a href={`/ranges/${id}/`} class="text-lg text-amber-500 no-underline hover:opacity-75" title={`${range.name}のレビューを見る`}>{starRating}</a><span class="text-sm text-slate-500 ml-2">({avgRating > 0 ? avgRating.toFixed(1) : '-'} / {reviewCount}件)</span></h3>
+                                <div id={`${id}-info`} class="scroll-mt-24">
+                                    <h3 class="text-xl font-bold flex items-center flex-wrap gap-x-2 gap-y-1">
+                                        <span>{range.name}</span>
+                                        {/* [修正点3] SVG星評価をここに追加 */}
+                                        {avgRating > 0 && (
+                                        <div class="flex items-center" role="img" aria-label={`評価 ${avgRating.toFixed(1)}/5`}>
+                                            {Array.from({ length: 5 }).map((_, i) => (
+                                                <svg class={`w-5 h-5 ${i < Math.round(avgRating) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                </svg>
+                                            ))}
+                                        </div>
+                                        )}
+                                        <span class="text-sm text-slate-500 font-normal">({avgRating > 0 ? avgRating.toFixed(1) : '-'} / {reviewCount}件)</span>
+                                    </h3>
                                     <div class="not-prose overflow-x-auto mt-4">
                                         <table class="w-full text-left border-collapse">
                                             <tbody>
