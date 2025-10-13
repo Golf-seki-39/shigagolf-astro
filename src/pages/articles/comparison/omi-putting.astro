@@ -2,15 +2,16 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
 
-// ▼▼▼ 修正点1：共通コンポーネントをインポート ▼▼▼
+// --- 共通コンポーネント ---
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
 // --- この記事固有の情報 ---
 const baseUrl = "https://shigolf.com";
-// 記事のURLをこのファイルの内容に合わせて修正
 const articleUrl = `${baseUrl}/articles/comparison/omi-putting/`;
 const publicationDate = "2025-09-29";
 const lastModified = new Date(); 
@@ -19,7 +20,6 @@ const title = "【滋賀・徹底比較】パター練習が充実している�
 const description = "近江八幡・東近江エリアの全5施設のゴルフ練習場を実地調査！スコアメイクの鍵を握るパター練習場の環境を徹底比較。本格グリーンから、屋内で快適に練習できる穴場まで、あなたの目的に合った練習場が必ず見つかります。";
 const headline = "【滋賀】パター練習が本当に充実しているゴルフ練習場は？近江八幡・東近江エリア5選";
 const imageUrl = "https://i.imgur.com/IJZwf4W.jpeg";
-// category変数を追加
 const category = "比較記事"; 
 
 // --- Firebaseから各練習場の情報を取得 ---
@@ -85,7 +85,7 @@ const faqElements = {
     ]
 };
 
-// ▼▼▼ 修正点2：全記事共通の「関連記事リスト」を定義 ▼▼▼
+// --- 関連記事リスト ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
@@ -108,7 +108,9 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
-        "headline": headline, "description": description, "image": [ imageUrl ],
+        "headline": headline, "description": description, 
+        // [修正点4] 記事内の全画像を追加
+        "image": [ imageUrl, ...Object.values(rangeImages) ],
         "author": { "@type": "Person", "name": "関（せき）", "url": `${baseUrl}/about/`, "image": "https://i.imgur.com/BOcMOf3.png" },
         "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { 
             "@type": "ImageObject", 
@@ -138,8 +140,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{title.split(" | ")[0]}</h1>
                 <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>
             </header>
-
-            <img src={imageUrl} alt="滋賀県のゴルフ練習場でパター練習に集中するゴルファー" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width="1200" height="800" fetchpriority="high" />
+            
+            <Image src={imageUrl} alt="滋賀県のゴルフ練習場でパター練習に集中するゴルファー" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={800} fetchpriority="high" format="webp" quality={80} />
             
             <div class="not-prose bg-blue-50 p-4 my-6 rounded-lg border border-l-4 border-blue-500">
                 <p class="font-bold text-slate-800 text-lg">結論：本格的な練習なら<a href="#riverside-jumbo" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a>、屋内で気軽に試すなら<a href="#greenpia-oh" class="text-green-700 hover:underline">グリーンピア近江八幡ゴルフ</a>がおすすめです。</p>
@@ -193,7 +195,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         {summaryData.map((item, index) => (
                             <tr class={(index % 2 !== 0) ? 'bg-slate-50 border-b' : 'bg-white border-b'}>
                                 <td class="px-4 py-2 border whitespace-nowrap">
-                                    {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                                     <a href={`/ranges/${item.id}/`} class="text-blue-600 hover:underline">{item.name} ({item.city})</a>
                                 </td>
                                 <td class="px-4 py-2 border text-center whitespace-nowrap">{item.location}</td>
@@ -210,7 +211,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             <div class="space-y-4 my-4 not-prose md:hidden">
                 {summaryData.map(item => (
                     <div class="border rounded-lg p-4">
-                        {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                         <h3 class="text-lg font-bold m-0"><a href={`/ranges/${item.id}/`} class="text-blue-600 hover:underline">{item.name}</a></h3>
                         <p class="text-sm text-slate-500 m-0">{item.city}</p>
                         <table class="w-full mt-2 text-sm"><tbody>
@@ -233,16 +233,14 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             <p>今回は「グリーンの質」「広さ」「設備の充実度」という観点で、特におすすめの3つのゴルフ練習場をランキング形式でご紹介します。</p>
 
             <section id="riverside-jumbo" class="scroll-mt-24">
-                {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8">🥇 第1位：<a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">{rangesData.riverside_jumbo?.name}</a>｜起伏のある"コース並み"の本格グリーン</h3>
                 <p class="mt-2">東近江エリアで、最もコースに近い環境でパター練習をしたいなら、この<a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a>以外に選択肢はありません。</p>
-                <img src="https://i.imgur.com/5HIvgij.jpeg" alt={`${rangesData.riverside_jumbo?.name}（東近江市）の広々としたパター練習グリーン`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <Image src={rangeImages.riverside_jumbo} alt={`${rangesData.riverside_jumbo?.name}（東近江市）の広々としたパター練習グリーン`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：圧倒的な実践環境</h4>
                 <p>ここの真価は、その本格的なグリーン設計にあります。広さもさることながら、大きくうねるような起伏や複雑な傾斜が再現されており、平坦なマットでは決して味わえない「ラインを読む」練習が可能です。</p>
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由②：天候や時間を問わない利便性</h4>
                 <p>グリーンの大部分が屋根と照明でカバーされているため、雨の日や仕事帰りの夜間でも集中して練習に打ち込めます。さらに、これだけの設備でありながら誰でも無料で利用できるという点も、特筆すべきポイントです。</p>
                 <div class="not-prose text-center my-6">
-                    {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                     <a href="/ranges/riverside_jumbo/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                         <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                         この練習場の施設詳細ページへ
@@ -251,16 +249,14 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             </section>
 
             <section id="greenpia-oh" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800">🥈 第2位：<a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">{rangesData.greenpia_oh?.name}</a>｜天候不問！広々とした綺麗な屋内グリーン</h3>
                 <p class="mt-2"><a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">{rangesData.greenpia_oh?.name}</a>の強みは、なんといってもこの広々とした屋内パターグリーンです。ただし、施設全体が新しいわけではなく、このエリアがリニューアルされていると捉えるのが実態に近いでしょう。</p>
-                <img src="https://i.imgur.com/28znno9.png" alt={`${rangesData.greenpia_oh?.name}（近江八幡市）の屋内パター練習グリーン`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <Image src={rangeImages.greenpia_oh} alt={`${rangesData.greenpia_oh?.name}（近江八幡市）の屋内パター練習グリーン`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由①：広々とした屋内スペース</h4>
                 <p>屋内練習場にありがちな窮屈さはなく、短い距離のパットを繰り返し練習し、方向性を確認するには十分な広さです。天候や季節を問わず、快適な室温で練習できる点は大きなメリットです。</p>
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由②：知っておくべき注意点</h4>
                 <p>一方で、正直にお伝えすべき点もあります。このグリーンは受付の真横にあり、時間帯によっては人の往来が気になるかもしれません。また、管理人の実体験として、芝の下に少し空気が入って浮いているように感じる箇所もありました。完璧に整備されたグリーンを求める方よりは、「屋内でまとまったスペースで練習できる」という点に価値を感じる方向けと言えます。</p>
                 <div class="not-prose text-center my-6">
-                    {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                     <a href="/ranges/greenpia_oh/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                         <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                         この練習場の施設詳細ページへ
@@ -269,10 +265,9 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             </section>
 
             <section id="sakura-gc" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                 <h3 class="text-xl md:text-2xl font-bold text-slate-800">🥉 第3位：<a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">{rangesData.sakura_gc?.name}</a>｜気分で選べる！複数の無料パター練習器具</h3>
                 <p class="mt-2">「まずは気軽にパター練習を始めてみたい」そんなニーズに応えてくれるのが、東近江市のゴルフ練習場、<a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">{rangesData.sakura_gc?.name}</a>です。</p>
-                <img src="https://i.imgur.com/e2uTCqP.png" alt={`${rangesData.sakura_gc?.name}（東近江市）の2カップあるパターグリーン`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width="1200" height="800" />
+                <Image src={rangeImages.sakura_gc} alt={`${rangesData.sakura_gc?.name}（東近江市）の2カップあるパターグリーン`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <h4 class="text-lg md:text-xl font-bold mt-6">おすすめ理由：バラエティ豊かな練習器具</h4>
                 <p>施設内のフリースペースには、まっすぐなストロークを養うためのシンプルな「練習マット」と、2カップある少し広めの「組み立て式グリーン」の2種類が設置されています。気分や目的に合わせて使い分けられるのが嬉しいポイントです。</p>
                 <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
@@ -280,7 +275,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
                         管理人の詳細体験レポートを読む
                     </a>
-                     {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                      <a href="/ranges/sakura_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                         <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                         この練習場の施設詳細ページへ
@@ -292,16 +286,14 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  <h2 class="text-2xl md:text-3xl font-bold text-slate-800">【番外編】打席の合間にサクッと練習したいなら</h2>
                  <div class="grid md:grid-cols-2 gap-8 mt-4">
                     <div class="flex flex-col h-full">
-                        {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                         <h3 class="text-xl font-bold text-center"><a href="/ranges/garage_park/" class="text-slate-800 hover:underline">{rangesData.garage_park?.name}</a></h3>
-                        <img src="https://i.imgur.com/s9GafmA.jpeg" alt={`${rangesData.garage_park?.name}（東近江市）のDIYパター練習エリア`} class="w-full h-auto object-cover rounded-lg my-3" loading="lazy" width="800" height="600" />
+                        <Image src={rangeImages.garage_park} alt={`${rangesData.garage_park?.name}（東近江市）のDIYパター練習エリア`} class="w-full h-auto object-cover rounded-lg my-3" loading="lazy" width={800} height={600} format="webp" quality={80} />
                         <p>休憩スペースにDIY感のあるパッティングエリアがあります。ボールの転がりが速く、表面が少し凸凹しているという個性的な特徴も（笑）。まさに"秘密基地"感覚を楽しめるゴルフ練習場です。</p>
                         <div class="not-prose text-center my-6 space-y-4 mt-auto">
                             <a href="/articles/garege-park-review/" class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
                                 <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
                                 詳細体験レポートを読む
                             </a>
-                            {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                             <a href="/ranges/garage_park/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                                 <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                                 施設詳細ページへ
@@ -309,16 +301,14 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         </div>
                     </div>
                      <div class="flex flex-col h-full">
-                        {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                         <h3 class="text-xl font-bold text-center"><a href="/ranges/azuchi_gc/" class="text-slate-800 hover:underline">{rangesData.azuchi_gc?.name}</a></h3>
-                        <img src="https://i.imgur.com/xBrBYhE.jpeg" alt={`${rangesData.azuchi_gc?.name}（近江八幡市）のパター練習マット`} class="w-full h-auto object-cover rounded-lg my-3" loading="lazy" width="800" height="600" />
+                        <Image src={rangeImages.azuchi_gc} alt={`${rangesData.azuchi_gc?.name}（近江八幡市）のパター練習マット`} class="w-full h-auto object-cover rounded-lg my-3" loading="lazy" width={800} height={600} format="webp" quality={80} />
                         <p>受付の後ろにシンプルな練習マットが設置されています。打席が空くのを待つ間に、今日の調子を確認する、といった使い方に最適なゴルフ練習場です。</p>
                          <div class="not-prose text-center my-6 space-y-4 mt-auto">
                              <a href="/articles/azuchi-review/" class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
                                 <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
                                 詳細体験レポートを読む
                             </a>
-                            {/* ▼▼▼ 内部リンク修正 ▼▼▼ */}
                             <a href="/ranges/azuchi_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                                 <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                                 施設詳細ページへ
@@ -353,10 +343,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p>ドライバーの練習も爽快ですが、スコアに直結するのは、こうした地道な練習です。次の練習では、3パット撲滅を目指して、あなたの目的に合ったゴルフ練習場でパターと向き合う時間を作ってみてはいかがでしょうか。</p>
             </section>
             
-            {/* ▼▼▼ 改善点3：古い関連記事セクションを削除し、新しい統一コンポーネントをここに配置 ▼▼▼ */}
             <div class="not-prose my-12 space-y-12">
             {
-                // この記事は「比較記事」なので、「体験談」が先に表示されます
                 category === '比較記事' ? (
                     <>
                         <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
@@ -382,19 +370,30 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         const range = rangesData[id];
                         if (!range) return null;
                         
-                        // ▼▼▼ 改善点4：星評価のロジックを追加 ▼▼▼
                         const avgRating = range.avgRating || 0;
                         const reviewCount = range.reviewCount || 0;
-                        const starRating = '★'.repeat(Math.round(avgRating)) + '☆'.repeat(5 - Math.round(avgRating));
 
                         const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
                         const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+                        // [修正点2] Google Maps Embed URLを標準形式に修正
                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
 
                         return (
                             <div id={id} class="scroll-mt-24">
-                                {/* ▼▼▼ 改善点5：星評価を表示 ▼▼▼ */}
-                                <h3 class="text-xl font-bold">{range.name} <a href={`/ranges/${id}/`} class="text-lg text-amber-500 no-underline hover:opacity-75" title={`${range.name}のレビューを見る`}>{starRating}</a><span class="text-sm text-slate-500 ml-2">({avgRating > 0 ? avgRating.toFixed(1) : '-'} / {reviewCount}件)</span></h3>
+                                <h3 class="text-xl font-bold flex items-center flex-wrap gap-x-2 gap-y-1">
+                                    <span>{range.name}</span>
+                                    {/* [修正点3] SVG星評価をここに追加 */}
+                                    {avgRating > 0 && (
+                                    <div class="flex items-center" role="img" aria-label={`評価 ${avgRating.toFixed(1)}/5`}>
+                                        {Array.from({ length: 5 }).map((_, i) => (
+                                            <svg class={`w-5 h-5 ${i < Math.round(avgRating) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        ))}
+                                    </div>
+                                    )}
+                                    <span class="text-sm text-slate-500 font-normal">({avgRating > 0 ? avgRating.toFixed(1) : '-'} / {reviewCount}件)</span>
+                                </h3>
                                 <div class="not-prose overflow-x-auto mt-4">
                                     <table class="w-full text-left border-collapse"><tbody>
                                         <tr class="border-b border-slate-200">
