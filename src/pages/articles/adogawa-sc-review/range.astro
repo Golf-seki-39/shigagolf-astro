@@ -58,6 +58,10 @@ const comparisonArticles = [
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
+          "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": articleUrl
+    },
         "headline": headline,
         "description": description,
         "image": [ imageUrl ],
