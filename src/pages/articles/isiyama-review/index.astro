@@ -2,6 +2,8 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
 
 // --- This article's specific information ---
 const title =
@@ -14,6 +16,11 @@ const pubDateISO = "2025-09-26T10:00:00+09:00";
 const imageUrl = "https://i.imgur.com/7tuB35m.jpeg";
 const rangeId = "ishiyama_gp";
 // --- End of specific information ---
+
+// [修正点4] 構造化データ用にURL変数を定義
+const baseUrl = "https://shigolf.com";
+// ★記事のURLパスをサイトの構成に合わせて設定してください
+const articleUrl = `${baseUrl}/articles/ishiyama-gp-review/`; 
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
@@ -32,9 +39,14 @@ if (docSnap.exists()) {
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
+        // [修正点4] mainEntityOfPage を追加
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": articleUrl
+        },
         "headline": title.split(" | ")[0],
         "description": description,
-        "image": [ imageUrl ],
+        "image": [ imageUrl, "https://i.imgur.com/ShGbliU.jpeg", "https://i.imgur.com/esUXxwC.jpeg", "https://i.imgur.com/1eTKYtp.jpeg", "https://i.imgur.com/F1GZMdB.jpeg" ],
         "author": {
             "@type": "Person",
             "name": "関（せき）",
@@ -55,7 +67,7 @@ if (docSnap.exists()) {
                 "@type": "LocalBusiness",
                 "name": rangeData?.name,
                 "image": rangeData?.imageUrl,
-                "telephone": rangeData?.phone, // Corrected from 'tel' to 'phone'
+                "telephone": rangeData?.phone,
                 "priceRange": rangeData?.priceRange,
                 "address": {
                   "@type": "PostalAddress",
@@ -68,6 +80,7 @@ if (docSnap.exists()) {
             },
             "reviewRating": {
                 "@type": "Rating",
+                // Firebaseから取得した値を参照
                 "ratingValue": rangeData?.avgRating || "0",
                 "bestRating": "5",
                 "worstRating": "1"
@@ -120,13 +133,15 @@ if (docSnap.exists()) {
             </div>
 
             <figure class="my-6">
-                <img
+                <Image
                     src="https://i.imgur.com/7tuB35m.jpeg"
                     alt="石山ゴルフ練習場の打席からの眺め"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
-                    width="1280"
-                    height="960"
+                    width={1280}
+                    height={960}
+                    format="webp"
+                    quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
                     昔ながらの雰囲気が、逆に集中力を高めてくれる
@@ -147,13 +162,15 @@ if (docSnap.exists()) {
             </p>
 
             <figure class="my-6">
-                <img
+                 <Image
                     src="https://i.imgur.com/ShGbliU.jpeg"
                     alt="石山ゴルフ練習場の分かりやすい案内看板"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
-                    width="960"
-                    height="1280"
+                    width={960}
+                    height={1280}
+                    format="webp"
+                    quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
                     分かりやすい大きな看板が、初めてでも迷わせない
@@ -175,13 +192,15 @@ if (docSnap.exists()) {
             </p>
 
             <figure class="my-6">
-                <img
+                 <Image
                     src="https://i.imgur.com/esUXxwC.jpeg"
                     alt="石山ゴルフ練習場のズレない打席マット"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
-                    width="1280"
-                    height="960"
+                    width={1280}
+                    height={960}
+                    format="webp"
+                    quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
                     このどっしりとしたマットが、ミスへの恐怖を和らげる
@@ -197,13 +216,15 @@ if (docSnap.exists()) {
             </p>
 
             <figure class="my-6">
-                <img
+                 <Image
                     src="https://i.imgur.com/1eTKYtp.jpeg"
                     alt="5000円で売られていたミズノの新古品ウェッジ"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
-                    width="1280"
-                    height="960"
+                    width={1280}
+                    height={960}
+                    format="webp"
+                    quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
                     まさかの出会い。宝探し感覚でクラブを選べる
@@ -245,13 +266,15 @@ if (docSnap.exists()) {
             </p>
 
             <figure class="my-6">
-                <img
+                 <Image
                     src="https://i.imgur.com/F1GZMdB.jpeg"
                     alt="40歳以下男性限定の打ち放題キャンペーン料金表"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
-                    width="960"
-                    height="1280"
+                    width={960}
+                    height={1280}
+                    format="webp"
+                    quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
                     この価格は、まさに「事件」。見逃せない
@@ -312,6 +335,21 @@ if (docSnap.exists()) {
                                         {rangeData.name}
                                     </td>
                                 </tr>
+                                {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">
                                         住所
@@ -393,6 +431,7 @@ if (docSnap.exists()) {
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                         {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"

@@ -2,7 +2,6 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
-// [修正点1] AstroのImageコンポーネントをインポート
 import { Image } from "astro:assets";
 
 import MySlider from '../../../components/MySlider.astro';
@@ -15,7 +14,7 @@ const description = "滋賀のインドアゴルフはコスパが悪い？そ�
 const category = "体験談";
 const pubDate = "2025-09-28";
 const pubDateISO = "2025-09-28T10:00:00+09:00";
-const imageUrl = "https://i.imgur.com/TQmlJFb.jpeg"; // メインのアイキャッチ画像
+const imageUrl = "https://i.imgur.com/TQmlJFb.jpeg";
 const rangeId = "garage_park";
 
 // --- シェアボタン用の変数を定義 ---
@@ -55,12 +54,11 @@ const comparisonArticles = [
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Article",
-        // [修正点4] mainEntityOfPage を追加
         "mainEntityOfPage": {
           "@type": "WebPage",
           "@id": articleUrl
         },
-        "headline": title.split(" | ")[0],
+        "headline": headline,
         "description": description,
         "image": [ 
             imageUrl,
@@ -102,7 +100,8 @@ const comparisonArticles = [
             },
             "reviewRating": {
                 "@type": "Rating",
-                "ratingValue": rangeData?.avgRating || "4.8", 
+                // ▼ [最重要修正点] ハードコードされた "4.8" を削除し、Firebaseの値を常に使用するように変更
+                "ratingValue": rangeData?.avgRating, 
                 "bestRating": "5",
                 "worstRating": "1"
             },
@@ -325,7 +324,6 @@ const comparisonArticles = [
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
-                        {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
