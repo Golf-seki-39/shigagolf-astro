@@ -221,44 +221,36 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         </a>
         <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
             {/* ▼▼▼【CSS修正】ここから全修正 ▼▼▼ */}
-          <style>
-  html { scroll-behavior: smooth; }
-  section[id] { scroll-margin-top: 80px; }
-  .cta-icon { width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: text-bottom; }
-  .diagnosis-card { background-color: #f8fafc; border-left: 5px solid #16a34a; padding: 1rem; margin-bottom: 1rem; border-radius: 0.25rem; }
-  .diagnosis-card h5 { margin-top: 0; }
-  .table-wrapper { overflow-x: auto; }
-  .min-w-table { min-width: 600px; }
-  .table-wrapper th:first-child, .table-wrapper td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
-  .table-wrapper thead th:first-child { background-color: #f1f5f9; }
-  .table-wrapper tbody tr.bg-white td:first-child { background-color: #ffffff; }
-  .table-wrapper tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+          <style is:global>
+  /* is:global を追加することで、スタイルの影響範囲をページ全体に広げ、
+     JavaScriptによるクラス変更や外部CSSとの競合問題を完全に解決します。 */
 
-  /* ▼▼▼【スマホ用レスポンシブ対応】ここから修正 ▼▼▼ */
-  /* 「かつ縦向き(portrait)の時」という条件を追加 */
+  /* ▼▼▼ スマホ縦向きの時だけカード表示を適用 ▼▼▼ */
   @media (max-width: 767px) and (orientation: portrait) {
-    /* 【変更点】全てのセレクタの先頭に #article-view を追加して詳細度を上げる */
+    /* --- カード表示の基本スタイル --- */
     #article-view .responsive-table thead {
-      display: none;
+      display: none !important;
     }
     #article-view .responsive-table tr {
-      display: block;
-      margin-bottom: 1.5rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 0.5rem;
+      display: block !important;
+      margin-bottom: 1.5rem !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 0.5rem !important;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
       overflow: hidden;
-      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     }
     #article-view .responsive-table td {
-      display: block;
-      text-align: right;
-      position: relative;
-      border-bottom: 1px solid #e2e8f0;
-      padding: 0.75rem;
-      padding-left: 130px; /* ラベル用のスペースを確保 */
+      display: block !important;
+      text-align: right !important;
+      position: relative !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      padding: 0.75rem 0.75rem 0.75rem 130px !important; /* 上右下左 */
+      /* PC用の列固定スタイルをリセット */
+      left: auto !important;
+      background-color: #fff !important; /* 背景色を統一 */
     }
     #article-view .responsive-table td:last-child {
-      border-bottom: none;
+      border-bottom: none !important;
     }
     #article-view .responsive-table td::before {
       content: attr(data-label);
@@ -272,37 +264,52 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
       width: 110px;
     }
     #article-view .responsive-table td:first-child {
-      background-color: #f1f5f9;
-      font-weight: bold;
-      text-align: center;
-      padding-left: 0.75rem;
+      background-color: #f1f5f9 !important;
+      font-weight: bold !important;
+      text-align: center !important;
+      padding-left: 0.75rem !important;
     }
-    #article-view .responsive-table td:first-child::before {
-       content: '';
+     #article-view .responsive-table td:first-child::before {
+       content: '' !important;
     }
+    /* ---ここまでカード表示の基本スタイル --- */
 
+
+    /* --- ボタンで切り替えた「テーブル表示」のスタイル --- */
     #article-view .show-table-view .responsive-table thead {
-        display: table-header-group;
+        display: table-header-group !important;
     }
-    #article-view .show-table-view .responsive-table tr,
+    #article-view .show-table-view .responsive-table tr {
+        display: table-row !important; /* trの表示を戻す */
+        border: none !important;
+        box-shadow: none !important;
+    }
     #article-view .show-table-view .responsive-table td {
-        display: table-cell;
-        margin-bottom: 0;
-        border: 1px solid #cbd5e1;
-        border-radius: 0;
-        box-shadow: none;
-        text-align: center;
-        padding: 0.5rem;
-        position: static;
+        display: table-cell !important;
+        border: 1px solid #cbd5e1 !important;
+        padding: 0.5rem !important;
+        position: static !important;
+        text-align: center !important;
     }
     #article-view .show-table-view .responsive-table td:first-child {
-        text-align: left;
+        text-align: left !important;
+        position: sticky !important; /* PC用の列固定を再度有効化 */
+        left: 0 !important;
     }
     #article-view .show-table-view .responsive-table td::before {
-        content: none;
+        content: none !important;
     }
+    #article-view .show-table-view tr.bg-slate-50 td {
+        background-color: #f8fafc !important;
+    }
+     #article-view .show-table-view tr.bg-white td {
+        background-color: #fff !important;
+    }
+     #article-view .show-table-view thead th {
+        background-color: #f1f5f9 !important;
+     }
+    /* --- ここまでテーブル表示のスタイル --- */
   }
-  /* ▲▲▲【スマホ用レスポンシブ対応】ここまで修正 ▲▲▲ */
 </style>
             
             <header>
