@@ -2,6 +2,13 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
+import { Image } from "astro:assets";
+
+// --- 共通コンポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
 
 // --- This article's specific information ---
 const title = "【KSP希望ヶ丘 体験記】「一滴の汗」が僕を救ったコンペ前夜の小さな奇跡 | シガゴル";
@@ -13,6 +20,11 @@ const imageUrl = "https://i.imgur.com/5mTWgt7.png";
 const rangeId = "ksp_hope";
 // --- End of specific information ---
 
+// --- シェアボタンと構造化データ用の変数を定義 ---
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/ksp-hope-review/`;
+const headline = title.split(" | ")[0];
+
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
 const docRef = doc(db, docPath);
@@ -23,6 +35,12 @@ if (docSnap.exists()) {
 } else {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
+
+// --- 関連記事リストの定義 ---
+const comparisonArticles = [
+    { url: '/articles/comparison/kusatsu-konan-price/', title: '【料金で徹底比較】草津・湖南エリアの安い練習場5選', img: 'https://i.imgur.com/example1.jpeg' },
+    { url: '/articles/comparison/kusatsu-konan-lefty/', title: '【レフティ打席が充実】草津・湖南エリアの練習場4選', img: 'https://i.imgur.com/example2.jpeg' },
+];
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
@@ -33,10 +51,23 @@ if (docSnap.exists()) {
         set:html={JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Article",
-            "headline": title.split(" | ")[0],
+            // [修正点4] mainEntityOfPage を追加
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": articleUrl
+            },
+            "headline": headline,
             "description": description,
             "image": [
-                "https://i.imgur.com/bmOlXlw.png"
+                imageUrl,
+                "https://i.imgur.com/bmOlXlw.png",
+                "https://i.imgur.com/07HGpnW.png",
+                "https://i.imgur.com/NGVzDDG.png",
+                "https://i.imgur.com/5gujXLe.jpeg",
+                "https://i.imgur.com/AaPNhYj.jpeg",
+                "https://i.imgur.com/fiCAgIo.png",
+                "https://i.imgur.com/kt7QAjC.png",
+                "https://i.imgur.com/KSdjiMj.png"
              ],
             "author": {
                 "@type": "Person",
@@ -59,7 +90,33 @@ if (docSnap.exists()) {
                 }
             },
             "datePublished": pubDateISO,
-            "dateModified": pubDateISO
+            "dateModified": pubDateISO,
+            // [修正点4] review 情報を追加
+            "review": {
+                "@type": "Review",
+                "itemReviewed": {
+                    "@type": "LocalBusiness",
+                    "name": rangeData?.name,
+                    "image": rangeData?.imageUrl,
+                    "telephone": rangeData?.phone,
+                    "priceRange": rangeData?.priceRange,
+                    "address": {
+                      "@type": "PostalAddress",
+                      "streetAddress": rangeData?.address,
+                      "addressLocality": rangeData?.city,
+                      "addressRegion": "滋賀県",
+                      "postalCode": rangeData?.postalCode,
+                      "addressCountry": "JP"
+                    }
+                },
+                "reviewRating": {
+                    "@type": "Rating",
+                    "ratingValue": rangeData?.avgRating || "0",
+                    "bestRating": "5",
+                    "worstRating": "1"
+                },
+                "author": { "@type": "Person", "name": "関（せき）" }
+            }
         })}
     />
 
@@ -78,19 +135,20 @@ if (docSnap.exists()) {
         >
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {title.split(" | ")[0]}
+                    {headline}
                 </h1>
                 <p class="text-sm text-slate-500 mt-2">
                     公開日：{pubDate}
                 </p>
             </header>
 
-            <img 
+            <Image 
                 src="https://i.imgur.com/bmOlXlw.png" 
                 alt="KSP希望ヶ丘 体験記アイキャッチ" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
-                width="1600" height="900" 
+                width={1600} height={900}
+                format="webp" quality={80}
             />
 
             <div class="space-y-4 bg-slate-50 p-6 rounded-lg text-center">
@@ -134,12 +192,13 @@ if (docSnap.exists()) {
                 </ul>
             </div>
 
-            <img 
+            <Image 
                 src="https://i.imgur.com/07HGpnW.png" 
                 alt="KSP希望ヶ丘の外観" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
-                width="1600" height="900" 
+                width={1600} height={900}
+                format="webp" quality={80}
             />
 
             <h2 id="why-ksp" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
@@ -147,12 +206,13 @@ if (docSnap.exists()) {
             </h2>
             <p class="font-semibold text-lg text-slate-800">→「安心と信頼」こそ、僕がKSPを選んだ理由</p>
 
-            <img 
+            <Image 
                 src="https://i.imgur.com/NGVzDDG.png" 
                 alt="KSP希望ヶ丘のトップトレーサー・レンジの打席モニター" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
-                width="1600" height="900" 
+                width={1600} height={900}
+                format="webp" quality={80}
             />
 
             <p>数ある練習場の中から、なぜ僕が『KSP希望ヶ丘』を選んだのか。 その理由は、極めてシンプルです。そこには、「安心感」と「信頼感」があったから。</p>
@@ -174,23 +234,25 @@ if (docSnap.exists()) {
             <p>僕は、ターゲットの旗より、意図的に「右」を向いて構え始めました。 そして、体の正面に打ち出すことだけを意識して、スイングする。すると、どうでしょう。 いつも僕を裏切ってきた左回転が、まるで計算されたかのように、ターゲット方向へとボールを運んでくれるのです。</p>
             <p>そして同日の夜。 今度は友人と一緒に、複数のショットを総合評価してくれるゲームモード「Toptracer12」をプレイ。 そこで出たデータは、昼間の僕の判断が正しかったことを、さらに裏付けてくれました。</p>
 
-            <img 
+            <Image 
                 src="https://i.imgur.com/5gujXLe.jpeg" 
                 alt="トップトレーサー12の分析結果。安定性が低いデータ画面" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
-                width="1200" height="800" 
+                width={1200} height={800}
+                format="webp" quality={80}
             />
 
             <p>ドライバーの平均飛距離は、206ヤード、219ヤード、177ヤードと、やはり安定感ゼロ。 ショットの安定性も、3回プレイしてようやく「33%」がやっと。データに、もはや衝撃はありませんでした。 「やっぱりな…」という、確信にも似た納得感。</p>
             <p>後日談になりますが、この日見つけた「ドローを打つ」意識で練習を続けた結果、別の日のトップトレーサーの分析で、僕が最も苦手としていたはずのアプローチ（125-150yd）が、「素晴らしいショットです」と評価を受けるまでになったのです。</p>
 
-            <img 
+            <Image 
                 src="https://i.imgur.com/AaPNhYj.jpeg" 
                 alt="トップトレーサーのアプローチ分析で高評価を得た画面" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
-                width="1200" height="800" 
+                width={1200} height={800}
+                format="webp" quality={80}
             />
 
             <p>データと向き合う。 それは時に、残酷な現実を突きつけます。しかし、自分の弱さから目を背けずに受け入れることこそが、新しい自分に出会うための、唯一の道なのかもしれません。 このゴルフ練習場は、そんな大切なことを教えてくれました。</p>
@@ -204,12 +266,13 @@ if (docSnap.exists()) {
             <p>「やっぱり、パターは目の真下にボールを置くのが基本だよな」</p>
             <p>そう僕が頷き、ボールをセットしようと屈んだ、その瞬間です。</p>
 
-            <img 
+            <Image 
                 src="https://i.imgur.com/fiCAgIo.png" 
                 alt="KSP希望ヶ丘の屋内パター練習グリーンで練習する様子" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
-                width="1600" height="900" 
+                width={1600} height={900}
+                format="webp" quality={80}
             />
 
             <p>僕の額から、一滴の汗が、ぴちゃ！っと音を立てて、ボールの真上に落ちました。</p>
@@ -230,12 +293,13 @@ if (docSnap.exists()) {
             <p>さて、ここまで僕の練習の様子を語ってきましたが、このKSP希望ヶ丘で、僕はもう一つ、大きな「発見」をしました。 それは、練習場の受付に掲示されていた、一枚の張り紙がきっかけでした。</p>
             <p class="italic font-semibold text-center text-lg my-4 text-slate-800">『当練習場は、野洲市ふるさと納税返礼品の提供事業者です』</p>
             
-            <img 
+            <Image 
                 src="https://i.imgur.com/kt7QAjC.png" 
                 alt="KSP希望ヶ丘の受付にある、野洲市ふるさと納税の張り紙" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
-                width="1600" height="900" 
+                width={1600} height={900}
+                format="webp" quality={80}
             />
 
             <p>正直に告白すると、僕はこれまで一度も、ふるさと納税という制度を自分で利用したことはありません。もちろん、制度の素晴らしさは、身をもって知っています。 例えば、仲間内でパーティーを開く時。「俺、ふるさと納税でゲットした良い肉を持っていくから、会費は免除で！」なんていう友人がいて、そのおかげで僕も、何度も美味しい思いをしてきました。</p>
@@ -273,17 +337,22 @@ if (docSnap.exists()) {
             
             <p>あの晩、焦っていた僕を優しく迎えてくれた入り口。今でも忘れられません。</p>
 
-            <img 
+            <Image 
                 src="https://i.imgur.com/KSdjiMj.png" 
                 alt="夜のKSP希望ヶ丘の入り口" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
-                width="1600" height="900" 
+                width={1600} height={900}
+                format="webp" quality={80}
             />
             
             <p>あなたの「150ヤード」は、本当に飛んでいますか？ もし、少しでも不安があるのなら、一度、ご自身のゴルフの“健康診断”をしに、足を運んでみてはいかがでしょうか。きっと、スコア以上の「大切な何か」が見つかるはずです。</p>
 
-            <hr class="my-8" />
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+            </div>
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
 
             <h2
                 id="info-summary"
@@ -304,6 +373,21 @@ if (docSnap.exists()) {
                                         {rangeData.name}
                                     </td>
                                 </tr>
+                                {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">
                                         住所
@@ -385,6 +469,7 @@ if (docSnap.exists()) {
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
