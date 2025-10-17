@@ -61,7 +61,7 @@ const mainEntity = {
     ],
     "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
     "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }},
-    "datePublished": publicationDate.toISOString(), "dateModified": lastModified.toISOString()
+"datePublished": new Date(publicationDate).toISOString(), "dateModified": lastModified.toISOString()
 };
 
 const faqElements = {
