@@ -48,6 +48,63 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
 ];
+
+<script slot="head" type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": articleUrl
+    },
+    "headline": headline,
+    "description": description,
+    "image": [ 
+        imageUrl,
+        "https://i.imgur.com/lL5bRC7.jpeg",
+        "https://i.imgur.com/hZljYRY.jpeg",
+        "https://i.imgur.com/eaMBXeP.jpeg",
+        "https://i.imgur.com/y0hjcrU.jpeg",
+        "https://i.imgur.com/HYj7q5q.jpeg"
+    ],
+    "author": {
+        "@type": "Person",
+        "name": "関（せき）",
+        "url": "https://shigolf.com/about/",
+        "image": "https://i.imgur.com/BOcMOf3.png",
+        "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "シガゴル",
+        "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+    },
+    "datePublished": pubDateISO,
+    "dateModified": pubDateISO,
+    "review": {
+        "@type": "Review",
+        "itemReviewed": {
+            "@type": "LocalBusiness",
+            "name": rangeData?.name,
+            "image": imageUrl,
+            "telephone": rangeData?.phone,
+            "priceRange": "¥500-¥2000",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": rangeData?.address,
+              "addressLocality": "近江八幡市",
+              "addressRegion": "滋賀県",
+              "addressCountry": "JP"
+            }
+        },
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": rangeData?.avgRating || "0", // Firebaseから取得。存在しない場合は0
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "author": { "@type": "Person", "name": "関（せき）" }
+    }
+})} />
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
