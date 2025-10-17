@@ -87,14 +87,15 @@ const comparisonArticles = [
         "itemReviewed": {
             "@type": "LocalBusiness",
             "name": rangeData?.name,
-            "image": imageUrl,
+            "image": rangeData?.imageUrl || imageUrl, // ★修正点①：Firebaseの画像を優先
             "telephone": rangeData?.phone,
-            "priceRange": "¥500-¥2000",
+            "priceRange": rangeData?.priceRange || "500円〜2,000円", // ★修正点②
             "address": {
               "@type": "PostalAddress",
               "streetAddress": rangeData?.address,
-              "addressLocality": "近江八幡市",
+              "addressLocality": rangeData?.city || "近江八幡市", // ★修正点③
               "addressRegion": "滋賀県",
+              "postalCode": rangeData?.postalCode, // ★修正点（メイン）
               "addressCountry": "JP"
             }
         },
