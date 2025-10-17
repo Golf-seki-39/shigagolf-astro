@@ -48,6 +48,7 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
 ];
+---
 
 <script slot="head" type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
@@ -104,8 +105,8 @@ const comparisonArticles = [
         },
         "author": { "@type": "Person", "name": "関（せき）" }
     }
-})} 
----
+})} />
+
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
     
