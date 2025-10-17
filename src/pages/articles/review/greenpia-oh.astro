@@ -24,16 +24,17 @@ const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/review/greenpia-oh/`; 
 const headline = "【正直レビュー】1球3円は本当か？グリーンピア近江八幡の光と影";
 
-// --- [5] Firebaseから練習場データを取得（今回はダミーデータを使用） ---
-const rangeData = {
-    name: "グリーンピア近江八幡ゴルフ",
-    address: "滋賀県近江八幡市倉橋部町146-5",
-    phone: "0748-37-2010",
-    business_hours: "平日・土日祝: 6:00～23:00\n(早朝営業 6:00～10:00)\n(フロント営業 10:00～)",
-    yardage: 250,
-    bays: 64,
-    access: "JR琵琶湖線「近江八幡駅」から車で約10分",
-};
+// --- [5] Firebaseから練習場データを取得 ---
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
 
 // --- [6] 関連記事リストの定義 (experienceReportsを追加) ---
 const experienceReports = [
@@ -99,7 +100,7 @@ const comparisonArticles = [
         },
         "reviewRating": {
             "@type": "Rating",
-            "ratingValue": rangeData?.avgRating || "0", // Firebaseから取得。存在しない場合は0
+            "ratingValue": rangeData?.avgRating ? parseFloat(rangeData.avgRating).toFixed(1) : "0",
             "bestRating": "5",
             "worstRating": "1"
         },
@@ -257,58 +258,85 @@ const comparisonArticles = [
             <AuthorProfile />
             
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                「{rangeData.name}」の基本情報
+                {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
             </h2>
-            <div class="overflow-x-auto not-prose">
-                <table class="w-full text-left border-collapse">
-                    <tbody>
-                        <tr class="border-b border-slate-200">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
-                            <td class="py-3 px-4">{rangeData.name}</td>
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
-                            <td class="py-3 px-4">
-                                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
-                                    {rangeData.address}
-                                </a>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
-                            <td class="py-3 px-4">
-                                <a href={`tel:${rangeData.phone.replace(/-/g, "")}`} class="text-green-700 hover:underline">
-                                    {rangeData.phone}
-                                </a>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
-                            <td class="py-3 px-4" set:html={rangeData.business_hours.replace(/\n/g, '<br />')} />
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">料金</th>
-                            <td class="py-3 px-4">
-                                入場料: 300円 (早朝無料)<br>
-                                ボール料: 5円/球〜<br>
-                                打ち放題: 1,980円〜 (平日3時間)
-                            </td>
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
-                            <td class="py-3 px-4">{rangeData.yardage}ヤード</td>
-                        </tr>
-                        <tr class="border-b border-slate-200">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
-                            <td class="py-3 px-4">{rangeData.bays}打席</td>
-                        </tr>
-                        <tr>
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
-                            <td class="py-3 px-4">{rangeData.access}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto not-prose">
+                        <table class="w-full text-left border-collapse">
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                </tr>
+                                {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            {rangeData.address}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4" set:html={rangeData.business_hours?.replace(/\n/g, '<br />') || "-"} />
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                    <td class="py-3 px-4">
+                                        入場料: 300円 (早朝無料)<br/>
+                                        ボール料: 5円/球〜<br/>
+                                        打ち放題: 1,980円〜 (平日3時間)
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
