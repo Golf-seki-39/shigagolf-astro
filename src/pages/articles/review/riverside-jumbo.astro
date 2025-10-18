@@ -1,0 +1,524 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報 ---
+const title = "【2025年最新】リバーサイドジャンボゴルフが“最高の練習場”に進化！東近江市の神パター＆リニューアル打席を徹底レビュー | シガゴル";
+const description = "東近江市の「リバーサイドジャンボゴルフ」が2025年6月に全面リニューアル！神クオリティと名高い無料パター練習場と、快適すぎる新打席を徹底レビュー。女性や初心者にもおすすめです。";
+const category = "体験談";
+const pubDate = "2025-10-18";
+const pubDateISO = "2025-10-18T11:00:00+09:00";
+const imageUrl = "https://i.imgur.com/KTh9uMB.jpeg";
+const rangeId = "riverside_jumbo"; 
+
+// --- [4] シェアボタン用の変数を定義 ---
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/review/riverside-jumbo/`; 
+const headline = "【2025年最新】リバーサイドジャンボゴルフが“最高の練習場”に進化した理由";
+
+// --- [5] Firebaseから練習場データを取得 ---
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
+
+// 料金シミュレーター用のデータ定義
+const priceData = {
+  entryFee: { member: 200, visitor: 400 },
+  ballPrice: {
+    serviceTime: 8,
+    weekday: 10,
+    weekend: 11,
+    ladiesDay: 7 
+  },
+  memberWeekendPrice: 10
+};
+
+// --- [6] 関連記事リストの定義 ---
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/cJBj7Sh.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/DqJ7aMO.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/TQmlJFb.jpeg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://i.imgur.com/KIm1JOr.jpeg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://i.imgur.com/KTh9uMB.jpeg' },
+];
+const comparisonArticles = [
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://i.imgur.com/XXlXJbL.jpeg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://i.imgur.com/1sT2kzY.jpeg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+];
+---
+
+<script slot="head" type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "itemReviewed": {
+        "@type": "SportsActivityLocation",
+        "name": "リバーサイドジャンボゴルフ",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": rangeData?.address,
+            "addressLocality": rangeData?.city || "東近江市",
+            "addressRegion": "滋賀県",
+            "postalCode": rangeData?.postalCode,
+            "addressCountry": "JP"
+        },
+        "telephone": rangeData?.phone,
+        "image": rangeData?.imageUrl || imageUrl,
+        "priceRange": rangeData?.priceRange || "1000円〜3000円",
+        "url": articleUrl
+    },
+    "author": { "@type": "Person", "name": "関＠シガゴル管理人" },
+    "reviewBody": description,
+    "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": rangeData?.avgRating ? parseFloat(rangeData.avgRating).toFixed(1) : "5",
+        "bestRating": "5"
+    },
+    "publisher": { "@type": "Organization", "name": "シガゴル" },
+    "datePublished": pubDateISO
+})} />
+
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <p>「パターイズマネー」<br>ゴルファーなら誰もが知るこの言葉。しかし、そのパットを本当に練習できる場所に、あなたは出会えているでしょうか？</p>
+            <p>「コースのような本格的なグリーンで、もっと距離感を養いたい…」</p>
+            <p>もし、あなたがそう感じているなら、この練習場を知らないのは本当にもったいない。<br>滋賀県東近江市にある<strong>「リバーサイドジャンボゴルフ」</strong>。ここは、私のゴルフ人生を変えたと言っても過言ではない、特別な場所です。</p>
+            <p>そして、ただでさえ素晴らしかったこの練習場は、2025年6月の大型リニューアルを経て、もはや“別世界”と呼べるほどの進化を遂げました。</p>
+            <p>この記事では、この練習場が持つ伝説的な「神クオリティのパター練習場」と、リニューアルで生まれ変わった「快適すぎる新打席」、その全ての魅力を私の実体験を交えながら徹底的にレポートします。</p>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#charm1" class="text-green-700 hover:underline">【魅力①】東近江エリアで“唯一無二”の無料パター練習場</a></li>
+                    <li><a href="#charm2" class="text-green-700 hover:underline">【魅力②】打席リニューアルで女性も通いやすい練習場へ</a></li>
+                    <li><a href="#charm3" class="text-green-700 hover:underline">【魅力③】アプローチ練習も完備！スコアアップ志向ゴルファー必見</a></li>
+                    <li><a href="#charm4" class="text-green-700 hover:underline">【魅力④】通い続けたくなる料金と温かい接客</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">結論：どんなゴルファーにおすすめ？</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">基本情報</a></li>
+                </ul>
+            </div>
+
+            <h2 id="charm1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力①】👑 東近江エリアで“唯一無二”の無料パター練習場</h2>
+            <p>この練習場の名を語る上で、絶対に外せないのが、無料で利用できる屋外パター練習場です。私がここに通い詰める最大の理由が、まさにこれです。</p>
+            
+            <Image src="https://i.imgur.com/QPOFImK.jpeg" alt="半分屋根付きの本格的なパター練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="eager" fetchpriority="high" width={1200} height={675} decoding="async" format="webp" quality={80} />
+
+            <p>「無料だから、まあまあの設備でしょ？」――初めて訪れる人は、そのクオリティに度肝を抜かれるはずです。</p>
+            <ul class="list-disc list-inside space-y-2">
+                <li><strong>驚きの広さとリアルなグリーン:</strong> 複数人が同時に練習しても全く問題ない広さ。そして、見た目以上に複雑なアンジュレーション（傾斜）と、絶妙な位置に切られた4つのカップは、まるで本コースのグリーンそのもの。ここで練習すれば、あなたのパット数は確実に変わります。</li>
+                <li><strong>天候に左右されない快適さ:</strong> 半分が屋根付きなので、雨の日も、真夏の日差しが強い日でも、天候を気にせず快適に練習に没頭できます。</li>
+                <li><strong>いつでも最高のコンディション:</strong> スタッフの方々が常に手入れをしており、いつ訪れても気持ちよく集中できる環境が保たれています。</li>
+                <li><strong>手ぶらでもOK:</strong> 夜間照明が完備され、貸しパターもあるので、仕事帰りにふらっと立ち寄れるのも嬉しいポイントです。</li>
+            </ul>
+            
+            <Image src="https://i.imgur.com/h8Mf4rM.jpeg" alt="複雑な傾斜と4つのカップがあるパターグリーンの様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+
+            <p>普段は別の練習場に通う友人でさえ「パター練習だけは、絶対にジャンボがいい」と断言するほど。東近江エリアでこのレベルのパター練習ができるのは、間違いなくここだけでしょう。</p>
+
+            <h2 id="charm2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力②】✨ 打席リニューアルで女性も通いやすい練習場へ</h2>
+            <p>そして、この練習場の物語は、2025年6月に新たな章を迎えました。打席エリアが全面的にリニューアルされ、以前の「味のある雰囲気」も懐かししく感じるほどの“別世界”へと進化したのです。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">１．集中力が途切れない！“ノーストレス”な新打席マット</h3>
+            <p>足を踏み入れた瞬間に分かる、鮮やかなグリーンの打席マットとシックなカーペット。この変化は見た目の美しさだけではありません。使い込まれたマットにありがちな凹凸が一切なくなり、ショット一打一打に丁寧に向き合える「ノーストレス」な環境が生まれました。練習へのモチベーションを静かに、しかし確実に高めてくれます。</p>
+
+            <Image src="https://i.imgur.com/WkXSaLQ.jpeg" alt="リニューアル後の鮮やかなグリーンの新打席マット" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://i.imgur.com/r9W2YjK.jpeg" alt="比較用のリニューアル前の打席の様子の写真" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">２．☕ 女性や初心者も安心！居心地が格段にアップした休憩スペース</h3>
+            <p>練習の合間に一息つく休憩用の椅子とテーブルも、モダンなデザインに一新。この変化は、練習場の「空気感」そのものを変えました。クリーンでおしゃれな休憩スペースは、これまで少し練習場に馴染みがなかった若い世代や女性ゴルファーも、温かく迎え入れてくれる「開かれた場所」の象徴のように感じます。</p>
+            
+            <Image src="https://i.imgur.com/G95grGE.jpeg" alt="モダンでおしゃれになった新しい休憩スペース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://i.imgur.com/B8ba4Cf.jpeg" alt="比較用のリニューアル前の温かみのある木のベンチ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">３．📸 スマホ撮影に最適！あなたのスイングが“映える”打席環境へ</h3>
+            <p>そして、私が今回のリニューアルで最も重要な変化だと感じた点。それは、この場所が<strong>自分のゴルフを「発信したくなる場所」</strong>へ進化したことです。清潔感のあるマットと統一感のあるシックな背景は、自分のスイングをスマートフォンで撮影するのに最高の“スタジオ”です。TikTokやInstagramで成長過程を発信したい現代のゴルファーにとって、これ以上ない環境と言えるでしょう。</p>
+
+            <Image src="https://i.imgur.com/wU54Omm.jpeg" alt="新しい打席から見える開放的なフェアウェイの景色" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+
+            <h2 id="charm3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力③】🎯 アプローチ練習も完備！スコアアップ志向ゴルファー必見</h2>
+            <p>パターと打席だけではありません。スコアアップに直結する、ゴルファーの心をくすぐる設備がここには揃っています。</p>
+
+            <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">会員限定！超実践的なアプローチ練習場 <span class="text-sm font-normal text-red-600">⚠️有料/会員限定</span></h4>
+            <p>スコアメイクの鍵を握るアプローチ。会員（年会費2,000円）になれば、専用のアプローチ練習場（有料：60分300円）が利用できます。約50ヤードのスペースに、フェアウェイ、ラフ、深いラフ、そして「アゴ高っ！」と感じる本格的なバンカーまで完備。コースさながらの状況から、徹底的にショートゲームを磨き上げることができます。</p>
+            
+            <Image src="https://i.imgur.com/0sZFL4K.jpeg" alt="様々なライから練習できるアプローチ練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+
+            <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">打席ごとの正確な距離表示がありがたい！</h4>
+            <p>「あの旗まで、実際は何ヤードなんだろう？」――そんな練習場でのモヤモヤも、ここでは解消されます。2打席ごとに、その打席から見た各ターゲットまでの実測ヤードが細かく表示されているのです。これにより、より正確な距離感を養い、番手選びの精度を格段にアップさせることができます。</p>
+            
+            <Image src="https://i.imgur.com/gdy6D67.jpeg" alt="各打席に設置された正確な距離表示" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            
+            <h2 id="charm4" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力④】😊 通い続けたくなる料金と温かい接客</h2>
+            
+            <div class="not-prose my-8 p-5 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
+                <h4 class="text-lg font-bold text-slate-800 mt-0 mb-2">【料金について】少しだけ正直な話</h4>
+                <p class="m-0 text-slate-700">
+                    正直にお伝えすると、ボール1球あたりの単価だけを見れば、近隣にはもう少し安い練習場も存在します。
+                    しかし、この記事で紹介した唯一無二のパター練習場が無料で使えることや、リニューアルされた最高の打席環境で集中できることを考えれば、その価格は「スコアアップへの価値ある投資」だと私は感じています。
+                </p>
+                <p class="mt-3 mb-0 text-slate-700">
+                    もし、純粋な料金の安さを最優先で練習場を探している方は、以下の記事で詳しく比較していますので、ぜひ参考にしてみてください。<br>
+                    → <a href="https://shigolf.com/articles/comparison/omi-pricerank/" class="text-green-700 font-bold hover:underline" target="_blank" rel="noopener noreferrer">【料金で徹底比較】近江八幡・東近江の安いゴルフ練習場5選</a>
+                </p>
+            </div>
+
+            <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">お財布に優しい納得の料金システム</h4>
+            <p>練習にかかる費用は、とても良心的です。</p>
+            <ul class="list-disc list-inside space-y-2">
+                <li><strong>入場料:</strong> 会員200円 / ビジター400円</li>
+                <li><strong>ボール単価:</strong> 平日10円、土日祝11円</li>
+                <li><strong>サービスタイム（毎日9:00～12:00）:</strong> なんと全日<strong>1球8円！</strong></li>
+                <li><strong>レディースデー（月・金 9:00～17:00）:</strong> 驚きの<strong>1球7円！</strong></li>
+            </ul>
+            
+            <Image src="https://i.imgur.com/Kbgmz7W.jpeg" alt="リバーサイドジャンボゴルフの料金表" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            
+            <p>会員になれば入場料が半額になるだけでなく、ポイント特典などメリット多数。これなら無理なく通い続けられます。</p>
+
+            <div id="price-simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8">
+                <h3 class="text-xl font-bold mb-4 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    かんたん料金シミュレーション
+                </h3>
+            
+                <div class="md:grid md:grid-cols-2 md:gap-6">
+                    <div>
+                        <div id="step-1" class="mb-4">
+                            <label class="font-semibold text-slate-700">① 会員ですか？</label>
+                            <div class="flex gap-4 mt-2" id="membership-options">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="membership" value="member" class="mr-2"> 会員</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="membership" value="visitor" class="mr-2"> 非会員</label>
+                            </div>
+                        </div>
+            
+                        <div id="step-2" class="mb-4 hidden md:block">
+                            <label class="font-semibold text-slate-700">② いつ利用しますか？</label>
+                            <div class="flex flex-col gap-2 mt-2" id="time-options">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="time" value="serviceTime" class="mr-2"> サービスタイム (毎日9-12時)</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="time" value="ladiesDay" class="mr-2"> レディースデー (月/金 9-17時)</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="time" value="weekday" class="mr-2"> 平日 (上記以外)</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="time" value="weekend" class="mr-2"> 土日祝</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div id="step-3" class="hidden md:block">
+                            <div class="mb-4">
+                                <label for="ball-count" class="font-semibold text-slate-700">③ 何球打ちますか？</label>
+                                <input type="range" id="ball-count" min="50" max="500" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="text-center font-bold text-green-700 text-lg mt-2" id="ball-count-display">150球</div>
+                            </div>
+                            <div class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300 mt-6">
+                                <p class="text-slate-600 mb-1 text-sm">合計金額（目安）</p>
+                                <p class="text-3xl font-bold text-green-700">
+                                    ¥<span id="total-price">----</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button id="reset-button" class="hidden md:hidden bg-slate-200 text-slate-600 text-sm py-1 px-3 rounded-full">やり直す</button>
+                </div>
+                <p class="text-xs text-center text-slate-500 mt-2">※あくまでシミュレーションです。実際の金額は練習場でご確認ください。</p>
+            </div>
+
+            <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">心温まるアットホームな対応</h4>
+            <p>この練習場の魅力は、設備だけではありません。スタッフの方々の温かい心遣いが素晴らしいのです。私自身、2回も打席にプリペイドカードを忘れたことがありますが、どちらもフロントで保管してくれていました。初めての方でも、プリカの購入から打席の使い方まで親切に教えてくれるので、初心者でも安心して飛び込めます。</p>
+            
+            <Image src="https://i.imgur.com/jvJwjv4.jpeg" alt="アットホームな雰囲気の受付・休憩スペース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+
+            <div class="not-prose my-8 p-5 bg-slate-50 border-l-4 border-slate-400 rounded-r-lg">
+                <h4 class="text-lg font-bold text-slate-800 mt-0 mb-2">【筆者の一言】</h4>
+                <p class="m-0 text-slate-700">実際に通い詰めてみて分かったのは、「ここは上達の加速装置だ」ということ。特にパター練習場の完成度は、県内でも群を抜いています。</p>
+            </div>
+
+            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【結論】リバーサイドジャンボゴルフは、こんな人におすすめ！</h2>
+            <p>今回のリニューアルを経て、リバーサイドジャンボゴルフは、もはや単なる「パターが良い練習場」ではありません。<strong>あらゆるゴルファーの上達したいという想いに、最高の環境で応えてくれる場所</strong>へと進化しました。</p>
+            
+            <div class="not-prose my-6 p-4 border-2 border-green-300 rounded-lg bg-green-50">
+                <h4 class="text-xl font-bold text-center mt-0 mb-4 text-green-800">✅ こんな人には最高の練習場です！</h4>
+                <ul class="list-disc list-inside m-0 p-0 pl-4 space-y-2">
+                    <li><strong>本気でパターを上達させたい、すべてのゴルファー</strong></li>
+                    <li><strong>どうせなら綺麗な環境で、気持ちよく練習したい方</strong></li>
+                    <li><strong>自分のスイング動画を“映える”場所で撮影・発信したい方</strong></li>
+                    <li><strong>コースに近い状況で、アプローチを徹底的に練習したい方（会員限定）</strong></li>
+                    <li><strong>初心者で、どこか良い練習場を探している方</strong></li>
+                </ul>
+            </div>
+            
+            <p>もしあなたが一つでも当てはまるなら、新しくなったリバーサイドジャンボゴルフは、その期待に完璧に応えてくれるはずです。</p>
+            <p>あなたも一度、“あの神グリーン”に立ってみてください。練習が「作業」から「楽しみ」に変わる瞬間を、きっと感じられるはずです。</p>
+
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto not-prose">
+                        <table class="w-full text-left border-collapse">
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                </tr>
+                                {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            {rangeData.address}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4" set:html={rangeData.business_hours?.replace(/\n/g, '<br />') || "-"} />
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                    <td class="py-3 px-4">
+                                        会員: 入場料200円 + 8円/球〜<br/>
+                                        （詳細は<a href="#charm4" class="text-green-700 hover:underline">料金体系</a>をご確認ください）
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
+                            width="100%" height="450" style="border:0;"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
+        </article>
+    </div>
+
+    <style>
+        .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
+        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .scroll-mt-24 { scroll-margin-top: 6rem; }
+    </style>
+
+    <script define:vars={{ priceData }}>
+    document.addEventListener('DOMContentLoaded', () => {
+        const simulator = document.getElementById('price-simulator');
+        if (!simulator) return;
+
+        const step1 = simulator.querySelector('#step-1');
+        const step2 = simulator.querySelector('#step-2');
+        const step3 = simulator.querySelector('#step-3');
+        const resetButton = simulator.querySelector('#reset-button');
+
+        const membershipRadios = simulator.querySelectorAll('input[name="membership"]');
+        const timeRadios = simulator.querySelectorAll('input[name="time"]');
+        const ballCountSlider = simulator.querySelector('#ball-count');
+        
+        const ballCountDisplay = simulator.querySelector('#ball-count-display');
+        const totalPriceDisplay = simulator.querySelector('#total-price');
+
+        function calculatePrice() {
+            const membershipRadio = simulator.querySelector('input[name="membership"]:checked');
+            const timeRadio = simulator.querySelector('input[name="time"]:checked');
+            const balls = parseInt(ballCountSlider.value);
+
+            ballCountDisplay.textContent = `${balls}球`;
+
+            // いずれかの選択肢が未選択の場合は計算せずにプレースホルダーを表示
+            if (!membershipRadio || !timeRadio) {
+                totalPriceDisplay.textContent = '----';
+                return;
+            }
+
+            const membership = membershipRadio.value;
+            const time = timeRadio.value;
+            const entryFee = priceData.entryFee[membership];
+            
+            let ballPrice;
+            if (time === 'ladiesDay') {
+                ballPrice = priceData.ballPrice.ladiesDay;
+            } else if (membership === 'member' && time === 'weekend') {
+                ballPrice = priceData.memberWeekendPrice;
+            } else {
+                ballPrice = priceData.ballPrice[time];
+            }
+            
+            const total = entryFee + (ballPrice * balls);
+            totalPriceDisplay.textContent = total.toLocaleString();
+        }
+
+        const isMobile = () => window.innerWidth < 768;
+
+        function goToStep(stepToShow) {
+            if (!isMobile()) return;
+            
+            step1.classList.add('hidden');
+            step2.classList.add('hidden');
+            step3.classList.add('hidden');
+
+            stepToShow.classList.remove('hidden');
+            resetButton.classList.remove('hidden');
+        }
+
+        function resetSimulator() {
+            // ラジオボタンの選択を全て解除
+            membershipRadios.forEach(radio => radio.checked = false);
+            timeRadios.forEach(radio => radio.checked = false);
+            
+            ballCountSlider.value = 150;
+            
+            if (isMobile()) {
+                step1.classList.remove('hidden');
+                step2.classList.add('hidden');
+                step3.classList.add('hidden');
+                resetButton.classList.add('hidden');
+            }
+            
+            calculatePrice();
+        }
+        
+        function setupListeners() {
+            membershipRadios.forEach(radio => {
+                // clickではなくchangeイベントを使用
+                radio.addEventListener('change', () => {
+                    calculatePrice();
+                    if (isMobile()) {
+                        goToStep(step2);
+                    }
+                });
+            });
+
+            timeRadios.forEach(radio => {
+                // clickではなくchangeイベントを使用
+                radio.addEventListener('change', () => {
+                    calculatePrice();
+                    if (isMobile()) {
+                        goToStep(step3);
+                    }
+                });
+            });
+
+            ballCountSlider.addEventListener('input', calculatePrice);
+            resetButton.addEventListener('click', resetSimulator);
+        }
+
+        function initializeView() {
+            if (isMobile()) {
+                step2.classList.add('hidden');
+                step3.classList.add('hidden');
+                resetButton.classList.add('hidden');
+                step1.classList.remove('hidden');
+            } else {
+                step1.classList.remove('hidden');
+                step2.classList.remove('hidden');
+                step3.classList.remove('hidden');
+                // PC表示ではリセットボタンは常に非表示
+                resetButton.classList.add('hidden'); 
+            }
+        }
+        
+        initializeView();
+        setupListeners();
+        calculatePrice(); // 初期表示（合計金額が '----' になる）
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                // 画面サイズが変わったら状態をリセットして再描画
+                resetSimulator();
+                initializeView();
+            }, 250);
+        });
+    });
+</script>
+</BaseLayout>
