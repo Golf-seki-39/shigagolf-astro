@@ -11,7 +11,7 @@ import AuthorProfile from '../../../components/AuthorProfile.astro';
 
 // --- この記事固有の情報 ---
 const baseUrl = "https://shigolf.com";
-const articleUrl = `${baseUrl}/articles/comparison/omi-hachiman-summary/`;
+const articleUrl = `${baseUrl}/articles/comparison/o-mihachiman-guide/`;
 const publicationDate = "2025-10-17"; // 公開日を固定
 const lastModified = new Date();
 
@@ -20,7 +20,7 @@ const title = "【2025年最新】近江八幡市のゴルフ練習場まとめ�
 const description = "近江八幡市のゴルフ練習場選びの決定版！グリーンピア、安土ゴルフクラブに加え、会員制インドアゴルフELGRACEまで全3施設を網羅。料金・設備・特徴を徹底比較し、あなたに最適な練習場を見つけます。";
 const category = "比較記事";
 const headline = "【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較";
-const imageUrl = "https://i.imgur.com/DOzSbMV.jpeg"; // 近江八幡に合わせた画像に変更推奨
+const imageUrl = "https://i.imgur.com/JtqmdV1.jpeg"; // 近江八幡に合わせた画像に変更推奨
 
 // --- Firebaseから各練習場の情報を取得 ---
 const rangeIds = ['greenpia_oh', 'azuchi_gc', 'elgrace_omihachiman'];
@@ -45,7 +45,7 @@ if (rangesData.azuchi_gc && !rangesData.azuchi_gc.access) {
 // --- 各施設の追加情報 ---
 const additionalData = {
     azuchi_gc: { reviewUrl: '/articles/azuchi-review/' },
-    greenpia_oh: { reviewUrl: null },
+    greenpia_oh: { reviewUrl: '/articles/review/greenpia-oh/' },
     elgrace_omihachiman: { reviewUrl: null }
 };
 
@@ -143,7 +143,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>
             </header>
 
-            <Image src={imageUrl} alt="近江八幡市のゴルフ練習場比較" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={675} fetchpriority="high" decoding="async" format="webp" quality={80} />
+            <Image src="https://i.imgur.com/JtqmdV1.jpeg" alt="近江八幡市のゴルフ練習場比較" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={675} fetchpriority="high" decoding="async" format="webp" quality={80} />
 
             <div class="not-prose bg-green-50 border border-l-4 border-green-500 p-4 rounded-lg my-6">
               <h4 class="text-lg font-bold text-green-800 mb-2 mt-0">あなたにおすすめの選び方</h4>
