@@ -106,7 +106,9 @@ const priceData = {
     // 平日
     weekday: {
       early:   { floor1: 7, floor2: 7 },
-      daytime: { floor1: 8, floor2: 8 },
+      // ★★★ 修正 (2025-10-22) ★★★
+      daytime: { floor1: 8, floor2: 7 }, // 2Fを 8円 → 7円 に修正
+      // ★★★ 修正ここまで ★★★
       night1:  { floor1: 9, floor2: 8 },
       night2:  { floor1: 8, floor2: 8 }, // 2Fを1Fと同じと仮定
     },
@@ -866,17 +868,20 @@ const comparisonArticles = [
             let bestOption = { name: '単価打ち', price: ballTotal };
             let unlimitedMessage = "";
             let availablePlans = [];
-
+            
             // 打ち放題が利用可能な時間帯 (9:00-22:00) かつ 3円デーでない場合
+            // ★ 3円デー判定用の `dayKey` と、打ち放題料金参照用の `unlimitedDayKey` を分ける
+            const unlimitedDayKey = (dayKey === 'special_day') ? 'weekday' : dayKey; // 3円デーは平日料金で判定
+
             if ((timeKey === 'daytime' || timeKey === 'night1') && dayKey !== 'special_day') {
                 if (plan.type === 'ladies_junior') {
                     availablePlans = plan.unlimited; 
                 } else if (plan.type === 'premium') {
                     availablePlans = plan.unlimited; 
                 } else if (plan.type === 'visitor' || plan.type === 'member') {
-                    // 一般の打ち放題。dayKey は 'weekday' or 'weekend'
-                    if (timeZone.unlimited && timeZone.unlimited[dayKey]) {
-                         availablePlans = [timeZone.unlimited[dayKey]]; 
+                    // 一般の打ち放題
+                    if (timeZone.unlimited && timeZone.unlimited[unlimitedDayKey]) {
+                         availablePlans = [timeZone.unlimited[unlimitedDayKey]]; 
                     }
                 }
             }
@@ -949,7 +954,7 @@ const comparisonArticles = [
          */
         function resetSimulator() {
             // ラジオボタンの選択を全て解除
-            [...dayRadios, ...floorRadios, ...timeRadios, ...dayRadiosPc, ...floorRadiosPc].forEach(radio => radio.checked = false);
+            [...dayRadios, ...floorRadios, ...timeRadios, ...dayRdi...dayRadiosPc, ...floorRadiosPc].forEach(radio => radio.checked = false);
             
             ballCountSlider.value = 150;
             
