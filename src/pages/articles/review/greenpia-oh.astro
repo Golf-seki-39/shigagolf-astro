@@ -36,7 +36,7 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// === [★ L/Jプランを平日/土日共通に修正] 料金シミュレーター用のデータ定義 ===
+// === [L/Jプランを平日/土日共通に修正] 料金シミュレーター用のデータ定義 ===
 const priceData = {
   plans: {
     visitor: { 
@@ -276,7 +276,7 @@ const comparisonArticles = [
                     
                     <div id="step-1" class="step-container"> 
                         <label for="plan-select" class="font-semibold text-slate-700">① プランを選択</label>
-                        <select id="plan-select" class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white text-base">
+                        <select id="plan-select" class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white">
                             <option value="" disabled selected>プランを選択してください</option>
                             <option value="visitor">ビジター</option>
                             <option value="sd_card">SDカード等 割引適用</option>
@@ -524,9 +524,9 @@ const comparisonArticles = [
         .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .scroll-mt-24 { scroll-margin-top: 6rem; }
         
-        /* ★ プラン選択のiOSフォントサイズ対策 */
-        #price-simulator select {
-             font-size: 1rem; /* 16px */
+        /* ★ 修正: IDセレクタと !important で強制適用 */
+        #plan-select {
+             font-size: 1rem !important; /* 16px */
         }
 
         /* ★スマホ用ステップ表示のためのCSS */
@@ -634,45 +634,48 @@ const comparisonArticles = [
 
             const actualBallPrice = Math.max(0, baseBallPrice - ballPriceDiscount);
             ballTotal = (actualBallPrice * balls) + entryFee;
-            finalPrice = ballTotal; // まず単価計算を最终価格とする
 
             // 4. 打ち放題プランとの比較
             unlimitedDisplay.classList.add('hidden'); // いったんメッセージを隠す
 
-            // ★ 修正: L/JとGold会員の比較ロジックを修正
-            let priceOptions = [
-                { name: `単価打ち`, price: ballTotal }
-            ];
-            
+            // ★ 修正: L/JとGold会員の比較ロジックを「単価を超えない最大プラン」に変更
+            let bestOption = { name: `単価打ち`, price: ballTotal }; // デフォルトは単価打ち
+            let availablePlans = [];
+
             if (plan.type === 'ladies_junior') {
-                // L/Jプランは時間帯・曜日に関わらず共通のプランを追加
-                priceOptions.push(...plan.unlimited);
-            
-            } else if (plan.type === 'gold_member' && timeZone.unlimited) {
-                // Gold会員は早朝以外でプランを追加
-                priceOptions.push(...plan.unlimited);
-            
+                availablePlans = plan.unlimited; // L/Jプランは常時利用可能
+            } else if (plan.type === 'gold_member' && timeKey !== 'early') {
+                availablePlans = plan.unlimited; // Gold会員は早朝以外
             } else if ((plan.type === 'visitor' || plan.type === 'sd_card') && timeZone.unlimited) {
-                // ビジター/SDは早朝以外で一般プランを追加
-                priceOptions.push(timeZone.unlimited);
+                availablePlans = [timeZone.unlimited]; // 一般プラン
             }
 
-            // ★ 修正: 最も安いプランを見つけるロジック
-            if (priceOptions.length > 1) {
-                const bestOption = priceOptions.reduce((best, current) => {
-                    return current.price < best.price ? current : best;
-                });
+            if (availablePlans.length > 0) {
+                // 単価打ち(ballTotal)を超えない、最大の打ち放題プランを探す
+                const suitablePlans = availablePlans.filter(p => p.price <= ballTotal);
                 
-                finalPrice = bestOption.price;
-                unlimitedMessage = `💡 ${bestOption.name} (¥${bestOption.price.toLocaleString()}) がお得です`;
-            } else {
-                // 比較対象がない場合 (例: 早朝のビジター)
-                finalPrice = ballTotal;
-                unlimitedMessage = ""; // メッセージなし
+                if (suitablePlans.length > 0) {
+                    // 単価打ちより安いプランが1つ以上ある
+                    // その中で最も高い（＝最も長時間使える）プランを選ぶ
+                    const bestUnlimitedPlan = suitablePlans.reduce((best, current) => {
+                        return current.price > best.price ? current : best;
+                    });
+                    bestOption = bestUnlimitedPlan;
+                    unlimitedMessage = `💡 ${bestOption.name} (¥${bestOption.price.toLocaleString()}) がお得です`;
+                } else {
+                    // 単価打ちより安いプランがない (＝単価打ちが最安)
+                    // L/Jプランの時だけ「単価打ちがお得」と明示する
+                    if (plan.type === 'ladies_junior') {
+                         unlimitedMessage = `💡 単価打ち (¥${ballTotal.toLocaleString()}) がお得です`;
+                    }
+                }
             }
-
+            
             // 5. 最終金額とメッセージを表示
+            // ★ 表示する金額は「最もお得なプランの金額」
+            finalPrice = bestOption.price;
             totalPriceDisplay.textContent = finalPrice.toLocaleString();
+            
             if (unlimitedMessage) {
                 unlimitedDisplay.textContent = unlimitedMessage;
                 unlimitedDisplay.classList.remove('hidden');
