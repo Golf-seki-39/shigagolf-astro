@@ -524,12 +524,10 @@ const comparisonArticles = [
         .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .scroll-mt-24 { scroll-margin-top: 6rem; }
         
-        /* ★ 修正: IDセレクタと !important で強制適用 */
         #plan-select {
              font-size: 1rem !important; /* 16px */
         }
 
-        /* ★スマホ用ステップ表示のためのCSS */
         @media (max-width: 767px) {
             .step-container {
                 transition: opacity 0.3s ease-out, max-height 0.3s ease-out, margin 0.3s ease-out, padding 0.3s ease-out;
@@ -605,7 +603,6 @@ const comparisonArticles = [
 
             ballCountDisplay.textContent = `${balls}球`;
 
-            // planKeyが"" (未選択) の場合も計算しない
             if (!planKey || !dayKey || !timeKey || !floorKey) {
                 totalPriceDisplay.textContent = '----';
                 unlimitedDisplay.classList.add('hidden');
@@ -631,73 +628,77 @@ const comparisonArticles = [
             // 3. プラン別に基本料金を計算
             if (plan.type === 'gold_member') {
                 entryFee = plan.entryFee; // 0円
-                ballPriceDiscount = plan.discount[dayKey]; // 平日-2, 土日祝-1
+                ballPriceDiscount = plan.discount[dayKey];
             } else if (plan.type === 'sd_card') {
-                ballPriceDiscount = plan.discount[dayKey]; // 平日-2, 土日祝-1
+                ballPriceDiscount = plan.discount[dayKey];
             }
-            // visitor と ladies_junior は基本料金（入場料, 単価）を使用
 
             const actualBallPrice = Math.max(0, baseBallPrice - ballPriceDiscount);
             ballTotal = (actualBallPrice * balls) + entryFee;
 
             // 4. 打ち放題プランとの比較
-            unlimitedDisplay.classList.add('hidden'); // いったんメッセージを隠す
-            unlimitedDisplay.innerHTML = ""; // 中身を空にする
+            unlimitedDisplay.classList.add('hidden');
+            unlimitedDisplay.innerHTML = ""; 
 
-            let bestOption = { name: '単価打ち', price: ballTotal }; // デフォルトは単価打ち
+            let bestOption = { name: '単価打ち', price: ballTotal };
             let unlimitedMessage = "";
             let availablePlans = [];
 
             if (plan.type === 'ladies_junior') {
-                availablePlans = plan.unlimited; // L/Jプランは常時利用可能
+                availablePlans = plan.unlimited; 
             } else if (plan.type === 'gold_member' && timeKey !== 'early') {
-                availablePlans = plan.unlimited; // Gold会員は早朝以外
+                availablePlans = plan.unlimited; 
             } else if ((plan.type === 'visitor' || plan.type === 'sd_card') && timeZone.unlimited) {
-                availablePlans = [timeZone.unlimited]; // 一般プラン
+                availablePlans = [timeZone.unlimited]; 
             }
 
             if (availablePlans.length > 0) {
                 
-                // L/J と Gold の場合 (複数の打ち放題プランがある場合)
                 if (plan.type === 'ladies_junior' || (plan.type === 'gold_member' && timeKey !== 'early')) {
                     
-                    // 単価打ち(ballTotal)より安いプランをすべて見つける
                     const suitablePlans = availablePlans.filter(p => p.price <= ballTotal);
                     
                     if (suitablePlans.length > 0) {
-                        // 単価打ちより安いプランが1つ以上ある
-                        // その中で「最も高い（＝最も長時間使える）」プランをベストオプションとする
-                        // (例: 1300円なら1100円プランが選ばれる)
                         const bestUnlimitedPlan = suitablePlans.reduce((best, current) => {
                             return current.price > best.price ? current : best;
                         });
                         bestOption = bestUnlimitedPlan;
                     }
-                    // suitablePlansが0の場合 (例: 400円 < 550円)
-                    // bestOptionは '単価打ち' (ballTotal) のまま
 
-                    // メッセージには *利用可能なすべてのプラン* を列挙する
                     unlimitedMessage = "💡 打ち放題プラン:<br>" + availablePlans.map(p => {
                         return `${p.name} (¥${p.price.toLocaleString()})`;
                     }).join('<br>');
 
                 } 
-                // Visitor / SDカード の場合 (打ち放題プランが1つだけの場合)
-                else {
-                    const cheapestUnlimitedPlan = availablePlans[0]; // 1つしかない
+                else { // Visitor / SDカード
+                    const cheapestUnlimitedPlan = availablePlans[0]; 
                     if (cheapestUnlimitedPlan.price <= ballTotal) {
-                        // 単価打ちより打ち放題が安い
                         bestOption = cheapestUnlimitedPlan;
                         unlimitedMessage = `💡 ${bestOption.name} (¥${bestOption.price.toLocaleString()}) がお得です`;
                     }
-                    // 単価打ちが安い場合は bestOption は '単価打ち' のまま、メッセージもなし
                 }
             }
             
             // 5. 最終金額とメッセージを表示
-            // 表示する金額は「最もお得なプランの金額」
             finalPrice = bestOption.price;
-            totalPriceDisplay.textContent = finalPrice.toLocaleString();
+            let finalPriceString = finalPrice.toLocaleString(); // デフォルトは計算結果
+
+            // ★★★ 修正 (2025-10-22) ★★★
+            // レディース・ゴールド会員で、かつ「打ち放題」が最安オプションになった場合
+            if ((plan.type === 'ladies_junior' || (plan.type === 'gold_member' && timeKey !== 'early')) && bestOption.name !== '単価打ち') {
+                
+                // 利用可能な打ち放題プランの最低価格を取得 (e.g., 550 or 1100)
+                if (availablePlans.length > 0) {
+                    // availablePlans を価格でソートして最小値を取得
+                    const minUnlimitedPrice = availablePlans.reduce((min, p) => p.price < min ? p.price : min, availablePlans[0].price);
+                    
+                    // 表示を「¥(最低価格)〜」に変更
+                    finalPriceString = `${minUnlimitedPrice.toLocaleString()}〜`; 
+                }
+            }
+            // ★★★ 修正ここまで ★★★
+
+            totalPriceDisplay.textContent = finalPriceString; // 最終的な表示文字列を設定
             
             if (unlimitedMessage) {
                 unlimitedDisplay.innerHTML = unlimitedMessage; // <br> を解釈させる
@@ -774,9 +775,6 @@ const comparisonArticles = [
                 calculatePrice();
             }));
 
-            // ★★★ 修正 (2025-10-22) ★★★
-            // 'T' を削除
-            
             // PC用ラジオ
              dayRadiosPc.forEach(radio => radio.addEventListener('change', () => {
                 simulator.querySelector(`input[name="day"][value="${radio.value}"]`).checked = true; // スマホと同期
