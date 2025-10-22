@@ -1,0 +1,126 @@
+---
+// src/components/Breadcrumbs.astro
+
+// --- Props ---
+// BaseLayoutからページの <title> を受け取ります
+const { pageTitle } = Astro.props;
+
+// --- 静的パス名の日本語マッピング ---
+// URLのセグメント（例: 'articles'）を日本語（例: 'お役立ち記事'）に変換します
+const pathTranslations = new Map([
+    ["articles", "お役立ち記事"],
+    ["category", "カテゴリ"],
+    ["comparison", "比較記事"],
+    ["review", "体験レビュー"],
+    ["ranges", "練習場詳細"], // [rangeId] の親階層
+    ["contact", "お問い合わせ"],
+    ["about", "シガゴルについて"],
+    ["criteria", "評価基準"],
+    ["map", "マップ"],
+    // ※今後 'adogawa-sc-review' のような記事が増えた場合、
+    // ここに追加するか、記事ページから別途名前を渡す必要があります
+    ["adogawa-sc-review", "安曇川スポーツセンター"],
+    ["azuchi-review", "安土ゴルフ練習場"],
+    ["ksp-hikone-review", "KSP彦根"],
+    ["ksp_hope-review", "KSPホープ"],
+]);
+
+// --- パンクズリストの生成ロジック ---
+const currentPath = Astro.url.pathname;
+const breadcrumbs = [];
+
+// 1. ホームを追加
+breadcrumbs.push({ name: "ホーム", href: "/" });
+
+// 2. パスを解析して動的にパンクズを追加
+if (currentPath !== "/") {
+    const segments = currentPath.split("/").filter(Boolean); //例: ['ranges', 'abcdef123']
+    let pathAccumulator = ""; // URLを蓄積する変数
+
+    segments.forEach((segment, index) => {
+        pathAccumulator += `/${segment}`;
+        const isLast = index === segments.length - 1;
+        let name = "";
+
+        if (isLast) {
+            // --- 最後の項目の処理 ---
+            // 渡された title (例: "KSP彦根の口コミ・評判 | シガゴル") から名前を抽出
+            if (pageTitle) {
+                const titlePart = pageTitle.split(" | ")[0];
+                // "の口コミ・評判" などを取り除く簡易的な処理
+                name = titlePart
+                    .replace("の口コミ・評判", "")
+                    .replace("のレビュー", "");
+            } else {
+                // titleが渡されなかった場合のフォールバック
+                name = pathTranslations.get(segment) || segment;
+            }
+        } else {
+            // --- 途中階層の処理 ---
+            name = pathTranslations.get(segment) || segment;
+        }
+
+        breadcrumbs.push({
+            name: name,
+            href: isLast ? null : pathAccumulator, // 最後の項目はリンクなし
+        });
+    });
+}
+
+// --- SEO用 JSON-LD 構造化データの生成 ---
+const jsonLdItems = breadcrumbs.map((item, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    name: item.name,
+    // 最後の項目は item.item を持たないのが一般的
+    ...(item.href && { item: new URL(item.href, Astro.site).href }),
+}));
+
+const ldJson = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: jsonLdItems,
+};
+---
+
+{/* --- HTMLのレンダリング --- */}
+{
+    breadcrumbs.length > 1 && (
+        <nav
+            aria-label="パンクズリスト"
+            class="container mx-auto px-4 py-3 text-sm text-slate-600"
+        >
+            <ol class="flex flex-wrap gap-x-2">
+                {breadcrumbs.map((crumb, index) => (
+                    <li class="flex items-center gap-x-2">
+                        {index > 0 && (
+                            <span class="text-slate-400" aria-hidden="true">
+                                ›
+                            </span>
+                        )}
+                        {crumb.href ? (
+                            // リンクあり（ホーム、途中階層）
+                            <a
+                                href={crumb.href}
+                                class="hover:underline hover:text-green-700"
+                            >
+                                {crumb.name}
+                            </a>
+                        ) : (
+                            // リンクなし（現在のページ）
+                            <span
+                                class="font-semibold text-slate-700"
+                                aria-current="page"
+                            >
+                                {crumb.name}
+                            </span>
+                        )}
+                    </li>
+                ))}
+            </ol>
+        </nav>
+    )
+}
+
+{/* --- JSON-LDの埋め込み --- */}
+<script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
