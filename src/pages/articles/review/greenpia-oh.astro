@@ -36,19 +36,78 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
+// === [★更新] 料金シミュレーター用のデータ定義 ===
+const priceData = {
+  plans: {
+    visitor: { 
+      name: 'ビジター', 
+      type: 'visitor' 
+    },
+    sd_card: { 
+      name: 'SDカード等割引', 
+      type: 'sd_card', 
+      discount: { weekday: 2, weekend: 1 } // ★平日/土日祝で割引額を変更
+    },
+    gold_member: {
+      name: 'ゴールド会員',
+      type: 'gold_member',
+      entryFee: 0, // ★入場料無料
+      discount: { weekday: 2, weekend: 1 }, // ★平日-2円, 土日祝-1円
+      unlimited: [ // ★2時間と3時間のプラン
+        { name: "2時間打ち放題", price: 1100 },
+        { name: "3時間打ち放題", price: 1650 }
+      ]
+    },
+    ladies_junior: {
+      name: 'レディース・ジュニア',
+      type: 'ladies_junior',
+      unlimited: { name: "1時間打ち放題", price: 550 } // ★専用プラン
+    }
+  },
+  timeZones: {
+    early: { 
+      name: "早朝 (6:00-10:00)", 
+      entryFee: 0, 
+      unlimited: null // 一般打ち放題なし
+    },
+    daytime: { 
+      name: "日中 (10:00-17:00)", 
+      entryFee: 300, 
+      unlimited: { price: 1980, name: "3時間打ち放題" } // 一般
+    },
+    night: { 
+      name: "夜間 (17:00-23:00)", 
+      entryFee: 300, 
+      unlimited: { price: 2200, name: "3時間打ち放題" } // 一般
+    }
+  },
+  ballPrice: {
+    weekday: {
+      early: { floor1: 6, floor2: 6 },
+      daytime: { floor1: 8, floor2: 5 },
+      night: { floor1: 9, floor2: 5 },
+    },
+    weekend: {
+      early: { floor1: 6, floor2: 6 },
+      daytime: { floor1: 9, floor2: 7 },
+      night: { floor1: 9, floor2: 7 },
+    }
+  }
+};
+// === [★更新ここまで] ===
+
+// --- [6] 関連記事リストの定義 (experienceReportsを追加) ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/cJBj7Sh.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/DqJ7aMO.png' },
     { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/TQmlJFb.jpeg' },
-    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://i.imgur.com/KIm1JOr.jpeg' },
     { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://i.imgur.com/KTh9uMB.jpeg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://i.imgur.com/KIm1JOr.jpeg' },
 ];
 const comparisonArticles = [
     { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
     { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://i.imgur.com/XXlXJbL.jpeg' },
-    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://i.imgur.com/1sT2kzY.jpeg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
 ];
 ---
@@ -89,15 +148,15 @@ const comparisonArticles = [
         "itemReviewed": {
             "@type": "LocalBusiness",
             "name": rangeData?.name,
-            "image": rangeData?.imageUrl || imageUrl, // ★修正点①：Firebaseの画像を優先
+            "image": rangeData?.imageUrl || imageUrl,
             "telephone": rangeData?.phone,
-            "priceRange": rangeData?.priceRange || "500円〜2,000円", // ★修正点②
+            "priceRange": rangeData?.priceRange || "500円〜2,000円",
             "address": {
               "@type": "PostalAddress",
               "streetAddress": rangeData?.address,
-              "addressLocality": rangeData?.city || "近江八幡市", // ★修正点③
+              "addressLocality": rangeData?.city || "近江八幡市",
               "addressRegion": "滋賀県",
-              "postalCode": rangeData?.postalCode, // ★修正点（メイン）
+              "postalCode": rangeData?.postalCode,
               "addressCountry": "JP"
             }
         },
@@ -166,7 +225,7 @@ const comparisonArticles = [
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
                     <li><a href="#section-1" class="text-green-700 hover:underline">グリーンピア近江八幡の料金：驚異の割引システム</a></li>
-                    <li><a href="#section-2" class="text-green-700 hover:underline">練習環境のリアル｜私が感じた3つのストレス要因</a></li>
+                    <li><a href="#simulator" class="text-green-700 hover:underline">かんたん料金シミュレーション</a></li> <li><a href="#section-2" class="text-green-700 hover:underline">練習環境のリアル｜私が感じた3つのストレス要因</a></li>
                     <li><a href="#section-3" class="text-green-700 hover:underline">結論：私がもう行かない理由と、おすすめできる人</a></li>
                     <li><a href="#info-summary" class="text-green-700 hover:underline">「グリーンピア近江八幡ゴルフ」の基本情報</a></li>
                 </ul>
@@ -184,19 +243,98 @@ const comparisonArticles = [
 
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">「SDカード」で実現する驚異のボール単価</h3>
-            <p>そして、この練習場の真骨頂が、特定のカード提示によるボール単価2円引きサービスです。対象はSDカード（セーフドライバーカード）保持者、消防団員、JAF会員など多岐にわたります。</p>
+            <p>そして、この練習場の真骨頂が、特定のカード提示によるボール単価割引サービスです。対象はSDカード（セーフドライバーカード）保持者、消防団員、JAF会員など多岐にわたります。</p>
             
             <figure class="my-6">
                 <Image src="https://i.imgur.com/eaMBXeP.jpeg" alt="割引対象の案内" class="w-full h-auto object-cover rounded-lg" width={900} height={1200} format="webp" quality={80} />
             </figure>
 
-            <p>例えば、平日10時以降の2階打席は1球5円。もしあなたが対象カードを持っていれば、そこからさらに2円引き。<br><strong>なんと、1球あたり3円で練習できてしまう</strong>計算になります。これは信じられないレベルのお得さです。</p>
+            <p>
+                ご指摘いただき修正しましたが、**平日は2円引き、土日祝は1円引き**が正しい割引額のようです。
+                例えば、平日10時以降の2階打席（1球5円）なら、2円引きで**1球3円**。
+                土日祝10時以降の2階打席（1球7円）なら、1円引きで**1球6円**となります。
+            </p>
             
             <div class="not-prose my-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
                 <p class="font-bold m-0">私が訪れた時はSDカードを忘れてしまい、通常料金（それでも1球5円！）で練習することに…。皆さんは、行く前に必ずお財布の中身を確認してくださいね！</p>
-                <p class="text-sm m-0 mt-2">※打ち放題プランとボール単価割引の併用はできません。</p>
+                <p class="text-sm m-0 mt-2">※打ち放題プランとボール単価割引の併用はできません。（シミュレーターでは自動で安い方を適用します）</p>
             </div>
 
+            <h2 id="simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">かんたん料金シミュレーション</h2>
+            <div id="price-simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8">
+                <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    かんたん料金シミュレーション
+                </h3>
+            
+                <div class="space-y-4">
+                    
+                    <div id="step-1">
+                        <label for="plan-select" class="font-semibold text-slate-700">① プランを選択</label>
+                        <select id="plan-select" class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white">
+                            <option value="visitor">ビジター</option>
+                            <option value="sd_card">SDカード等 割引適用</option>
+                            <option value="gold_member">ゴールド会員</option>
+                            <option value="ladies_junior">レディース・ジュニア</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div id="step-2">
+                            <label class="font-semibold text-slate-700">② 利用日</label>
+                            <div class="flex gap-4 mt-2" id="day-options">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekday" class="mr-2" checked> 平日</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekend" class="mr-2"> 土日祝</label>
+                            </div>
+                        </div>
+
+                        <div id="step-4">
+                            <label class="font-semibold text-slate-700">④ 打席</label>
+                            <div class="flex gap-4 mt-2" id="floor-options">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="floor1" class="mr-2"> 1階</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="floor2" class="mr-2" checked> 2階</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="step-3">
+                        <label class="font-semibold text-slate-700">③ 時間帯</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2" id="time-options">
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="early" class="mr-2"> 早朝<br class="hidden md:inline">(6-10時)
+                            </label>
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="daytime" class="mr-2" checked> 日中<br class="hidden md:inline">(10-17時)
+                            </label>
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="night" class="mr-2"> 夜間<br class="hidden md:inline">(17-23時)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="step-5" class="pt-2">
+                        <div class="mb-4">
+                            <label for="ball-count" class="font-semibold text-slate-700">⑤ 何球打ちますか？</label>
+                            <input type="range" id="ball-count" min="50" max="800" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="text-center font-bold text-green-700 text-lg mt-2" id="ball-count-display">150球</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300 mt-6">
+                    <p class="text-slate-600 mb-1 text-sm">合計金額（目安）</p>
+                    <p class="text-3xl font-bold text-green-700" id="total-price-display">
+                        ¥<span id="total-price">----</span>
+                    </p>
+                    <p class="text-sm font-bold text-blue-600 mt-2 hidden" id="unlimited-display"></p>
+                </div>
+                
+                <p class="text-xs text-center text-slate-500 mt-4">
+                    ※あくまでシミュレーションです。実際の金額は練習場でご確認ください。<br>
+                    ※ゴールド会員、L/Jプランは年会費や登録料が別途必要な場合があります。
+                </p>
+            </div>
             <h2 id="section-2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">練習環境のリアル｜私が感じた3つのストレス要因</h2>
             <p>さて、これだけの「光」があれば、当然「影」も気になりますよね。ここからは、私が実際に練習する中で感じた、正直な感想といくつかのストレス要因についてお話しします。</p>
 
@@ -359,4 +497,119 @@ const comparisonArticles = [
         .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .scroll-mt-24 { scroll-margin-top: 6rem; }
     </style>
+
+    <script define:vars={{ priceData }}>
+    document.addEventListener('DOMContentLoaded', () => {
+        const simulator = document.getElementById('price-simulator');
+        if (!simulator) return;
+
+        const planSelect = simulator.querySelector('#plan-select');
+        const dayRadios = simulator.querySelectorAll('input[name="day"]');
+        const timeRadios = simulator.querySelectorAll('input[name="time"]');
+        const floorRadios = simulator.querySelectorAll('input[name="floor"]');
+        const ballCountSlider = simulator.querySelector('#ball-count');
+        
+        const ballCountDisplay = simulator.querySelector('#ball-count-display');
+        const totalPriceDisplay = simulator.querySelector('#total-price');
+        const unlimitedDisplay = simulator.querySelector('#unlimited-display');
+
+        function calculatePrice() {
+            // 1. 各選択肢の値を取得
+            const planKey = planSelect.value;
+            const dayKey = simulator.querySelector('input[name="day"]:checked')?.value;
+            const timeKey = simulator.querySelector('input[name="time"]:checked')?.value;
+            const floorKey = simulator.querySelector('input[name="floor"]:checked')?.value;
+            const balls = parseInt(ballCountSlider.value);
+
+            ballCountDisplay.textContent = `${balls}球`;
+
+            if (!planKey || !dayKey || !timeKey || !floorKey) {
+                totalPriceDisplay.textContent = '----';
+                unlimitedDisplay.classList.add('hidden');
+                return;
+            }
+
+            // 2. 必要な料金データを取得
+            const plan = priceData.plans[planKey];
+            const timeZone = priceData.timeZones[timeKey];
+            const baseBallPrice = priceData.ballPrice[dayKey][timeKey][floorKey];
+
+            let entryFee = timeZone.entryFee;
+            let ballPriceDiscount = 0;
+            let ballTotal = 0;
+            let finalPrice = 0;
+            let unlimitedMessage = "";
+
+            // 3. プラン別に基本料金を計算
+            if (plan.type === 'gold_member') {
+                entryFee = plan.entryFee; // 0円
+                ballPriceDiscount = plan.discount[dayKey]; // 平日-2, 土日祝-1
+            } else if (plan.type === 'sd_card') {
+                ballPriceDiscount = plan.discount[dayKey]; // 平日-2, 土日祝-1
+            }
+            // visitor と ladies_junior は基本料金（入場料, 単価）を使用
+
+            const actualBallPrice = Math.max(0, baseBallPrice - ballPriceDiscount);
+            ballTotal = (actualBallPrice * balls) + entryFee;
+            finalPrice = ballTotal; // まず単価計算を最終価格とする
+
+            // 4. 打ち放題プランとの比較
+            unlimitedDisplay.classList.add('hidden'); // いったんメッセージを隠す
+
+            if (plan.type === 'ladies_junior') {
+                // ★ レディース・ジュニアの場合
+                const ljPlan = plan.unlimited; // { name: "1時間...", price: 550 }
+                if (ballTotal > ljPlan.price) {
+                    finalPrice = ljPlan.price;
+                    unlimitedMessage = `💡 ${ljPlan.name} (¥${ljPlan.price.toLocaleString()}) がお得です`;
+                }
+
+            } else if (plan.type === 'gold_member' && timeZone.unlimited) {
+                // ★ ゴールド会員の場合 (早朝以外)
+                // 2時間プラン(1100円)と3時間プラン(1650円)を安い順に比較
+                const memberPlans = plan.unlimited.slice().sort((a, b) => a.price - b.price); // [1100, 1650]
+                
+                let bestPlanPrice = ballTotal;
+                let bestPlanMessage = "";
+
+                if (ballTotal > memberPlans[0].price) { // 1100円プランと比較
+                    bestPlanPrice = memberPlans[0].price;
+                    bestPlanMessage = `💡 ${memberPlans[0].name} (¥${memberPlans[0].price.toLocaleString()}) がお得です`;
+                }
+                if (bestPlanPrice > memberPlans[1].price) { // 1650円プランと比較
+                    bestPlanPrice = memberPlans[1].price;
+                    bestPlanMessage = `💡 ${memberPlans[1].name} (¥${memberPlans[1].price.toLocaleString()}) がお得です`;
+                }
+
+                finalPrice = bestPlanPrice;
+                unlimitedMessage = bestPlanMessage;
+
+            } else if ((plan.type === 'visitor' || plan.type === 'sd_card') && timeZone.unlimited) {
+                // ★ ビジター / SDカード の場合 (早朝以外)
+                const generalPlan = timeZone.unlimited; // { name: "3時間...", price: 1980 or 2200 }
+                if (ballTotal > generalPlan.price) {
+                    finalPrice = generalPlan.price;
+                    unlimitedMessage = `💡 ${generalPlan.name} (¥${generalPlan.price.toLocaleString()}) がお得です`;
+                }
+            }
+
+            // 5. 最終金額とメッセージを表示
+            totalPriceDisplay.textContent = finalPrice.toLocaleString();
+            if (unlimitedMessage) {
+                unlimitedDisplay.textContent = unlimitedMessage;
+                unlimitedDisplay.classList.remove('hidden');
+            }
+        }
+        
+        // イベントリスナーを設定
+        const allInputs = [planSelect, ...dayRadios, ...timeRadios, ...floorRadios, ballCountSlider];
+        allInputs.forEach(input => {
+            input.addEventListener('input', calculatePrice);
+            input.addEventListener('change', calculatePrice); // ラジオ/セレクト用
+        });
+
+        // 初期計算を実行
+        calculatePrice();
+    });
+</script>
 </BaseLayout>
