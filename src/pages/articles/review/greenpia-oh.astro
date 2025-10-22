@@ -613,15 +613,12 @@ const comparisonArticles = [
             }
 
             // 2. 必要な料金データを取得
-            // ★★★ 修正 (2025-10-22) ★★★
-            // priceData.plans[planKey] が存在するか確認 (HTMLのtypo対策)
             const plan = priceData.plans[planKey];
             if (!plan) {
                  console.error("Selected plan not found in priceData:", planKey);
                  totalPriceDisplay.textContent = 'エラー';
                  return;
             }
-            // ★★★ 修正ここまで ★★★
 
             const timeZone = priceData.timeZones[timeKey];
             const baseBallPrice = priceData.ballPrice[dayKey][timeKey][floorKey];
@@ -644,8 +641,6 @@ const comparisonArticles = [
             ballTotal = (actualBallPrice * balls) + entryFee;
 
             // 4. 打ち放題プランとの比較
-            // ★★★ 修正 (2025-10-22) ★★★
-            // ロジックを全面的に見直し
             unlimitedDisplay.classList.add('hidden'); // いったんメッセージを隠す
             unlimitedDisplay.innerHTML = ""; // 中身を空にする
 
@@ -708,7 +703,6 @@ const comparisonArticles = [
                 unlimitedDisplay.innerHTML = unlimitedMessage; // <br> を解釈させる
                 unlimitedDisplay.classList.remove('hidden');
             }
-            // ★★★ 修正ここまで ★★★
         }
 
         /**
@@ -780,7 +774,9 @@ const comparisonArticles = [
                 calculatePrice();
             }));
 
-T
+            // ★★★ 修正 (2025-10-22) ★★★
+            // 'T' を削除
+            
             // PC用ラジオ
              dayRadiosPc.forEach(radio => radio.addEventListener('change', () => {
                 simulator.querySelector(`input[name="day"][value="${radio.value}"]`).checked = true; // スマホと同期
