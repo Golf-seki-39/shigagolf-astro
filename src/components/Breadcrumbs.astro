@@ -22,7 +22,14 @@ const pathTranslations = new Map([
     ["adogawa-sc-review", "安曇川スポーツセンター"],
     ["azuchi-review", "安土ゴルフ練習場"],
     ["ksp-hikone-review", "KSP彦根"],
-    ["ksp_hope-review", "KSPホープ"],
+    ["ksp_hope-review", "KSP希望ヶ丘"],
+]);
+// パンくずリストに表示したくない、URL構造のためのセグメント
+const segmentsToIgnore = new Set([
+    "ranges", // /ranges/[rangeId] の 'ranges' を非表示
+    "review", // /review/[rangeId] の 'review' を非表示
+    "category", // /articles/category/[category] の 'category' を非表示
+    "comparison", // /articles/comparison/... の 'comparison' を非表示
 ]);
 
 // --- パンクズリストの生成ロジック ---
@@ -38,6 +45,12 @@ if (currentPath !== "/") {
     let pathAccumulator = ""; // URLを蓄積する変数
 
     segments.forEach((segment, index) => {
+        // ▼▼▼【変更点2: この if ブロックを追加】▼▼▼
+        // 無視リストに含まれるセグメントなら、パンくずを生成せずにスキップ
+        if (segmentsToIgnore.has(segment)) {
+            pathAccumulator += `/${segment}`; // URLの蓄積だけは行う
+            return; // この階層のパンくずは作らず、次のセグメントへ
+        }
         pathAccumulator += `/${segment}`;
         const isLast = index === segments.length - 1;
         let name = "";
