@@ -280,7 +280,7 @@ const comparisonArticles = [
                             <option value="" disabled selected>プランを選択してください</option>
                             <option value="visitor">ビジター</option>
                             <option value="sd_card">SDカード等 割引適用</option>
-                            <option value: "gold_member">ゴールド会員</option>
+                            <option value="gold_member">ゴールド会員</option>
                             <option value="ladies_junior">レディース・ジュニア</option>
                         </select>
                     </div>
@@ -605,7 +605,7 @@ const comparisonArticles = [
 
             ballCountDisplay.textContent = `${balls}球`;
 
-            // ★ 修正: planKeyが"" (未選択) の場合も計算しない
+            // planKeyが"" (未選択) の場合も計算しない
             if (!planKey || !dayKey || !timeKey || !floorKey) {
                 totalPriceDisplay.textContent = '----';
                 unlimitedDisplay.classList.add('hidden');
@@ -613,7 +613,16 @@ const comparisonArticles = [
             }
 
             // 2. 必要な料金データを取得
+            // ★★★ 修正 (2025-10-22) ★★★
+            // priceData.plans[planKey] が存在するか確認 (HTMLのtypo対策)
             const plan = priceData.plans[planKey];
+            if (!plan) {
+                 console.error("Selected plan not found in priceData:", planKey);
+                 totalPriceDisplay.textContent = 'エラー';
+                 return;
+            }
+            // ★★★ 修正ここまで ★★★
+
             const timeZone = priceData.timeZones[timeKey];
             const baseBallPrice = priceData.ballPrice[dayKey][timeKey][floorKey];
 
@@ -621,7 +630,6 @@ const comparisonArticles = [
             let ballPriceDiscount = 0;
             let ballTotal = 0;
             let finalPrice = 0;
-            let unlimitedMessage = "";
 
             // 3. プラン別に基本料金を計算
             if (plan.type === 'gold_member') {
@@ -636,9 +644,13 @@ const comparisonArticles = [
             ballTotal = (actualBallPrice * balls) + entryFee;
 
             // 4. 打ち放題プランとの比較
+            // ★★★ 修正 (2025-10-22) ★★★
+            // ロジックを全面的に見直し
             unlimitedDisplay.classList.add('hidden'); // いったんメッセージを隠す
+            unlimitedDisplay.innerHTML = ""; // 中身を空にする
 
-            let bestOption = { name: `単価打ち`, price: ballTotal }; // デフォルトは単価打ち
+            let bestOption = { name: '単価打ち', price: ballTotal }; // デフォルトは単価打ち
+            let unlimitedMessage = "";
             let availablePlans = [];
 
             if (plan.type === 'ladies_junior') {
@@ -649,54 +661,54 @@ const comparisonArticles = [
                 availablePlans = [timeZone.unlimited]; // 一般プラン
             }
 
-            // ★★★ 修正 (2025-10-22) ★★★
-            // レディース・ジュニア、またはゴールド会員(早朝以外)の場合は、球数に関わらず全プランを表示
-            if ((plan.type === 'ladies_junior' || (plan.type === 'gold_member' && timeKey !== 'early')) && availablePlans.length > 0) {
-                
-                // 利用可能な全プランを文字列化
-                unlimitedMessage = availablePlans.map(p => {
-                    return `${p.name} (¥${p.price.toLocaleString()})`;
-                }).join('<br>'); // 改行で連結
-                
-                // 5. 最終金額とメッセージを表示 (L/J, Goldの場合)
-                finalPrice = ballTotal; // 合計金額は「単価打ち」のまま表示
-                totalPriceDisplay.textContent = finalPrice.toLocaleString();
-                
-                // innerHTMLを使用して <br> を解釈させる
-                unlimitedDisplay.innerHTML = `💡 打ち放題プラン:<br>${unlimitedMessage}`; 
-                unlimitedDisplay.classList.remove('hidden');
-                
-                return; // ★ これ以降の比較ロジックをスキップして関数を終了
-            }
-            // ★★★ 修正ここまで ★★★
-
-
-            // (↓ここからは ビジター / SDカード のロジック)
             if (availablePlans.length > 0) {
-                // 単価打ち(ballTotal)を超えない、最大の打ち放題プランを探す
-                const suitablePlans = availablePlans.filter(p => p.price <= ballTotal);
                 
-                if (suitablePlans.length > 0) {
-                    // 単価打ちより安いプランが1つ以上ある
-                    // その中で最も高い（＝最も長時間使える）プランを選ぶ
-                    const bestUnlimitedPlan = suitablePlans.reduce((best, current) => {
-                        return current.price > best.price ? current : best;
-                    });
-                    bestOption = bestUnlimitedPlan;
-                    unlimitedMessage = `💡 ${bestOption.name} (¥${bestOption.price.toLocaleString()}) がお得です`;
+                // L/J と Gold の場合 (複数の打ち放題プランがある場合)
+                if (plan.type === 'ladies_junior' || (plan.type === 'gold_member' && timeKey !== 'early')) {
+                    
+                    // 単価打ち(ballTotal)より安いプランをすべて見つける
+                    const suitablePlans = availablePlans.filter(p => p.price <= ballTotal);
+                    
+                    if (suitablePlans.length > 0) {
+                        // 単価打ちより安いプランが1つ以上ある
+                        // その中で「最も高い（＝最も長時間使える）」プランをベストオプションとする
+                        // (例: 1300円なら1100円プランが選ばれる)
+                        const bestUnlimitedPlan = suitablePlans.reduce((best, current) => {
+                            return current.price > best.price ? current : best;
+                        });
+                        bestOption = bestUnlimitedPlan;
+                    }
+                    // suitablePlansが0の場合 (例: 400円 < 550円)
+                    // bestOptionは '単価打ち' (ballTotal) のまま
+
+                    // メッセージには *利用可能なすべてのプラン* を列挙する
+                    unlimitedMessage = "💡 打ち放題プラン:<br>" + availablePlans.map(p => {
+                        return `${p.name} (¥${p.price.toLocaleString()})`;
+                    }).join('<br>');
+
+                } 
+                // Visitor / SDカード の場合 (打ち放題プランが1つだけの場合)
+                else {
+                    const cheapestUnlimitedPlan = availablePlans[0]; // 1つしかない
+                    if (cheapestUnlimitedPlan.price <= ballTotal) {
+                        // 単価打ちより打ち放題が安い
+                        bestOption = cheapestUnlimitedPlan;
+                        unlimitedMessage = `💡 ${bestOption.name} (¥${bestOption.price.toLocaleString()}) がお得です`;
+                    }
+                    // 単価打ちが安い場合は bestOption は '単価打ち' のまま、メッセージもなし
                 }
-                // (L/Jプランは上のifブロックで処理されるため、ここのelse-ifは不要になった)
             }
             
-            // 5. 最終金額とメッセージを表示 (ビジター / SDカードの場合)
-            // ★ 表示する金額は「最もお得なプランの金額」
+            // 5. 最終金額とメッセージを表示
+            // 表示する金額は「最もお得なプランの金額」
             finalPrice = bestOption.price;
             totalPriceDisplay.textContent = finalPrice.toLocaleString();
             
             if (unlimitedMessage) {
-                unlimitedDisplay.textContent = unlimitedMessage; // textContent (こちらは<br>を使わないため)
+                unlimitedDisplay.innerHTML = unlimitedMessage; // <br> を解釈させる
                 unlimitedDisplay.classList.remove('hidden');
             }
+            // ★★★ 修正ここまで ★★★
         }
 
         /**
@@ -768,6 +780,7 @@ const comparisonArticles = [
                 calculatePrice();
             }));
 
+T
             // PC用ラジオ
              dayRadiosPc.forEach(radio => radio.addEventListener('change', () => {
                 simulator.querySelector(`input[name="day"][value="${radio.value}"]`).checked = true; // スマホと同期
