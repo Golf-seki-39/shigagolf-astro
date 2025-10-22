@@ -36,7 +36,7 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// === 料金シミュレーター用のデータ定義 ===
+// === [★更新] 料金シミュレーター用のデータ定義 ===
 const priceData = {
   plans: {
     visitor: { 
@@ -61,10 +61,11 @@ const priceData = {
     ladies_junior: {
       name: 'レディース・ジュニア',
       type: 'ladies_junior',
-      // ★ 1時間プランを基準に比較。
-      // (もし2時間/3時間プランがあれば、Gold会員のように配列で追加可能)
+      // ★ L/Jプラン (平日・土日祝 共通)
       unlimited: [
-        { name: "1時間打ち放題", price: 550 }
+        { name: "1時間打ち放題", price: 550 },
+        { name: "2時間打ち放題", price: 1100 },
+        { name: "3時間打ち放題", price: 1650 }
       ]
     }
   },
@@ -287,7 +288,7 @@ const comparisonArticles = [
                         <div id="step-2-pc" class="step-container"> 
                             <label class="font-semibold text-slate-700">② 利用日</label>
                             <div class="flex gap-4 mt-2" id="day-options-pc">
-                                <label class="flex items-center cursor-pointer"><input type="radio" name="day-pc" value="weekday" class="mr-2" checked> 平日</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day-pc" value="weekday" class="mr-2"> 平日</label>
                                 <label class="flex items-center cursor-pointer"><input type="radio" name="day-pc" value="weekend" class="mr-2"> 土日祝</label>
                             </div>
                         </div>
@@ -296,7 +297,7 @@ const comparisonArticles = [
                             <label class="font-semibold text-slate-700">③ 打席</label>
                             <div class="flex gap-4 mt-2" id="floor-options-pc">
                                 <label class="flex items-center cursor-pointer"><input type="radio" name="floor-pc" value="floor1" class="mr-2"> 1階</label>
-                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor-pc" value="floor2" class="mr-2" checked> 2階</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor-pc" value="floor2" class="mr-2"> 2階</label>
                             </div>
                         </div>
                     </div>
@@ -521,6 +522,12 @@ const comparisonArticles = [
         .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
         .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .scroll-mt-24 { scroll-margin-top: 6rem; }
+        
+        /* ★ プラン選択のiOSフォントサイズ対策 */
+        #price-simulator select {
+             font-size: 1rem; /* 16px */
+        }
+
         /* ★スマホ用ステップ表示のためのCSS */
         @media (max-width: 767px) {
             .step-container {
@@ -631,16 +638,31 @@ const comparisonArticles = [
             unlimitedDisplay.classList.add('hidden'); // いったんメッセージを隠す
 
             if (plan.type === 'ladies_junior') {
-                // ★ L/Jプランの場合
-                // (もしL/Jに2時間/3時間プランが追加されたら、Goldと同様に.sort()で比較する)
-                const ljPlan = plan.unlimited[0]; // { name: "1時間...", price: 550 }
-                if (ballTotal > ljPlan.price) {
-                    finalPrice = ljPlan.price;
-                    unlimitedMessage = `💡 ${ljPlan.name} (¥${ljPlan.price.toLocaleString()}) がお得です`;
-                } else {
-                    // ★ 単価打ちの方が安い場合もメッセージを出す
-                    unlimitedMessage = `💡 単価打ち (¥${ballTotal.toLocaleString()}) がお得です`;
+                // ★ L/Jプランの場合 (平日/土日祝共通の料金プランと比較)
+                // ★ 修正: plan.unlimited[dayKey] -> plan.unlimited (L/JプランはdayKeyに依存しない)
+                const ljPlans = plan.unlimited.slice().sort((a, b) => a.price - b.price); // [550, 1100, 1650]
+                
+                let bestPlanPrice = ballTotal;
+                let bestPlanMessage = `💡 単価打ち (¥${ballTotal.toLocaleString()}) がお得です`;
+
+                // 1時間プランと比較
+                if (ballTotal > ljPlans[0].price) { 
+                    bestPlanPrice = ljPlans[0].price;
+                    bestPlanMessage = `💡 ${ljPlans[0].name} (¥${ljPlans[0].price.toLocaleString()}) がお得です`;
                 }
+                // 2時間プランと比較
+                if (ljPlans.length > 1 && bestPlanPrice > ljPlans[1].price) { 
+                    bestPlanPrice = ljPlans[1].price;
+                    bestPlanMessage = `💡 ${ljPlans[1].name} (¥${ljPlans[1].price.toLocaleString()}) がお得です`;
+                }
+                // 3時間プランと比較
+                if (ljPlans.length > 2 && bestPlanPrice > ljPlans[2].price) { 
+                    bestPlanPrice = ljPlans[2].price;
+                    bestPlanMessage = `💡 ${ljPlans[2].name} (¥${ljPlans[2].price.toLocaleString()}) がお得です`;
+                }
+
+                finalPrice = bestPlanPrice;
+                unlimitedMessage = bestPlanMessage;
 
             } else if (plan.type === 'gold_member' && timeZone.unlimited) {
                 // ★ ゴールド会員の場合 (早朝以外)
@@ -654,7 +676,7 @@ const comparisonArticles = [
                     bestPlanPrice = memberPlans[0].price;
                     bestPlanMessage = `💡 ${memberPlans[0].name} (¥${memberPlans[0].price.toLocaleString()}) がお得です`;
                 }
-                // 3時間プラン(1650円)と比較 (bestPlanPriceは1100円になっている可能性あり)
+                // 3時間プラン(1650円)と比較
                 if (bestPlanPrice > memberPlans[1].price) { 
                     bestPlanPrice = memberPlans[1].price;
                     bestPlanMessage = `💡 ${memberPlans[1].name} (¥${memberPlans[1].price.toLocaleString()}) がお得です`;
@@ -697,12 +719,7 @@ const comparisonArticles = [
             // ラジオボタンの選択を全て解除
             [...dayRadios, ...floorRadios, ...timeRadios, ...dayRadiosPc, ...floorRadiosPc].forEach(radio => radio.checked = false);
             
-            // デフォルト選択 (PC/スマホ両方)
-            simulator.querySelector('input[name="day"][value="weekday"]').checked = true;
-            simulator.querySelector('input[name="day-pc"][value="weekday"]').checked = true;
-            simulator.querySelector('input[name="floor"][value="floor2"]').checked = true;
-            simulator.querySelector('input[name="floor-pc"][value="floor2"]').checked = true;
-            simulator.querySelector('input[name="time"][value="daytime"]').checked = true;
+            // ★ デフォルト選択をすべて削除 (バグ修正)
 
             planSelect.value = 'visitor';
             ballCountSlider.value = 150;
@@ -724,7 +741,7 @@ const comparisonArticles = [
                 resetButton.classList.add('hidden'); 
             }
             
-            calculatePrice(); // 最後に初期計算
+            calculatePrice(); // 最後に初期計算 (---- と表示される)
         }
         
         /**
