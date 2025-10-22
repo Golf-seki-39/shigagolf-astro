@@ -34,6 +34,94 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
+// ★★★ ここから料金シミュレーター用のデータ定義 ★★★
+const priceData = {
+  plans: {
+    visitor: { 
+      name: 'ビジター', 
+      type: 'visitor' 
+    },
+    member: { 
+      name: 'メンバー会員', 
+      type: 'member',
+      entryFee: 0 // 入場料無料
+    },
+    premium: {
+      name: 'プレミアム会員',
+      type: 'premium',
+      entryFee: 0, // 入場料無料
+      discount: 1, // 1円引き (9:00-22:00)
+      unlimited: [ // 9:00-22:00
+        { name: "2時間打ち放題", price: 1030 },
+        { name: "3時間打ち放題", price: 1545 }
+      ]
+    },
+    ladies_junior: {
+      name: 'レディース・ジュニア',
+      type: 'ladies_junior',
+      entryFee: 0, // 入場料無料
+      unlimited: [ // 9:00-22:00
+        { name: "1時間打ち放題", price: 515 },
+        { name: "2時間打ち放題", price: 1030 },
+        { name: "3時間打ち放題", price: 1545 }
+      ]
+    }
+  },
+  timeZones: {
+    early: { 
+      name: "早朝 (6:00-9:00)", 
+      entryFee: { weekday: 0, weekend: 0 }, // 共通で無料
+      unlimited: null // 打ち放題なし
+    },
+    daytime: { 
+      name: "日中 (9:00-17:00)", 
+      entryFee: { weekday: 280, weekend: 320 }, 
+      unlimited: { // 一般
+        weekday: { price: 1854, name: "3時間打ち放題" },
+        weekend: { price: 2060, name: "3時間打ち放題" }
+      }
+    },
+    night1: { 
+      name: "夜間 (17:00-22:00)", 
+      entryFee: { weekday: 280, weekend: 320 }, // 日中と同じと仮定
+      unlimited: { // 一般 (日中と同じと仮定)
+        weekday: { price: 1854, name: "3時間打ち放題" },
+        weekend: { price: 2060, name: "3時間打ち放題" }
+      }
+    },
+    night2: { 
+      name: "深夜 (22:00-24:00)", 
+      entryFee: { weekday: 0, weekend: 0 }, // 共通で無料
+      unlimited: null // 打ち放題なし
+    }
+  },
+  ballPrice: {
+    // 3円デー (平日扱いと仮定)
+    special_day: {
+      early:   { floor1: 3, floor2: 3 },
+      daytime: { floor1: 3, floor2: 3 },
+      night1:  { floor1: 3, floor2: 3 },
+      night2:  { floor1: 3, floor2: 3 },
+    },
+    // 平日
+    weekday: {
+      early:   { floor1: 7, floor2: 7 },
+      daytime: { floor1: 8, floor2: 8 },
+      night1:  { floor1: 9, floor2: 8 },
+      night2:  { floor1: 8, floor2: 8 }, // 2Fを1Fと同じと仮定
+    },
+    // 土日祝
+    weekend: {
+      early:   { floor1: 7, floor2: 7 }, // 平日と同じと仮定
+      daytime: { floor1: 10, floor2: 9 },
+      night1:  { floor1: 10, floor2: 9 }, // 日中と同じと仮定
+      night2:  { floor1: 9, floor2: 9 },
+    }
+  }
+};
+// ★★★ 料金シミュレーター用のデータ定義ここまで ★★★
+
+
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/cJBj7Sh.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/DqJ7aMO.png' },
@@ -44,7 +132,7 @@ const experienceReports = [
 const comparisonArticles = [
     { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
     { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江5選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
     { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://i.imgur.com/XXlXJbL.jpeg' },
     { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://i.imgur.com/1sT2kzY.jpeg' },
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
@@ -203,6 +291,7 @@ const comparisonArticles = [
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
                     <li><a href="#benefits" class="text-green-700 hover:underline">女性＆ジュニアにうれしい特典はこちら！</a></li>
+                    <li><a href="#simulator" class="text-green-700 hover:underline">かんたん料金シミュレーション</a></li> 
                     <li><a href="#reasons" class="text-green-700 hover:underline">男性筆者がそれでも「さくらゴルフ倶楽部」に通い詰める理由</a></li>
                     <li><a href="#environment" class="text-green-700 hover:underline">気になる練習環境を徹底チェック！</a></li>
                     <li><a href="#insider-tip" class="text-green-700 hover:underline">“裏ワザ”ではなく、店員さんのご厚意です</a></li>
@@ -236,6 +325,109 @@ const comparisonArticles = [
 
             <p>…正直、これ本当？って思いますよね。私も最初は目を疑いました（笑）。 これならお財布を気にせず、思いっきり練習に打ち込めます！ 実際に、私のゴルフ仲間（女性）もこの特典をフル活用して、めきめき上達していますよ！</p>
 
+
+            <h2 id="simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">かんたん料金シミュレーション</h2>
+            <div id="price-simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8 overflow-hidden"> 
+                <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    かんたん料金シミュレーション
+                </h3>
+            
+                <div class="md:space-y-4">
+                    
+                    <div id="step-1" class="step-container"> 
+                        <label for="plan-select" class="font-semibold text-slate-700">① プランを選択</label>
+                        <select id="plan-select" class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white">
+                            <option value="" disabled selected>プランを選択してください</option>
+                            <option value="visitor">ビジター</option>
+                            <option value="member">メンバー会員</option>
+                            <option value="premium">プレミアム会員</option>
+                            <option value="ladies_junior">レディース・ジュニア</option>
+                        </select>
+                    </div>
+
+                    <div class="hidden md:grid grid-cols-2 gap-4">
+                        <div id="step-2-pc" class="step-container"> 
+                            <label class="font-semibold text-slate-700">② 利用日</label>
+                            <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2" id="day-options-pc">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day-pc" value="weekday" class="mr-2"> 平日</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day-pc" value="weekend" class="mr-2"> 土日祝</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day-pc" value="special_day" class="mr-2"> 3円デー(第3火曜)</label>
+                            </div>
+                        </div>
+
+                        <div id="step-3-pc" class="step-container"> 
+                            <label class="font-semibold text-slate-700">③ 打席</label>
+                            <div class="flex gap-4 mt-2" id="floor-options-pc">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor-pc" value="floor1" class="mr-2"> 1階</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor-pc" value="floor2" class="mr-2"> 2階</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="step-2" class="step-container md:hidden"> 
+                        <label class="font-semibold text-slate-700">② 利用日</label>
+                        <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2" id="day-options">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekday" class="mr-2"> 平日</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekend" class="mr-2"> 土日祝</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="special_day" class="mr-2"> 3円デー</label>
+                        </div>
+                    </div>
+
+                    <div id="step-3" class="step-container md:hidden"> 
+                        <label class="font-semibold text-slate-700">③ 打席</label>
+                        <div class="flex gap-4 mt-2" id="floor-options">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="floor1" class="mr-2"> 1階</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="floor2" class="mr-2"> 2階</label>
+                        </div>
+                    </div>
+
+                    <div id="step-4" class="step-container"> 
+                        <label class="font-semibold text-slate-700">④ 時間帯</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2" id="time-options">
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="early" class="mr-2"> 早朝<br class="hidden md:inline">(6-9時)
+                            </label>
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="daytime" class="mr-2"> 日中<br class="hidden md:inline">(9-17時)
+                            </label>
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="night1" class="mr-2"> 夜間<br class="hidden md:inline">(17-22時)
+                            </label>
+                             <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="night2" class="mr-2"> 深夜<br class="hidden md:inline">(22-24時)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="step-5" class="step-container pt-2"> 
+                        <div class="mb-4">
+                            <label for="ball-count" class="font-semibold text-slate-700">⑤ 何球打ちますか？</label>
+                            <input type="range" id="ball-count" min="10" max="800" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="text-center font-bold text-green-700 text-lg mt-2" id="ball-count-display">150球</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300 mt-6">
+                    <p class="text-slate-600 mb-1 text-sm">合計金額（目安）</p>
+                    <p class="text-3xl font-bold text-green-700" id="total-price-display">
+                        ¥<span id="total-price">----</span>
+                    </p>
+                    <p class="text-sm font-bold text-blue-600 mt-2 hidden" id="unlimited-display"></p>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button id="reset-button" class="hidden bg-slate-200 text-slate-600 text-sm py-1 px-3 rounded-full">
+                        やり直す
+                    </button>
+                </div>
+
+                <p class="text-xs text-center text-slate-500 mt-4">
+                    ※あくまでシミュレーションです。実際の金額は練習場でご確認ください。<br>
+                    ※3円デーは打ち放題プランの割引対象外となる前提で計算しています。
+                </p>
+            </div>
             <h2 id="reasons" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 男性筆者がそれでも「さくらゴルフ倶楽部」に通い詰める理由
             </h2>
@@ -417,7 +609,7 @@ const comparisonArticles = [
                                                 <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
                                                 {Array.from({ length: 5 }).map((_, i) => (
                                                     <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                     </svg>
                                                 ))}
                                             </div>
@@ -427,7 +619,7 @@ const comparisonArticles = [
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
                                     <td class="py-3 px-4">
-                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                        <a href={`http://googleusercontent.com/maps/google.com/0{encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
                                         </a>
                                     </td>
@@ -474,7 +666,7 @@ const comparisonArticles = [
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
                         {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
-                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
+                            src={`http://googleusercontent.com/maps/google.com/1{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
                             height="450"
                             style="border:0;"
@@ -523,11 +715,13 @@ const comparisonArticles = [
 </BaseLayout>
 
 <style>
+    /* ★ シミュレーター用のCSSを追加 */
     .map-container {
         position: relative;
         width: 100%;
         overflow: hidden;
-        padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        /* 変更: 16:9 ではなく、高さを 450px に固定 (元コードに合わせる) */
+        height: 450px; 
     }
     .map-container iframe {
         position: absolute;
@@ -540,4 +734,304 @@ const comparisonArticles = [
     .scroll-mt-24 {
         scroll-margin-top: 6rem; /* 96px */
     }
+
+    #plan-select {
+         font-size: 1rem !important; /* 16px */
+    }
+
+    @media (max-width: 767px) {
+        .step-container {
+            transition: opacity 0.3s ease-out, max-height 0.3s ease-out, margin 0.3s ease-out, padding 0.3s ease-out;
+            overflow: hidden;
+        }
+        .step-container.hidden {
+            opacity: 0;
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+    }
 </style>
+
+<script define:vars={{ priceData }}>
+    document.addEventListener('DOMContentLoaded', () => {
+        const simulator = document.getElementById('price-simulator');
+        if (!simulator) return;
+
+        // --- 要素の取得 ---
+        const planSelect = simulator.querySelector('#plan-select');
+        
+        // スマホ用
+        const dayRadios = simulator.querySelectorAll('input[name="day"]');
+        const floorRadios = simulator.querySelectorAll('input[name="floor"]');
+        // PC用 
+        const dayRadiosPc = simulator.querySelectorAll('input[name="day-pc"]');
+        const floorRadiosPc = simulator.querySelectorAll('input[name="floor-pc"]');
+
+        // 共通
+        const timeRadios = simulator.querySelectorAll('input[name="time"]');
+        const ballCountSlider = simulator.querySelector('#ball-count');
+        const ballCountDisplay = simulator.querySelector('#ball-count-display');
+        const totalPriceDisplay = simulator.querySelector('#total-price');
+        const unlimitedDisplay = simulator.querySelector('#unlimited-display');
+        const resetButton = simulator.querySelector('#reset-button');
+
+        // ステップコンテナ
+        const steps = [
+            simulator.querySelector('#step-1'),
+            simulator.querySelector('#step-2'), // スマホ用 利用日
+            simulator.querySelector('#step-3'), // スマホ用 打席
+            simulator.querySelector('#step-4'), // 共通 時間帯
+            simulator.querySelector('#step-5')  // 共通 球数
+        ];
+        
+        // PC用コンテナ
+        const pcStep2 = simulator.querySelector('#step-2-pc');
+        const pcStep3 = simulator.querySelector('#step-3-pc');
+
+        // --- 状態管理 ---
+        const isMobile = () => window.innerWidth < 768;
+
+        // --- 関数定義 ---
+
+        /**
+         * 料金を計算して表示する
+         */
+        function calculatePrice() {
+            // 1. 各選択肢の値を取得
+            const planKey = planSelect.value;
+            let dayKey = (isMobile() ? 
+                            simulator.querySelector('input[name="day"]:checked') : 
+                            simulator.querySelector('input[name="day-pc"]:checked'))?.value;
+            const floorKey = (isMobile() ? 
+                              simulator.querySelector('input[name="floor"]:checked') : 
+                              simulator.querySelector('input[name="floor-pc"]:checked'))?.value;
+            const timeKey = simulator.querySelector('input[name="time"]:checked')?.value;
+            const balls = parseInt(ballCountSlider.value);
+
+            ballCountDisplay.textContent = `${balls}球`;
+
+            if (!planKey || !dayKey || !timeKey || !floorKey) {
+                totalPriceDisplay.textContent = '----';
+                unlimitedDisplay.classList.add('hidden');
+                return;
+            }
+
+            // 2. 必要な料金データを取得
+            const plan = priceData.plans[planKey];
+            if (!plan) {
+                 console.error("Selected plan not found in priceData:", planKey);
+                 totalPriceDisplay.textContent = 'エラー';
+                 return;
+            }
+
+            const timeZone = priceData.timeZones[timeKey];
+            // 3円デー 'special_day' が選択された場合、ボール単価は 'special_day' を参照
+            const ballPriceDayKey = dayKey; 
+            const baseBallPrice = priceData.ballPrice[ballPriceDayKey][timeKey][floorKey];
+
+            let entryFee = 0;
+            let ballPriceDiscount = 0;
+            let ballTotal = 0;
+            let finalPrice = 0;
+
+            // 3. プラン別に基本料金を計算
+            
+            // 3-1. 入場料
+            if (plan.type === 'visitor') {
+                // 3円デー(第3火曜)は平日扱いとする
+                const entryDayKey = (dayKey === 'special_day') ? 'weekday' : dayKey;
+                entryFee = timeZone.entryFee[entryDayKey];
+            } else {
+                // member, premium, ladies_junior は入場料無料
+                entryFee = plan.entryFee;
+            }
+            
+            // 3-2. 単価割引
+            // プレミアム会員、かつ、9-22時、かつ、3円デー以外
+            if (plan.type === 'premium' && (timeKey === 'daytime' || timeKey === 'night1') && dayKey !== 'special_day') {
+                ballPriceDiscount = plan.discount; // 1円
+            }
+
+            const actualBallPrice = Math.max(0, baseBallPrice - ballPriceDiscount);
+            ballTotal = (actualBallPrice * balls) + entryFee;
+
+            // 4. 打ち放題プランとの比較
+            unlimitedDisplay.classList.add('hidden');
+            unlimitedDisplay.innerHTML = ""; 
+
+            let bestOption = { name: '単価打ち', price: ballTotal };
+            let unlimitedMessage = "";
+            let availablePlans = [];
+
+            // 打ち放題が利用可能な時間帯 (9:00-22:00) かつ 3円デーでない場合
+            if ((timeKey === 'daytime' || timeKey === 'night1') && dayKey !== 'special_day') {
+                if (plan.type === 'ladies_junior') {
+                    availablePlans = plan.unlimited; 
+                } else if (plan.type === 'premium') {
+                    availablePlans = plan.unlimited; 
+                } else if (plan.type === 'visitor' || plan.type === 'member') {
+                    // 一般の打ち放題。dayKey は 'weekday' or 'weekend'
+                    if (timeZone.unlimited && timeZone.unlimited[dayKey]) {
+                         availablePlans = [timeZone.unlimited[dayKey]]; 
+                    }
+                }
+            }
+            // (早朝・深夜・3円デーは availablePlans = [] のまま)
+
+            if (availablePlans.length > 0) {
+                
+                // L/J と Premium の場合 (複数の打ち放題プランがある場合)
+                if (plan.type === 'ladies_junior' || plan.type === 'premium') {
+                    
+                    const suitablePlans = availablePlans.filter(p => p.price <= ballTotal);
+                    
+                    if (suitablePlans.length > 0) {
+                        const bestUnlimitedPlan = suitablePlans.reduce((best, current) => {
+                            return current.price > best.price ? current : best;
+                        });
+                        bestOption = bestUnlimitedPlan;
+                    }
+
+                    unlimitedMessage = "💡 打ち放題プラン:<br>" + availablePlans.map(p => {
+                        return `${p.name} (¥${p.price.toLocaleString()})`;
+                    }).join('<br>');
+
+                } 
+                // Visitor / Member の場合 (一般打ち放題が1つの場合)
+                else { 
+                    const cheapestUnlimitedPlan = availablePlans[0]; 
+                    if (cheapestUnlimitedPlan.price <= ballTotal) {
+                        bestOption = cheapestUnlimitedPlan;
+                        unlimitedMessage = `💡 ${bestOption.name} (¥${bestOption.price.toLocaleString()}) がお得です`;
+                    }
+                }
+            }
+            
+            // 5. 最終金額とメッセージを表示
+            finalPrice = bestOption.price;
+            let finalPriceString = finalPrice.toLocaleString(); 
+
+            // レディース・プレミアム会員で、かつ「打ち放題」が最安オプションになった場合
+            if ((plan.type === 'ladies_junior' || plan.type === 'premium') && bestOption.name !== '単価打ち') {
+                
+                if (availablePlans.length > 0) {
+                    const minUnlimitedPrice = availablePlans.reduce((min, p) => p.price < min ? p.price : min, availablePlans[0].price);
+                    
+                    // 表示を「¥(最低価格)〜」に変更
+                    finalPriceString = `${minUnlimitedPrice.toLocaleString()}〜`; 
+                }
+            }
+
+            totalPriceDisplay.textContent = finalPriceString; 
+            
+            if (unlimitedMessage) {
+                unlimitedDisplay.innerHTML = unlimitedMessage; 
+                unlimitedDisplay.classList.remove('hidden');
+            }
+        }
+
+        /**
+         * スマホ表示でステップを進める
+         */
+        function goToStep(stepToShow) {
+            if (!isMobile()) return;
+            steps.forEach(step => step.classList.add('hidden'));
+            stepToShow.classList.remove('hidden');
+            resetButton.classList.remove('hidden');
+        }
+
+        /**
+         * スマホ/PC表示とフォームをリセット
+         */
+        function resetSimulator() {
+            // ラジオボタンの選択を全て解除
+            [...dayRadios, ...floorRadios, ...timeRadios, ...dayRadiosPc, ...floorRadiosPc].forEach(radio => radio.checked = false);
+            
+            ballCountSlider.value = 150;
+            
+            if (isMobile()) {
+                // ★ スマホ: プランを「未選択」に戻す
+                planSelect.value = ""; 
+                steps.forEach((step, index) => {
+                    if (index === 0) step.classList.remove('hidden'); // ステップ1
+                    else step.classList.add('hidden');
+                });
+                resetButton.classList.add('hidden');
+            } else {
+                // ★ PC: デフォルトを設定
+                planSelect.value = 'visitor'; // PCはビジターデフォルト
+                simulator.querySelector('input[name="day-pc"][value="weekday"]').checked = true;
+                simulator.querySelector('input[name="floor-pc"][value="floor2"]').checked = true;
+                simulator.querySelector('input[name="time"][value="daytime"]').checked = true;
+
+                // PCはスマホ用ステップを隠す
+                steps.forEach(step => step.classList.remove('hidden'));
+                steps[1].classList.add('hidden'); // (スマホ用)
+                steps[2].classList.add('hidden'); // (スマホ用)
+                pcStep2.classList.remove('hidden');
+                pcStep3.classList.remove('hidden');
+                resetButton.classList.add('hidden'); 
+            }
+            
+            calculatePrice(); // 最後に初期計算 (PCは計算され、スマホは '----' のまま)
+        }
+        
+        /**
+         * イベントリスナーを設定
+         */
+        function setupListeners() {
+            planSelect.addEventListener('change', () => {
+                calculatePrice(); // Recalculate
+                if (isMobile()) {
+                    goToStep(steps[1]); // プラン選んだらステップ2へ
+                }
+            });
+            
+            // スマホ用ラジオ
+            dayRadios.forEach(radio => radio.addEventListener('change', () => {
+                simulator.querySelector(`input[name="day-pc"][value="${radio.value}"]`).checked = true; // PCと同期
+                goToStep(steps[2]); // ステップ3へ
+                calculatePrice();
+            }));
+            floorRadios.forEach(radio => radio.addEventListener('change', () => {
+                 simulator.querySelector(`input[name="floor-pc"][value="${radio.value}"]`).checked = true; // PCと同期
+                goToStep(steps[3]); // ステップ4へ
+                calculatePrice();
+            }));
+            
+            // PC用ラジオ
+             dayRadiosPc.forEach(radio => radio.addEventListener('change', () => {
+                simulator.querySelector(`input[name="day"][value="${radio.value}"]`).checked = true; // スマホと同期
+                calculatePrice();
+            }));
+            floorRadiosPc.forEach(radio => radio.addEventListener('change', () => {
+                simulator.querySelector(`input[name="floor"][value="${radio.value}"]`).checked = true; // スマホと同期
+                calculatePrice();
+            }));
+
+            // 共通
+            timeRadios.forEach(radio => radio.addEventListener('change', () => {
+                if(isMobile()) goToStep(steps[4]); // ステップ5へ
+                calculatePrice();
+            }));
+            ballCountSlider.addEventListener('input', calculatePrice);
+            resetButton.addEventListener('click', resetSimulator);
+        }
+
+        // --- 初期化実行 ---
+        setupListeners(); // イベントリスナーを先に設定
+        resetSimulator(); // Viewとフォームを初期化
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                resetSimulator(); // リサイズ時もリセットして再描画
+            }, 250);
+        });
+    });
+</script>
