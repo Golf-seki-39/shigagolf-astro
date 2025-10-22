@@ -53,7 +53,7 @@ const priceData = {
       type: 'gold_member',
       entryFee: 0, 
       discount: { weekday: 2, weekend: 1 }, 
-      unlimited: [ 
+      unlimited: [ // ★ 早朝以外で適用
         { name: "2時間打ち放題", price: 1100 },
         { name: "3時間打ち放題", price: 1650 }
       ]
@@ -61,7 +61,7 @@ const priceData = {
     ladies_junior: {
       name: 'レディース・ジュニア',
       type: 'ladies_junior',
-      // ★ L/Jプラン (平日・土日祝 共通)
+      // ★ L/Jプラン (平日・土日祝 共通 / 時間帯問わず適用)
       unlimited: [
         { name: "1時間打ち放題", price: 550 },
         { name: "2時間打ち放題", price: 1100 },
@@ -73,7 +73,7 @@ const priceData = {
     early: { 
       name: "早朝 (6:00-10:00)", 
       entryFee: 0, 
-      unlimited: null // 一般打ち放題なし
+      unlimited: null // 一般・ゴールド会員の打ち放題なし
     },
     daytime: { 
       name: "日中 (10:00-17:00)", 
@@ -277,6 +277,7 @@ const comparisonArticles = [
                     <div id="step-1" class="step-container"> 
                         <label for="plan-select" class="font-semibold text-slate-700">① プランを選択</label>
                         <select id="plan-select" class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white text-base">
+                            <option value="" disabled selected>プランを選択してください</option>
                             <option value="visitor">ビジター</option>
                             <option value="sd_card">SDカード等 割引適用</option>
                             <option value="gold_member">ゴールド会員</option>
@@ -604,6 +605,7 @@ const comparisonArticles = [
 
             ballCountDisplay.textContent = `${balls}球`;
 
+            // ★ 修正: planKeyが"" (未選択) の場合も計算しない
             if (!planKey || !dayKey || !timeKey || !floorKey) {
                 totalPriceDisplay.textContent = '----';
                 unlimitedDisplay.classList.add('hidden');
@@ -637,49 +639,36 @@ const comparisonArticles = [
             // 4. 打ち放題プランとの比較
             unlimitedDisplay.classList.add('hidden'); // いったんメッセージを隠す
 
+            // ★ 修正: L/JとGold会員の比較ロジックを修正
+            let priceOptions = [
+                { name: `単価打ち`, price: ballTotal }
+            ];
+            
             if (plan.type === 'ladies_junior') {
-                // ★ L/Jプランの場合 (平日/土日祝共通の料金プランと比較)
-                const ljPlans = plan.unlimited.slice().sort((a, b) => a.price - b.price); // [550, 1100, 1650]
-                
-                let bestPlanPrice = ballTotal;
-                let bestPlanMessage = `💡 単価打ち (¥${ballTotal.toLocaleString()}) がお得です`;
-
-                // ★ 修正: ループですべてのプランを比較
-                for (const unlimitedPlan of ljPlans) {
-                    if (bestPlanPrice > unlimitedPlan.price) {
-                        bestPlanPrice = unlimitedPlan.price;
-                        bestPlanMessage = `💡 ${unlimitedPlan.name} (¥${unlimitedPlan.price.toLocaleString()}) がお得です`;
-                    }
-                }
-
-                finalPrice = bestPlanPrice;
-                unlimitedMessage = bestPlanMessage;
-
+                // L/Jプランは時間帯・曜日に関わらず共通のプランを追加
+                priceOptions.push(...plan.unlimited);
+            
             } else if (plan.type === 'gold_member' && timeZone.unlimited) {
-                // ★ ゴールド会員の場合 (早朝以外)
-                const memberPlans = plan.unlimited.slice().sort((a, b) => a.price - b.price); // [1100, 1650]
-                
-                let bestPlanPrice = ballTotal;
-                let bestPlanMessage = ""; // デフォルトは単価打ち（メッセージなし）
-
-                // ★ 修正: ループですべてのプランを比較
-                for (const unlimitedPlan of memberPlans) {
-                    if (bestPlanPrice > unlimitedPlan.price) {
-                        bestPlanPrice = unlimitedPlan.price;
-                        bestPlanMessage = `💡 ${unlimitedPlan.name} (¥${unlimitedPlan.price.toLocaleString()}) がお得です`;
-                    }
-                }
-                
-                finalPrice = bestPlanPrice;
-                unlimitedMessage = bestPlanMessage;
-
+                // Gold会員は早朝以外でプランを追加
+                priceOptions.push(...plan.unlimited);
+            
             } else if ((plan.type === 'visitor' || plan.type === 'sd_card') && timeZone.unlimited) {
-                // ★ ビジター / SDカード の場合 (早朝以外)
-                const generalPlan = timeZone.unlimited; // { name: "3時間...", price: 1980 or 2200 }
-                if (ballTotal > generalPlan.price) {
-                    finalPrice = generalPlan.price;
-                    unlimitedMessage = `💡 ${generalPlan.name} (¥${generalPlan.price.toLocaleString()}) がお得です`;
-                }
+                // ビジター/SDは早朝以外で一般プランを追加
+                priceOptions.push(timeZone.unlimited);
+            }
+
+            // ★ 修正: 最も安いプランを見つけるロジック
+            if (priceOptions.length > 1) {
+                const bestOption = priceOptions.reduce((best, current) => {
+                    return current.price < best.price ? current : best;
+                });
+                
+                finalPrice = bestOption.price;
+                unlimitedMessage = `💡 ${bestOption.name} (¥${bestOption.price.toLocaleString()}) がお得です`;
+            } else {
+                // 比較対象がない場合 (例: 早朝のビジター)
+                finalPrice = ballTotal;
+                unlimitedMessage = ""; // メッセージなし
             }
 
             // 5. 最終金額とメッセージを表示
@@ -707,22 +696,24 @@ const comparisonArticles = [
             // ラジオボタンの選択を全て解除
             [...dayRadios, ...floorRadios, ...timeRadios, ...dayRadiosPc, ...floorRadiosPc].forEach(radio => radio.checked = false);
             
-            planSelect.value = 'visitor';
             ballCountSlider.value = 150;
             
             if (isMobile()) {
-                // ★ スマホ: デフォルトなし、ステップ1のみ表示
+                // ★ スマホ: プランを「未選択」に戻す
+                planSelect.value = ""; 
                 steps.forEach((step, index) => {
                     if (index === 0) step.classList.remove('hidden'); // ステップ1
                     else step.classList.add('hidden');
                 });
                 resetButton.classList.add('hidden');
             } else {
-                // ★ PC: デフォルトを設定し、全ステップ表示
+                // ★ PC: デフォルトを設定
+                planSelect.value = 'visitor'; // PCはビジターデフォルト
                 simulator.querySelector('input[name="day-pc"][value="weekday"]').checked = true;
                 simulator.querySelector('input[name="floor-pc"][value="floor2"]').checked = true;
                 simulator.querySelector('input[name="time"][value="daytime"]').checked = true;
 
+                // PCはスマホ用ステップを隠す
                 steps.forEach(step => step.classList.remove('hidden'));
                 steps[1].classList.add('hidden'); // (スマホ用)
                 steps[2].classList.add('hidden'); // (スマホ用)
