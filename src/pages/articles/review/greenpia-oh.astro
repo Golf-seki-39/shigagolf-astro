@@ -5,7 +5,7 @@ import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 import { Image } from "astro:assets";
 
-// --- [2] 共通コンポーポーネントをインポート ---
+// --- [2] 共通コンポーポー_componentsをインポート ---
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
@@ -280,7 +280,7 @@ const comparisonArticles = [
                             <option value="" disabled selected>プランを選択してください</option>
                             <option value="visitor">ビジター</option>
                             <option value="sd_card">SDカード等 割引適用</option>
-                            <option value="gold_member">ゴールド会員</option>
+                            <option value: "gold_member">ゴールド会員</option>
                             <option value="ladies_junior">レディース・ジュニア</option>
                         </select>
                     </div>
@@ -455,7 +455,7 @@ const comparisonArticles = [
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
                                     <td class="py-3 px-4">
-                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                        <a href={`http://googleusercontent.com/maps/google.com/0{encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
                                         </a>
                                     </td>
@@ -509,7 +509,7 @@ const comparisonArticles = [
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
                         <iframe
-                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
+                            src={`http://googleusercontent.com/maps/google.com/1{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
                             allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                         ></iframe>
@@ -638,7 +638,6 @@ const comparisonArticles = [
             // 4. 打ち放題プランとの比較
             unlimitedDisplay.classList.add('hidden'); // いったんメッセージを隠す
 
-            // ★ 修正: L/JとGold会員の比較ロジックを「単価を超えない最大プラン」に変更
             let bestOption = { name: `単価打ち`, price: ballTotal }; // デフォルトは単価打ち
             let availablePlans = [];
 
@@ -650,6 +649,29 @@ const comparisonArticles = [
                 availablePlans = [timeZone.unlimited]; // 一般プラン
             }
 
+            // ★★★ 修正 (2025-10-22) ★★★
+            // レディース・ジュニア、またはゴールド会員(早朝以外)の場合は、球数に関わらず全プランを表示
+            if ((plan.type === 'ladies_junior' || (plan.type === 'gold_member' && timeKey !== 'early')) && availablePlans.length > 0) {
+                
+                // 利用可能な全プランを文字列化
+                unlimitedMessage = availablePlans.map(p => {
+                    return `${p.name} (¥${p.price.toLocaleString()})`;
+                }).join('<br>'); // 改行で連結
+                
+                // 5. 最終金額とメッセージを表示 (L/J, Goldの場合)
+                finalPrice = ballTotal; // 合計金額は「単価打ち」のまま表示
+                totalPriceDisplay.textContent = finalPrice.toLocaleString();
+                
+                // innerHTMLを使用して <br> を解釈させる
+                unlimitedDisplay.innerHTML = `💡 打ち放題プラン:<br>${unlimitedMessage}`; 
+                unlimitedDisplay.classList.remove('hidden');
+                
+                return; // ★ これ以降の比較ロジックをスキップして関数を終了
+            }
+            // ★★★ 修正ここまで ★★★
+
+
+            // (↓ここからは ビジター / SDカード のロジック)
             if (availablePlans.length > 0) {
                 // 単価打ち(ballTotal)を超えない、最大の打ち放題プランを探す
                 const suitablePlans = availablePlans.filter(p => p.price <= ballTotal);
@@ -662,22 +684,17 @@ const comparisonArticles = [
                     });
                     bestOption = bestUnlimitedPlan;
                     unlimitedMessage = `💡 ${bestOption.name} (¥${bestOption.price.toLocaleString()}) がお得です`;
-                } else {
-                    // 単価打ちより安いプランがない (＝単価打ちが最安)
-                    // L/Jプランの時だけ「単価打ちがお得」と明示する
-                    if (plan.type === 'ladies_junior') {
-                         unlimitedMessage = `💡 単価打ち (¥${ballTotal.toLocaleString()}) がお得です`;
-                    }
                 }
+                // (L/Jプランは上のifブロックで処理されるため、ここのelse-ifは不要になった)
             }
             
-            // 5. 最終金額とメッセージを表示
+            // 5. 最終金額とメッセージを表示 (ビジター / SDカードの場合)
             // ★ 表示する金額は「最もお得なプランの金額」
             finalPrice = bestOption.price;
             totalPriceDisplay.textContent = finalPrice.toLocaleString();
             
             if (unlimitedMessage) {
-                unlimitedDisplay.textContent = unlimitedMessage;
+                unlimitedDisplay.textContent = unlimitedMessage; // textContent (こちらは<br>を使わないため)
                 unlimitedDisplay.classList.remove('hidden');
             }
         }
