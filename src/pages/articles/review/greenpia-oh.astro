@@ -36,7 +36,7 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// === [★更新] 料金シミュレーター用のデータ定義 ===
+// === [★ L/Jプランを平日/土日共通に修正] 料金シミュレーター用のデータ定義 ===
 const priceData = {
   plans: {
     visitor: { 
@@ -336,7 +336,7 @@ const comparisonArticles = [
                     <div id="step-5" class="step-container pt-2"> 
                         <div class="mb-4">
                             <label for="ball-count" class="font-semibold text-slate-700">⑤ 何球打ちますか？</label>
-                            <input type="range" id="ball-count" min="50" max="800" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <input type="range" id="ball-count" min="10" max="800" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
                             <div class="text-center font-bold text-green-700 text-lg mt-2" id="ball-count-display">150球</div>
                         </div>
                     </div>
@@ -632,33 +632,24 @@ const comparisonArticles = [
 
             const actualBallPrice = Math.max(0, baseBallPrice - ballPriceDiscount);
             ballTotal = (actualBallPrice * balls) + entryFee;
-            finalPrice = ballTotal; // まず単価計算を最終価格とする
+            finalPrice = ballTotal; // まず単価計算を最终価格とする
 
             // 4. 打ち放題プランとの比較
             unlimitedDisplay.classList.add('hidden'); // いったんメッセージを隠す
 
             if (plan.type === 'ladies_junior') {
                 // ★ L/Jプランの場合 (平日/土日祝共通の料金プランと比較)
-                // ★ 修正: plan.unlimited[dayKey] -> plan.unlimited (L/JプランはdayKeyに依存しない)
                 const ljPlans = plan.unlimited.slice().sort((a, b) => a.price - b.price); // [550, 1100, 1650]
                 
                 let bestPlanPrice = ballTotal;
                 let bestPlanMessage = `💡 単価打ち (¥${ballTotal.toLocaleString()}) がお得です`;
 
-                // 1時間プランと比較
-                if (ballTotal > ljPlans[0].price) { 
-                    bestPlanPrice = ljPlans[0].price;
-                    bestPlanMessage = `💡 ${ljPlans[0].name} (¥${ljPlans[0].price.toLocaleString()}) がお得です`;
-                }
-                // 2時間プランと比較
-                if (ljPlans.length > 1 && bestPlanPrice > ljPlans[1].price) { 
-                    bestPlanPrice = ljPlans[1].price;
-                    bestPlanMessage = `💡 ${ljPlans[1].name} (¥${ljPlans[1].price.toLocaleString()}) がお得です`;
-                }
-                // 3時間プランと比較
-                if (ljPlans.length > 2 && bestPlanPrice > ljPlans[2].price) { 
-                    bestPlanPrice = ljPlans[2].price;
-                    bestPlanMessage = `💡 ${ljPlans[2].name} (¥${ljPlans[2].price.toLocaleString()}) がお得です`;
+                // ★ 修正: ループですべてのプランを比較
+                for (const unlimitedPlan of ljPlans) {
+                    if (bestPlanPrice > unlimitedPlan.price) {
+                        bestPlanPrice = unlimitedPlan.price;
+                        bestPlanMessage = `💡 ${unlimitedPlan.name} (¥${unlimitedPlan.price.toLocaleString()}) がお得です`;
+                    }
                 }
 
                 finalPrice = bestPlanPrice;
@@ -669,19 +660,16 @@ const comparisonArticles = [
                 const memberPlans = plan.unlimited.slice().sort((a, b) => a.price - b.price); // [1100, 1650]
                 
                 let bestPlanPrice = ballTotal;
-                let bestPlanMessage = "";
+                let bestPlanMessage = ""; // デフォルトは単価打ち（メッセージなし）
 
-                // 2時間プラン(1100円)と比較
-                if (ballTotal > memberPlans[0].price) { 
-                    bestPlanPrice = memberPlans[0].price;
-                    bestPlanMessage = `💡 ${memberPlans[0].name} (¥${memberPlans[0].price.toLocaleString()}) がお得です`;
+                // ★ 修正: ループですべてのプランを比較
+                for (const unlimitedPlan of memberPlans) {
+                    if (bestPlanPrice > unlimitedPlan.price) {
+                        bestPlanPrice = unlimitedPlan.price;
+                        bestPlanMessage = `💡 ${unlimitedPlan.name} (¥${unlimitedPlan.price.toLocaleString()}) がお得です`;
+                    }
                 }
-                // 3時間プラン(1650円)と比較
-                if (bestPlanPrice > memberPlans[1].price) { 
-                    bestPlanPrice = memberPlans[1].price;
-                    bestPlanMessage = `💡 ${memberPlans[1].name} (¥${memberPlans[1].price.toLocaleString()}) がお得です`;
-                }
-
+                
                 finalPrice = bestPlanPrice;
                 unlimitedMessage = bestPlanMessage;
 
@@ -719,20 +707,22 @@ const comparisonArticles = [
             // ラジオボタンの選択を全て解除
             [...dayRadios, ...floorRadios, ...timeRadios, ...dayRadiosPc, ...floorRadiosPc].forEach(radio => radio.checked = false);
             
-            // ★ デフォルト選択をすべて削除 (バグ修正)
-
             planSelect.value = 'visitor';
             ballCountSlider.value = 150;
             
-            // ★ ビュー（表示）の初期化
             if (isMobile()) {
+                // ★ スマホ: デフォルトなし、ステップ1のみ表示
                 steps.forEach((step, index) => {
                     if (index === 0) step.classList.remove('hidden'); // ステップ1
                     else step.classList.add('hidden');
                 });
                 resetButton.classList.add('hidden');
             } else {
-                // PC view reset
+                // ★ PC: デフォルトを設定し、全ステップ表示
+                simulator.querySelector('input[name="day-pc"][value="weekday"]').checked = true;
+                simulator.querySelector('input[name="floor-pc"][value="floor2"]').checked = true;
+                simulator.querySelector('input[name="time"][value="daytime"]').checked = true;
+
                 steps.forEach(step => step.classList.remove('hidden'));
                 steps[1].classList.add('hidden'); // (スマホ用)
                 steps[2].classList.add('hidden'); // (スマホ用)
@@ -741,7 +731,7 @@ const comparisonArticles = [
                 resetButton.classList.add('hidden'); 
             }
             
-            calculatePrice(); // 最後に初期計算 (---- と表示される)
+            calculatePrice(); // 最後に初期計算 (PCは計算され、スマホは '----' のまま)
         }
         
         /**
