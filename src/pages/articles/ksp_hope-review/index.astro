@@ -16,7 +16,7 @@ const description = "コンペ前夜、焦った僕がKSP希望ヶ丘で得た�
 const category = "体験談";
 const pubDate = "2025-07-11";
 const pubDateISO = "2025-07-11T10:00:00+09:00";
-const imageUrl = "https://i.imgur.com/5mTWgt7.png";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/000000img.png";
 const rangeId = "ksp_hope";
 // --- End of specific information ---
 
@@ -36,10 +36,22 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// --- 関連記事リストの定義 ---
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
+];
 const comparisonArticles = [
-    { url: '/articles/comparison/kusatsu-konan-price/', title: '【料金で徹底比較】草津・湖南エリアの安い練習場5選', img: 'https://i.imgur.com/example1.jpeg' },
-    { url: '/articles/comparison/kusatsu-konan-lefty/', title: '【レフティ打席が充実】草津・湖南エリアの練習場4選', img: 'https://i.imgur.com/example2.jpeg' },
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 ---
 
@@ -60,20 +72,20 @@ const comparisonArticles = [
             "description": description,
             "image": [
                 imageUrl,
-                "https://i.imgur.com/bmOlXlw.png",
-                "https://i.imgur.com/07HGpnW.png",
-                "https://i.imgur.com/NGVzDDG.png",
-                "https://i.imgur.com/5gujXLe.jpeg",
-                "https://i.imgur.com/AaPNhYj.jpeg",
-                "https://i.imgur.com/fiCAgIo.png",
-                "https://i.imgur.com/kt7QAjC.png",
-                "https://i.imgur.com/KSdjiMj.png"
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/000000img.png",
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7086.png",
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7088.png",
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7852.jpg",
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7853.jpg",
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7109.png",
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7121.png",
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7136.png"
              ],
             "author": {
                 "@type": "Person",
                 "name": "関（せき）",
                 "url": "https://shigagolf.com/about/",
-                "image": "https://i.imgur.com/BOcMOf3.png",
+                "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
                 "sameAs": [
                     "https://x.com/Golf_Seki39",
                     "https://golf-medley.com/articles/authors/seki",
@@ -86,7 +98,7 @@ const comparisonArticles = [
                 "name": "シガゴル",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://i.imgur.com/mN0IbPS.png"
+                    "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
                 }
             },
             "datePublished": pubDateISO,
@@ -143,7 +155,7 @@ const comparisonArticles = [
             </header>
 
             <Image 
-                src="https://i.imgur.com/bmOlXlw.png" 
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/000000img.png" 
                 alt="KSP希望ヶ丘 体験記アイキャッチ" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
@@ -193,7 +205,7 @@ const comparisonArticles = [
             </div>
 
             <Image 
-                src="https://i.imgur.com/07HGpnW.png" 
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7086.png" 
                 alt="KSP希望ヶ丘の外観" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
@@ -207,7 +219,7 @@ const comparisonArticles = [
             <p class="font-semibold text-lg text-slate-800">→「安心と信頼」こそ、僕がKSPを選んだ理由</p>
 
             <Image 
-                src="https://i.imgur.com/NGVzDDG.png" 
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7088.png" 
                 alt="KSP希望ヶ丘のトップトレーサー・レンジの打席モニター" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
@@ -235,7 +247,7 @@ const comparisonArticles = [
             <p>そして同日の夜。 今度は友人と一緒に、複数のショットを総合評価してくれるゲームモード「Toptracer12」をプレイ。 そこで出たデータは、昼間の僕の判断が正しかったことを、さらに裏付けてくれました。</p>
 
             <Image 
-                src="https://i.imgur.com/5gujXLe.jpeg" 
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7852.jpg" 
                 alt="トップトレーサー12の分析結果。安定性が低いデータ画面" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
@@ -247,7 +259,7 @@ const comparisonArticles = [
             <p>後日談になりますが、この日見つけた「ドローを打つ」意識で練習を続けた結果、別の日のトップトレーサーの分析で、僕が最も苦手としていたはずのアプローチ（125-150yd）が、「素晴らしいショットです」と評価を受けるまでになったのです。</p>
 
             <Image 
-                src="https://i.imgur.com/AaPNhYj.jpeg" 
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7853.jpg" 
                 alt="トップトレーサーのアプローチ分析で高評価を得た画面" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
@@ -267,7 +279,7 @@ const comparisonArticles = [
             <p>そう僕が頷き、ボールをセットしようと屈んだ、その瞬間です。</p>
 
             <Image 
-                src="https://i.imgur.com/fiCAgIo.png" 
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7109.png" 
                 alt="KSP希望ヶ丘の屋内パター練習グリーンで練習する様子" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
@@ -294,7 +306,7 @@ const comparisonArticles = [
             <p class="italic font-semibold text-center text-lg my-4 text-slate-800">『当練習場は、野洲市ふるさと納税返礼品の提供事業者です』</p>
             
             <Image 
-                src="https://i.imgur.com/kt7QAjC.png" 
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7121.png" 
                 alt="KSP希望ヶ丘の受付にある、野洲市ふるさと納税の張り紙" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 
@@ -338,7 +350,7 @@ const comparisonArticles = [
             <p>あの晩、焦っていた僕を優しく迎えてくれた入り口。今でも忘れられません。</p>
 
             <Image 
-                src="https://i.imgur.com/KSdjiMj.png" 
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7136.png" 
                 alt="夜のKSP希望ヶ丘の入り口" 
                 class="w-full h-auto object-cover rounded-lg my-6" 
                 loading="lazy" 

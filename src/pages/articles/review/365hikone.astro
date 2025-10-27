@@ -1,0 +1,806 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報 ---
+// ★★★ 要確認 ★★★ 
+// ↓↓↓ 記事のOGP画像（記事一覧やSNSシェア時に表示される画像）のURLを指定してください
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/0000img.jpg"; // ← ★★★必ず差し替えてください★★★
+
+const title = "【訪問レビュー】365ゴルフクラブ彦根（旧ゴルフプラザ彦根）が激変！料金・設備を徹底解説 | シガゴル";
+const description = "「ゴルフプラザ彦根」はどうなった？新しく「365ゴルフクラブ彦根」として生まれ変わった施設を徹底レビュー。最新のトップトレーサー・レンジや清潔な打席、料金体系まで詳しく解説します。";
+const category = "体験談"; // カテゴリ
+const pubDate = "2025-10-24"; // ★記事の公開日
+const pubDateISO = "2025-10-24T12:00:00+09:00"; // ★記事の公開日(ISO)
+const rangeId = "365_hikone"; // ★Firebaseの練習場ID 
+
+// --- [4] シェアボタン用の変数を定義 ---
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/review/365-hikone/`; // ★記事のURL
+const headline = "【訪問レビュー】365ゴルフクラブ彦根が激変！旧ゴルフプラザ彦根から“完璧な”穴場へ";
+
+// --- [5] Firebaseから練習場データを取得 ---
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
+
+// --- [6] 関連記事リストの定義 ---
+const experienceReports = [
+    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
+];
+// const comparisonArticles = []; 
+
+// --- [7] 料金シミュレーター用のデータ定義 ---
+const priceData = {
+  pricaOptions: [
+    { label: '通常 2,200円 (2,000pt)', unitPrice: 1.1 }, 
+    { label: '通常 3,300円 (3,200pt)', unitPrice: 1.03125 },
+    { label: '通常 5,500円 (5,500pt)', unitPrice: 1.0 }, 
+    { label: '通常 11,000円 (11,500pt)', unitPrice: 0.9565 },
+    { label: '女性割 1,760円 (2,000pt)', unitPrice: 0.88 }, 
+    { label: '女性割 2,640円 (3,200pt)', unitPrice: 0.825 }, 
+    { label: '女性割 4,400円 (5,500pt)', unitPrice: 0.8 }, 
+    { label: '女性割 8,800円 (11,500pt)', unitPrice: 0.7652 },
+    { label: 'LINE割 2,300円 (3,200pt)', unitPrice: 0.71875 },
+    { label: 'LINE割 4,000円 (5,500pt)', unitPrice: 0.7272 }, 
+    { label: 'LINE割 9,000円 (11,500pt)', unitPrice: 0.7826 }
+  ],
+  visitorEntryFee: 250, 
+  earlyBirdPointPrice: 7, 
+  ballUnit: {
+    member: {
+      weekday: { normal: { f1: 7, f2: 6 }, late: { f1: 6, f2: 5 } },
+      weekend: { normal: { f1: 9, f2: 8 }, late: { f1: 8, f2: 7 } }
+    },
+    visitor: {
+      weekday: { normal: { f1: 10, f2: 9 }, late: { f1: 10, f2: 9 } },
+      weekend: { normal: { f1: 11, f2: 10 }, late: { f1: 11, f2: 10 } }
+    }
+  },
+  timeBlock: {
+    member: {
+      weekday: { '60': { f1: 900, f2: 800 }, '90': { f1: 1200, f2: 1100 }, '120': { f1: 1500, f2: 1400 } },
+      weekend: { '60': { f1: 1000, f2: 900 }, '90': { f1: 1300, f2: 1200 }, '120': { f1: 1600, f2: 1500 } }
+    },
+    visitor: {
+      weekday: { '60': { f1: 1300, f2: 1200 }, '90': { f1: 1600, f2: 1500 }, '120': { f1: 1900, f2: 1800 } },
+      weekend: { '60': { f1: 1400, f2: 1300 }, '90': { f1: 1700, f2: 1600 }, '120': { f1: 2000, f2: 1900 } }
+    }
+  }
+};
+---
+
+<script slot="head" type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "itemReviewed": {
+        "@type": "SportsActivityLocation",
+        "name": "365ゴルフクラブ 彦根", 
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": rangeData?.address,
+            "locality": rangeData?.city || "彦根市",
+            "addressRegion": "滋賀県",
+            "postalCode": rangeData?.postalCode,
+            "addressCountry": "JP"
+        },
+        "telephone": rangeData?.phone,
+        "image": rangeData?.imageUrl || imageUrl,
+        "priceRange": rangeData?.priceRange || "1000円〜3000円",
+        "url": articleUrl
+    },
+    "author": { "@type": "Person", "name": "関＠シガゴル管理人" },
+    "reviewBody": description,
+    "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": rangeData?.avgRating ? parseFloat(rangeData.avgRating).toFixed(1) : "4.5", 
+        "bestRating": "5"
+    },
+    "publisher": { "@type": "Organization", "name": "シガゴル" },
+    "datePublished": pubDateISO
+})} />
+
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <p>「あれ、ゴルフプラザ彦根ってどうなったの？」<br>「彦根 ゴルフプラザ 閉店」</p>
+            <p>もしかして、そんな風に検索してお探しではありませんか？</p>
+            <p>ご安心ください。あの場所は<strong>「365ゴルフクラブ 彦根」</strong>として、新しく、そして“完璧に”生まれ変わっています。</p>
+            <p>「あの“365”の系列店が、彦根にできたらしい」</p>
+            <p>その噂を耳にした時、僕（筆者：セキ）の心はウキウキと弾んでいました。
+            僕が愛してやまない、滋賀のゴルフ練習場「365ゴルフクラブ ながはま」。その系列店が、ついに彦根にオープンしたというのです。</p>
+            <p>「絶対に良いに決ってる」という高いハードル。
+            しかし、心のどこかでこうも思っていました。</p>
+            <p>「もし、期待外れだったらどうしよう…？ ながはまの方が良かった、なんて思いたくない」</p>
+            <p>これは、僕が「完璧」を知るが故の小さな不安が、訪れてすぐに「心地よい確信」に変わるまでの一部始終。
+            そして、なぜここが<strong>“奇跡の穴場”</strong>なのかを綴った、パーソナルな体験記です。</p>
+
+            
+            <div class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-green-800">
+                    365ゴルフクラブ 彦根 の要点
+                </h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><strong>旧施設:</strong> 「ゴルフプラザ彦根」が全面リニューアルしてオープン</li>
+                    <li><strong>特徴:</strong> 全打席「トップトレーサー・レンジ」完備、リアルな的も豊富で練習の質が高い</li>
+                    <li><strong>料金 (球貸し):</strong> メンバー 6pt/球～, ビジター 9pt/球～ (+入場料250円)</li>
+                    <li><strong>料金 (放題):</strong> メンバー 800pt～ (60分), ビジター 1,200pt～ (60分)</li>
+                    <li><strong>その他:</strong> 清潔感◎、2F休憩所が快適、プリカはLINE割や女性割がお得</li>
+                </ul>
+                <p class="mt-4 text-sm">
+                    ※料金はポイント制(pt)。詳細は本文のシミュレーターで解説しています
+                </p>
+            </div>
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#charm1" class="text-green-700 hover:underline">「感覚」と「データ」の完璧な融合！彦根のトップトレーサーは一味違う</a></li>
+                    <li><a href="#charm2" class="text-green-700 hover:underline">僕が唯一モヤっとした、キャッシュレス派の「小さな悩み」</a></li>
+                    <li><a href="#simulator" class="text-green-700 hover:underline">かんたん料金シミュレーション</a></li>
+                    <li><a href="#charm3" class="text-green-700 hover:underline">なぜ快適？彦根の“穴場”ゴルフ練習場である理由</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">結論：彦根でおすすめのゴルフ練習場。でも、正直教えたくない…</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">施設情報：365ゴルフクラブ 彦根</a></li>
+                </ul>
+            </div>
+
+            <h2 id="charm1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                「感覚」と「データ」の完璧な融合！<br/>彦根のトップトレーサーは一味違う
+            </h2>
+            
+            <p>まず結論から言うと、
+            この練習場は「期待通りにハイクオリティ」でした。
+            オープンしたばかりの清潔感、広々とした打席、
+            そして全打席に完備された
+            最新システム「トップトレーサー・レンジ」。</p>
+            
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7723.png" alt="365ゴルフクラブ彦根の全打席にあるトップトレーサーのモニター" class="w-full h-auto object-cover rounded-lg my-4" loading="eager" fetchpriority="high" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <p class="text-center text-sm text-slate-500 -mt-2 mb-4">これです。みんな大好きトップトレーサーレンジ。すべての打席にあります。</p>
+
+            <p>正直に告白すると、最近の僕は少しだけトップトレーサーに「慣れ」てしまっています。
+            彦根でトップトレーサーが使える練習場は他にもありますが、
+            僕が驚いたのはそこではありませんでした。</p>
+            <p>ここの打席に立った瞬間、僕の“慣れ”は新鮮な驚きに変わったんです。
+            それは、<strong>フェアウェイに広がる物理的なターゲット（的）の種類の多さ</strong>でした。</p>
+
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7710.png" alt="365ゴルフクラブ彦根のターゲットが豊富なフェアウェイ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+
+            <p>トップトレーサーを採用していてフェアウェイがここまで整っている練習場は初めてです。</p>
+            <p>トップトレーサーがある練習場は、
+            モニターの数字がすべてだからか、
+            リアルなターゲットが少ないことが多い。</p>
+            <p>でも、ここは違うんです。</p>
+            <p>自分の目で「あの50ヤード先の円」を明確に狙う。
+            その結果を、モニターに表示される
+            「飛距離：52y」
+            「ブレ：右1.2y」
+            という正確無比なデータで即座に確認する。</p>
+            <p><strong>“狙う（アナログ感覚）”と
+            “知る（デジタルデータ）”の融合。</strong></p>
+            <p>このサイクルが、驚くほどスマートで、気持ちいい。
+            自分の感覚と事実を瞬時に行き来できるこの環境は、
+            僕の練習の質を確実に一段階引き上げてくれました。</p>
+            
+            <p>そして、もう一つ。
+            2階にある、こじんまりとしたオシャレな休憩所。
+            ここが僕の「秘密の戦略室」。練習の合間に、ここで次の課題を整理します。</p>
+
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7698.png" alt="365ゴルフクラブ彦根の2階休憩所" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+
+            <p>僕はここを、勝手に「僕だけの戦略室」と呼んでいます。
+            練習の合間にここで涼みながら、
+            打ったばかりのショットをトップトレーサーのアプリで振り返る。
+            スマホで撮影した自分のスイング動画をチェックして、
+            次の課題を整理する。</p>
+            <p>派手な感動はないかもしれません。
+            でも、ゴルファーが「本当にしたいこと」を分かってくれている。
+            そんな質の高さが、この練習場にはありました。</p>
+
+
+            <h2 id="charm2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                僕が唯一モヤっとした、<br/>キャッシュレス派の「小さな悩み」
+            </h2>
+
+            <p>完璧。
+            ほぼ、完璧です。</p>
+            <p>でも、たった一つだけ。僕のゴルフライフの“習慣”と衝突する、愛すべき「小さな不満」がありました。
+            それは、料金設定です。</p>
+            <p>ゴルフを始めてまだ半年ちょっとですが、
+            練習には週3回のペースで通っています。
+            様々な施設を巡るうち、僕の中に一つの習慣ができました。
+            それは、現金でプリペイドカードを買うことです。</p>
+            
+            <p>普段は財布すら持ち歩かないキャッシュレス派の僕も、
+            現金決済のみの練習場が多いため、ゴルフの時だけは財布を持っていきます。
+            そして、この日もいつものように現金で支払おうとしたところ、
+            プリペイドカードの価格は「2,200円」「3,300円」。</p>
+            <p>チャリン、と返ってきたお釣りの小銭を握りしめ、
+            僕は心の中でこうツコミました。</p>
+            <p><strong>（うわぁ…小銭、増えちゃった…！）</strong></p>
+            
+            <p>もちろん、キャッシュレスで払えば済む話です。
+            でも、多くの練習場で染み付いたこの習慣のせいで、
+            僕のポケットは久しぶりにジャラジャラと重くなりました。</p>
+
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7754.png" alt="365ゴルフクラブ彦根のキャッシュレス決済案内" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <p class="text-center text-sm text-slate-500 -mt-2 mb-4">この通り、各種クレジットカードとかQRコードも使えるんですけどね（笑）</p>
+            
+            <p>この完璧な施設の中で、唯一僕を人間臭い現実に引き戻してくれた、
+            忘れられない出来事です。</p>
+
+
+            <div id="simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-12 scroll-mt-24">
+                <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    かんたん料金シミュレーション
+                </h3>
+
+                <div class="md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-6" id="price-simulator">
+                    
+                    <div class="space-y-6">
+                        <div id="step-1">
+                            <label class="font-semibold text-slate-700">① 利用するプリカ（ポイント単価）</label>
+                            <select id="sim-prica" class="w-full mt-2 p-2 border border-slate-300 rounded-md">
+                                <option value="">--- プリカを選択 ---</option>
+                                {priceData.pricaOptions.map(opt => (
+                                    <option value={opt.unitPrice}>{opt.label} ({opt.unitPrice.toFixed(2)}円/pt)</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div id="step-2" class="hidden md:block">
+                            <label class="font-semibold text-slate-700">② 会員ですか？</label>
+                            <div class="flex gap-4 mt-2" id="sim-membership">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="membership" value="member" class="mr-2"> 会員</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="membership" value="visitor" class="mr-2"> 非会員</label>
+                            </div>
+                        </div>
+
+                        <div id="step-3" class="hidden md:block">
+                            <label class="font-semibold text-slate-700">③ 練習方法</label>
+                            <div class="flex gap-4 mt-2" id="sim-type">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="type" value="ballUnit" class="mr-2"> 球貸し</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="type" value="timeBlock" class="mr-2"> 打ち放題</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div id="sim-details-ball" class="space-y-4 p-4 bg-white border border-slate-200 rounded-md hidden">
+                            <label class="font-semibold text-slate-700 block -mb-2">④ 球貸し詳細</label>
+                            <div>
+                                <label class="font-medium text-sm text-slate-600">利用時間帯</label>
+                                <select id="sim-ball-time" class="w-full mt-1 p-2 border border-slate-300 rounded-md">
+                                    <option value="">--- 時間帯を選択 ---</option>
+                                    <option value="early">早朝 (6-9時)</option>
+                                    <option value="weekday-normal">平日 (9-21時)</option>
+                                    <option value="weekday-late">平日 (21-23時)</option>
+                                    <option value="weekend-normal">土日祝 (9-21時)</option>
+                                    <option value="weekend-late">土日祝 (21-23時)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="font-medium text-sm text-slate-600">打席</label>
+                                <div class="flex gap-4 mt-1" id="sim-ball-floor">
+                                    <label class="flex items-center cursor-pointer"><input type="radio" name="ball-floor" value="f1" class="mr-2"> 1F</label>
+                                    <label class="flex items-center cursor-pointer"><input type="radio" name="ball-floor" value="f2" class="mr-2"> 2F</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="ball-count" class="font-medium text-sm text-slate-600">打球数</label>
+                                <input type="range" id="ball-count" min="50" max="500" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                                <div class="text-center font-bold text-green-700 text-lg mt-2" id="ball-count-display">150球</div>
+                            </div>
+                        </div>
+
+                        <div id="sim-details-time" class="space-y-4 p-4 bg-white border border-slate-200 rounded-md hidden">
+                            <label class="font-semibold text-slate-700 block -mb-2">④ 打ち放題詳細</label>
+                            <div>
+                                <label class="font-medium text-sm text-slate-600">利用日</label>
+                                <div class="flex gap-4 mt-1" id="sim-time-day">
+                                    <label class="flex items-center cursor-pointer"><input type="radio" name="time-day" value="weekday" class="mr-2"> 平日</label>
+                                    <label class="flex items-center cursor-pointer"><input type="radio" name="time-day" value="weekend" class="mr-2"> 土日祝</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="font-medium text-sm text-slate-600">利用時間</label>
+                                <div class="flex gap-4 mt-1" id="sim-time-duration">
+                                    <label class="flex items-center cursor-pointer"><input type="radio" name="time-duration" value="60" class="mr-2"> 60分</label>
+                                    <label class="flex items-center cursor-pointer"><input type="radio" name="time-duration" value="90" class="mr-2"> 90分</label>
+                                    <label class="flex items-center cursor-pointer"><input type="radio" name="time-duration" value="120" class="mr-2"> 120分</label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="font-medium text-sm text-slate-600">打席</label>
+                                <div class="flex gap-4 mt-1" id="sim-time-floor">
+                                    <label class="flex items-center cursor-pointer"><input type="radio" name="time-floor" value="f1" class="mr-2"> 1F</label>
+                                    <label class="flex items-center cursor-pointer"><input type="radio" name="time-floor" value="f2" class="mr-2"> 2F</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="step-5" class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300 space-y-2 hidden md:block">
+                            <div class="flex justify-around items-center">
+                                <div>
+                                    <p class="text-slate-600 mb-1 text-sm">使用ポイント</p>
+                                    <p class="text-xl font-bold text-slate-700">
+                                        <span id="total-points">----</span> pt
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-slate-600 mb-1 text-sm">入場料 (ビジター)</p>
+                                    <p class="text-xl font-bold text-slate-700">
+                                        ¥ <span id="visitor-fee">----</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="border-t border-slate-200 pt-2">
+                                <p class="text-slate-600 mb-1 text-sm">合計金額（目安）</p>
+                                <p class="text-3xl font-bold text-green-700">
+                                    ¥ <span id="total-price">----</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button id="reset-button" class="hidden md:hidden bg-slate-200 text-slate-600 text-sm py-1 px-4 rounded-full hover:bg-slate-300">リセット</button>
+                </div>
+                <p class="text-xs text-center text-slate-500 mt-2">※あくまでシミュレーションです。実際の金額は練習場でご確認ください。</p>
+            </div>
+            <h2 id="charm3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                なぜ快適？彦根の“穴場”<br/>ゴルフ練習場である理由
+            </h2>
+
+            <p>これだけの設備が揃い、アクセスも良い。
+            普通なら、多くのゴルファーで賑わっていてもおかしくありません。</p>
+            <p>しかし、僕が訪れた平日の昼過ぎから夕方17時頃まで、
+            打席にはかなりの空きがありました。</p>
+
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/名称未設定のデザイン (4).png" alt="365ゴルフクラブ彦根の空いている打席の様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <p class="text-center text-sm text-slate-500 -mt-2 mb-4">見てください。この空き打席。快適なのに優雅に利用出来る練習場なのです！</p>
+            
+            <p>正直、快適すぎて申し訳なくなるレベルです。
+            この理由は、おそらく「まだあまり知られていないから」。</p>
+            <p>実はこの場所、2024年末までは
+            <strong>「ゴルフプラザ彦根」</strong>という名前で営業していました。
+            そこから「365ゴルフクラブ 彦根」
+            として生まれ変わったという事実が、
+            まだ世間に浸透していないようなのです。</p>
+            <p>そう、ここはまさに彦根のゴルフ練習場の中でも、
+            知る人ぞ知る“穴場”なんです。</p>
+            <p>同じクオリティの施設で打席待ちをするくらいなら、
+            少し車を走らせてでもここに来てしまう。
+            それだけの「快適さ」が、ここにはあります。</p>
+            
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7723.png" alt="貸切状態の練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <p class="text-center text-sm text-slate-500 -mt-2 mb-4">まるで、自分だけのための練習場。人生初の貸切状態です。</p>
+
+
+            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【結論】彦根でおすすめのゴルフ練習場。<br/>でも、正直教えたくない…
+            </h2>
+
+            <p>で、結局あなたはどう思うの？
+            と聞かれれば、僕はこう答えます。</p>
+            <p><strong>「最高。だから、正直あまり人に教えたくない」</strong>と。</p>
+            <p>もしこの記事のせいで練習場が混んでしまったら、
+            僕が今享受している「快適さ」は確実に減ってしまう。
+            それが本音です。</p>
+
+            <div class="not-prose my-8 p-5 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
+                <h4 class="text-lg font-bold text-slate-800 mt-0 mb-2">✅ この練習場が向かない人</h4>
+                <p class="m-0 text-slate-700">
+                    クオリティが高すぎて、「この練習場が向かない人っている？」と逆に聞itaくなるレベルですが、あえて挙げるなら「とにかく安くゴルフの打ち放題で球数を打ちたい！」という人でしょうか。
+                </p>
+            </div>
+
+            <p>そして、これは僕個人の、本当に個人的な“願い”なのですが…。
+            団体で練習に来られる方々には、
+            できればあまり見つからないでほしいな、と。</p>
+            <p>一人ひとりの声は小さくても、
+            人数が集まることで生まれる、あの独特の喧騒。
+            僕はあの「数の暴力」とでも言うべき雰囲気が、
+            少しだけ苦手なんです。</p>
+            
+            <div class="not-prose my-6 p-4 border-2 border-green-300 rounded-lg bg-green-50">
+                <h4 class="text-xl font-bold text-center mt-0 mb-4 text-green-800">✅ こんな人には“天国”です！</h4>
+                <ul class="list-disc list-inside m-0 p-0 pl-4 space-y-2">
+                    <li><strong>静かに、自分のゴルフと向き合いたい人</strong></li>
+                    <li><strong>データと感覚を頼りに、一打の精度を高めたい人</strong></li>
+                    <li><strong>新しくてキレイな環境で、モチベーションを上げたい人</strong></li>
+                </ul>
+            </div>
+
+            <p>そう願う、僕と同じタイプのゴルファーにとって、
+            ここは間違いなく“天国”です。</p>
+            <p>「ゴルフプラザ彦根」の跡地を探していた方も、彦根で最高の練習場を探していた方も、この天国が混んでしまう前に、ぜひ一度、この快適さを体験してみてください。</p>
+            <p>そして、僕と同じジレンマを、あなたも抱えてほしいと思います。</p>
+            
+            
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」の基本情報` : "「365ゴルフクラブ 彦根」の基本情報"}
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto not-prose">
+                        <table class="w-full text-left border-collapse">
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name} (旧：ゴルフプラザ彦根)</td>
+                                </tr>
+                                {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            {rangeData.address}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4" set:html={rangeData.business_hours?.replace(/\n/g, '<br />') || "-"} />
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                    <td class="py-3 px-4">
+                                        <b>【球貸し】</b><br/>
+                                        メンバー: 6pt/球～<br/>
+                                        ビジター: 9pt/球～ (+入場料250円)<br/>
+                                        <b>【打ち放題 (60分)】</b><br/>
+                                        メンバー: 800pt～<br/>
+                                        ビジター: 1,200pt～<br/>
+                                        <small>※料金は時間・打席で異なります。<br/>※詳細は<a href="#simulator" class="text-green-700 hover:underline">料金シミュレーター</a>をご確認ください。</small>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">公式サイト</th>
+                                    <td class="py-3 px-4">
+                                        <a href="https://www.365golf.jp/hikone/" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            https://www.365golf.jp/hikone/
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access || "JR南彦根駅から車で約8分"}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
+                            width="100%" height="450" style="border:0;"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
+             <p class="text-center font-bold text-lg mt-8">
+                🎯 さらに詳しい情報や口コミはこちら！
+                <br />
+                <a
+                    href={`https://shigolf.com/ranges/${rangeId}/`} 
+                    class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    {rangeData ? `「${rangeData.name}」のシガゴル公式レビューページへ →` : "公式レビューページへ →"}
+                </a>
+            </p>
+        </article>
+    </div>
+
+    <style>
+        .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
+        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .scroll-mt-24 { scroll-margin-top: 6rem; }
+        #price-simulator select:invalid { color: #6b7280; }
+        #price-simulator option { color: #1f2937; }
+    </style>
+
+    
+    <script define:vars={{ priceData }}>
+        document.addEventListener('DOMContentLoaded', () => {
+            const simulator = document.getElementById('simulator'); 
+            if (!simulator) return;
+
+            // --- ステップ要素 ---
+            const step1 = simulator.querySelector('#step-1');
+            const step2 = simulator.querySelector('#step-2');
+            const step3 = simulator.querySelector('#step-3');
+            const detailsBall = simulator.querySelector('#sim-details-ball');
+            const detailsTime = simulator.querySelector('#sim-details-time');
+            const step5 = simulator.querySelector('#step-5'); // 結果表示
+            const allDetailSteps = [detailsBall, detailsTime];
+            const allSteps = [step1, step2, step3, detailsBall, detailsTime, step5];
+
+            // --- 入力要素 ---
+            const pricaSelect = simulator.querySelector('#sim-prica');
+            const membershipRadios = simulator.querySelectorAll('input[name="membership"]');
+            const typeRadios = simulator.querySelectorAll('input[name="type"]');
+            
+            const ballTimeSelect = simulator.querySelector('#sim-ball-time');
+            const ballFloorRadios = simulator.querySelectorAll('input[name="ball-floor"]');
+            const ballCountSlider = simulator.querySelector('#ball-count');
+            
+            const timeDayRadios = simulator.querySelectorAll('input[name="time-day"]');
+            const timeDurationRadios = simulator.querySelectorAll('input[name="time-duration"]');
+            const timeFloorRadios = simulator.querySelectorAll('input[name="time-floor"]');
+
+            const resetButton = simulator.querySelector('#reset-button');
+
+            // --- 出力要素 ---
+            const ballCountDisplay = simulator.querySelector('#ball-count-display');
+            const totalPointsDisplay = simulator.querySelector('#total-points');
+            const visitorFeeDisplay = simulator.querySelector('#visitor-fee');
+            const totalPriceDisplay = simulator.querySelector('#total-price');
+
+            // --- ユーティリティ ---
+            const isMobile = () => window.innerWidth < 768;
+
+            // --- メインの計算処理 ---
+            function calculatePrice() {
+                const pointUnitPrice = parseFloat(pricaSelect.value) || null;
+                const membership = simulator.querySelector('input[name="membership"]:checked')?.value || null;
+                const type = simulator.querySelector('input[name="type"]:checked')?.value || null;
+
+                let totalPoints = 0;
+                let visitorFee = 0;
+                let calculationComplete = false;
+
+                // --- 練習方法に応じて詳細UIを切り替え (PC/スマホ共通) ---
+                detailsBall.classList.toggle('hidden', type !== 'ballUnit' || (isMobile() && !type));
+                detailsTime.classList.toggle('hidden', type !== 'timeBlock' || (isMobile() && !type));
+
+                if (type === 'ballUnit') {
+                    const timeSlot = ballTimeSelect.value;
+                    const floor = simulator.querySelector('input[name="ball-floor"]:checked')?.value || null;
+                    const balls = parseInt(ballCountSlider.value);
+
+                    if (ballCountDisplay) ballCountDisplay.textContent = `${balls}球`;
+
+                    if (membership && timeSlot && floor) {
+                        let pointsPerBall = 0;
+                        if (timeSlot === 'early') {
+                            pointsPerBall = priceData.earlyBirdPointPrice;
+                        } else {
+                            const [day, time] = timeSlot.split('-'); 
+                            pointsPerBall = priceData.ballUnit[membership][day][time][floor];
+                        }
+                        totalPoints = pointsPerBall * balls;
+                        calculationComplete = true;
+                    }
+                    if (membership === 'visitor') {
+                        visitorFee = priceData.visitorEntryFee;
+                    }
+
+                } else if (type === 'timeBlock') {
+                    const day = simulator.querySelector('input[name="time-day"]:checked')?.value || null;
+                    const duration = simulator.querySelector('input[name="time-duration"]:checked')?.value || null;
+                    const floor = simulator.querySelector('input[name="time-floor"]:checked')?.value || null;
+
+                    if (membership && day && duration && floor) {
+                        totalPoints = priceData.timeBlock[membership][day][duration][floor];
+                        calculationComplete = true;
+                    }
+                    visitorFee = 0; 
+                }
+
+                // --- 結果の表示 ---
+                if (calculationComplete && pointUnitPrice) {
+                    if (totalPointsDisplay) totalPointsDisplay.textContent = totalPoints.toLocaleString();
+                    if (visitorFeeDisplay) visitorFeeDisplay.textContent = visitorFee.toLocaleString();
+                    if (totalPriceDisplay) totalPriceDisplay.textContent = (Math.ceil(totalPoints * pointUnitPrice) + visitorFee).toLocaleString();
+                } else {
+                    if (totalPointsDisplay) totalPointsDisplay.textContent = '----';
+                    if (visitorFeeDisplay) visitorFeeDisplay.textContent = (membership === 'visitor' && type === 'ballUnit') ? priceData.visitorEntryFee.toLocaleString() : '----';
+                    if (totalPriceDisplay) totalPriceDisplay.textContent = '----';
+                }
+            }
+
+            // --- スマホ用ステップ制御 ---
+            function goToStep(stepToShow) {
+                if (!isMobile()) return;
+                
+                allSteps.forEach(step => {
+                    if (step) step.classList.add('hidden');
+                });
+                
+                if (stepToShow) stepToShow.classList.remove('hidden');
+
+                // 練習方法(step3)が選ばれたら、対応する詳細(ball/time)も表示する
+                if (stepToShow === step3) {
+                    const type = simulator.querySelector('input[name="type"]:checked')?.value || null;
+                    if(type === 'ballUnit' && detailsBall) detailsBall.classList.remove('hidden');
+                    if(type === 'timeBlock' && detailsTime) detailsTime.classList.remove('hidden');
+                }
+
+                // [修正]
+                // 詳細ステップが表示されたら、結果(step5)も同時に表示する
+                const isDetailStep = stepToShow === detailsBall || stepToShow === detailsTime;
+                if (isDetailStep && step5) {
+                    step5.classList.remove('hidden'); 
+                }
+                
+                // 最後のステップ(詳細または結果)が表示されたらリセットボタンも表示
+                const isLastStep = isDetailStep || stepToShow === step5;
+                if (resetButton) resetButton.classList.toggle('hidden', !isLastStep);
+            }
+
+            // --- 初期表示制御 (PC/スマホ) ---
+            function initializeView() {
+                if (isMobile()) {
+                    allSteps.forEach(step => {
+                        if (step) step.classList.add('hidden');
+                    });
+                    if (step1) step1.classList.remove('hidden');
+                    if (resetButton) resetButton.classList.add('hidden');
+                } else {
+                    // PC表示
+                    allSteps.forEach(step => {
+                        if (step) step.classList.remove('hidden');
+                    });
+                    if (resetButton) resetButton.classList.add('hidden');
+                    // 初期状態では詳細を隠す
+                    if (detailsBall) detailsBall.classList.add('hidden');
+                    if (detailsTime) detailsTime.classList.add('hidden');
+                }
+            }
+
+            // --- リセット処理 ---
+            function resetForm() {
+                if (pricaSelect) pricaSelect.value = "";
+                membershipRadios.forEach(radio => radio.checked = false);
+                typeRadios.forEach(radio => radio.checked = false);
+                
+                if (ballTimeSelect) ballTimeSelect.value = "";
+                ballFloorRadios.forEach(radio => radio.checked = false);
+                if (ballCountSlider) ballCountSlider.value = 150;
+                
+                timeDayRadios.forEach(radio => radio.checked = false);
+                timeDurationRadios.forEach(radio => radio.checked = false);
+                timeFloorRadios.forEach(radio => radio.checked = false);
+                
+                initializeView(); 
+                calculatePrice(); 
+            }
+
+            // --- イベントリスナーの設定 ---
+            if (pricaSelect) {
+                pricaSelect.addEventListener('change', () => {
+                    calculatePrice();
+                    if (pricaSelect.value) goToStep(step2);
+                });
+            }
+
+            membershipRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    calculatePrice();
+                    goToStep(step3);
+                });
+            });
+
+            typeRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    calculatePrice(); 
+                    const type = radio.value;
+                    if (type === 'ballUnit') goToStep(detailsBall);
+                    if (type === 'timeBlock') goToStep(detailsTime);
+                });
+            });
+
+            // [修正] 詳細入力のリスナーからは goToStep() を削除
+            const detailInputs = [
+                ...ballFloorRadios, ...timeDayRadios, ...timeDurationRadios, ...timeFloorRadios
+            ];
+            if (ballTimeSelect) detailInputs.push(ballTimeSelect);
+            if (ballCountSlider) detailInputs.push(ballCountSlider);
+
+            detailInputs.forEach(input => {
+                if (!input) return;
+                const eventType = (input.type === 'range') ? 'input' : 'change';
+                input.addEventListener(eventType, () => {
+                    calculatePrice(); // 計算のみ実行
+                    // goToStep(step5); // ← これを削除
+                });
+            });
+            
+            if (resetButton) {
+                resetButton.addEventListener('click', resetForm);
+            }
+
+            // --- リサイズ対応 ---
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    resetForm(); 
+                    initializeView(); 
+                }, 250);
+            });
+            
+            // --- 初期化 ---
+            initializeView();
+            calculatePrice();
+        });
+    </script>
+    
+</BaseLayout>

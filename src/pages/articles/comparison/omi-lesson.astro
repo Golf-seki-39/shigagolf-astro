@@ -21,7 +21,7 @@ const title = "【2025年最新版】滋賀のゴルフレッスン比較｜初�
 const description = "「初心者レッスンで失敗した…」そんな経験から生まれた滋賀・近江八幡／東近江エリアのレッスン徹底比較。無料スクールから本格マンツーマンまで、目的別に最適な教室をわかりやすく解説！";
 const category = "比較記事"; 
 const headline = "【実体験】レッスンで挫折した僕が本気で分析！滋賀のゴルフ初心者が見るべきレッスン選びの”防衛マニュアル”";
-const imageUrl = "https://i.imgur.com/XXlXJbL.jpeg";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg";
 
 // --- Firebaseから各練習場の情報を取得 ---
 const rangeIds = ['riverside_jumbo', 'greenpia_oh', 'sakura_gc', 'azuchi_gc'];
@@ -65,13 +65,13 @@ const mainEntity = {
     // [修正点4] 記事内の全画像を追加
     "image": [
         imageUrl,
-        "https://i.imgur.com/S5JuYdV.jpeg",
-        "https://i.imgur.com/WcDqIqT.jpeg",
-        "https://i.imgur.com/ULQKBpI.jpeg",
-        "https://i.imgur.com/B0ozXOC.png"
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/C7A324E8-9569-4216-8955-2B3F2D9B59112025-04-02_18-42-15_481.jpg",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/WcDqIqT.jpeg",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6245.jpeg",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8072 2.png"
     ],
     "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
-    "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }},
+    "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }},
     "datePublished": new Date(publicationDate).toISOString(), "dateModified": lastModified.toISOString()
 };
 
@@ -85,21 +85,22 @@ const faqElements = {
   ]
 };
 
-// --- 全記事共通の「関連記事リスト」を定義 ---
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
 const experienceReports = [
-    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/cJBj7Sh.png' },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/DqJ7aMO.png' },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/TQmlJFb.jpeg' },
-    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://i.imgur.com/KTh9uMB.jpeg' },
-    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://i.imgur.com/KIm1JOr.jpeg' },
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-pricerank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
-    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://i.imgur.com/1sT2kzY.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://i.imgur.com/XXlXJbL.jpeg' },
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 
 const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -200,7 +201,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600">挫折した僕が、あの日の自分に教えたい最高の”入口”</h4>
                      <p>東近江エリアで「これからゴルフを始めたい」「何から手をつけていいか全く分からない」という方に、私が心の底からお勧めするのが、このリバーサイドジャンボゴルフの<strong>「初心者スクール」</strong>です。初心者でも通いやすい雰囲気で、安心してゴルフを始められます。</p>
-                     <Image src="https://i.imgur.com/S5JuYdV.jpeg" alt="リバーサイドジャンボゴルフの初心者向けゴルフレッスン案内" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/C7A324E8-9569-4216-8955-2B3F2D9B59112025-04-02_18-42-15_481.jpg" alt="リバーサイドジャンボゴルフの初心者向けゴルフレッスン案内" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <h5 class="text-lg font-bold">最大の魅力：実質200円！？常識破りの「初心者スクール」</h5>
                      <p>関西ゴルフ振興が実施するこのプログラムは、まさに初心者の救世主。レッスン料・ボール代・クラブレンタル代が全て無料で、4回（1回60分）のレッスンを受けられます。かかるのは登録料2,200円のみで、4回終了後には2,000円分のプリペイドカードが戻ってくるため、<strong>実質200円、缶ジュース2本分ほどの値段</strong>でプロに基礎を教えてもらえる計算です。</p>
                      <h5 class="text-lg font-bold">【要確認】申し込み方法と注意点</h5>
@@ -217,7 +218,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">グリーンピア近江八幡ゴルフ</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600">プロ6名以上！レッスンのデパートで”あなただけ”のコーチを見つける</h4>
                      <p>「自分に合うプロを見つけたい」「いろんなレッスン形式を試してみたい」そんな中〜上級者の方には、このグリーンピア近江八幡ゴルフが最適です。LPGA所属の女性プロからPGAトーナメントプロまで、実に6名以上のプロが在籍しており、まさに「レッスンの総合デパート」です。「スイング解析」も可能な最新機器を使った個人レッスンも選べます。</p>
-                     <Image src="https://i.imgur.com/WcDqIqT.jpeg" alt="グリーンピア近江八幡ゴルフの多彩な個人レッスン紹介" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/WcDqIqT.jpeg" alt="グリーンピア近江八幡ゴルフの多彩な個人レッスン紹介" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <h5 class="text-lg font-bold">魅力：圧倒的な選択肢</h5>
                      <p>10分1,200円のワンポイントレッスンから、月謝制のスクール、最新機器トラックマンを使ったデータ分析レッスンまで、考えられるほぼ全てのレッスン形式がここにあります。予算や目的に合わせて、自分だけの最適なプランを組み立てられるのが最大の強みです。</p>
                      <h5 class="text-lg font-bold text-red-600">【超重要】初心者スクールの注意点</h5>
@@ -234,7 +235,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">さくらゴルフ倶楽部</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600">バランス型の優等生。特に女性ゴルファーにおすすめ</h4>
                      <p>複数のプロから自分に合ったレッスンを選びたい、でも選択肢が多すぎても困る…。そんな方にフィットするのが、このさくらゴルフ倶楽部です。4名のプロが在籍し、グループレッスンとマンツーマンの両方を選べる、バランスの取れた練習場です。</p>
-                     <Image src="https://i.imgur.com/ULQKBpI.jpeg" alt="さくらゴルフ倶楽部の女性インストラクターによるレッスン風景" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6245.jpeg" alt="さくらゴルフ倶楽部の女性インストラクターによるレッスン風景" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <h5 class="text-lg font-bold">魅力：試しやすい料金設定と女性インストラクターの在籍</h5>
                      <p>瀬古えりなプロのマンツーマンレッスンは初回1,000円、鎮西まゆみプロのグループレッスンは初回1,500円と、気軽に試せる料金設定が魅力です。特に2名の女性インストラクターが在籍している点は、女性ゴルファーにとって大きな安心材料になるでしょう。不定期で無料のワンポイントレッスンが開催されることもあります。</p>
                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
@@ -255,7 +256,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/azuchi_gc/" class="text-green-700 hover:underline">安土ゴルフクラブ</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600">遠方からも人が集う、本格派マンツーマン専門塾</h4>
                      <p>「自己流の限界を感じている」「本気でスコアアップしたい」そんな熱意あるゴルファーに最適なのが、安土ゴルフクラブの入江賢プロによる個人レッスンです。</p>
-                     <Image src="https://i.imgur.com/B0ozXOC.png" alt="安土ゴルフクラブでのマンツーマン指導の様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8072 2.png" alt="安土ゴルフクラブでのマンツーマン指導の様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <h5 class="text-lg font-bold">魅力：質の高い50分のマンツーマンレッスン</h5>
                      <p>レッスンは1回50分。料金は都度払いで4,000円（4回チケットなら1回あたり3,500円）と非常にシンプルです。PGA所属のツアー経験もある入江プロのマンツーマン指導は評判が高く、大津市や他府県からわざわざ通ってくる人もいるほど。質の高い個人レッスンを求めるなら、ここが最有力候補となるでしょう。予約はプロの携帯電話へ直接行います。</p>
                       <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">

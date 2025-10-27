@@ -5,6 +5,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ReviewSection from "../../../components/ReviewSection.astro";
 import { db } from "../../../lib/firebase.js"; // getStaticPaths で使用
+import { Image } from "astro:assets"; // ★★★ この行を追加 ★★★
 import { collection, getDocs } from "firebase/firestore";
 
 // 1. getStaticPaths (変更なし)
@@ -105,10 +106,13 @@ const clientFirebaseConfig = {
         <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
             
             <header>
-                <img
+               <Image
                     src={imageUrl}
                     alt={`${name}の外観`}
                     class="w-full h-64 object-cover rounded-lg mb-6"
+                    width={1200} // ★★★ ここに元画像の幅を指定 ★★★
+                    height={630} // ★★★ ここに元画像の高さを指定 ★★★
+                    format="webp"
                     loading="lazy"
                 />
                 <div>
@@ -134,17 +138,16 @@ const clientFirebaseConfig = {
                 </div>
             </header>
              
-            {galleryImages && galleryImages.length > 0 && (
-              <section class="mt-8 pt-6 border-t border-slate-200">
-                <h2 class="text-2xl font-bold">フォトギャラリー</h2>
-                <div id="gallery-grid" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {galleryImages.map((image, index) => (
+           {galleryImages.map((image, index) => (
                     <div class="gallery-item hidden">
                       <a href={getPublicUrl(image.url)} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
-                        <img 
-                          src={getThumbnailUrl(image.url)}
+                        <Image 
+                          src={getThumbnailUrl(image.url)} // サムネイルなので getThumbnailUrl を使う
                           alt={`${name}のギャラリー写真 ${index + 1}（投稿者: ${image.author}） ${image.description || ''}`}
                           class="w-full h-full object-cover rounded-lg group-hover:opacity-80 transition-opacity"
+                          width={400} // ★★★ サムネイルの幅を指定（getThumbnailUrl の出力サイズに合わせる）★★★
+                          height={400} // ★★★ サムネイルの高さを指定（getThumbnailUrl の出力サイズに合わせる）★★★
+                          format="webp"
                           loading="lazy"
                         />
                       </a>

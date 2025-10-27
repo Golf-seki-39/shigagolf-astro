@@ -13,7 +13,7 @@ const description =
 const category = "体験談";
 const pubDate = "2025-09-26";
 const pubDateISO = "2025-09-26T10:00:00+09:00"; 
-const imageUrl = "https://i.imgur.com/7tuB35m.jpeg";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png";
 const rangeId = "ishiyama_gp";
 // --- End of specific information ---
 
@@ -32,6 +32,24 @@ if (docSnap.exists()) {
 } else {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
+
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
+];
+const comparisonArticles = [
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
+];
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
@@ -46,18 +64,18 @@ if (docSnap.exists()) {
         },
         "headline": title.split(" | ")[0],
         "description": description,
-        "image": [ imageUrl, "https://i.imgur.com/ShGbliU.jpeg", "https://i.imgur.com/esUXxwC.jpeg", "https://i.imgur.com/1eTKYtp.jpeg", "https://i.imgur.com/F1GZMdB.jpeg" ],
+        "image": [ imageUrl, "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png", "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png", "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png", "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png" ],
         "author": {
             "@type": "Person",
             "name": "関（せき）",
             "url": "https://shigagolf.com/about/",
-            "image": "https://i.imgur.com/BOcMOf3.png",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
             "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
         },
         "publisher": {
             "@type": "Organization",
             "name": "シガゴル",
-            "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
         },
         "datePublished": pubDateISO,
         "dateModified": pubDateISO,
@@ -134,7 +152,7 @@ if (docSnap.exists()) {
 
             <figure class="my-6">
                 <Image
-                    src="https://i.imgur.com/7tuB35m.jpeg"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9344.png"
                     alt="石山ゴルフ練習場の打席からの眺め"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -163,7 +181,7 @@ if (docSnap.exists()) {
 
             <figure class="my-6">
                  <Image
-                    src="https://i.imgur.com/ShGbliU.jpeg"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png"
                     alt="石山ゴルフ練習場の分かりやすい案内看板"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -193,7 +211,7 @@ if (docSnap.exists()) {
 
             <figure class="my-6">
                  <Image
-                    src="https://i.imgur.com/esUXxwC.jpeg"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png"
                     alt="石山ゴルフ練習場のズレない打席マット"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -217,7 +235,7 @@ if (docSnap.exists()) {
 
             <figure class="my-6">
                  <Image
-                    src="https://i.imgur.com/1eTKYtp.jpeg"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png"
                     alt="5000円で売られていたミズノの新古品ウェッジ"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -267,7 +285,7 @@ if (docSnap.exists()) {
 
             <figure class="my-6">
                  <Image
-                    src="https://i.imgur.com/F1GZMdB.jpeg"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png"
                     alt="40歳以下男性限定の打ち放題キャンペーン料金表"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"

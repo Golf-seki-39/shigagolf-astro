@@ -19,7 +19,7 @@ const description =
 const category = "体験談";
 const pubDate = "2025-10-09";
 const pubDateISO = "2025-10-09T18:00:00+09:00";
-const imageUrl = "https://i.imgur.com/y4TlmOJ.jpeg";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/001111img.jpg";
 const rangeId = "adogawa_sc";
 const docPath = `artifacts/${import.meta.env.PUBLIC_FIREBASE_APP_ID}/public/data/practice_ranges/${rangeId}`;
 
@@ -44,28 +44,22 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// --- [6] 関連記事リスト ---
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
+];
 const comparisonArticles = [
-    {
-        url: "/articles/comparison/omi-priceRank/",
-        title: "【料金で徹底比較】近江八幡・東近江の安い練習場5選",
-        img: "https://i.imgur.com/DOzSbMV.jpeg",
-    },
-    {
-        url: "/articles/comparison/omi-putting/",
-        title: "【パター練習場が充実】近江八幡・東近江エリア4選",
-        img: "https://i.imgur.com/IJZwf4W.jpeg",
-    },
-    {
-        url: "/articles/omi-higashiomi-approach/",
-        title: "【アプローチ＆バンカー練習場】近江八幡・東近江5選",
-        img: "https://i.imgur.com/jOTBh4U.jpeg",
-    },
-    {
-        url: "/articles/omi-higashiomi-comparison/",
-        title: "【総合比較】近江八幡・東近江エリアのゴルフ練習場4選",
-        img: "https://i.imgur.com/DyVr8of.jpeg",
-    },
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 ---
 
@@ -90,14 +84,14 @@ const comparisonArticles = [
             description: description,
             image: [
                 imageUrl,
-                "https://i.imgur.com/DqceAHw.png",
-                "https://i.imgur.com/SkmeOQ3.jpeg",
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8758.png",
+                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8778.png",
             ],
             author: {
                 "@type": "Person",
                 name: "関（せき）",
                 url: "https://shigolf.com/about/",
-                image: "https://i.imgur.com/BOcMOf3.png",
+                image: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
                 sameAs: [
                     "https://x.com/Golf_Seki39",
                     "https://golf-medley.com/articles/authors/seki",
@@ -110,7 +104,7 @@ const comparisonArticles = [
                 name: "シガゴル",
                 logo: {
                     "@type": "ImageObject",
-                    url: "https://i.imgur.com/mN0IbPS.png",
+                    url: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png",
                 },
             },
             datePublished: pubDateISO,
@@ -172,7 +166,7 @@ const comparisonArticles = [
             </p>
             <figure class="my-6">
                 <Image
-                    src="https://i.imgur.com/HMxgAzU.png"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8702.png"
                     alt="安曇川スポーツセンターのショートコースの様子"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -268,7 +262,7 @@ const comparisonArticles = [
             </p>
             <figure class="my-6">
                 <Image
-                    src="https://i.imgur.com/CgyI0C7.png"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8743.png"
                     alt="アットホームな雰囲気のクラブハウス内部"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -302,7 +296,7 @@ const comparisonArticles = [
 
             <figure class="my-6">
                 <Image
-                    src="https://i.imgur.com/DqceAHw.png"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8758.png"
                     alt="芝が禿げている衝撃的なグリーン"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -316,7 +310,7 @@ const comparisonArticles = [
             <div class="voice-box">
                 <div class="voice-icon">
                     <Image
-                        src="https://i.imgur.com/BOcMOf3.png"
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
                         alt="筆者アイコン"
                         class="w-16 h-16 rounded-full"
                         width={64}
@@ -336,7 +330,7 @@ const comparisonArticles = [
             <div class="voice-box">
                 <div class="voice-icon">
                     <Image
-                        src="https://i.imgur.com/BOcMOf3.png"
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
                         alt="筆者アイコン"
                         class="w-16 h-16 rounded-full"
                         width={64}
@@ -358,7 +352,7 @@ const comparisonArticles = [
             </p>
             <figure class="my-6">
                 <Image
-                    src="https://i.imgur.com/SkmeOQ3.jpeg"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8778.png"
                     alt="年季の入ったティーマット"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -387,7 +381,7 @@ const comparisonArticles = [
             </p>
             <figure class="my-6">
                 <Image
-                    src="https://i.imgur.com/BIiGhMt.png"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8721.png"
                     alt="大人用と子供用のレンタルクラブ"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"

@@ -16,7 +16,7 @@ const description = "東近江市の「リバーサイドジャンボゴルフ�
 const category = "体験談";
 const pubDate = "2025-10-18";
 const pubDateISO = "2025-10-18T11:00:00+09:00";
-const imageUrl = "https://i.imgur.com/KTh9uMB.jpeg";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg";
 const rangeId = "riverside_jumbo"; 
 
 // --- [4] シェアボタン用の変数を定義 ---
@@ -48,21 +48,22 @@ const priceData = {
   memberWeekendPrice: 10
 };
 
-// --- [6] 関連記事リストの定義 ---
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
 const experienceReports = [
-    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/cJBj7Sh.png' },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/DqJ7aMO.png' },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/TQmlJFb.jpeg' },
-    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://i.imgur.com/KIm1JOr.jpeg' },
-    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://i.imgur.com/KTh9uMB.jpeg' },
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://i.imgur.com/XXlXJbL.jpeg' },
-    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://i.imgur.com/1sT2kzY.jpeg' },
-    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 ---
 
@@ -132,7 +133,7 @@ const comparisonArticles = [
             <h2 id="charm1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力①】👑 東近江エリアで“唯一無二”の無料パター練習場</h2>
             <p>この練習場の名を語る上で、絶対に外せないのが、無料で利用できる屋外パター練習場です。私がここに通い詰める最大の理由が、まさにこれです。</p>
             
-            <Image src="https://i.imgur.com/QPOFImK.jpeg" alt="半分屋根付きの本格的なパター練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="eager" fetchpriority="high" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6448.jpg" alt="半分屋根付きの本格的なパター練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="eager" fetchpriority="high" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <p>「無料だから、まあまあの設備でしょ？」――初めて訪れる人は、そのクオリティに度肝を抜かれるはずです。</p>
             <ul class="list-disc list-inside space-y-2">
@@ -142,7 +143,7 @@ const comparisonArticles = [
                 <li><strong>手ぶらでもOK:</strong> 夜間照明が完備され、貸しパターもあるので、仕事帰りにふらっと立ち寄れるのも嬉しいポイントです。</li>
             </ul>
             
-            <Image src="https://i.imgur.com/h8Mf4rM.jpeg" alt="複雑な傾斜と4つのカップがあるパターグリーンの様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6450 2.jpg" alt="複雑な傾斜と4つのカップがあるパターグリーンの様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <p>普段は別の練習場に通う友人でさえ「パター練習だけは、絶対にジャンボがいい」と断言するほど。東近江エリアでこのレベルのパター練習ができるのは、間違いなくここだけでしょう。</p>
 
@@ -152,19 +153,19 @@ const comparisonArticles = [
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">１．集中力が途切れない！“ノーストレス”な新打席マット</h3>
             <p>足を踏み入れた瞬間に分かる、鮮やかなグリーンの打席マットとシックなカーペット。この変化は見た目の美しさだけではありません。使い込まれたマットにありがちな凹凸が一切なくなり、ショット一打一打に丁寧に向き合える「ノーストレス」な環境が生まれました。練習へのモチベーションを静かに、しかし確実に高めてくれます。</p>
 
-            <Image src="https://i.imgur.com/WkXSaLQ.jpeg" alt="リニューアル後の鮮やかなグリーンの新打席マット" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
-            <Image src="https://i.imgur.com/r9W2YjK.jpeg" alt="比較用のリニューアル前の打席の様子の写真" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_9012.png" alt="リニューアル後の鮮やかなグリーンの新打席マット" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6431.png" alt="比較用のリニューアル前の打席の様子の写真" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">２．☕ 女性や初心者も安心！居心地が格段にアップした休憩スペース</h3>
             <p>練習の合間に一息つく休憩用の椅子とテーブルも、モダンなデザインに一新。この変化は、練習場の「空気感」そのものを変えました。クリーンでおしゃれな休憩スペースは、これまで少し練習場に馴染みがなかった若い世代や女性ゴルファーも、温かく迎え入れてくれる「開かれた場所」の象徴のように感じます。</p>
             
-            <Image src="https://i.imgur.com/G95grGE.jpeg" alt="モダンでおしゃれになった新しい休憩スペース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
-            <Image src="https://i.imgur.com/B8ba4Cf.jpeg" alt="比較用のリニューアル前の温かみのある木のベンチ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_9015.png" alt="モダンでおしゃれになった新しい休憩スペース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6432.png" alt="比較用のリニューアル前の温かみのある木のベンチ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">３．📸 スマホ撮影に最適！あなたのスイングが“映える”打席環境へ</h3>
             <p>そして、私が今回のリニューアルで最も重要な変化だと感じた点。それは、この場所が<strong>自分のゴルフを「発信したくなる場所」</strong>へ進化したことです。清潔感のあるマットと統一感のあるシックな背景は、自分のスイングをスマートフォンで撮影するのに最高の“スタジオ”です。TikTokやInstagramで成長過程を発信したい現代のゴルファーにとって、これ以上ない環境と言えるでしょう。</p>
 
-            <Image src="https://i.imgur.com/wU54Omm.jpeg" alt="新しい打席から見える開放的なフェアウェイの景色" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_9009.png" alt="新しい打席から見える開放的なフェアウェイの景色" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <h2 id="charm3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力③】🎯 アプローチ練習も完備！スコアアップ志向ゴルファー必見</h2>
             <p>パターと打席だけではありません。スコアアップに直結する、ゴルファーの心をくすぐる設備がここには揃っています。</p>
@@ -172,12 +173,12 @@ const comparisonArticles = [
             <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">会員限定！超実践的なアプローチ練習場 <span class="text-sm font-normal text-red-600">⚠️有料/会員限定</span></h4>
             <p>スコアメイクの鍵を握るアプローチ。会員（年会費2,000円）になれば、専用のアプローチ練習場（有料：60分300円）が利用できます。約50ヤードのスペースに、フェアウェイ、ラフ、深いラフ、そして「アゴ高っ！」と感じる本格的なバンカーまで完備。コースさながらの状況から、徹底的にショートゲームを磨き上げることができます。</p>
             
-            <Image src="https://i.imgur.com/0sZFL4K.jpeg" alt="様々なライから練習できるアプローチ練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6406.jpg" alt="様々なライから練習できるアプローチ練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">打席ごとの正確な距離表示がありがたい！</h4>
             <p>「あの旗まで、実際は何ヤードなんだろう？」――そんな練習場でのモヤモヤも、ここでは解消されます。2打席ごとに、その打席から見た各ターゲットまでの実測ヤードが細かく表示されているのです。これにより、より正確な距離感を養い、番手選びの精度を格段にアップさせることができます。</p>
             
-            <Image src="https://i.imgur.com/gdy6D67.jpeg" alt="各打席に設置された正確な距離表示" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6423.jpg" alt="各打席に設置された正確な距離表示" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
             
             <h2 id="charm4" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力④】😊 通い続けたくなる料金と温かい接客</h2>
             
@@ -202,7 +203,7 @@ const comparisonArticles = [
                 <li><strong>レディースデー（月・金 9:00～17:00）:</strong> 驚きの<strong>1球7円！</strong></li>
             </ul>
             
-            <Image src="https://i.imgur.com/Kbgmz7W.jpeg" alt="リバーサイドジャンボゴルフの料金表" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6441.jpg" alt="リバーサイドジャンボゴルフの料金表" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
             
             <p>会員になれば入場料が半額になるだけでなく、ポイント特典などメリット多数。これなら無理なく通い続けられます。</p>
 
@@ -258,7 +259,7 @@ const comparisonArticles = [
             <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">心温まるアットホームな対応</h4>
             <p>この練習場の魅力は、設備だけではありません。スタッフの方々の温かい心遣いが素晴らしいのです。私自身、2回も打席にプリペイドカードを忘れたことがありますが、どちらもフロントで保管してくれていました。初めての方でも、プリカの購入から打席の使い方まで親切に教えてくれるので、初心者でも安心して飛び込めます。</p>
             
-            <Image src="https://i.imgur.com/jvJwjv4.jpeg" alt="アットホームな雰囲気の受付・休憩スペース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6416.png" alt="アットホームな雰囲気の受付・休憩スペース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <div class="not-prose my-8 p-5 bg-slate-50 border-l-4 border-slate-400 rounded-r-lg">
                 <h4 class="text-lg font-bold text-slate-800 mt-0 mb-2">【筆者の一言】</h4>

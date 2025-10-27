@@ -16,7 +16,7 @@ const description = "安曇川スポーツセンターの料金を徹底解説�
 const category = "体験談";
 const pubDate = "2025-10-07";
 const pubDateISO = "2025-10-07T17:00:00+09:00";
-const imageUrl = "https://i.imgur.com/F0kERMr.jpeg";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg";
 const rangeId = "adogawa_sc";
 
 // --- [4] シェアボタン用の変数を定義 ---
@@ -38,16 +38,20 @@ if (docSnap.exists()) {
 
 // --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
 const experienceReports = [
-    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/LSkRor1.jpeg' },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/nMH3jlD.png' },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/0rkZCzV.jpeg' },
-    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://i.imgur.com/Rwj2hi0.png' },
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 ---
 
@@ -67,13 +71,13 @@ const comparisonArticles = [
             "@type": "Person",
             "name": "関（せき）",
             "url": "https://shigolf.com/about/",
-            "image": "https://i.imgur.com/BOcMOf3.png",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
             "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
         },
         "publisher": {
             "@type": "Organization",
             "name": "シガゴル",
-            "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
         },
         "datePublished": pubDateISO,
         "dateModified": pubDateISO,
@@ -153,7 +157,7 @@ const comparisonArticles = [
             <p>ここはゴルフコースのティーイングエリアか？――思わずそう錯覚してしまうほど、圧倒的な開放感。滋賀県高島市にある打ちっぱなし、「安曇川スポーツセンター」は、「ドライバーを心の底から思いっきり振り抜きたい」というゴルファーの願いを叶えてくれる練習場です。</p>
 
             <figure class="my-6">
-                <Image src="https://i.imgur.com/Nm3ngEQ.jpeg" alt="安曇川スポーツセンターの広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_9119.JPG" alt="安曇川スポーツセンターの広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
             
             <p>しかし、その大きな魅力の裏には、施設の歴史を感じさせる側面や、訪れる前に知っておきたい注意点も存在します。この記事では、私が実際に体験したことと詳細な料金情報を元に、その魅力とリアルな姿を正直にお伝えします。</p>
@@ -193,7 +197,7 @@ const comparisonArticles = [
     支払いはプリペイドカード方式です。メンバーになると、ビジターよりもお得に購入できます。メンバーシップはショートコースと共通で、<strong>年会費は11,000円</strong>です。（※入会特典については練習場にご確認ください）
 </p>
 
-<Image src="https://imgur.com/Y9b22GY.png" alt="安曇川スポーツセンター プリペイドカード料金表" class="my-4 rounded-lg w-full h-auto" width={800} height={600} format="webp" quality={80} />
+<Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8806.png" alt="安曇川スポーツセンター プリペイドカード料金表" class="my-4 rounded-lg w-full h-auto" width={800} height={600} format="webp" quality={80} />
 
 <div class="not-prose my-4 text-center">
     <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="price-prica-table-container">
@@ -235,8 +239,8 @@ const comparisonArticles = [
         <h4 class="text-lg font-bold text-amber-800 mb-2">🉐【平日限定】超お得なサービスデー！</h4>
         <p class="text-amber-900">平日限定で、さらにお得になるイベントが開催されています。プリペイドカードを使って参加できます。</p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-            <Image src="https://imgur.com/G0huxNo.png" alt="ボール単価2円デーの案内" class="rounded-lg w-full h-auto" width={600} height={800} format="webp" quality={80} />
-            <Image src="https://imgur.com/vPahU6D.png" alt="打ち放題の案内" class="rounded-lg w-full h-auto" width={600} height={800} format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8837.png" alt="ボール単価2円デーの案内" class="rounded-lg w-full h-auto" width={600} height={800} format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8838.png" alt="打ち放題の案内" class="rounded-lg w-full h-auto" width={600} height={800} format="webp" quality={80} />
         </div>
         <ul class="list-disc list-inside mt-4 space-y-2 text-slate-800">
             <li><strong>ボール単価<span class="text-red-600 font-bold text-xl">2円</span>デー</strong>：第2・4木曜日 9時〜15時（10〜30番打席）</li>
@@ -251,7 +255,7 @@ const comparisonArticles = [
 <p>
     ショートコースは<span class="font-bold">全日回り放題</span>です。ジュニア料金の設定もあり、家族で一日楽しめます。
 </p>
-<Image src="https://imgur.com/OE0XQeY.png" alt="安曇川スポーツセンター ショートコース料金表" class="my-4 rounded-lg w-full h-auto" width={800} height={600} format="webp" quality={80} />
+<Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8727.png" alt="安曇川スポーツセンター ショートコース料金表" class="my-4 rounded-lg w-full h-auto" width={800} height={600} format="webp" quality={80} />
 <div class="not-prose my-4 text-center">
     <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="price-short-course-table-container">
          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
@@ -294,7 +298,7 @@ const comparisonArticles = [
     <li><strong>レンタルクラブ</strong>：<span class="font-bold">無料</span>（練習場・ショートコース共通。左用・キッズ用もあり）</li>
     <li><strong>昼食・お弁当</strong>：クラブハウスで注文可能。カレーや定食などメニューが豊富です。</li>
 </ul>
-<Image src="https://imgur.com/cujoLEO.png" alt="安曇川スポーツセンター お弁当メニュー" class="my-4 rounded-lg w-full h-auto" width={800} height={600} format="webp" quality={80} />
+<Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8754.png" alt="安曇川スポーツセンター お弁当メニュー" class="my-4 rounded-lg w-full h-auto" width={800} height={600} format="webp" quality={80} />
 
             <h2 id="section-1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">安曇川スポーツセンターの2つの魅力</h2>
             
@@ -304,7 +308,7 @@ const comparisonArticles = [
             <p>ただ練習するという以上に、この景色の中でドライバーを振り抜くこと自体が、最高のストレス発散になります。難しいことを考えず、ただひたすらに気持ちよくボールを打ちたい。そんな日にこそ、訪れたい場所です。</p>
 
             <figure class="my-6">
-                <Image src="https://i.imgur.com/gsDMZjj.png" alt="ヤード表示と広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8814.png" alt="ヤード表示と広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 練習場で生まれた、一期一会の出会い</h3>
@@ -318,7 +322,7 @@ const comparisonArticles = [
             <p>素晴らしい魅力がある一方で、事前に知っておくべき点もあります。第一に、施設の歴史は深く、最新設備が整っているわけではありません。</p>
 
             <figure class="my-6">
-                <Image src="https://i.imgur.com/6ib3tNo.png" alt="使い込まれて凹んだ打席マット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8811.png" alt="使い込まれて凹んだ打席マット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">長年の歴史を感じさせる打席マット。場所によっては凹みも。</figcaption>
             </figure>
 
@@ -345,7 +349,7 @@ const comparisonArticles = [
             <p>これはあくまで取材という特殊な状況での出来事であり、一般の利用者が同じ経験をすることはないと思います。ただ、施設の顔である受付の対応には、改善の余地があると感じたのもまた事実です。</p>
             
             <figure class="my-6">
-                <Image src="https://i.imgur.com/OQutn0l.png" alt="安曇川スポーツセンターの受付外観" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8803のコピー.png" alt="安曇川スポーツセンターの受付外観" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h2 id="section-5" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">結論：どんなゴルファーにおすすめできるか？</h2>

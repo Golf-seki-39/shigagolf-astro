@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { db } from "../lib/firebase.js";
+import { Image } from "astro:assets"; 
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 // SEO情報
@@ -207,11 +208,14 @@ try {
                                 data-rating={range.avgRating || 0}
                                 data-reviews={range.reviewCount || 0}
                             >
-                                <img
-                                    src={range.imageUrl}
-                                    alt={`${range.name}の外観`}
-                                    class="w-full h-40 object-cover"
-                                />
+                                <Image
+                                src={range.imageUrl}
+                                alt={`${range.name}の外観`}
+                                class="w-full h-40 object-cover"
+                                width={1200}  {/* ← ★★★ 元画像の幅を確認・指定 ★★★ */}
+                                height={630} {/* ← ★★★ 元画像の高さを確認・指定 ★★★ */}
+                                format="webp"
+                            />
                                 <div class="p-4 flex-grow flex flex-col">
                                     <p class="text-sm text-green-600 font-semibold">
                                         {range.area}エリア

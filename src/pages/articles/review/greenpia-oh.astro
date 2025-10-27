@@ -16,7 +16,7 @@ const description = "滋賀県近江八幡市の「グリーンピア近江八�
 const category = "体験談";
 const pubDate = "2025-10-17";
 const pubDateISO = "2025-10-17T13:00:00+09:00"; // JST
-const imageUrl = "https://i.imgur.com/KIm1JOr.jpeg"; // アイキャッチ画像を更新
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg"; // アイキャッチ画像を更新
 const rangeId = "greenpia_oh"; 
 
 // --- [4] シェアボタン用の変数を定義 (URLを修正) ---
@@ -101,19 +101,22 @@ const priceData = {
 };
 // === [データ定義ここまで] ===
 
-// --- [6] 関連記事リストの定義 (experienceReportsを追加) ---
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
 const experienceReports = [
-    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/cJBj7Sh.png' },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/DqJ7aMO.png' },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/TQmlJFb.jpeg' },
-    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://i.imgur.com/KTh9uMB.jpeg' },
-    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://i.imgur.com/KIm1JOr.jpeg' },
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
-    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 ---
 
@@ -128,23 +131,23 @@ const comparisonArticles = [
     "description": description,
     "image": [ 
         imageUrl,
-        "https://i.imgur.com/lL5bRC7.jpeg",
-        "https://i.imgur.com/hZljYRY.jpeg",
-        "https://i.imgur.com/eaMBXeP.jpeg",
-        "https://i.imgur.com/y0hjcrU.jpeg",
-        "https://i.imgur.com/HYj7q5q.jpeg"
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6751.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/白　ゴールド　茶色　シンプル　ビジネス　LINE　リッチメニュー表　大 (1).png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/SDカード等割引.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6880.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6863.png"
     ],
     "author": {
         "@type": "Person",
         "name": "関（せき）",
         "url": "https://shigolf.com/about/",
-        "image": "https://i.imgur.com/BOcMOf3.png",
+        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
         "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
     },
     "publisher": {
         "@type": "Organization",
         "name": "シガゴル",
-        "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
     },
     "datePublished": pubDateISO,
     "dateModified": pubDateISO,
@@ -193,7 +196,7 @@ const comparisonArticles = [
             <p><strong>「1球3円で練習できる場所がある」</strong>――。<br>そんな噂を聞いて、誰もが「本当！？」と二度見してしまうゴルフ練習場が、滋賀県近江八幡市にあります。<br>それが「グリーンピア近江八幡ゴルフ」です。</p>
             
             <figure class="my-6">
-                <Image src="https://i.imgur.com/lL5bRC7.jpeg" alt="グリーンピア近江八幡ゴルフの外観" class="w-full h-auto object-cover rounded-lg" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6751.png" alt="グリーンピア近江八幡ゴルフの外観" class="w-full h-auto object-cover rounded-lg" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">夕暮れ時のグリーンピア近江八幡ゴルフ</figcaption>
             </figure>
 
@@ -244,7 +247,7 @@ const comparisonArticles = [
             <p>まず、女性とジュニア（18歳未満）には、入場料込みで1時間550円から利用できる、非常にお得な打ち放題プランが用意されています。練習量を確保したい方にとっては、これだけでも通う価値があるかもしれません。</p>
             
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/hZljYRY.jpeg" alt="レディース＆ジュニア 打ち放題料金表" class="w-full h-auto object-cover rounded-lg" width={1200} height={900} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/白　ゴールド　茶色　シンプル　ビジネス　LINE　リッチメニュー表　大 (1).png" alt="レディース＆ジュニア 打ち放題料金表" class="w-full h-auto object-cover rounded-lg" width={1200} height={900} format="webp" quality={80} />
             </figure>
 
 
@@ -252,7 +255,7 @@ const comparisonArticles = [
             <p>そして、この練習場の真骨頂が、特定のカード提示によるボール単価割引サービスです。対象はSDカード（セーフドライバーカード）保持者、消防団員、JAF会員など多岐にわたります。</p>
             
             <figure class="my-6">
-                <Image src="https://i.imgur.com/eaMBXeP.jpeg" alt="割引対象の案内" class="w-full h-auto object-cover rounded-lg" width={900} height={1200} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/SDカード等割引.png" alt="割引対象の案内" class="w-full h-auto object-cover rounded-lg" width={900} height={1200} format="webp" quality={80} />
             </figure>
 
             <p>
@@ -370,7 +373,7 @@ const comparisonArticles = [
             <p>まず打席ですが、設備はかなり年季が入っています。一部の打席マットは使い込まれて波打っており、平らなライでの練習が難しい場合があります。</p>
 
             <figure class="my-6">
-                <Image src="https://i.imgur.com/y0hjcrU.jpeg" alt="波打っている打席マット" class="w-full h-auto object-cover rounded-lg" width={1200} height={900} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6880.png" alt="波打っている打席マット" class="w-full h-auto object-cover rounded-lg" width={1200} height={900} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">マットが波打っており、ボールが転がってしまうことも。</figcaption>
             </figure>
 
@@ -380,7 +383,7 @@ const comparisonArticles = [
             <p>アプローチとバンカーの練習場も併設されていますが（有料・フロント申込制）、アプローチ練習場は「軽く芝の上から打てる」という程度の広さです。さらに、アゴの高い本格的なバンカーは、私が訪問した際は数日前の雨の影響で完全に水没していました…。</p>
 
             <figure class="my-6">
-                <Image src="https://i.imgur.com/HYj7q5q.jpeg" alt="水没したバンカー練習場" class="w-full h-auto object-cover rounded-lg" width={1200} height={900} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6863.png" alt="水没したバンカー練習場" class="w-full h-auto object-cover rounded-lg" width={1200} height={900} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">複数回訪れましたが、いつも利用不可の状態でした。</figcaption>
             </figure>
 

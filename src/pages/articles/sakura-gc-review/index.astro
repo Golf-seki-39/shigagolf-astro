@@ -15,7 +15,7 @@ const description = "滋賀県東近江市にある「さくらゴルフ倶楽�
 const category = "体験談";
 const pubDate = "2025-05-23";
 const pubDateISO = "2025-05-23T10:00:00+09:00"; 
-const imageUrl = "https://i.imgur.com/wgDjFch.jpeg";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png";
 const rangeId = "sakura_gc";
 // --- End of specific information ---
 
@@ -122,20 +122,22 @@ const priceData = {
 // ★★★ 料金シミュレーター用のデータ定義ここまで ★★★
 
 
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
 const experienceReports = [
-    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/cJBj7Sh.png' },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/DqJ7aMO.png' },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/TQmlJFb.jpeg' },
-    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://i.imgur.com/KIm1JOr.jpeg' },
-    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://i.imgur.com/KTh9uMB.jpeg' },
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江5選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://i.imgur.com/XXlXJbL.jpeg' },
-    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://i.imgur.com/1sT2kzY.jpeg' },
-    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 ---
 
@@ -153,39 +155,39 @@ const comparisonArticles = [
         "description": description,
         "image": [ 
             imageUrl,
-            "https://i.imgur.com/ZqtS7KZ.png",
-            "https://i.imgur.com/JESF50G.jpeg",
-            "https://i.imgur.com/MxbDzQ0.png",
-            "https://i.imgur.com/TOM6sID.jpeg",
-            "https://i.imgur.com/EtCU4D6.jpeg",
-            "https://i.imgur.com/9ypbv0k.jpeg",
-            "https://i.imgur.com/7wsrA50.jpeg",
-            "https://i.imgur.com/hfDU3SE.jpeg",
-            "https://i.imgur.com/RYK0Lmz.png",
-            "https://i.imgur.com/0vYblgK.jpeg",
-            "https://i.imgur.com/5aJXKlT.png",
-            "https://i.imgur.com/nsHMRDX.jpeg",
-            "https://i.imgur.com/POpXpCd.jpeg",
-            "https://i.imgur.com/InmvnTr.jpeg",
-            "https://i.imgur.com/7Owsnqp.jpeg",
-            "https://i.imgur.com/GEFqCJG.jpeg",
-            "https://i.imgur.com/xLzoLbP.jpeg",
-            "https://i.imgur.com/DMFHH2o.jpeg",
-            "https://i.imgur.com/A8TfyKs.jpeg",
-            "https://i.imgur.com/EUkMBQR.jpeg",
-            "https://i.imgur.com/P2cOPEX.jpeg"
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/シガゴル (3).png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6014.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/MxbDzQ0.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/TOM6sID.jpeg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6033.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/3.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/hfDU3SE.jpeg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/7.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/5.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/8.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9789.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/9.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/10.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6025.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6030.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/13.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/12.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/6.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6639.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6081.jpg"
         ],
         "author": {
             "@type": "Person",
             "name": "関（せき）",
             "url": "https://shigolf.com/about/",
-            "image": "https://i.imgur.com/BOcMOf3.png",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
             "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
         },
         "publisher": {
             "@type": "Organization",
             "name": "シガゴル",
-            "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
         },
         "datePublished": pubDateISO,
         "dateModified": pubDateISO,
@@ -246,7 +248,7 @@ const comparisonArticles = [
 
             <figure class="my-6">
                 <Image
-                    src="https://i.imgur.com/wgDjFch.jpeg"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/0000000img.jpg"
                     alt="夕暮れ後の静けさに包まれた「さくらゴルフ倶楽部」入口の様子"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -267,7 +269,7 @@ const comparisonArticles = [
 
             <figure class="my-6">
                  <Image
-                    src="https://i.imgur.com/ZqtS7KZ.png"
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/シガゴル (3).png"
                     alt="広々とした『さくらゴルフ倶楽部』の打席エリア。ナイター照明も完備"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
@@ -306,7 +308,7 @@ const comparisonArticles = [
             </h2>
             
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/JESF50G.jpeg" alt="メンバー特典のチラシ。女性会員はプレミアム会員相当" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6014.jpg" alt="メンバー特典のチラシ。女性会員はプレミアム会員相当" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">メンバー特典のチラシ。女性会員はプレミアム会員相当（2025年4月／筆者撮影）</figcaption>
             </figure>
 
@@ -319,7 +321,7 @@ const comparisonArticles = [
             </ul>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/MxbDzQ0.png" alt="レディースパック打ち放題の詳細看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/MxbDzQ0.png" alt="レディースパック打ち放題の詳細看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">レディースパック打ち放題の詳細看板（2025年4月／筆者撮影）</figcaption>
             </figure>
 
@@ -450,98 +452,98 @@ const comparisonArticles = [
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【打席設備】</h3>
             <p><strong>マット：</strong> 打席によって多少の使用感はありますが、練習に支障が出るレベルではありません。</p>
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/TOM6sID.jpeg" alt="昼間の打席マットの状態。ティーアップされている球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/TOM6sID.jpeg" alt="昼間の打席マットの状態。ティーアップされている球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">昼間の打席マットの状態。ティーアップされている球（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p><strong>ティーアップ：</strong> 便利な自動式。高さも5段階に調整可能で操作も簡単！</p>
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/EtCU4D6.jpeg" alt="ティーの高さ調整をする機械。プリカの挿入もこの一台で！" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/2.png" alt="ティーの高さ調整をする機械。プリカの挿入もこの一台で！" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">ティーの高さ調整をする機械。プリカの挿入もこの一台で！（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p><strong>ボール：</strong> 様々なメーカーのロストボールがミックスされています。状態は色々ですが、練習用としては十分です。</p>
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/9ypbv0k.jpeg" alt="アプローチ練習場で実際にレンタルする球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6033.jpg" alt="アプローチ練習場で実際にレンタルする球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場で実際にレンタルする球（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p><strong>ターゲット：</strong> 10ヤード毎のラインや多数の旗、グリーンを模した的も設置されていて、距離感が掴みやすい！奥のネット(200ヤード～)にドライバーショットが届けば気分爽快です！</p>
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/7wsrA50.jpeg" alt="打席から見たフェアウェイ（ターゲットのyd表示あり）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/3.png" alt="打席から見たフェアウェイ（ターゲットのyd表示あり）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">打席から見たフェアウェイ（星印をつけているところにターゲット（yd表示）があります）（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p><strong>無料貸し出し品：</strong> ヘッドスピード測定器、アドレス確認用ミラー、スマホホルダーも受付で無料レンタル可能。スイングチェックに役立ちます。</p>
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/hfDU3SE.jpeg" alt="無料貸し出し品一覧の写真（店内貼り出し用ポスター）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/hfDU3SE.jpeg" alt="無料貸し出し品一覧の写真（店内貼り出し用ポスター）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">無料貸し出し品一覧の写真（店内貼り出し用ポスター）（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【初心者ゴルファーさん注目！集中できる「初心者優先スペース」】</h3>
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/RYK0Lmz.png" alt="身長より高い打席横にあるパーテーション" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/7.png" alt="身長より高い打席横にあるパーテーション" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">身長より高い打席横にあるパーテーション。（2025年4月／筆者撮影）</figcaption>
             </figure>
             
             <p>2階打席の一番奥には、6打席の「初心者優先スペース」があります。 ここが本当に素晴らしい！ 高さ約2mのしっかりしたパーテーションで区切られているので、隣の打席や周りの視線を気にせず、自分のペースで練習に集中できます。「空振りしたら恥ずかしいな…」なんて心配、もう必要ありません！ 安心して、納得いくまでクラブを振れますよ。</p>
             
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/0vYblgK.jpeg" alt="横から見た初心者優先スペース。光差し込む昼間の打席" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/5.png" alt="横から見た初心者優先スペース。光差し込む昼間の打席" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">横から見た初心者優先スペース。光差し込む昼間の打席（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>一番奥は左利き用の打席になっています。2階なので打ち下ろしで気持ちよく練習できるのも◎。 受付で空き状況を確認してみてくださいね。</p>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/5aJXKlT.png" alt="フロントに設置されている打席の空き状況確認掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/8.png" alt="フロントに設置されている打席の空き状況確認掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">フロントに設置されている打席の空き状況確認掲示板（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【スコアメイクの鍵！実戦力が身につく「アプローチ練習場」】</h3>
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/nsHMRDX.jpeg" alt="アプローチ練習場の全体。芝の状態などがはっきりわかる昼間" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9789.png" alt="アプローチ練習場の全体。芝の状態などがはっきりわかる昼間" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場の全体。芝の状態などがはっきりわかる昼間（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>ゴルフのスコアを左右するショートゲーム。「さくらゴルフ倶楽部」には、約60ヤードのアプローチ練習場があり、これがまた素晴らしいんです！</p>
             
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/POpXpCd.jpeg" alt="アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/9.png" alt="アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>正直にお伝えすると、芝やバンカーの状態が常に完璧！というわけではありません。 でも、それが逆にイイ！ コースで遭遇するような、ちょっと難しいライやアゴの高いバンカーからのショットなど、より実践的な練習ができるんです。 旗も2本立っているので、目標設定もしやすいですよ。</p>
             
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/InmvnTr.jpeg" alt="アプローチ練習場のバンカー。砂の状態やライの状態を確認できます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/10.png" alt="アプローチ練習場のバンカー。砂の状態やライの状態を確認できます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場のバンカー。砂の状態やライの状態を確認できます（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>私自身、ここのアプローチ練習場で様々な打ち方を試し、練習を重ねた結果、苦手だったアプローチでのトップが激減！スコアアップを実感しています。</p>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/7Owsnqp.jpeg" alt="目土小屋。袋の中にスコップが入っているのでそのまま使えます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6025.jpg" alt="目土小屋。袋の中にスコップが入っているのでそのまま使えます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">目土小屋。袋の中にはスコップが入っているのでそのまま使えます（2025年4月／筆者撮影）</figcaption>
             </figure>
             
             <p>ゴルフシューズはもちろん、スニーカーでの利用もOK。 練習後にはコンプレッサーで汚れを落とせるのも嬉しいポイント。休憩用のベンチも設置されています。</p>
             
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/GEFqCJG.jpeg" alt="アプローチ練習場に設置されている休憩用ベンチ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6030.jpg" alt="アプローチ練習場に設置されている休憩用ベンチ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場に設置されている休憩用ベンチ（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【気分転換にも最適「パター練習コーナー」】</h3>
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/xLzoLbP.jpeg" alt="2Fオープンスペースにあるパター練習用のミニグリーン" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/13.png" alt="2Fオープンスペースにあるパター練習用のミニグリーン" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">2Fオープンスペースにあるパター練習用のミニグリーン（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>2階ホールには、パターマット2種類とフラットなミニグリーン（約2m×1m）も。 本格的なパター練習には少し物足りないかもしれませんが、打席練習の合間の気分転換や、初心者の方がパットの感覚を掴むには最適です。 気軽に利用してみてください。</p>
             
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/DMFHH2o.jpeg" alt="2Fオープンスペースにあるパターマット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/12.png" alt="2Fオープンスペースにあるパターマット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">2Fオープンスペースにあるパターマット（2025年4月／筆者撮影）</figcaption>
             </figure>
             
@@ -554,7 +556,7 @@ const comparisonArticles = [
             <p>重ねてお伝えしますが、これらはあくまで店員さんのご厚意によるものであり、常に同様の対応を期待できるものではありません。 もし同様の状況になった場合は、必ず事前に店員さんに謙虚な姿勢で相談してみてくださいね。</p>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/A8TfyKs.jpeg" alt="打席から見た、晴れた昼間のフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/6.png" alt="打席から見た、晴れた昼間のフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">打席から見た、晴れた昼間のフェアウェイ（2025年4月／筆者撮影）</figcaption>
             </figure>
 
@@ -562,7 +564,7 @@ const comparisonArticles = [
                 初心者だった私が「ホッ」とした瞬間。店員さんの神対応！
             </h2>
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/EUkMBQR.jpeg" alt="さくらゴルフ倶楽部のメンバーズカード（メンバー会員）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6639.jpg" alt="さくらゴルフ倶楽部のメンバーズカード（メンバー会員）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">さくらゴルフ倶楽部のメンバーズカード（メンバー会員）（2025年5月／筆者撮影）</figcaption>
             </figure>
             <p>私がまだゴルフを始めたばかりの頃。 ある日、夜9時頃から練習を始めたのですが、夜10時になった瞬間、突然プリペイドカードが打席から排出されたんです！</p>
@@ -695,7 +697,7 @@ const comparisonArticles = [
             <p>設備は最新鋭ピカピカ！というわけではないかもしれませんが、それを補って余りあるほどの練習のしやすさと居心地の良さがここにはあります。</p>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/P2cOPEX.jpeg" alt="1Fエントランス横休憩スペースに設置されているマッサージチェア" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6081.jpg" alt="1Fエントランス横休憩スペースに設置されているマッサージチェア" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">マッサージチェアも置いてます笑 1Fエントランス横休憩スペースに設置されているマッサージチェア。自由に使用可能（2025年4月／筆者撮影）</figcaption>
             </figure>
 

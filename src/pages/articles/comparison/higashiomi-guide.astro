@@ -20,7 +20,7 @@ const title = "【2025年最新】東近江市のゴルフ練習場まとめ｜�
 const description = "東近江市のゴルフ練習場選びで迷っていませんか？全3施設を料金・設備・特徴で徹底比較。とにかく安く打ちたい、アプローチ練習をしたい、女性や初心者でも安心な練習場はどこか、あなたの目的にぴったりの練習場が必ず見つかります。";
 const category = "比較記事";
 const headline = "【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較";
-const imageUrl = "https://i.imgur.com/1sT2kzY.jpeg";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg";
 
 // --- Firebaseから各練習場の情報を取得 ---
 const rangeIds = ['riverside_jumbo', 'garage_park', 'sakura_gc'];
@@ -55,12 +55,12 @@ const mainEntity = {
     "headline": headline, "description": description,
     "image": [
         imageUrl,
-        "https://i.imgur.com/UNYudh2.jpeg",
-        "https://i.imgur.com/l96uWba.jpeg",
-        "https://i.imgur.com/XK51XXc.jpeg"
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6450 2.jpg",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9502.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9788.png"
     ],
     "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
-    "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }},
+    "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }},
 "datePublished": new Date(publicationDate).toISOString(), "dateModified": lastModified.toISOString()
 };
 
@@ -74,21 +74,22 @@ const faqElements = {
   ]
 };
 
-// --- 全記事共通の「関連記事リスト」を定義 ---
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
 const experienceReports = [
-    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/cJBj7Sh.png' },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/DqJ7aMO.png' },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/TQmlJFb.jpeg' },
-    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://i.imgur.com/KTh9uMB.jpeg' },
-    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://i.imgur.com/KIm1JOr.jpeg' },
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-pricerank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://i.imgur.com/1sT2kzY.jpeg' },
-    { url: '/articles/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://i.imgur.com/XXlXJbL.jpeg' },
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 
 const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -148,7 +149,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>
             </header>
 
-            <Image src="https://i.imgur.com/1sT2kzY.jpeg" alt="東近江市のゴルフ練習場3施設の魅力的な風景コラージュ" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={675} fetchpriority="high" decoding="async" format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg" alt="東近江市のゴルフ練習場3施設の魅力的な風景コラージュ" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={675} fetchpriority="high" decoding="async" format="webp" quality={80} />
 
             <div class="not-prose bg-green-50 border border-l-4 border-green-500 p-4 rounded-lg my-6">
               <h4 class="text-lg font-bold text-green-800 mb-2 mt-0">あなたにおすすめの選び方</h4>
@@ -232,10 +233,10 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">東近江市のゴルフ練習場3施設を個別レビュー</h2>
                  <div id="riverside_jumbo" class="mt-8 pt-6 scroll-mt-24">
                      <h3 class="text-2xl font-bold text-slate-800 mt-0">リバーサイドジャンボゴルフ</h3>
-                     <Image src="https://i.imgur.com/UNYudh2.jpeg" alt="リバーサイドジャンボゴルフの広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6419.png" alt="リバーサイドジャンボゴルフの広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
                      <h4 class="text-xl font-semibold text-slate-600">「質」を求める本気ゴルファーの聖地</h4>
                      <p>「安さ」よりも「練習の質」を徹底的に追求するゴルファーが集うのが、このリバーサイドジャンボゴルフです。無料で利用できる本格的なパターグリーンや、質の高い（会員限定有料）アプローチ練習場は、スコアアップへの投資価値十分。</p>
-                     <Image src="https://i.imgur.com/Kd7anY2.jpeg" alt="リバーサイドジャンボゴルフの手入れが行き届いた綺麗なパターグリーン" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6450 2.jpg" alt="リバーサイドジャンボゴルフの手入れが行き届いた綺麗なパターグリーン" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <p>2025年6月に打席周りがリニューアルされ、夏場はミストも出るなど、快適性もさらに向上しています。</p>
                      <div class="not-prose text-center my-6">
                          <a href="/ranges/riverside_jumbo/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
@@ -246,10 +247,10 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="garage_park" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                      <h3 class="text-2xl font-bold text-slate-800 mt-0">がれーじぱーく東近江</h3>
-                     <Image src="https://i.imgur.com/l96uWba.jpeg" alt="がれーじぱーく東近江のインドア練習ブース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9502.png" alt="がれーじぱーく東近江のインドア練習ブース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
                      <h4 class="text-xl font-semibold text-slate-600">データと効率を重視する現代ゴルファーの秘密基地</h4>
                      <p>蒲生スマートICからわずか2分という抜群のアクセスを誇る、完全インドア練習場。天候を一切気にすることなく、弾道測定器が示す詳細なデータに基づいて、どこまでも効率的にご自身のスイングと向き合えます。</p>
-                     <Image src="https://i.imgur.com/faG0Y9m.jpeg" alt="がれーじぱーく東近江の弾道測定器の画面" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9537.png" alt="がれーじぱーく東近江の弾道測定器の画面" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <p>特に、月額5,000円のフリーパスは、練習頻度が高いゴルファーにとってまさに”最強”の選択肢です。</p>
                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
                          <a href="/ranges/garage_park/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
@@ -267,10 +268,10 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <div id="sakura_gc" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                      <h3 class="text-2xl font-bold text-slate-800 mt-0">さくらゴルフ倶楽部</h3>
-                     <Image src="https://i.imgur.com/XK51XXc.jpeg" alt="さくらゴルフ倶楽部の清潔感のある打席エリア" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/6.png" alt="さくらゴルフ倶楽部の清潔感のある打席エリア" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
                      <h4 class="text-xl font-semibold text-slate-600">女性・初心者に天国！快適性を追求した練習環境</h4>
                      <p>女性やジュニアへの特典が非常に手厚く、対象者にとっては最高の練習環境がここにあります。夏場は冷房が効いており、厳しい暑さの中でも快適に練習に集中しやすいのが大きな魅力です。</p>
-                     <Image src="https://i.imgur.com/FXIZLQY.jpeg" alt="さくらゴルフ倶楽部の広々としたアプローチ練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9788.png" alt="さくらゴルフ倶楽部の広々としたアプローチ練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <p>広々としたアプローチ練習場や初心者優先打席など、幅広い層への配慮が光る練習場です。</p>
                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
                          <a href="/ranges/sakura_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
@@ -311,7 +312,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             <section id="price-comparison" class="scroll-mt-24">
                  <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【料金徹底比較】あなたのスタイルに合う最安練習場はここだ！</h2>
                  <p>「結局、東近江市で一番安い練習場はどこなの？」その答えは、あなたの練習スタイルによって変わります。<strong>平日昼</strong>に行くのか、<strong>仕事終わりの夜</strong>なのか、<strong>たくさん打ちたい</strong>のか。このセクションの比較表を見れば、もう迷うことはありません。</p>
-                 <Image src="https://i.imgur.com/RLWcVuZ.png" alt="電卓を片手に料金を比較検討しているイメージ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/RLWcVuZ.png" alt="電卓を片手に料金を比較検討しているイメージ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
                  
                  <h3 class="text-xl font-bold mt-6">1.【時間帯別】料金 比較表</h3>
                  <p>👇 まずは基本となる、1球あたりの料金と時間制プランを比較します。</p>
@@ -462,19 +463,19 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <div class="space-y-6 mt-4 not-prose">
                     <div class="border-2 border-slate-200 rounded-lg p-6">
                         <h3 class="text-xl font-bold mt-0 border-b-2 border-green-600 pb-2">⛳️ アプローチ & バンカー練習場を極めたいなら</h3>
-                        <Image src="https://i.imgur.com/CiYXyOG.jpeg" alt="アプローチ練習に真剣に打ち込むゴルファー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/LKFJDIS.png" alt="アプローチ練習に真剣に打ち込むゴルファー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                         <p>スコアの鍵を握る100ヤード以内。東近江市で本格的なアプローチ・バンカー練習ができる施設を徹底比較しています。</p>
                         <a href="/articles/omi-higashiomi-approach/" class="text-green-700 font-bold hover:underline"><strong>➡️【東近江・徹底比較】アプローチ＆バンカー練習ができるのはここ！</strong></a>
                     </div>
                     <div class="border-2 border-slate-200 rounded-lg p-6">
                         <h3 class="text-xl font-bold mt-0 border-b-2 border-green-600 pb-2">🏆 パター練習環境が充実している場所は？</h3>
-                        <Image src="https://i.imgur.com/u7Blt2X.png" alt="真剣な表情でパターのラインを読むゴルファー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/Gemini_Generated_Image_kiao7ukiao7ukiao.png" alt="真剣な表情でパターのラインを読むゴルファー" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
                         <p>「パットイズマネー」。無料で使える高速グリーンから、屋内で快適に練習できる穴場まで、パター練習環境を調査しました。</p>
                         <a href="/articles/comparison/omi-putting/" class="text-green-700 font-bold hover:underline"><strong>➡️【滋賀・徹底比較】パター練習が充実しているゴルフ練習場</strong></a>
                     </div>
                     <div class="border-2 border-slate-200 rounded-lg p-6">
                         <h3 class="text-xl font-bold mt-0 border-b-2 border-green-600 pb-2">🔰 初心者向けゴルフレッスンを探しているなら</h3>
-                        <Image src="https://i.imgur.com/5fbqsDy.png" alt="インストラクターが初心者に優しく指導している様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/Gemini_Generated_Image_gz50t0gz50t0gz50.png" alt="インストラクターが初心者に優しく指導している様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
                         <p>「今年こそ100切りしたい！」そんなあなたへ。失敗しないスクール選びを、初心者目線で徹底解説します。</p>
                         <a href="/articles/comparison/omi-lesson/" class="text-green-700 font-bold hover:underline"><strong>➡️【滋賀ゴルフレッスン比較】初心者が絶対に失敗しない4スクール</strong></a>
                     </div>

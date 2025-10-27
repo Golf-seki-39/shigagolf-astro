@@ -17,7 +17,7 @@ const description = "プリカ不要の現金払いと、強面だけど優し�
 const category = "体験談";
 const pubDate = "2025-09-18";
 const pubDateISO = "2025-09-18T10:00:00+09:00";
-const imageUrl = "https://i.imgur.com/cJBj7Sh.png";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png";
 const rangeId = "azuchi_gc";
 
 // --- [4] シェアボタン用の変数を定義 ---
@@ -39,18 +39,20 @@ if (docSnap.exists()) {
 
 // --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
 const experienceReports = [
-    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://i.imgur.com/cJBj7Sh.png' },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://i.imgur.com/DqJ7aMO.png' },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://i.imgur.com/TQmlJFb.jpeg' },
-    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://i.imgur.com/KIm1JOr.jpeg' },
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://i.imgur.com/DOzSbMV.jpeg' },
-    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://i.imgur.com/1sT2kzY.jpeg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア4選', img: 'https://i.imgur.com/IJZwf4W.jpeg' },
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://i.imgur.com/XXlXJbL.jpeg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://i.imgur.com/jOTBh4U.jpeg' },
-    { url: '/articles/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://i.imgur.com/DyVr8of.jpeg' },
+    { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 ---
 
@@ -68,27 +70,27 @@ const comparisonArticles = [
         "description": description,
         "image": [ 
             imageUrl,
-            "https://i.imgur.com/zlMFn6n.jpeg",
-            "https://i.imgur.com/Bnyh1ZN.png",
-            "https://i.imgur.com/gbVRkcv.png",
-            "https://i.imgur.com/ln4bRN4.png",
-            "https://i.imgur.com/gKVMuM6.jpeg",
-            "https://i.imgur.com/aDtm6av.png",
-            "https://i.imgur.com/TVtZy5Y.png",
-            "https://i.imgur.com/Wcfi623.png",
-            "https://i.imgur.com/EXfntih.png"
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8067 2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8135 2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8090 2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8069 2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8071 2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8120 2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8091 2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8072 2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8159.png"
         ],
         "author": {
             "@type": "Person",
             "name": "関（せき）",
             "url": "https://shigagolf.com/about/",
-            "image": "https://i.imgur.com/BOcMOf3.png",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
             "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
         },
         "publisher": {
             "@type": "Organization",
             "name": "シガゴル",
-            "logo": { "@type": "ImageObject", "url": "https://i.imgur.com/mN0IbPS.png" }
+            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
         },
         "datePublished": pubDateISO,
         "dateModified": pubDateISO,
@@ -141,7 +143,7 @@ const comparisonArticles = [
             </div>
             
             <figure class="my-6">
-                <Image src="https://i.imgur.com/zlMFn6n.jpeg" alt="施設の入り口" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8067 2.png" alt="施設の入り口" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">滋賀・近江八幡で見つけた、最高の“駆け込み寺”。ここから物語は始まります。</figcaption>
             </figure>
             
@@ -152,7 +154,7 @@ const comparisonArticles = [
             <p>この記事は、そんな最高のギャップから始まった、僕と安土ゴルフクラブの物語。最新設備はないけれど、それ以上に大切な「何か」が、ここにはありました。</p>
 
             <figure class="my-6">
-                <Image src="https://i.imgur.com/Bnyh1ZN.png" alt="店舗受付カウンター" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8135 2.png" alt="店舗受付カウンター" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
@@ -170,7 +172,7 @@ const comparisonArticles = [
             <p>この練習場の魅力は、まず施設全体を包む「古き良き味」にあります。正直に言えば、建物は古くて、少し狭い。ティーアップも自分でボールをセットする、昔ながらのセルフ方式です。でも、そこがいい。</p>
 
             <figure class="my-6">
-                <Image src="https://i.imgur.com/gbVRkcv.png" alt="レンジボールやセルフ式がわかる打席の様子" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8090 2.png" alt="レンジボールやセルフ式がわかる打席の様子" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">使い込まれたボール。ここで多くのゴルファーが腕を磨いてきた証だ。</figcaption>
             </figure>
 
@@ -178,7 +180,7 @@ const comparisonArticles = [
             <p>そして、最大の魅力が「現金での明朗会計」と、その裏にある「究極の気配り」です。僕のように、レビューのために多くの練習場を訪れる者にとって、プリカを使い切れない問題は死活問題。その点、ここは入場料無料で100球700円と、その都度必要な分だけを現金で支払える。このシンプルさが、どれだけ心を軽くしてくれることか。</p>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/ln4bRN4.png" alt="シンプルな料金表" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8069 2.png" alt="シンプルな料金表" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <p>さらに、ここで僕が見つけた、とっておきの裏技を教えます。</p>
@@ -192,14 +194,14 @@ const comparisonArticles = [
             <p>この柔軟すぎる対応。ゴルファーの気持ちを、これ以上なく汲み取ってくれる、店主の優しさそのものです。お小遣いをやりくりするサラリーマンや学生にとって、まさに「聖地」と呼ぶにふさわしい場所です。</p>
 
             <figure class="my-6">
-                 <Image src="https://i.imgur.com/gKVMuM6.jpeg" alt="打放題などの注意点が記載された掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8071 2.png" alt="打放題などの注意点が記載された掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h2 id="section-2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">“できない”からこそ、僕らは賢くなる</h2>
             <p>もちろん、この練習場に“ない”ものもあります。最新の弾道測定器も、アプローチ専用グリーンもありません。そして、最大の「影」は、「ドライバーを、心の底から満振りできないこと」かもしれません。</p>
 
             <figure class="my-6">
-                <Image src="https://i.imgur.com/aDtm6av.png" alt="アイアンのみ使用の注意書き" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8120 2.png" alt="アイアンのみ使用の注意書き" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">「飛ばすな」。この一言こそ、スコアメイクの本質を教えてくれる。</figcaption>
             </figure>
 
@@ -207,7 +209,7 @@ const comparisonArticles = [
             <p>そんな「覚醒したて」の僕にとって、安土ゴルフクラブの180ヤードという距離は、正直、少し窮屈に感じてしまうのです。「やっと打てるようになったこの一打を、ネットに突き刺したくない…！」と、無意識に体がセーブしてしまう。</p>
 
             <figure class="my-6">
-                <Image src="https://i.imgur.com/TVtZy5Y.png" alt="打席からみたフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8091 2.png" alt="打席からみたフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
             
             <p>しかし、僕は気づいたのです。この「ドライバーを満振りできない」という制約こそが、最高の“恩恵”なのだと。飛ばす誘惑を強制的に断ち切られるからこそ、僕たちは自然と、スコアメイクに最も重要なアイアンの精度を高める練習に集中できるのです。</p>
@@ -216,7 +218,7 @@ const comparisonArticles = [
             <h2 id="section-3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">なぜ、僕は独学なのに「ツアープロのレッスン情報」を載せるのか？</h2>
             
             <figure class="my-6">
-                <Image src="https://i.imgur.com/Wcfi623.png" alt="ゴルフレッスンの看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8072 2.png" alt="ゴルフレッスンの看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <p>ここで正直に告白すると、僕はレッスンに少しだけトラウマがあります。ゴルフを始めた初日、何もわからない僕を「そんなことも知らないの？」とでも言いたげな態度で扱った、あるレッスンプロがいたからです。（実際には、普通グリップやアドレスは事前に調べてわかってからレッスンに来るのが当たり前やで！と強く言われました。）</p>
@@ -224,7 +226,7 @@ const comparisonArticles = [
             <p>しかし、です。僕個人の経験はさておき、これは客観的に見て、とんでもない価値であることは断言できます。</p>
             
             <figure class="my-6">
-                <Image src="https://i.imgur.com/EXfntih.png" alt="プロのレッスン詳細" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8159.png" alt="プロのレッスン詳細" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
             
             <blockquote class="text-xl font-semibold border-l-4 border-green-600 pl-4 my-6">
