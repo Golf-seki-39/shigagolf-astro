@@ -24,7 +24,7 @@ export async function getStaticPaths() {
 
 // 2. Props と静的変数の定義 (あなたの元のコードと同じ)
 const { range } = Astro.props;
-const { id, name, address, phone, business_hours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl, isIndoor, is_beginner_friendly, hasTracer, tracer_brand, tags, galleryImages, yardage, bays, hasApproach, hasBunker, hasPutter, hasUchihodai, price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str, approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info, rental_club_info, lefty_bays_info, managerReviewUrl } = range;
+const { id, name, address, phone, business_hours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl, isIndoor, is_beginner_friendly, hasTracer, tracer_brand, tags, galleryImages= [], yardage, bays, hasApproach, hasBunker, hasPutter, hasUchihodai, price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str, approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info, rental_club_info, lefty_bays_info, managerReviewUrl } = range;
 
 
 const title = `${name}の口コミ・評判 | シガゴル`;
