@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from "astro:assets"; // ★★★ この行を追加 ★★★
 
 // ★ SEOを意識し、ページタイトルとディスクリプションにキーワードを追加 ★
 const pageTitle = "運営者紹介 | 滋賀のゴルフ練習場レビューサイト「シガゴル」";
@@ -11,7 +12,7 @@ const personSchema = {
   "@type": "Person",
   "name": "関（せき）",
   "url": "https://shigagolf-reviews.netlify.app/about/",
-  "image": "https://i.imgur.com/BOcMOf3.png",
+  "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
   "jobTitle": "初心者向けゴルフ施設レビュアー",
   "worksFor": {
     "@type": "Organization",
@@ -29,7 +30,7 @@ const personSchema = {
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "customer support",
-    "url": "https://shigagolf-reviews.netlify.app/contact/"
+    "url": "https://shigagolf.com/contact/"
   }
 };
 ---
@@ -37,7 +38,7 @@ const personSchema = {
 <BaseLayout pageTitle={pageTitle} description={description}>
   
   <Fragment slot="head">
-    <meta property="og:image" content="https://i.imgur.com/BOcMOf3.png" />
+    <meta property="og:image" content="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png" />
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
   </Fragment>
 
@@ -91,9 +92,14 @@ const personSchema = {
       <section class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
         <h2 class="text-2xl md:text-3xl font-bold text-slate-800">運営者プロフィール</h2>
         <div class="mt-6 flex flex-col sm:flex-row gap-6 items-center">
-            <div class="flex-shrink-0">
-                <img src="https://i.imgur.com/BOcMOf3.png" alt="シガゴル運営者 関のプロフィール写真" class="rounded-full w-32 h-32 md:w-36 md:h-36 object-cover border-4 border-slate-200">
-            </div>
+            <Image
+            src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
+            alt="シガゴル運営者 関のプロフィール写真"
+            class="rounded-full w-32 h-32 md:w-36 md:h-36 object-cover border-4 border-slate-200"
+            width={512}  {/* ← ★★★ 元画像の幅を確認・指定 ★★★ */}
+            height={512} {/* ← ★★★ 元画像の高さを確認・指定 ★★★ */}
+            format="webp"
+        />
             <div class="text-center sm:text-left">
                 <p class="text-xl font-semibold">関（せき）</p>
                 <p class="text-green-700 font-bold">初心者向けゴルフ施設レビュアー</p>
@@ -141,8 +147,14 @@ const personSchema = {
             <!-- ゴルフメドレー -->
             <div class="flex flex-col bg-slate-50 p-4 rounded-lg border h-full">
                 <div class="flex items-center mb-3">
-                    <img src="https://i.imgur.com/QqxiurZ.png" alt="ゴルフメドレー ロゴ" class="w-12 h-12 mr-4 object-contain">
-                    <h3 class="text-xl font-semibold text-slate-700">ゴルフメドレー様</h3>
+<Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/QqxiurZ.png"
+                alt="ゴルフメドレー ロゴ"
+                class="w-12 h-12 mr-4 object-contain"
+                width={1592}
+                height={834}
+                format="webp"
+            />                    <h3 class="text-xl font-semibold text-slate-700">ゴルフメドレー様</h3>
                 </div>
                 <p class="text-slate-600 text-sm flex-grow">滋賀県内外のゴルフ施設に関する体験レビュー記事を多数寄稿しています。</p>
                 <div class="mt-4 text-center">
@@ -154,8 +166,14 @@ const personSchema = {
             <!-- スマートニュース -->
             <div class="flex flex-col bg-slate-50 p-4 rounded-lg border h-full">
                 <div class="flex items-center mb-3">
-                    <img src="https://i.imgur.com/mpPPzI1.png" alt="スマートニュース ロゴ" class="w-12 h-12 mr-4 object-contain">
-                    <h3 class="text-xl font-semibold text-slate-700">スマートニュース様</h3>
+<Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/mpPPzI1.png"
+                alt="スマートニュース ロゴ"
+                class="w-12 h-12 mr-4 object-contain"
+                width={100}
+                height={100}
+                format="webp"
+            />                    <h3 class="text-xl font-semibold text-slate-700">スマートニュース様</h3>
                 </div>
                 <p class="text-slate-600 text-sm flex-grow">noteで執筆した「AIと二人三脚でメディアライターになるまでの奮闘記」が掲載されました。</p>
                 <div class="mt-4 text-center">
