@@ -15,10 +15,12 @@ export async function getStaticPaths() {
     const rangesCollection = collection(db, publicDataPath, 'practice_ranges');
     const querySnapshot = await getDocs(rangesCollection);
 
-    const paths = querySnapshot.docs.map(doc => ({
-        params: { rangeId: doc.id },
-        props: { range: { id: doc.id, ...doc.data() } }
-    }));
+   const paths = querySnapshot.docs
+        .filter(doc => doc.id !== 'image_archive') // ★★★ この行を追加 ★★★
+        .map(doc => ({
+            params: { rangeId: doc.id },
+            props: { range: { id: doc.id, ...doc.data() } }
+        }));
     return paths;
 }
 
