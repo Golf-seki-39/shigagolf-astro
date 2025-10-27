@@ -140,30 +140,42 @@ const clientFirebaseConfig = {
                 </div>
             </header>
              
-           {galleryImages.map((image, index) => (
-                    <div class="gallery-item hidden">
+          {/* ↓↓↓ フォトギャラリーセクション ここから ↓↓↓ */}
+            {galleryImages && galleryImages.length > 0 && (
+              <section class="mt-8 pt-6 border-t border-slate-200">
+                {/* ★★★ 1. 見出しを再追加 ★★★ */}
+                <h2 class="text-2xl font-bold">フォトギャラリー</h2>
+
+                {/* ★★★ 2. グリッド用のdivコンテナを再追加 ★★★ */}
+                <div id="gallery-grid" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {galleryImages.map((image, index) => (
+                    <div class="gallery-item hidden"> {/* ← 各画像アイテム */}
                       <a href={getPublicUrl(image.url)} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
-                        <Image 
-                          src={getThumbnailUrl(image.url)} // サムネイルなので getThumbnailUrl を使う
+                        {/* ★★★ 3. Imageコンポーネント（修正済み） ★★★ */}
+                        <Image
+                          src={getThumbnailUrl(image.url)}
                           alt={`${name}のギャラリー写真 ${index + 1}（投稿者: ${image.author}） ${image.description || ''}`}
                           class="w-full h-full object-cover rounded-lg group-hover:opacity-80 transition-opacity"
-                          width={400} // ★★★ サムネイルの幅を指定（getThumbnailUrl の出力サイズに合わせる）★★★
-                          height={400} // ★★★ サムネイルの高さを指定（getThumbnailUrl の出力サイズに合わせる）★★★
+                          width={400}
+                          height={400}
                           format="webp"
                           loading="lazy"
                         />
                       </a>
                     </div>
                   ))}
-                </div>
-             
+                </div> {/* ★★★ グリッド用のdivコンテナここまで ★★★ */}
+
+                {/* もっと見るボタン (変更なし) */}
                 {galleryImages.length > 8 && (
                   <div class="mt-6 text-center">
                     <button id="show-more-gallery-btn" class="bg-slate-200 text-slate-800 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition">もっと見る</button>
                   </div>
                 )}
               </section>
-            )}
+            
+            {/* ↑↑↑ フォトギャラリーセクション ここまで ↑↑↑ */}
+            
 
             <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
                 <section>
