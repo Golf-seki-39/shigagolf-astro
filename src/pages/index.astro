@@ -59,7 +59,7 @@ try {
                 </a>
                 <a
                     href="/map/"
-                    class="px-4 py-2 text-sm font-medium text-green-600 bg-white border border-green-600 rounded-r-md hover:bg-green-50"
+                    class="px-4 py-2 text-sm font-medium text-green-700 bg-white border border-green-800 rounded-r-md hover:bg-green-50"
                 >
                     マップで探す
                 </a>
@@ -120,36 +120,45 @@ try {
                             type="checkbox"
                             name="feature"
                             value="hasTracer"
-                        /><span>📡 測定器</span></label
-                    >
+                        />
+                        <span class="whitespace-nowrap">📡 測定器</span>
+                    </label>
+                    
                     <label class="flex items-center space-x-2"
                         ><input
                             type="checkbox"
                             name="feature"
                             value="hasApproach"
-                        /><span>⛳️ アプローチ</span></label
-                    >
+                        />
+                        <span class="whitespace-nowrap">⛳️ アプローチ</span>
+                    </label>
+
                     <label class="flex items-center space-x-2"
                         ><input
                             type="checkbox"
                             name="feature"
                             value="hasBunker"
-                        /><span>🕳️ バンカー</span></label
-                    >
+                        />
+                        <span class="whitespace-nowrap">🕳️ バンカー</span>
+                    </label>
+
                     <label class="flex items-center space-x-2"
                         ><input
                             type="checkbox"
                             name="feature"
                             value="hasPutter"
-                        /><span>🏌️ パター</span></label
-                    >
+                        />
+                        <span class="whitespace-nowrap">🏌️ パター</span>
+                    </label>
+
                     <label class="flex items-center space-x-2"
                         ><input
                             type="checkbox"
                             name="feature"
                             value="hasUchihodai"
-                        /><span>💰 打放題</span></label
-                    >
+                        />
+                        <span class="whitespace-nowrap">💰 打放題</span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -221,7 +230,7 @@ try {
     width={400}  {/* ← カードに十分なサイズ (例: 400px) */}
     height={210} {/* ← アスペクト比を 1200:630 に合わせる (例: 210px) */}
     format="webp"
-    quality={75} {/* qualityを少し下げるとさらに軽くなります */}
+    quality={60} {/* qualityを少し下げるとさらに軽くなります */}
     fit="cover"  {/* classの object-cover と合わせる */}
 />
                                 <div class="p-4 flex-grow flex flex-col">
