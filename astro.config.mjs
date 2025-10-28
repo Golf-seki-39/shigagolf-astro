@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
-import netlify from "@astrojs/netlify/"; // ★ 1. Netlifyアダプタをインポート
+import netlify from "@astrojs/netlify"; // ★ 1. Netlifyアダプタをインポート
 
 import partytown from "@astrojs/partytown";
 
