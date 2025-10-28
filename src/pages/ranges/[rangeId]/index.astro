@@ -325,74 +325,160 @@ const clientFirebaseConfig = {
 </BaseLayout>
 
 
-{/* クライアントサイドJavaScript */}
-<script define:vars={{ rangeId: range.id, passedConfig: clientFirebaseConfig, mapUrl: mapEmbedUrl }}>
+<script define:vars={{ rangeId: range.id, passedConfig: clientFirebaseConfig }}>
 
     // --- Firebase Modulesの遅延インポート ---
-    async function getFirebaseModules() { /* ... */ }
+    async function getFirebaseModules() {
+        const [ { initializeApp }, { getFirestore, collection, query, orderBy, getDocs } ] = await Promise.all([
+            import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+            import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')
+        ]);
+        return { initializeApp, getFirestore, collection, query, orderBy, getDocs };
+    }
 
     // --- Helper Functions ---
-    const escapeHTML = (str) => { /* ... */ };
-    function getPublicUrl(originalUrl) { /* ... */ }
+    const escapeHTML = (str) => {
+        if (typeof str !== 'string' || !str) return '';
+        return str.replace(/[&<>"']/g, (match) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[match]));
+    };
+    function getPublicUrl(originalUrl) {
+         if (!originalUrl || typeof originalUrl !== 'string') return '';
+         const urlParts = originalUrl.split('?');
+         const path = urlParts[0];
+         if (urlParts.length > 1 && urlParts[1].includes('alt=media')) { return originalUrl; }
+         return `${path}?alt=media`;
+    }
 
     // --- Create Review Article ---
-    function createReviewArticle(review) { /* ... alt attribute fixed ... */ }
+    function createReviewArticle(review) {
+        const article = document.createElement('article');
+        article.className = 'border-b border-slate-200 pb-6';
+        const ratingVal = review?.rating ? Math.round(review.rating) : 0;
+        const stars = '★'.repeat(ratingVal) + '☆'.repeat(5 - ratingVal);
+        let date = '日付不明';
+        try {
+             if (review?.createdAt?.toDate) { date = review.createdAt.toDate().toLocaleDateString('ja-JP'); } else if (review?.createdAt?.seconds) { date = new Date(review.createdAt.seconds * 1000).toLocaleDateString('ja-JP'); } else if (review?.createdAt instanceof Date) { date = review.createdAt.toLocaleDateString('ja-JP'); }
+        } catch (e) { console.warn("日付のフォーマットに失敗:", review?.createdAt); }
+        const isAdminReview = review?.author === "関＠シガゴル管理人";
+        const safeTitle = escapeHTML(review?.title || '');
+        const safeBody = review?.body ? escapeHTML(review.body).replace(/\n/g, '<br>') : '';
+        const safeAuthor = escapeHTML(review?.author || '匿名');
+        let imagesHTML = '';
+        if (review?.imageUrls && Array.isArray(review.imageUrls) && review.imageUrls.length > 0) {
+            imagesHTML = `<div class="mt-4 flex flex-wrap gap-3">${
+                review.imageUrls.map((url, index) => {
+                    if (!url) return '';
+                    const publicUrl = getPublicUrl(url);
+                    return `<a href="${publicUrl}" target="_blank" rel="noopener noreferrer" class="block"><img src="${publicUrl}" alt="投稿写真 ${index + 1}" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" /></a>`
+                }).join('')
+            }</div>`;
+        }
+        let scoresHTML = '';
+        if (isAdminReview && review?.scores) {
+            try {
+                const safeScoresData = escapeHTML(JSON.stringify(review.scores));
+                scoresHTML = `<div class="my-4 max-w-sm mx-auto"><canvas class="radar-chart-canvas" data-scores='${safeScoresData}'></canvas></div>`;
+            } catch (e) { console.error("スコアデータのJSON変換に失敗:", e, review.scores); }
+        }
+        const safeRatingString = escapeHTML(String(review?.rating || 'N/A'));
+        article.innerHTML = `
+            <div class="flex items-center gap-x-4">
+                <div class="text-amber-500 text-xl" title="${safeRatingString}つ星">${stars}</div>
+                ${isAdminReview ? `<span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">公式レビュー</span>` : ''}
+            </div>
+            <h3 class="text-lg font-bold mt-2">${safeTitle}</h3>
+            ${scoresHTML}
+            <p class="text-slate-600 my-4 whitespace-pre-wrap">${safeBody}</p>
+            ${imagesHTML}
+            <p class="text-sm text-slate-500 text-right mt-4">投稿者: ${safeAuthor} / 投稿日: ${date}</p>
+        `;
+        return article;
+    }
 
     // --- Render Radar Charts ---
-    function renderRadarCharts() { /* ... */ }
+    function renderRadarCharts() {
+        if (typeof Chart === 'undefined') { console.log("Chart.js is not loaded yet..."); return; }
+        document.querySelectorAll('.radar-chart-canvas:not(.chartjs-render-monitor)').forEach(canvas => {
+            if (canvas.chart) return;
+            try {
+                const scoresData = JSON.parse(canvas.dataset.scores);
+                const chart = new Chart(canvas, { type: 'radar', data: { labels: Object.keys(scoresData), datasets: [{ label: '評価スコア', data: Object.values(scoresData), fill: true, backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: 'rgb(22, 163, 74)', pointBackgroundColor: 'rgb(22, 163, 74)', pointBorderColor: '#fff', pointHoverBackgroundColor: '#fff', pointHoverBorderColor: 'rgb(22, 163, 74)' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { display: true }, suggestedMin: 0, suggestedMax: 5, ticks: { stepSize: 1, backdropColor: 'rgba(255, 255, 255, 0.75)', color: '#64748b', }, pointLabels: { font: { size: 10 }, color: '#334155' } } }, plugins: { legend: { display: false } } } });
+                canvas.chart = chart;
+            } catch (e) { console.error("レーダーチャートの描画に失敗:", e, canvas.dataset.scores); canvas.outerHTML = `<p class="text-center text-red-500 text-sm">チャート描画エラー</p>`; }
+        });
+    }
 
     // --- Load Reviews ---
-    async function loadReviews() { /* ... */ }
+    async function loadReviews() {
+        const reviewsListContainer = document.getElementById('reviews-list');
+        if (!reviewsListContainer) return;
+        try {
+            const { initializeApp, getFirestore, collection, query, orderBy, getDocs } = await getFirebaseModules();
+            let app = window._firebaseAppV10 || initializeApp(passedConfig); window._firebaseAppV10 = app;
+            const db = getFirestore(app);
+            const appId = passedConfig.appId;
+            const publicDataPath = `artifacts/${appId}/public/data`;
+            const fullReviewPath = `${publicDataPath}/practice_ranges/${rangeId}/reviews`;
+            const reviewsCollectionRef = collection(db, fullReviewPath);
+            const q = query(reviewsCollectionRef, orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q);
+            reviewsListContainer.innerHTML = '';
+            if (querySnapshot.empty) { reviewsListContainer.innerHTML = `<p id="no-reviews-message" class="text-center text-slate-500 py-8">この練習場にはまだレビューがありません。</p>`; return; }
+            const adminReviews = [], userReviews = [];
+            querySnapshot.forEach(doc => { const review = doc.data(); (review?.author === "関＠シガゴル管理人" ? adminReviews : userReviews).push(review); });
+            const sortedReviews = [...adminReviews, ...userReviews];
+            const fragment = document.createDocumentFragment();
+            sortedReviews.forEach(review => { if (review) { fragment.appendChild(createReviewArticle(review)); } });
+            reviewsListContainer.appendChild(fragment);
+            if (typeof Chart !== 'undefined') { renderRadarCharts(); } else { window.addEventListener('load', renderRadarCharts, { once: true }); }
+        } catch (error) { console.error("レビューの読み込みに失敗しました:", error); if (reviewsListContainer) { reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`; } }
+    }
 
     // --- Initialize Static Scripts ---
-    function initializeStaticScripts() { /* ... review button and gallery button logic ... */ }
+    function initializeStaticScripts() {
+        const showButton = document.getElementById("show-review-form-btn");
+        const formWrapper = document.getElementById("review-form-wrapper");
+        if (showButton && formWrapper) { showButton.addEventListener("click", () => { formWrapper.classList.remove("hidden"); showButton.style.display = "none"; formWrapper.scrollIntoView({ behavior: "smooth" }); }); }
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const showMoreBtn = document.getElementById('show-more-gallery-btn');
+        const initialVisibleCount = 8;
+        if (galleryItems.length > 0) { galleryItems.forEach((item, index) => { item.classList.toggle('hidden', index >= initialVisibleCount); }); if (galleryItems.length <= initialVisibleCount && showMoreBtn) showMoreBtn.style.display = 'none'; } else if (showMoreBtn) { showMoreBtn.style.display = 'none'; }
+        if (showMoreBtn) { showMoreBtn.addEventListener('click', () => { galleryItems.forEach(item => item.classList.remove('hidden')); showMoreBtn.style.display = 'none'; }); }
+    }
 
-    // ★★★ Intersection Observer for Lazy Loading Map ★★★
+    // --- Intersection Observer for Lazy Loading Map ---
     function lazyLoadMap() {
       const mapSection = document.getElementById('map-section');
       const mapIframe = document.getElementById('map-iframe');
-
-      if (!mapSection || !mapIframe || !mapIframe.dataset.src) {
-        console.warn('Map section or iframe not found for lazy loading.');
-        return;
-      }
-
-      // Intersection Observer の設定
-      const observerOptions = {
-        root: null, // ビューポートをルートとする
-        rootMargin: '0px', // マージンなし
-        threshold: 0.1 // 要素が10%見えたらトリガー
-      };
-
-      // Intersection Observer のコールバック関数
+      if (!mapSection || !mapIframe || !mapIframe.dataset.src) { console.warn('Map section or iframe not found for lazy loading.'); return; }
+      const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
       const observerCallback = (entries, observer) => {
         entries.forEach(entry => {
-          // 要素がビューポート内に入ったら
-          if (entry.isIntersecting) {
-            // iframe の data-src から src にURLを設定して読み込み開始
-            mapIframe.src = mapIframe.dataset.src;
-            // 一度読み込んだら監視を解除
-            observer.unobserve(mapSection);
-            console.log('Google Map loaded lazily.');
-          }
+          if (entry.isIntersecting) { mapIframe.src = mapIframe.dataset.src; observer.unobserve(mapSection); console.log('Google Map loaded lazily.'); }
         });
       };
-
-      // Intersection Observer のインスタンスを作成
       const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-      // マップセクションの監視を開始
       observer.observe(mapSection);
     }
 
-    // --- DOMContentLoadedイベントリスナー (初期化処理の実行) ---
+    // --- DOMContentLoadedイベントリスナー ---
     document.addEventListener('DOMContentLoaded', () => {
-        initializeStaticScripts(); // 静的要素の初期化
-        loadReviews();             // レビューの読み込み開始
-        lazyLoadMap();             // ★★★ マップの遅延読み込み監視を開始 ★★★
+        initializeStaticScripts();
+        loadReviews();
+        lazyLoadMap(); // マップの遅延読み込み監視を開始
     });
 
     // --- カスタムイベント 'reviewPosted' のリスナー ---
-    document.addEventListener('reviewPosted', (event) => { /* ... */ });
+    document.addEventListener('reviewPosted', (event) => {
+        console.log('新規レビュー投稿を検知:', event.detail);
+        const newReviewData = event.detail;
+        const reviewsListContainer = document.getElementById('reviews-list');
+        const noReviewsEl = document.getElementById('no-reviews-message');
+        if (!reviewsListContainer) return;
+        if (noReviewsEl) noReviewsEl.remove();
+        const article = createReviewArticle(newReviewData);
+        reviewsListContainer.prepend(article);
+        if (newReviewData?.author === "関＠シガゴル管理人" && newReviewData?.scores) { setTimeout(renderRadarCharts, 100); }
+    });
 
 </script>
