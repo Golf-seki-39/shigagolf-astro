@@ -107,7 +107,8 @@ const clientFirebaseConfig = {
                     width={1200} // ★★★ ここに元画像の幅を指定 ★★★
                     height={630} // ★★★ ここに元画像の高さを指定 ★★★
                     format="webp"
-                    loading="lazy"
+                    loading="eager"
+                    fetchpriority="high" {/* ← これを追加 */}
                 />
                 <div>
                     <p class="text-lg text-green-600 font-semibold">{area}エリア</p>
