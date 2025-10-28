@@ -41,8 +41,9 @@ const imageToUse = ogImage || defaultOgImage;
         <link rel="preconnect" href="https://shigagolf-e31e6.firebaseapp.com" />
         <link rel="preconnect" href="https://apis.google.com" />
 
+        {/* ▼▼▼【変更点】GTMスクリプトから is:inline を削除し、type="text/partytown" を追加 ▼▼▼ */}
         <script
-            is:inline
+            type="text/partytown"
             async
             src="https://www.googletagmanager.com/gtag/js?id=G-S7JPWMHPVS"
         ></script>
