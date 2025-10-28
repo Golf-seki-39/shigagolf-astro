@@ -17,11 +17,11 @@ const category = "体験談";
 const pubDate = "2025-10-18";
 const pubDateISO = "2025-10-18T11:00:00+09:00";
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg";
-const rangeId = "riverside_jumbo"; 
+const rangeId = "riverside_jumbo";
 
 // --- [4] シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
-const articleUrl = `${baseUrl}/articles/review/riverside-jumbo/`; 
+const articleUrl = `${baseUrl}/articles/review/riverside-jumbo/`;
 const headline = "【2025年最新】リバーサイドジャンボゴルフが“最高の練習場”に進化した理由";
 
 // --- [5] Firebaseから練習場データを取得 ---
@@ -42,18 +42,19 @@ const priceData = {
   ballPrice: {
     serviceTime: 8,
     weekday: 10,
-    weekend: 11,
-    ladiesDay: 7 
+    weekend: 11, // 注意: 非会員の週末料金
+    ladiesDay: 7
   },
-  memberWeekendPrice: 10
+  memberWeekendPrice: 10 // 会員の週末料金
 };
 
 // --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+// ★ 注意: MySlider.astro コンポーネント側で、これらの画像の alt="" を設定するか、より説明的な alt テキストに変更してください (例: `alt={article.title + " のサムネイル画像"}`)
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
     { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
-　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
     { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
@@ -62,7 +63,7 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
     { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
     { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
-    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 ---
@@ -98,15 +99,16 @@ const comparisonArticles = [
 })} />
 
 
+{/* ★ 注意: BaseLayout.astro 側で <slot /> が <main> タグで囲まれているか確認してください */}
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
-    
+
     <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
         <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
             ‹ お役立ち記事一覧に戻る
         </a>
-        
+
         <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
-            
+
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
@@ -121,18 +123,19 @@ const comparisonArticles = [
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#charm1" class="text-green-700 hover:underline">【魅力①】東近江エリアで“唯一無二”の無料パター練習場</a></li>
-                    <li><a href="#charm2" class="text-green-700 hover:underline">【魅力②】打席リニューアルで女性も通いやすい練習場へ</a></li>
-                    <li><a href="#charm3" class="text-green-700 hover:underline">【魅力③】アプローチ練習も完備！スコアアップ志向ゴルファー必見</a></li>
-                    <li><a href="#charm4" class="text-green-700 hover:underline">【魅力④】通い続けたくなる料金と温かい接客</a></li>
-                    <li><a href="#conclusion" class="text-green-700 hover:underline">結論：どんなゴルファーにおすすめ？</a></li>
-                    <li><a href="#info-summary" class="text-green-700 hover:underline">基本情報</a></li>
+                    {/* ★ 修正: prose スタイルは通常下線を付けるはずですが、もしなければ underline クラスを追加 */}
+                    <li><a href="#charm1" class="text-green-700 hover:underline underline">【魅力①】東近江エリアで“唯一無二”の無料パター練習場</a></li>
+                    <li><a href="#charm2" class="text-green-700 hover:underline underline">【魅力②】打席リニューアルで女性も通いやすい練習場へ</a></li>
+                    <li><a href="#charm3" class="text-green-700 hover:underline underline">【魅力③】アプローチ練習も完備！スコアアップ志向ゴルファー必見</a></li>
+                    <li><a href="#charm4" class="text-green-700 hover:underline underline">【魅力④】通い続けたくなる料金と温かい接客</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline underline">結論：どんなゴルファーにおすすめ？</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline underline">基本情報</a></li>
                 </ul>
             </div>
 
             <h2 id="charm1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力①】👑 東近江エリアで“唯一無二”の無料パター練習場</h2>
             <p>この練習場の名を語る上で、絶対に外せないのが、無料で利用できる屋外パター練習場です。私がここに通い詰める最大の理由が、まさにこれです。</p>
-            
+
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6448.jpg" alt="半分屋根付きの本格的なパター練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="eager" fetchpriority="high" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <p>「無料だから、まあまあの設備でしょ？」――初めて訪れる人は、そのクオリティに度肝を抜かれるはずです。</p>
@@ -142,7 +145,7 @@ const comparisonArticles = [
                 <li><strong>いつでも最高のコンディション:</strong> スタッフの方々が常に手入れをしており、いつ訪れても気持ちよく集中できる環境が保たれています。</li>
                 <li><strong>手ぶらでもOK:</strong> 夜間照明が完備され、貸しパターもあるので、仕事帰りにふらっと立ち寄れるのも嬉しいポイントです。</li>
             </ul>
-            
+
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6450 2.jpg" alt="複雑な傾斜と4つのカップがあるパターグリーンの様子" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <p>普段は別の練習場に通う友人でさえ「パター練習だけは、絶対にジャンボがいい」と断言するほど。東近江エリアでこのレベルのパター練習ができるのは、間違いなくここだけでしょう。</p>
@@ -150,18 +153,21 @@ const comparisonArticles = [
             <h2 id="charm2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力②】✨ 打席リニューアルで女性も通いやすい練習場へ</h2>
             <p>そして、この練習場の物語は、2025年6月に新たな章を迎えました。打席エリアが全面的にリニューアルされ、以前の「味のある雰囲気」も懐かししく感じるほどの“別世界”へと進化したのです。</p>
 
+            {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">１．集中力が途切れない！“ノーストレス”な新打席マット</h3>
             <p>足を踏み入れた瞬間に分かる、鮮やかなグリーンの打席マットとシックなカーペット。この変化は見た目の美しさだけではありません。使い込まれたマットにありがちな凹凸が一切なくなり、ショット一打一打に丁寧に向き合える「ノーストレス」な環境が生まれました。練習へのモチベーションを静かに、しかし確実に高めてくれます。</p>
 
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_9012.png" alt="リニューアル後の鮮やかなグリーンの新打席マット" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6431.png" alt="比較用のリニューアル前の打席の様子の写真" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
+            {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">２．☕ 女性や初心者も安心！居心地が格段にアップした休憩スペース</h3>
             <p>練習の合間に一息つく休憩用の椅子とテーブルも、モダンなデザインに一新。この変化は、練習場の「空気感」そのものを変えました。クリーンでおしゃれな休憩スペースは、これまで少し練習場に馴染みがなかった若い世代や女性ゴルファーも、温かく迎え入れてくれる「開かれた場所」の象徴のように感じます。</p>
-            
+
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_9015.png" alt="モダンでおしゃれになった新しい休憩スペース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6432.png" alt="比較用のリニューアル前の温かみのある木のベンチ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
+            {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">３．📸 スマホ撮影に最適！あなたのスイングが“映える”打席環境へ</h3>
             <p>そして、私が今回のリニューアルで最も重要な変化だと感じた点。それは、この場所が<strong>自分のゴルフを「発信したくなる場所」</strong>へ進化したことです。清潔感のあるマットと統一感のあるシックな背景は、自分のスイングをスマートフォンで撮影するのに最高の“スタジオ”です。TikTokやInstagramで成長過程を発信したい現代のゴルファーにとって、これ以上ない環境と言えるでしょう。</p>
 
@@ -170,31 +176,35 @@ const comparisonArticles = [
             <h2 id="charm3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力③】🎯 アプローチ練習も完備！スコアアップ志向ゴルファー必見</h2>
             <p>パターと打席だけではありません。スコアアップに直結する、ゴルファーの心をくすぐる設備がここには揃っています。</p>
 
-            <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">会員限定！超実践的なアプローチ練習場 <span class="text-sm font-normal text-red-600">⚠️有料/会員限定</span></h4>
+            {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-6 mb-2">会員限定！超実践的なアプローチ練習場 <span class="text-sm font-normal text-red-600">⚠️有料/会員限定</span></h3>
             <p>スコアメイクの鍵を握るアプローチ。会員（年会費2,000円）になれば、専用のアプローチ練習場（有料：60分300円）が利用できます。約50ヤードのスペースに、フェアウェイ、ラフ、深いラフ、そして「アゴ高っ！」と感じる本格的なバンカーまで完備。コースさながらの状況から、徹底的にショートゲームを磨き上げることができます。</p>
-            
+
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6406.jpg" alt="様々なライから練習できるアプローチ練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
-            <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">打席ごとの正確な距離表示がありがたい！</h4>
+            {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-6 mb-2">打席ごとの正確な距離表示がありがたい！</h3>
             <p>「あの旗まで、実際は何ヤードなんだろう？」――そんな練習場でのモヤモヤも、ここでは解消されます。2打席ごとに、その打席から見た各ターゲットまでの実測ヤードが細かく表示されているのです。これにより、より正確な距離感を養い、番手選びの精度を格段にアップさせることができます。</p>
-            
+
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6423.jpg" alt="各打席に設置された正確な距離表示" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
-            
+
             <h2 id="charm4" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【魅力④】😊 通い続けたくなる料金と温かい接客</h2>
-            
+
             <div class="not-prose my-8 p-5 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
-                <h4 class="text-lg font-bold text-slate-800 mt-0 mb-2">【料金について】少しだけ正直な話</h4>
+                {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
+                <h3 class="text-xl font-bold text-slate-800 mt-0 mb-2">【料金について】少しだけ正直な話</h3>
                 <p class="m-0 text-slate-700">
                     正直にお伝えすると、ボール1球あたりの単価だけを見れば、近隣にはもう少し安い練習場も存在します。
                     しかし、この記事で紹介した唯一無二のパター練習場が無料で使えることや、リニューアルされた最高の打席環境で集中できることを考えれば、その価格は「スコアアップへの価値ある投資」だと私は感じています。
                 </p>
                 <p class="mt-3 mb-0 text-slate-700">
                     もし、純粋な料金の安さを最優先で練習場を探している方は、以下の記事で詳しく比較していますので、ぜひ参考にしてみてください。<br>
-                    → <a href="https://shigolf.com/articles/comparison/omi-pricerank/" class="text-green-700 font-bold hover:underline" target="_blank" rel="noopener noreferrer">【料金で徹底比較】近江八幡・東近江の安いゴルフ練習場5選</a>
+                    → <a href="https://shigolf.com/articles/comparison/omi-pricerank/" class="text-green-700 font-bold hover:underline underline" target="_blank" rel="noopener noreferrer">【料金で徹底比較】近江八幡・東近江の安いゴルフ練習場5選</a> {/* ★ 念のため underline 追加 */}
                 </p>
             </div>
 
-            <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">お財布に優しい納得の料金システム</h4>
+            {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-6 mb-2">お財布に優しい納得の料金システム</h3>
             <p>練習にかかる費用は、とても良心的です。</p>
             <ul class="list-disc list-inside space-y-2">
                 <li><strong>入場料:</strong> 会員200円 / ビジター400円</li>
@@ -202,18 +212,19 @@ const comparisonArticles = [
                 <li><strong>サービスタイム（毎日9:00～12:00）:</strong> なんと全日<strong>1球8円！</strong></li>
                 <li><strong>レディースデー（月・金 9:00～17:00）:</strong> 驚きの<strong>1球7円！</strong></li>
             </ul>
-            
+
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6441.jpg" alt="リバーサイドジャンボゴルフの料金表" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
-            
+
             <p>会員になれば入場料が半額になるだけでなく、ポイント特典などメリット多数。これなら無理なく通い続けられます。</p>
 
             <div id="price-simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8">
+                {/* 料金シミュレーターの h3 はOK */}
                 <h3 class="text-xl font-bold mb-4 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
                     かんたん料金シミュレーション
                 </h3>
-            
-                <div class="md:grid md:grid-cols-2 md:gap-6">
+                {/* ... (シミュレーターのHTML部分は変更なし) ... */}
+                 <div class="md:grid md:grid-cols-2 md:gap-6">
                     <div>
                         <div id="step-1" class="mb-4">
                             <label class="font-semibold text-slate-700">① 会員ですか？</label>
@@ -222,7 +233,7 @@ const comparisonArticles = [
                                 <label class="flex items-center cursor-pointer"><input type="radio" name="membership" value="visitor" class="mr-2"> 非会員</label>
                             </div>
                         </div>
-            
+
                         <div id="step-2" class="mb-4 hidden md:block">
                             <label class="font-semibold text-slate-700">② いつ利用しますか？</label>
                             <div class="flex flex-col gap-2 mt-2" id="time-options">
@@ -256,21 +267,24 @@ const comparisonArticles = [
                 <p class="text-xs text-center text-slate-500 mt-2">※あくまでシミュレーションです。実際の金額は練習場でご確認ください。</p>
             </div>
 
-            <h4 class="text-lg font-bold text-slate-800 mt-6 mb-2">心温まるアットホームな対応</h4>
+            {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-6 mb-2">心温まるアットホームな対応</h3>
             <p>この練習場の魅力は、設備だけではありません。スタッフの方々の温かい心遣いが素晴らしいのです。私自身、2回も打席にプリペイドカードを忘れたことがありますが、どちらもフロントで保管してくれていました。初めての方でも、プリカの購入から打席の使い方まで親切に教えてくれるので、初心者でも安心して飛び込めます。</p>
-            
+
             <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6416.png" alt="アットホームな雰囲気の受付・休憩スペース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
 
             <div class="not-prose my-8 p-5 bg-slate-50 border-l-4 border-slate-400 rounded-r-lg">
-                <h4 class="text-lg font-bold text-slate-800 mt-0 mb-2">【筆者の一言】</h4>
+                {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
+                <h3 class="text-xl font-bold text-slate-800 mt-0 mb-2">【筆者の一言】</h3>
                 <p class="m-0 text-slate-700">実際に通い詰めてみて分かったのは、「ここは上達の加速装置だ」ということ。特にパター練習場の完成度は、県内でも群を抜いています。</p>
             </div>
 
             <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【結論】リバーサイドジャンボゴルフは、こんな人におすすめ！</h2>
             <p>今回のリニューアルを経て、リバーサイドジャンボゴルフは、もはや単なる「パターが良い練習場」ではありません。<strong>あらゆるゴルファーの上達したいという想いに、最高の環境で応えてくれる場所</strong>へと進化しました。</p>
-            
+
             <div class="not-prose my-6 p-4 border-2 border-green-300 rounded-lg bg-green-50">
-                <h4 class="text-xl font-bold text-center mt-0 mb-4 text-green-800">✅ こんな人には最高の練習場です！</h4>
+                {/* ★ 修正: h4 を h3 に変更 (クラスも調整) */}
+                <h3 class="text-xl font-bold text-center mt-0 mb-4 text-green-800">✅ こんな人には最高の練習場です！</h3>
                 <ul class="list-disc list-inside m-0 p-0 pl-4 space-y-2">
                     <li><strong>本気でパターを上達させたい、すべてのゴルファー</strong></li>
                     <li><strong>どうせなら綺麗な環境で、気持ちよく練習したい方</strong></li>
@@ -279,7 +293,7 @@ const comparisonArticles = [
                     <li><strong>初心者で、どこか良い練習場を探している方</strong></li>
                 </ul>
             </div>
-            
+
             <p>もしあなたが一つでも当てはまるなら、新しくなったリバーサイドジャンボゴルフは、その期待に完璧に応えてくれるはずです。</p>
             <p>あなたも一度、“あの神グリーン”に立ってみてください。練習が「作業」から「楽しみ」に変わる瞬間を、きっと感じられるはずです。</p>
 
@@ -290,7 +304,7 @@ const comparisonArticles = [
 
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
-            
+
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
             </h2>
@@ -308,7 +322,8 @@ const comparisonArticles = [
                                         <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
                                         <td class="py-3 px-4">
                                             <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
-                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {/* ★ 修正: text-amber-500 を text-amber-700 に変更 */}
+                                                <span class="font-bold text-amber-700 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
                                                 {Array.from({ length: 5 }).map((_, i) => (
                                                     <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -321,7 +336,7 @@ const comparisonArticles = [
                                 <tr class="border-b border-slate-200">
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
                                     <td class="py-3 px-4">
-                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline underline"> {/* ★ 念のため underline 追加 */}
                                             {rangeData.address}
                                         </a>
                                     </td>
@@ -330,7 +345,7 @@ const comparisonArticles = [
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
                                     <td class="py-3 px-4">
                                         {rangeData.phone ? (
-                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline underline"> {/* ★ 念のため underline 追加 */}
                                                 {rangeData.phone}
                                             </a>
                                         ) : (
@@ -346,7 +361,7 @@ const comparisonArticles = [
                                     <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
                                     <td class="py-3 px-4">
                                         会員: 入場料200円 + 8円/球〜<br/>
-                                        （詳細は<a href="#charm4" class="text-green-700 hover:underline">料金体系</a>をご確認ください）
+                                        （詳細は<a href="#charm4" class="text-green-700 hover:underline underline">料金体系</a>をご確認ください） {/* ★ 念のため underline 追加 */}
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
@@ -374,6 +389,7 @@ const comparisonArticles = [
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
                         <iframe
+                            title={`${rangeData.name || '練習場'} のアクセスマップ`} {/* ★ 修正: title 属性を追加 */}
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
                             allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
@@ -400,29 +416,30 @@ const comparisonArticles = [
         .scroll-mt-24 { scroll-margin-top: 6rem; }
     </style>
 
+    {/* ★★★ ここから料金シミュレーターの完全なJSコード ★★★ */}
     <script define:vars={{ priceData }}>
     document.addEventListener('DOMContentLoaded', () => {
         const simulator = document.getElementById('price-simulator');
         if (!simulator) return;
 
+        // シミュレーター要素の取得
         const step1 = simulator.querySelector('#step-1');
         const step2 = simulator.querySelector('#step-2');
         const step3 = simulator.querySelector('#step-3');
         const resetButton = simulator.querySelector('#reset-button');
-
         const membershipRadios = simulator.querySelectorAll('input[name="membership"]');
         const timeRadios = simulator.querySelectorAll('input[name="time"]');
         const ballCountSlider = simulator.querySelector('#ball-count');
-        
         const ballCountDisplay = simulator.querySelector('#ball-count-display');
         const totalPriceDisplay = simulator.querySelector('#total-price');
 
+        // 料金計算関数
         function calculatePrice() {
             const membershipRadio = simulator.querySelector('input[name="membership"]:checked');
             const timeRadio = simulator.querySelector('input[name="time"]:checked');
             const balls = parseInt(ballCountSlider.value);
 
-            ballCountDisplay.textContent = `${balls}球`;
+            ballCountDisplay.textContent = `${balls}球`; // 球数を表示
 
             // いずれかの選択肢が未選択の場合は計算せずにプレースホルダーを表示
             if (!membershipRadio || !timeRadio) {
@@ -432,104 +449,125 @@ const comparisonArticles = [
 
             const membership = membershipRadio.value;
             const time = timeRadio.value;
-            const entryFee = priceData.entryFee[membership];
-            
+            const entryFee = priceData.entryFee[membership]; // 会員か非会員かで入場料を取得
+
             let ballPrice;
+            // 料金体系に基づいて球単価を決定
             if (time === 'ladiesDay') {
                 ballPrice = priceData.ballPrice.ladiesDay;
             } else if (membership === 'member' && time === 'weekend') {
+                // 会員かつ週末の場合のみ専用の料金を使用
                 ballPrice = priceData.memberWeekendPrice;
             } else {
+                // それ以外は通常料金
                 ballPrice = priceData.ballPrice[time];
             }
-            
+
+            // 合計金額を計算して表示
             const total = entryFee + (ballPrice * balls);
-            totalPriceDisplay.textContent = total.toLocaleString();
+            totalPriceDisplay.textContent = total.toLocaleString(); // カンマ区切りで表示
         }
 
-        const isMobile = () => window.innerWidth < 768;
+        // モバイル表示かどうかを判定する関数
+        const isMobile = () => window.innerWidth < 768; // mdブレークポイント
 
+        // モバイルでステップを進める関数
         function goToStep(stepToShow) {
-            if (!isMobile()) return;
-            
+            if (!isMobile()) return; // モバイルでなければ何もしない
+
+            // 全ステップを一旦隠す
             step1.classList.add('hidden');
             step2.classList.add('hidden');
             step3.classList.add('hidden');
 
+            // 対象のステップを表示し、リセットボタンを表示
             stepToShow.classList.remove('hidden');
             resetButton.classList.remove('hidden');
         }
 
+        // シミュレーターをリセットする関数
         function resetSimulator() {
             // ラジオボタンの選択を全て解除
             membershipRadios.forEach(radio => radio.checked = false);
             timeRadios.forEach(radio => radio.checked = false);
-            
+
+            // 球数スライダーを初期値に戻す
             ballCountSlider.value = 150;
-            
+
+            // モバイル表示の場合、ステップ1に戻しリセットボタンを隠す
             if (isMobile()) {
                 step1.classList.remove('hidden');
                 step2.classList.add('hidden');
                 step3.classList.add('hidden');
                 resetButton.classList.add('hidden');
             }
-            
+
+            // 価格表示を更新（'----'に戻る）
             calculatePrice();
         }
-        
+
+        // イベントリスナーを設定する関数
         function setupListeners() {
             membershipRadios.forEach(radio => {
-                // clickではなくchangeイベントを使用
+                // changeイベントで発火（クリック確定時）
                 radio.addEventListener('change', () => {
-                    calculatePrice();
+                    calculatePrice(); // 価格を再計算
                     if (isMobile()) {
-                        goToStep(step2);
+                        goToStep(step2); // モバイルならステップ2へ
                     }
                 });
             });
 
             timeRadios.forEach(radio => {
-                // clickではなくchangeイベントを使用
+                // changeイベントで発火
                 radio.addEventListener('change', () => {
-                    calculatePrice();
+                    calculatePrice(); // 価格を再計算
                     if (isMobile()) {
-                        goToStep(step3);
+                        goToStep(step3); // モバイルならステップ3へ
                     }
                 });
             });
 
+            // スライダーが動いたらリアルタイムで価格を再計算
             ballCountSlider.addEventListener('input', calculatePrice);
+            // リセットボタンがクリックされたらリセット関数を実行
             resetButton.addEventListener('click', resetSimulator);
         }
 
+        // 初期表示を調整する関数
         function initializeView() {
             if (isMobile()) {
+                // モバイルならステップ2, 3とリセットボタンを隠す
                 step2.classList.add('hidden');
                 step3.classList.add('hidden');
                 resetButton.classList.add('hidden');
-                step1.classList.remove('hidden');
+                step1.classList.remove('hidden'); // ステップ1を表示
             } else {
+                // PCなら全ステップを表示
                 step1.classList.remove('hidden');
                 step2.classList.remove('hidden');
                 step3.classList.remove('hidden');
-                // PC表示ではリセットボタンは常に非表示
-                resetButton.classList.add('hidden'); 
+                resetButton.classList.add('hidden'); // PCではリセットボタンは常に非表示
             }
         }
-        
-        initializeView();
-        setupListeners();
-        calculatePrice(); // 初期表示（合計金額が '----' になる）
 
+        // --- 初期化処理 ---
+        initializeView(); // 表示を初期化
+        setupListeners(); // イベントリスナーを設定
+        calculatePrice(); // 初期価格を表示（通常は '----'）
+
+        // --- ウィンドウリサイズ時の処理 ---
         let resizeTimer;
         window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
+            clearTimeout(resizeTimer); // リサイズ中のイベント発火を間引く
             resizeTimer = setTimeout(() => {
                 // 画面サイズが変わったら状態をリセットして再描画
                 resetSimulator();
                 initializeView();
-            }, 250);
+            }, 250); // 250ms待ってから実行
         });
     });
-</script>
+    </script>
+    {/* ★★★ 料金シミュレーターのJSコードここまで ★★★ */}
+
 </BaseLayout>
