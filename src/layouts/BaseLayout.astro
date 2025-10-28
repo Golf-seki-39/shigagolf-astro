@@ -28,7 +28,8 @@ const {
 } = Astro.props;
 
 // ▼▼▼【変更点2】デフォルトのOGP画像URLを定義 ▼▼▼
-const defaultOgImage = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"; // サイトのロゴなど
+const defaultOgImage =
+    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"; // サイトのロゴなど
 
 // ▼▼▼【変更点3】ogImageが渡された場合はそれ、なければデフォルト画像を使うロジック ▼▼▼
 const imageToUse = ogImage || defaultOgImage;
@@ -36,27 +37,38 @@ const imageToUse = ogImage || defaultOgImage;
 
 <html lang="ja">
     <head>
-        <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-S7JPWMHPVS"></script>
-        <script is:inline>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 
-          gtag('config', 'G-S7JPWMHPVS');
+        <script
+            is:inline
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-S7JPWMHPVS"
+        ></script>
+        <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+
+            gtag("config", "G-S7JPWMHPVS");
         </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
-       
-        <meta name="google-site-verification" content="muQpmdbPlN2etL0O4WpXsvv307PUJ1uuaXjMO2VvHtg" />
+
+        <meta
+            name="google-site-verification"
+            content="muQpmdbPlN2etL0O4WpXsvv307PUJ1uuaXjMO2VvHtg"
+        />
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={Astro.url} />
-        
+
         {/* ▼▼▼【変更点4】og:imageのcontentを変数に置き換え ▼▼▼ */}
         <meta property="og:image" content={imageToUse} />
-        
+
         <meta property="og:site_name" content="シガゴル" />
         <meta property="og:type" content="website" />
 
@@ -65,20 +77,26 @@ const imageToUse = ogImage || defaultOgImage;
         <meta name="twitter:image" content={imageToUse} />
 
         {noindex && <meta name="robots" content="noindex" />}
-        <link rel="apple-touch-icon" href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" />
-        <link rel="icon" href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" />
-
+        <link
+            rel="apple-touch-icon"
+            href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+        />
+        <link
+            rel="icon"
+            href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+        />
 
         <script
             src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"
         ></script>
-        
+
         <slot name="head" />
-        
-        </head>
+    </head>
     <body class="bg-slate-50 text-slate-800">
         <Header />
-        {/* ページから渡された title をそのままパンクズリストコンポーネントに渡します */}
+        {
+            /* ページから渡された title をそのままパンクズリストコンポーネントに渡します */
+        }
         <Breadcrumbs pageTitle={title} />
         <slot />
         <Footer />
