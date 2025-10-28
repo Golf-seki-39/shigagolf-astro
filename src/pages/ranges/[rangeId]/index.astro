@@ -1,5 +1,5 @@
 ---
-// ★★★ [rangeId].astro - 完全版 (LCP最適化 + chart.js + アクセシビリティ修正) ★★★
+// ★★★ [rangeId].astro - 完全版 (LCP / JS遅延読み込み / アクセシビリティ修正) ★★★
 
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ReviewSection from "../../../components/ReviewSection.astro";
@@ -101,10 +101,7 @@ const clientFirebaseConfig = {
 };
 ---
 
-{/* chart.js の条件付き読み込み (このページでのみheadに追加) */}
-<Fragment slot="head">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</Fragment>
+{/* ★ 変更点: headでのchart.js読み込みを削除 (JS側で動的インポートするため) */}
 
 <BaseLayout title={title} description={description}>
     {/* SEO用JSON-LD */}
@@ -133,11 +130,12 @@ const clientFirebaseConfig = {
                     format="webp"
                     loading="eager"      {/* LCP要素なので eager */}
                     fetchpriority="high" {/* LCP要素なので high */}
+                    quality={75}         {/* ★ 変更点: quality を明示的に指定 */}
                 />
                )}
                 {/* 練習場名、エリア、バッジ */}
                 <div>
-                    <p class="text-lg text-green-700 font-semibold">{area || '滋賀県'}エリア</p> {/* コントラスト修正 */}
+                    <p class="text-lg text-green-700 font-semibold">{area || '滋賀県'}エリア</p>
                     <h1 class="text-4xl font-bold mt-1">{name}</h1>
                     {badges.length > 0 && (
                         <div class="mt-4 flex flex-wrap gap-2">
@@ -178,9 +176,9 @@ const clientFirebaseConfig = {
                             width={400}
                             height={400}
                             format="webp"
-                            fit="cover"    {/* CSSのobject-coverと合わせる */}
-                            loading="lazy" {/* スクロールしないと見えないので lazy */}
-                            quality={60}   {/* 品質を少し下げて軽量化 */}
+                            fit="cover"
+                            loading="lazy"
+                            quality={60}
                           />
                         )}
                       </a>
@@ -284,7 +282,8 @@ const clientFirebaseConfig = {
 
             {/* レビューを書くボタン */}
             <div class="my-8 text-center">
-                <button id="show-review-form-btn" class="bg-amber-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-700 transition text-lg">この練習場のレビューを書く</button> {/* コントラスト修正 */}
+                {/* ★ 変更点: bg-amber-500 を bg-amber-600 に変更 (コントラスト比の改善) */}
+                <button id="show-review-form-btn" class="bg-amber-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-700 transition text-lg">この練習場のレビューを書く</button>
             </div>
 
             {/* ユーザーレビューセクション */}
@@ -299,11 +298,12 @@ const clientFirebaseConfig = {
             </section>
 
             {/* アクセスマップセクション */}
-            <section class="mt-8 pt-6 border-t border-slate-200">
+            {/* ★ 変更点: section に id="map-section" を追加 */}
+            <section id="map-section" class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold">アクセスマップ</h2>
                 <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
-                    {/* ★★★ iframeに title を追加 ★★★ */}
                     <iframe
+                        id="map-iframe" {/* ★ 変更点: id="map-iframe" を追加 */}
                         title="アクセスマップ"
                         width="100%"
                         height="100%"
@@ -311,7 +311,8 @@ const clientFirebaseConfig = {
                         loading="lazy"
                         allowfullscreen=""
                         referrerpolicy="no-referrer-when-downgrade"
-                        src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}>
+                        {/* ★ 変更点: src を data-src に変更 (遅延読み込みのため) */}
+                        data-src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}>
                     </iframe>
                 </div>
             </section>
@@ -339,7 +340,7 @@ const clientFirebaseConfig = {
     // --- Helper Functions ---
     const escapeHTML = (str) => {
         if (typeof str !== 'string' || !str) return '';
-        return str.replace(/[&<>"']/g, (match) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[match]));
+        return str.replace(/[&<>"']/g, (match) => ({ '&': '&', '<': '<', '>': '>', '"': '"', "'": ''' }[match]));
     };
     function getPublicUrl(originalUrl) {
          if (!originalUrl || typeof originalUrl !== 'string') return '';
@@ -395,11 +396,22 @@ const clientFirebaseConfig = {
         return article;
     }
 
-    // --- Render Radar Charts ---
-    function renderRadarCharts() {
-        if (typeof Chart === 'undefined') { console.log("Chart.js is not loaded yet..."); return; }
+    // --- Render Radar Charts (★ 変更点: Chart.jsを動的インポート) ---
+    async function renderRadarCharts() { // ★ async を追加
+        
+        // ★ Chart.js が未ロードの場合、ここで動的にインポートする
+        if (typeof Chart === 'undefined') {
+            try {
+                // グローバルスコープ (window.Chart) に Chart をロードする
+                await import('https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.js');
+            } catch (e) {
+                console.error("Chart.jsの読み込みに失敗しました:", e);
+                return; // 読み込めなければ処理を中断
+            }
+        }
+
         document.querySelectorAll('.radar-chart-canvas:not(.chartjs-render-monitor)').forEach(canvas => {
-            if (canvas.chart) return;
+            if (canvas.chart) return; 
             try {
                 const scoresData = JSON.parse(canvas.dataset.scores);
                 const chart = new Chart(canvas, { type: 'radar', data: { labels: Object.keys(scoresData), datasets: [{ label: '評価スコア', data: Object.values(scoresData), fill: true, backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: 'rgb(22, 163, 74)', pointBackgroundColor: 'rgb(22, 163, 74)', pointBorderColor: '#fff', pointHoverBackgroundColor: '#fff', pointHoverBorderColor: 'rgb(22, 163, 74)' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { display: true }, suggestedMin: 0, suggestedMax: 5, ticks: { stepSize: 1, backdropColor: 'rgba(255, 255, 255, 0.75)', color: '#64748b', }, pointLabels: { font: { size: 10 }, color: '#334155' } } }, plugins: { legend: { display: false } } } });
@@ -408,7 +420,7 @@ const clientFirebaseConfig = {
         });
     }
 
-    // --- Load Reviews ---
+    // --- Load Reviews (★ 変更点: renderRadarChartsの呼び出し方を修正) ---
     async function loadReviews() {
         const reviewsListContainer = document.getElementById('reviews-list');
         if (!reviewsListContainer) return;
@@ -430,7 +442,10 @@ const clientFirebaseConfig = {
             const fragment = document.createDocumentFragment();
             sortedReviews.forEach(review => { if (review) { fragment.appendChild(createReviewArticle(review)); } });
             reviewsListContainer.appendChild(fragment);
-            if (typeof Chart !== 'undefined') { renderRadarCharts(); } else { window.addEventListener('load', renderRadarCharts, { once: true }); }
+            
+            // ★ 変更点: Chart.jsのロードチェックを削除し、awaitで呼び出す
+            await renderRadarCharts();
+
         } catch (error) { console.error("レビューの読み込みに失敗しました:", error); if (reviewsListContainer) { reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`; } }
     }
 
@@ -446,30 +461,51 @@ const clientFirebaseConfig = {
         if (showMoreBtn) { showMoreBtn.addEventListener('click', () => { galleryItems.forEach(item => item.classList.remove('hidden')); showMoreBtn.style.display = 'none'; }); }
     }
 
-    // --- Intersection Observer for Lazy Loading Map ---
-    function lazyLoadMap() {
-      const mapSection = document.getElementById('map-section');
-      const mapIframe = document.getElementById('map-iframe');
-      if (!mapSection || !mapIframe || !mapIframe.dataset.src) { console.warn('Map section or iframe not found for lazy loading.'); return; }
-      const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
-      const observerCallback = (entries, observer) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) { mapIframe.src = mapIframe.dataset.src; observer.unobserve(mapSection); console.log('Google Map loaded lazily.'); }
-        });
-      };
-      const observer = new IntersectionObserver(observerCallback, observerOptions);
-      observer.observe(mapSection);
+    // ★ 変更点: 汎用的な遅延読み込みオブザーバーを追加
+    function createLazyLoader(targetSelector, callback, rootMargin = '200px') {
+        const targetElement = document.querySelector(targetSelector);
+        if (!targetElement) {
+            console.warn(`Lazy load target ${targetSelector} not found.`);
+            return;
+        }
+        const observerOptions = {
+            root: null, // ビューポートを基準
+            rootMargin: rootMargin, // ビューポートに入る手前から
+            threshold: 0.01 // 少しでも見えたら
+        };
+        const observerCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    callback(); // ターゲットが見えたらコールバック実行
+                    observer.unobserve(targetElement); // 実行したら監視を停止
+                    console.log(`${targetSelector} loaded lazily.`);
+                }
+            });
+        };
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        observer.observe(targetElement);
     }
 
-    // --- DOMContentLoadedイベントリスナー ---
+    // ★ 変更点: lazyLoadMap 関数を削除 (createLazyLoaderが代わりになる)
+
+    // --- DOMContentLoadedイベントリスナー (★ 変更点: JSの遅延読み込みを IntersectionObserver に変更) ---
     document.addEventListener('DOMContentLoaded', () => {
         initializeStaticScripts();
-        loadReviews();
-        lazyLoadMap(); // マップの遅延読み込み監視を開始
+        
+        // ★ 変更: レビューリストが見えたら loadReviews を実行 (rootMargin 300px で少し早めに)
+        createLazyLoader('#reviews-list', loadReviews, '300px');
+
+        // ★ 変更: マップセクションが見えたら マップのsrc を設定 (rootMargin 100px で遅めに)
+        createLazyLoader('#map-section', () => {
+            const mapIframe = document.getElementById('map-iframe');
+            if (mapIframe && mapIframe.dataset.src) {
+                mapIframe.src = mapIframe.dataset.src;
+            }
+        }, '100px');
     });
 
-    // --- カスタムイベント 'reviewPosted' のリスナー ---
-    document.addEventListener('reviewPosted', (event) => {
+    // --- カスタムイベント 'reviewPosted' のリスナー (★ 変更点: async対応) ---
+    document.addEventListener('reviewPosted', async (event) => { // ★ async を追加
         console.log('新規レビュー投稿を検知:', event.detail);
         const newReviewData = event.detail;
         const reviewsListContainer = document.getElementById('reviews-list');
@@ -478,7 +514,11 @@ const clientFirebaseConfig = {
         if (noReviewsEl) noReviewsEl.remove();
         const article = createReviewArticle(newReviewData);
         reviewsListContainer.prepend(article);
-        if (newReviewData?.author === "関＠シガゴル管理人" && newReviewData?.scores) { setTimeout(renderRadarCharts, 100); }
+        
+        // ★ 変更: setTimeout を削除し、awaitで呼び出す
+        if (newReviewData?.author === "関＠シガゴル管理人" && newReviewData?.scores) { 
+            await renderRadarCharts(); 
+        }
     });
 
 </script>
