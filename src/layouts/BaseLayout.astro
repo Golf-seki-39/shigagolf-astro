@@ -28,7 +28,7 @@ const {
 } = Astro.props;
 
 // ▼▼▼【変更点2】デフォルトのOGP画像URLを定義 ▼▼▼
-const defaultOgImage = "https://i.imgur.com/mN0IbPS.png"; // サイトのロゴなど
+const defaultOgImage = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"; // サイトのロゴなど
 
 // ▼▼▼【変更点3】ogImageが渡された場合はそれ、なければデフォルト画像を使うロジック ▼▼▼
 const imageToUse = ogImage || defaultOgImage;
@@ -65,8 +65,8 @@ const imageToUse = ogImage || defaultOgImage;
         <meta name="twitter:image" content={imageToUse} />
 
         {noindex && <meta name="robots" content="noindex" />}
-        <link rel="apple-touch-icon" href="https://i.imgur.com/mN0IbPS.png" />
-        <link rel="icon" href="https://i.imgur.com/mN0IbPS.png" />
+        <link rel="apple-touch-icon" href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" />
+        <link rel="icon" href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" />
 
         <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
