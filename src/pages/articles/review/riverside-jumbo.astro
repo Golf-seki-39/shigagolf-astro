@@ -417,215 +417,157 @@ const comparisonArticles = [
     </style>
 
     {/* ★★★ ここから料金シミュレーターの完全なJSコード ★★★ */}
-   <script define:vars={{ priceData }}>
-    // --- Helper Functions (isMobile, calculatePrice, etc.) ---
+    <script define:vars={{ priceData }}>
+    document.addEventListener('DOMContentLoaded', () => {
+        const simulator = document.getElementById('price-simulator');
+        if (!simulator) return;
 
-    // 料金計算関数
-    function calculatePrice(simulator) {
-        const membershipRadio = simulator.querySelector('input[name="membership"]:checked');
-        const timeRadio = simulator.querySelector('input[name="time"]:checked');
+        // シミュレーター要素の取得
+        const step1 = simulator.querySelector('#step-1');
+        const step2 = simulator.querySelector('#step-2');
+        const step3 = simulator.querySelector('#step-3');
+        const resetButton = simulator.querySelector('#reset-button');
+        const membershipRadios = simulator.querySelectorAll('input[name="membership"]');
+        const timeRadios = simulator.querySelectorAll('input[name="time"]');
         const ballCountSlider = simulator.querySelector('#ball-count');
         const ballCountDisplay = simulator.querySelector('#ball-count-display');
         const totalPriceDisplay = simulator.querySelector('#total-price');
 
-        if (!ballCountSlider || !ballCountDisplay || !totalPriceDisplay) {
-             console.warn("[Shigagolf Debug] Simulator elements missing in calculatePrice.");
-             return; // 要素が見つからない場合は処理中断
+        // 料金計算関数
+        function calculatePrice() {
+            const membershipRadio = simulator.querySelector('input[name="membership"]:checked');
+            const timeRadio = simulator.querySelector('input[name="time"]:checked');
+            const balls = parseInt(ballCountSlider.value);
+
+            ballCountDisplay.textContent = `${balls}球`; // 球数を表示
+
+            // いずれかの選択肢が未選択の場合は計算せずにプレースホルダーを表示
+            if (!membershipRadio || !timeRadio) {
+                totalPriceDisplay.textContent = '----';
+                return;
+            }
+
+            const membership = membershipRadio.value;
+            const time = timeRadio.value;
+            const entryFee = priceData.entryFee[membership]; // 会員か非会員かで入場料を取得
+
+            let ballPrice;
+            // 料金体系に基づいて球単価を決定
+            if (time === 'ladiesDay') {
+                ballPrice = priceData.ballPrice.ladiesDay;
+            } else if (membership === 'member' && time === 'weekend') {
+                // 会員かつ週末の場合のみ専用の料金を使用
+                ballPrice = priceData.memberWeekendPrice;
+            } else {
+                // それ以外は通常料金
+                ballPrice = priceData.ballPrice[time];
+            }
+
+            // 合計金額を計算して表示
+            const total = entryFee + (ballPrice * balls);
+            totalPriceDisplay.textContent = total.toLocaleString(); // カンマ区切りで表示
         }
 
-        const balls = parseInt(ballCountSlider.value);
-        ballCountDisplay.textContent = `${balls}球`;
+        // モバイル表示かどうかを判定する関数
+        const isMobile = () => window.innerWidth < 768; // mdブレークポイント
 
-        if (!membershipRadio || !timeRadio) {
-            totalPriceDisplay.textContent = '----';
-            return;
+        // モバイルでステップを進める関数
+        function goToStep(stepToShow) {
+            if (!isMobile()) return; // モバイルでなければ何もしない
+
+            // 全ステップを一旦隠す
+            step1.classList.add('hidden');
+            step2.classList.add('hidden');
+            step3.classList.add('hidden');
+
+            // 対象のステップを表示し、リセットボタンを表示
+            stepToShow.classList.remove('hidden');
+            resetButton.classList.remove('hidden');
         }
 
-        const membership = membershipRadio.value;
-        const time = timeRadio.value;
-        const entryFee = priceData.entryFee[membership];
+        // シミュレーターをリセットする関数
+        function resetSimulator() {
+            // ラジオボタンの選択を全て解除
+            membershipRadios.forEach(radio => radio.checked = false);
+            timeRadios.forEach(radio => radio.checked = false);
 
-        let ballPrice;
-        if (time === 'ladiesDay') {
-            ballPrice = priceData.ballPrice.ladiesDay;
-        } else if (membership === 'member' && time === 'weekend') {
-            ballPrice = priceData.memberWeekendPrice;
-        } else {
-            ballPrice = priceData.ballPrice[time];
+            // 球数スライダーを初期値に戻す
+            ballCountSlider.value = 150;
+
+            // モバイル表示の場合、ステップ1に戻しリセットボタンを隠す
+            if (isMobile()) {
+                step1.classList.remove('hidden');
+                step2.classList.add('hidden');
+                step3.classList.add('hidden');
+                resetButton.classList.add('hidden');
+            }
+
+            // 価格表示を更新（'----'に戻る）
+            calculatePrice();
         }
 
-        const total = entryFee + (ballPrice * balls);
-        totalPriceDisplay.textContent = total.toLocaleString();
-    }
-
-    // モバイル判定関数
-    const isMobile = () => window.innerWidth < 768;
-
-    // モバイル用ステップ遷移関数
-    function goToStep(simulator, stepToShow) {
-        if (!isMobile()) return;
-        const step1 = simulator.querySelector('#step-1');
-        const step2 = simulator.querySelector('#step-2');
-        const step3 = simulator.querySelector('#step-3');
-        const resetButton = simulator.querySelector('#reset-button');
-
-        step1?.classList.add('hidden');
-        step2?.classList.add('hidden');
-        step3?.classList.add('hidden');
-        stepToShow?.classList.remove('hidden');
-        resetButton?.classList.remove('hidden');
-    }
-
-    // リセット関数
-    function resetSimulator(simulator) {
-        const membershipRadios = simulator.querySelectorAll('input[name="membership"]');
-        const timeRadios = simulator.querySelectorAll('input[name="time"]');
-        const ballCountSlider = simulator.querySelector('#ball-count');
-        const step1 = simulator.querySelector('#step-1');
-        const step2 = simulator.querySelector('#step-2');
-        const step3 = simulator.querySelector('#step-3');
-        const resetButton = simulator.querySelector('#reset-button');
-
-        membershipRadios.forEach(radio => radio.checked = false);
-        timeRadios.forEach(radio => radio.checked = false);
-        if (ballCountSlider) ballCountSlider.value = 150;
-
-        if (isMobile()) {
-            step1?.classList.remove('hidden');
-            step2?.classList.add('hidden');
-            step3?.classList.add('hidden');
-            resetButton?.classList.add('hidden');
-        }
-
-        calculatePrice(simulator); // リセット後、価格表示も更新
-    }
-
-    // --- Simulator Initialization Function ---
-    function initializeSimulator() {
-        const simulator = document.getElementById('price-simulator');
-        if (!simulator) {
-            console.warn("[Shigagolf Debug] Price simulator element not found.");
-            return;
-        }
-        console.log("[Shigagolf Debug] Initializing price simulator.");
-
-        // --- 要素取得 (initializeSimulator 内で行う) ---
-        const step1 = simulator.querySelector('#step-1');
-        const step2 = simulator.querySelector('#step-2');
-        const step3 = simulator.querySelector('#step-3');
-        const resetButton = simulator.querySelector('#reset-button');
-        const membershipRadios = simulator.querySelectorAll('input[name="membership"]');
-        const timeRadios = simulator.querySelectorAll('input[name="time"]');
-        const ballCountSlider = simulator.querySelector('#ball-count');
-
-        // イベントリスナー設定関数
+        // イベントリスナーを設定する関数
         function setupListeners() {
             membershipRadios.forEach(radio => {
+                // changeイベントで発火（クリック確定時）
                 radio.addEventListener('change', () => {
-                    calculatePrice(simulator);
+                    calculatePrice(); // 価格を再計算
                     if (isMobile()) {
-                        goToStep(simulator, step2);
+                        goToStep(step2); // モバイルならステップ2へ
                     }
                 });
             });
 
             timeRadios.forEach(radio => {
+                // changeイベントで発火
                 radio.addEventListener('change', () => {
-                    calculatePrice(simulator);
+                    calculatePrice(); // 価格を再計算
                     if (isMobile()) {
-                        goToStep(simulator, step3);
+                        goToStep(step3); // モバイルならステップ3へ
                     }
                 });
             });
 
-            // ballCountSlider が存在する場合のみリスナーを設定
-            if (ballCountSlider) {
-                ballCountSlider.addEventListener('input', () => calculatePrice(simulator));
-            }
-             // resetButton が存在する場合のみリスナーを設定
-            if (resetButton) {
-                resetButton.addEventListener('click', () => resetSimulator(simulator));
-            }
+            // スライダーが動いたらリアルタイムで価格を再計算
+            ballCountSlider.addEventListener('input', calculatePrice);
+            // リセットボタンがクリックされたらリセット関数を実行
+            resetButton.addEventListener('click', resetSimulator);
         }
 
-        // 初期表示調整関数
+        // 初期表示を調整する関数
         function initializeView() {
             if (isMobile()) {
-                step2?.classList.add('hidden');
-                step3?.classList.add('hidden');
-                resetButton?.classList.add('hidden');
-                step1?.classList.remove('hidden');
+                // モバイルならステップ2, 3とリセットボタンを隠す
+                step2.classList.add('hidden');
+                step3.classList.add('hidden');
+                resetButton.classList.add('hidden');
+                step1.classList.remove('hidden'); // ステップ1を表示
             } else {
-                step1?.classList.remove('hidden');
-                step2?.classList.remove('hidden');
-                step3?.classList.remove('hidden');
-                resetButton?.classList.add('hidden');
+                // PCなら全ステップを表示
+                step1.classList.remove('hidden');
+                step2.classList.remove('hidden');
+                step3.classList.remove('hidden');
+                resetButton.classList.add('hidden'); // PCではリセットボタンは常に非表示
             }
         }
 
-        // --- 初期化実行 ---
-        initializeView();
-        setupListeners();
-        calculatePrice(simulator); // 初期価格を表示
+        // --- 初期化処理 ---
+        initializeView(); // 表示を初期化
+        setupListeners(); // イベントリスナーを設定
+        calculatePrice(); // 初期価格を表示（通常は '----'）
 
-        // --- リサイズリスナー ---
+        // --- ウィンドウリサイズ時の処理 ---
         let resizeTimer;
         window.addEventListener('resize', () => {
-             clearTimeout(resizeTimer);
-             resizeTimer = setTimeout(() => {
-                 // simulator 要素を再度渡してリセットと再描画
-                 resetSimulator(simulator);
-                 initializeView();
-             }, 250);
+            clearTimeout(resizeTimer); // リサイズ中のイベント発火を間引く
+            resizeTimer = setTimeout(() => {
+                // 画面サイズが変わったら状態をリセットして再描画
+                resetSimulator();
+                initializeView();
+            }, 250); // 250ms待ってから実行
         });
-    }
-
-    // --- 汎用的な遅延読み込みオブザーバー ---
-    function createLazyLoader(targetSelector, callback, rootMargin = '200px') {
-        const targetElement = document.querySelector(targetSelector);
-        if (!targetElement) {
-            console.warn(`[Shigagolf Debug] createLazyLoader: Target ${targetSelector} not found.`);
-            return;
-        }
-        const observerOptions = {
-            root: null,
-            rootMargin: rootMargin,
-            threshold: 0.01
-        };
-        const observerCallback = (entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    callback();
-                    observer.unobserve(targetElement);
-                    console.log(`[Shigagolf Debug] ${targetSelector} loaded lazily.`);
-                }
-            });
-        };
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-        observer.observe(targetElement);
-    }
-
-    // --- スクリプトの実行 ---
-    function runScripts() {
-        try {
-            console.log("[Shigagolf Debug] runScripts: Executing.");
-
-            // ★ 修正: シミュレーターが見えたら初期化 (rootMargin を 100px にして少し遅めに)
-            createLazyLoader('#price-simulator', initializeSimulator, '100px');
-
-        } catch (e) {
-            console.error("[Shigagolf Debug] runScripts: Initialization failed.", e);
-        }
-    }
-
-    // --- readyState チェック ---
-    if (document.readyState === 'loading') {
-        console.log("[Shigagolf Debug] DOM is loading, adding DOMContentLoaded listener.");
-        document.addEventListener('DOMContentLoaded', runScripts);
-    } else {
-        console.log(`[Shigagolf Debug] DOM is ${document.readyState}, running scripts directly.`);
-        runScripts();
-    }
-</script>
+    });
+    </script>
+    {/* ★★★ 料金シミュレーターのJSコードここまで ★★★ */}
 
 </BaseLayout>
