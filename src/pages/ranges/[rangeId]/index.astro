@@ -1,5 +1,5 @@
 ---
-// ★★★ [rangeId].astro - 完全版 (DOMContentLoaded 修正版) ★★★
+// ★★★ [rangeId].astro - 完全版 (readyState チェック + デバッグログ) ★★★
 
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ReviewSection from "../../../components/ReviewSection.astro";
@@ -154,8 +154,7 @@ const clientFirebaseConfig = {
                 <h2 class="text-2xl font-bold">フォトギャラリー</h2>
                 <div id="gallery-grid" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                   {galleryImages.map((image, index) => (
-                    // ★ 変更点: ここで 'hidden' を付与
-                    <div class="gallery-item hidden"> 
+                    <div class="gallery-item hidden"> {/* ★ JSで表示制御するため 'hidden' を付与 */}
                       <a href={getPublicUrl(image?.url)} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
                         {image?.url && (
                           <Image
@@ -272,7 +271,7 @@ const clientFirebaseConfig = {
             {/* ユーザーレビューセクション */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
-                <div id="reviews-list" class="space-y-6">
+                <div id="reviews-list" class="space-y-6"> {/* ★ 監視対象 */}
                     <div id="loading-reviews" class="text-center py-8">
                         <p class="text-slate-500">レビューを読み込んでいます...</p>
                     </div>
@@ -280,11 +279,11 @@ const clientFirebaseConfig = {
             </section>
 
             {/* アクセスマップセクション */}
-            <section id="map-section" class="mt-8 pt-6 border-t border-slate-200"> {/* id="map-section" */}
+            <section id="map-section" class="mt-8 pt-6 border-t border-slate-200"> {/* ★ 監視対象 */}
                 <h2 class="text-2xl font-bold">アクセスマップ</h2>
                 <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
                     <iframe
-                        id="map-iframe" {/* id="map-iframe" */}
+                        id="map-iframe"
                         title="アクセスマップ"
                         width="100%"
                         height="100%"
@@ -444,11 +443,18 @@ const clientFirebaseConfig = {
         const galleryItems = document.querySelectorAll('.gallery-item');
         const showMoreBtn = document.getElementById('show-more-gallery-btn');
         const initialVisibleCount = 8;
+
+        // ★ デバッグログ
+        console.log(`[Shigagolf Debug] initializeStaticScripts: Found ${galleryItems.length} gallery items.`);
         
         if (galleryItems.length > 0) { 
             galleryItems.forEach((item, index) => { 
-                // ★ 変更点: 'hidden' クラスの付け外し
-                item.classList.toggle('hidden', index >= initialVisibleCount); 
+                // ★ 変更点: 明示的に remove / add
+                if (index < initialVisibleCount) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden'); // 8件目以降は hidden のまま
+                }
             }); 
             if (galleryItems.length <= initialVisibleCount && showMoreBtn) {
                 showMoreBtn.style.display = 'none'; 
@@ -469,7 +475,8 @@ const clientFirebaseConfig = {
     function createLazyLoader(targetSelector, callback, rootMargin = '200px') {
         const targetElement = document.querySelector(targetSelector);
         if (!targetElement) {
-            console.warn(`Lazy load target ${targetSelector} not found.`);
+            // ★ デバッグログ
+            console.warn(`[Shigagolf Debug] createLazyLoader: Target ${targetSelector} not found.`);
             return;
         }
         const observerOptions = {
@@ -482,7 +489,7 @@ const clientFirebaseConfig = {
                 if (entry.isIntersecting) {
                     callback(); 
                     observer.unobserve(targetElement); 
-                    console.log(`${targetSelector} loaded lazily.`);
+                    console.log(`[Shigagolf Debug] ${targetSelector} loaded lazily.`);
                 }
             });
         };
@@ -492,7 +499,7 @@ const clientFirebaseConfig = {
 
     // --- カスタムイベント 'reviewPosted' のリスナー ---
     document.addEventListener('reviewPosted', async (event) => { 
-        console.log('新規レビュー投稿を検知:', event.detail);
+        console.log('[Shigagolf Debug] New review posted:', event.detail);
         const newReviewData = event.detail;
         const reviewsListContainer = document.getElementById('reviews-list');
         const noReviewsEl = document.getElementById('no-reviews-message');
@@ -506,24 +513,34 @@ const clientFirebaseConfig = {
         }
     });
 
-    // ★★★ 変更点: DOMContentLoaded を削除し、スクリプトの最後で直接実行 ★★★
-    // このスクリプトは defer 動作するため、実行時点で DOM は準備完了しています。
-    try {
-        // (1) フォトギャラリーの表示を初期化
-        initializeStaticScripts();
-        
-        // (2) レビューリストが見えたら loadReviews を実行
-        createLazyLoader('#reviews-list', loadReviews, '300px');
+    // --- スクリプトの実行（DOMの準備を待つ） ---
+    function runScripts() {
+        try {
+            console.log("[Shigagolf Debug] runScripts: Executing."); // ★デバッグ
+            initializeStaticScripts();
+            createLazyLoader('#reviews-list', loadReviews, '300px');
+            createLazyLoader('#map-section', () => {
+                const mapIframe = document.getElementById('map-iframe');
+                if (mapIframe && mapIframe.dataset.src) {
+                    mapIframe.src = mapIframe.dataset.src;
+                } else {
+                     console.warn("[Shigagolf Debug] Map iframe or data-src not found."); // ★デバッグ
+                }
+            }, '100px');
+        } catch (e) {
+            console.error("[Shigagolf Debug] runScripts: Initialization failed.", e); // ★デバッグ
+        }
+    }
 
-        // (3) マップセクションが見えたら マップのsrc を設定
-        createLazyLoader('#map-section', () => {
-            const mapIframe = document.getElementById('map-iframe');
-            if (mapIframe && mapIframe.dataset.src) {
-                mapIframe.src = mapIframe.dataset.src;
-            }
-        }, '100px');
-    } catch (e) {
-        console.error("スクリプトの初期化に失敗しました:", e);
+    // ★★★ 変更点: DOMContentLoaded ではなく、readyState をチェック ★★★
+    if (document.readyState === 'loading') {
+        // まだロード中の場合は、イベントを待つ (通常Astroではここに来ないはず)
+        console.log("[Shigagolf Debug] DOM is loading, adding DOMContentLoaded listener."); // ★デバッグ
+        document.addEventListener('DOMContentLoaded', runScripts);
+    } else {
+        // 'interactive' または 'complete' (Astroの <script> は通常ここ)
+        console.log(`[Shigagolf Debug] DOM is ${document.readyState}, running scripts directly.`); // ★デバッグ
+        runScripts();
     }
 
 </script>
