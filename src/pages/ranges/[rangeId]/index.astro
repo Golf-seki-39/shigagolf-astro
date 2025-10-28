@@ -84,7 +84,9 @@ const clientFirebaseConfig = {
     appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
 };
 ---
-
+<Fragment slot="head">
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</Fragment>
 <BaseLayout title={title} description={description}>
     <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
 
