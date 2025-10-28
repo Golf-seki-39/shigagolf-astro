@@ -65,17 +65,7 @@ const ldJson = {
     }),
 };
 
-function getThumbnailUrl(originalUrl) {
-    if (!originalUrl) return '';
-    const urlParts = originalUrl.split('?');
-    const path = urlParts[0];
-    const extensionIndex = path.lastIndexOf('.');
-    if (extensionIndex === -1) return `${path}?alt=media`;
-    const basePath = path.substring(0, extensionIndex);
-    const extension = path.substring(extensionIndex);
-    const thumbnailPath = `${basePath}_400x400${extension}`;
-    return `${thumbnailPath}?alt=media`;
-}
+
 
 function getPublicUrl(originalUrl) {
     if (!originalUrl) return '';
@@ -153,12 +143,13 @@ const clientFirebaseConfig = {
                       <a href={getPublicUrl(image.url)} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
                         {/* ★★★ 3. Imageコンポーネント（修正済み） ★★★ */}
                         <Image
-                          src={getThumbnailUrl(image.url)}
+                          src={getPublicUrl(image.url)} 
                           alt={`${name}のギャラリー写真 ${index + 1}（投稿者: ${image.author}） ${image.description || ''}`}
                           class="w-full h-full object-cover rounded-lg group-hover:opacity-80 transition-opacity"
                           width={400}
                           height={400}
                           format="webp"
+                          fit="cover" 
                           loading="lazy"
                         />
                       </a>
