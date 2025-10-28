@@ -1,52 +1,62 @@
 ---
-// ★★★ [rangeId].astro 最終完成版 (v6) ★★★
-// (v5で修正し忘れた escapeHTML のタイプミスを「本当に」修正しました)
+// ★★★ [rangeId].astro - 完全版 (LCP最適化 + chart.js + アクセシビリティ修正) ★★★
 
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ReviewSection from "../../../components/ReviewSection.astro";
-import { db } from "../../../lib/firebase.js"; // getStaticPaths で使用
-import { Image } from "astro:assets"; // ★★★ この行を追加 ★★★
+import { db } from "../../../lib/firebase.js";
+import { Image } from "astro:assets";
 import { collection, getDocs } from "firebase/firestore";
 
-// 1. getStaticPaths (変更なし)
+// 1. getStaticPaths: ビルド時に各練習場のページを生成するためのパスとデータを取得
 export async function getStaticPaths() {
     const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
     const publicDataPath = `artifacts/${appId}/public/data`;
     const rangesCollection = collection(db, publicDataPath, 'practice_ranges');
     const querySnapshot = await getDocs(rangesCollection);
 
+   // 'image_archive' ドキュメントを除外してパスを生成
    const paths = querySnapshot.docs
-        .filter(doc => doc.id !== 'image_archive') // ★★★ この行を追加 ★★★
+        .filter(doc => doc.id !== 'image_archive')
         .map(doc => ({
-            params: { rangeId: doc.id },
-            props: { range: { id: doc.id, ...doc.data() } }
+            params: { rangeId: doc.id }, // URLの [rangeId] 部分
+            props: { range: { id: doc.id, ...doc.data() } } // ページコンポーネントに渡すデータ
         }));
     return paths;
 }
 
-// 2. Props と静的変数の定義 (あなたの元のコードと同じ)
-const { range } = Astro.props;
-const { id, name, address, phone, business_hours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl, isIndoor, is_beginner_friendly, hasTracer, tracer_brand, tags, galleryImages= [], yardage, bays, hasApproach, hasBunker, hasPutter, hasUchihodai, price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str, approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info, rental_club_info, lefty_bays_info, managerReviewUrl } = range;
+// 2. Props と静的変数の定義
+const { range } = Astro.props; // getStaticPathsから渡された練習場データ
+// 練習場データの各フィールドを変数に展開 (galleryImagesはデフォルトで空配列)
+const {
+    id, name, address, phone, business_hours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl,
+    isIndoor = false, is_beginner_friendly = false, hasTracer = false, tracer_brand, tags = [], galleryImages= [],
+    yardage, bays, hasApproach = false, hasBunker = false, hasPutter = false, hasUchihodai = false,
+    price_ball_weekday_str, price_ball_weekend_str, price_uchihodai_weekday_str, price_uchihodai_weekend_str,
+    approach_fee_info, bunker_fee_info, payment_methods, initial_cost, access, parking_info,
+    rental_club_info, lefty_bays_info, managerReviewUrl
+} = range;
 
-
+// ページのタイトルと説明文
 const title = `${name}の口コミ・評判 | シガゴル`;
-const description = `${name}（${area}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${name}に関する詳細情報が満載です。`;
+const description = `${name}（${area || '滋賀県'}エリア）の口コミ・評判をチェック。料金、設備、ユーザーレビューなど、${name}に関する詳細情報が満載です。`;
 
+// バッジ表示用の配列を作成
 const badges = [];
 if (isIndoor) badges.push("インドア");
 if (is_beginner_friendly) badges.push("初心者に優しい");
-if (hasTracer && tracer_brand === "トップトレーサー")
-    badges.push("全打席トップトレーサー");
+if (hasTracer && tracer_brand === "トップトレーサー") badges.push("全打席トップトレーサー");
 else if (hasTracer) badges.push("弾道測定器あり");
 if (tags && tags.includes("GP併設")) badges.push("GP併設");
 
-galleryImages?.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
+// ギャラリー画像を isFeatured でソート (配列であることを保証)
+(Array.isArray(galleryImages) ? galleryImages : []).sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
 
+// JSON-LD構造化データ (SEO用)
 const ldJson = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: name,
-    image: imageUrl,
+    image: imageUrl, // メイン画像URL
     telephone: phone,
     address: {
         "@type": "PostalAddress",
@@ -56,25 +66,31 @@ const ldJson = {
         postalCode: postalCode,
         addressCountry: "JP",
     },
+    // レビューがある場合のみ評価情報を追加
     ...(reviewCount > 0 && {
         aggregateRating: {
             "@type": "AggregateRating",
-            ratingValue: avgRating,
+            ratingValue: avgRating ? parseFloat(avgRating).toFixed(1) : undefined, // 数値に変換
             reviewCount: reviewCount,
         },
     }),
 };
 
-
-
+// Firebase StorageのURLから ?alt=media を付与する関数
 function getPublicUrl(originalUrl) {
-    if (!originalUrl) return '';
+    if (!originalUrl || typeof originalUrl !== 'string') return '';
     const urlParts = originalUrl.split('?');
     const path = urlParts[0];
+    // すでに ?alt=media がついている場合はそのまま返す
+    if (urlParts.length > 1 && urlParts[1].includes('alt=media')) {
+      return originalUrl;
+    }
+    // ? 以降を除去して ?alt=media を付与
     return `${path}?alt=media`;
 }
 
-// 3. クライアントスクリプト(v10)に渡すためのConfig (変更なし)
+
+// Firebase Config (クライアントサイドスクリプト用)
 const clientFirebaseConfig = {
     apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
     authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -84,34 +100,44 @@ const clientFirebaseConfig = {
     appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
 };
 ---
+
+{/* chart.js の条件付き読み込み (このページでのみheadに追加) */}
 <Fragment slot="head">
-  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </Fragment>
+
 <BaseLayout title={title} description={description}>
+    {/* SEO用JSON-LD */}
     <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
 
     <main class="container mx-auto p-4 md:p-6">
+        {/* 戻るリンク */}
         <div class="mb-4">
-            <a href="/" class="text-green-700 font-semibold hover:underline"
-                >‹ 練習場一覧に戻る</a
-            >
+            <a href="/" class="text-green-700 font-semibold hover:underline">
+                ‹ 練習場一覧に戻る
+            </a>
         </div>
 
         <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
-            
+
+            {/* ヘッダーセクション */}
             <header>
-               <Image
+               {/* メイン画像 (LCP最適化済み) */}
+               {imageUrl && (
+                 <Image
                     src={imageUrl}
                     alt={`${name}の外観`}
                     class="w-full h-64 object-cover rounded-lg mb-6"
-                    width={1200} // ★★★ ここに元画像の幅を指定 ★★★
-                    height={630} // ★★★ ここに元画像の高さを指定 ★★★
+                    width={1200}
+                    height={630}
                     format="webp"
-                    loading="eager"
-                    fetchpriority="high" {/* ← これを追加 */}
+                    loading="eager"      {/* LCP要素なので eager */}
+                    fetchpriority="high" {/* LCP要素なので high */}
                 />
+               )}
+                {/* 練習場名、エリア、バッジ */}
                 <div>
-                    <p class="text-lg text-green-600 font-semibold">{area}エリア</p>
+                    <p class="text-lg text-green-700 font-semibold">{area || '滋賀県'}エリア</p> {/* コントラスト修正 */}
                     <h1 class="text-4xl font-bold mt-1">{name}</h1>
                     {badges.length > 0 && (
                         <div class="mt-4 flex flex-wrap gap-2">
@@ -121,6 +147,7 @@ const clientFirebaseConfig = {
                         </div>
                     )}
                 </div>
+                {/* ヤード数、打席数 */}
                 <div class="my-6 grid grid-cols-2 gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden text-center">
                     <div class="bg-white p-4">
                         <p class="text-sm text-slate-500">ヤード数</p>
@@ -132,35 +159,35 @@ const clientFirebaseConfig = {
                     </div>
                 </div>
             </header>
-             
-          {/* ↓↓↓ フォトギャラリーセクション ここから ↓↓↓ */}
+
+            {/* フォトギャラリーセクション */}
             {galleryImages && galleryImages.length > 0 && (
               <section class="mt-8 pt-6 border-t border-slate-200">
-                {/* ★★★ 1. 見出しを再追加 ★★★ */}
                 <h2 class="text-2xl font-bold">フォトギャラリー</h2>
-
-                {/* ★★★ 2. グリッド用のdivコンテナを再追加 ★★★ */}
                 <div id="gallery-grid" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                   {galleryImages.map((image, index) => (
-                    <div class="gallery-item hidden"> {/* ← 各画像アイテム */}
-                      <a href={getPublicUrl(image.url)} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
-                        {/* ★★★ 3. Imageコンポーネント（修正済み） ★★★ */}
-                        <Image
-                          src={getPublicUrl(image.url)} 
-                          alt={`${name}のギャラリー写真 ${index + 1}（投稿者: ${image.author}） ${image.description || ''}`}
-                          class="w-full h-full object-cover rounded-lg group-hover:opacity-80 transition-opacity"
-                          width={400}
-                          height={400}
-                          format="webp"
-                          fit="cover" 
-                          loading="lazy"
-                        />
+                    // 各ギャラリーアイテム
+                    <div class="gallery-item hidden">
+                      <a href={getPublicUrl(image?.url)} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
+                        {/* URLが存在する場合のみ画像を表示 */}
+                        {image?.url && (
+                          <Image
+                            src={getPublicUrl(image.url)}
+                            alt={`${name}のギャラリー写真 ${index + 1}（投稿者: ${image.author || '不明'}） ${image.description || ''}`}
+                            class="w-full h-full object-cover rounded-lg group-hover:opacity-80 transition-opacity"
+                            width={400}
+                            height={400}
+                            format="webp"
+                            fit="cover"    {/* CSSのobject-coverと合わせる */}
+                            loading="lazy" {/* スクロールしないと見えないので lazy */}
+                            quality={60}   {/* 品質を少し下げて軽量化 */}
+                          />
+                        )}
                       </a>
                     </div>
                   ))}
-                </div> {/* ★★★ グリッド用のdivコンテナここまで ★★★ */}
-
-                {/* もっと見るボタン (変更なし) */}
+                </div>
+                {/* もっと見るボタン */}
                 {galleryImages.length > 8 && (
                   <div class="mt-6 text-center">
                     <button id="show-more-gallery-btn" class="bg-slate-200 text-slate-800 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition">もっと見る</button>
@@ -168,13 +195,14 @@ const clientFirebaseConfig = {
                 )}
               </section>
             )}
-            
 
+            {/* 情報セクション (設備、料金、基本情報、関連リンク) */}
             <div class="mt-8 pt-6 border-t border-slate-200 space-y-8">
+                {/* 設備情報 */}
                 <section>
                     <h2 class="text-2xl font-bold">設備情報</h2>
                     <ul class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 text-slate-600">
-                        <li>📡 弾道測定器: {hasTracer ? `あり (${tracer_brand})` : "なし"}</li>
+                        <li>📡 弾道測定器: {hasTracer ? `あり (${tracer_brand || '機種不明'})` : "なし"}</li>
                         <li>⛳️ アプローチ: {hasApproach ? "あり" : "なし"}</li>
                         <li>🕳️ バンカー: {hasBunker ? "あり" : "なし"}</li>
                         <li>🏌️ パター: {hasPutter ? "あり" : "なし"}</li>
@@ -182,11 +210,13 @@ const clientFirebaseConfig = {
                     </ul>
                 </section>
 
+                {/* 料金情報 */}
                 <section>
                     <h2 class="text-2xl font-bold">料金情報</h2>
                     <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
                         <table class="min-w-full text-sm">
                             <tbody class="text-slate-600">
+                                {/* 屋外練習場のみ球単価を表示 */}
                                 {!isIndoor && (
                                     <>
                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap">球単価（平日）</th><td class="py-3 px-4" set:html={price_ball_weekday_str ? price_ball_weekday_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし"} /></tr>
@@ -195,25 +225,27 @@ const clientFirebaseConfig = {
                                 )}
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（平日）</th><td class="py-3 px-4" set:html={hasUchihodai ? (price_uchihodai_weekday_str ? price_uchihodai_weekday_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし") : "打放題なし"} /></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">打ち放題（土日祝）</th><td class="py-3 px-4" set:html={hasUchihodai ? (price_uchihodai_weekend_str ? price_uchihodai_weekend_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし") : "打放題なし"} /></tr>
-                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">アプローチ練習場</th><td class="py-3 px-4">{approach_fee_info || "情報なし"}</td></tr>
-                                <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">バンカー練習場</th><td class="py-3 px-4">{bunker_fee_info || "情報なし"}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">アプローチ練習場</th><td class="py-3 px-4">{approach_fee_info || (hasApproach ? "併設（料金要確認）" : "なし")}</td></tr>
+                                <tr><th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">バンカー練習場</th><td class="py-3 px-4">{bunker_fee_info || (hasBunker ? "併設（料金要確認）" : "なし")}</td></tr>
                             </tbody>
                         </table>
                     </div>
+                    {/* 支払い方法、最低料金目安 */}
                     <ul class="mt-4 space-y-2 text-slate-600 text-sm">
                         <li><strong>支払い方法:</strong> {payment_methods || "情報なし"}</li>
                         <li><strong>最低料金の目安:</strong> {initial_cost || "情報なし"}</li>
                     </ul>
                 </section>
 
+                {/* 基本情報 */}
                 <section>
                     <h2 class="text-2xl font-bold">基本情報</h2>
                     <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
                         <table class="min-w-full text-sm">
                             <tbody class="text-slate-600">
-                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4">{business_hours || "情報なし"}</td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/4 whitespace-nowrap">営業時間</th><td class="py-3 px-4" set:html={business_hours?.replace(/\n/g, '<br />') || "情報なし"} /></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">住所</th><td class="py-3 px-4"><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address || '')}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">{address || "情報なし"}</a></td></tr>
-                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4"><a href={`tel:${phone}`} class="text-green-700 hover:underline">{phone || "情報なし"}</a></td></tr>
+                                <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">電話番号</th><td class="py-3 px-4">{phone ? <a href={`tel:${phone.replace(/-/g, "")}`} class="text-green-700 hover:underline">{phone}</a> : "情報なし"}</td></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">アクセス</th><td class="py-3 px-4">{access || "情報なし"}</td></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">駐車場</th><td class="py-3 px-4">{parking_info || "情報なし"}</td></tr>
                                 <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50">レンタルクラブ</th><td class="py-3 px-4">{rental_club_info || "情報なし"}</td></tr>
@@ -223,47 +255,80 @@ const clientFirebaseConfig = {
                     </div>
                 </section>
 
+                {/* 関連リンク */}
                 <section>
                     <h2 class="text-2xl font-bold">関連リンク</h2>
                     <div class="mt-2 space-y-3">
-                        {managerReviewUrl && (<a href={managerReviewUrl}/ target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg><span class="font-semibold text-slate-800 group-hover:underline">この練習場の管理人の体験談を見る</span></a>)}
-                        <a href="/articles/" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"/></svg><span class="font-semibold text-slate-800 group-hover:underline">お役立ち情報一覧</span></a>
-                        {website && (<a href={website} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg><span class="font-semibold text-slate-800 group-hover:underline">公式サイト</span></a>)}
+                        {/* 管理人レビューへのリンク */}
+                        {managerReviewUrl && (
+                          <a href={managerReviewUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                            <span class="font-semibold text-slate-800 group-hover:underline">この練習場の管理人の体験談を見る</span>
+                          </a>
+                        )}
+                        {/* お役立ち情報一覧へのリンク */}
+                        <a href="/articles/" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"/></svg>
+                           <span class="font-semibold text-slate-800 group-hover:underline">お役立ち情報一覧</span>
+                        </a>
+                        {/* 公式サイトへのリンク */}
+                        {website && (
+                          <a href={website} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                            <span class="font-semibold text-slate-800 group-hover:underline">公式サイト</span>
+                          </a>
+                        )}
                     </div>
                 </section>
             </div>
 
+            {/* レビューを書くボタン */}
             <div class="my-8 text-center">
-                <button id="show-review-form-btn" class="bg-amber-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-600 transition text-lg">この練習場のレビューを書く</button>
+                <button id="show-review-form-btn" class="bg-amber-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-700 transition text-lg">この練習場のレビューを書く</button> {/* コントラスト修正 */}
             </div>
 
+            {/* ユーザーレビューセクション */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
+                {/* レビューリストはクライアントサイドJSで描画 */}
                 <div id="reviews-list" class="space-y-6">
                     <div id="loading-reviews" class="text-center py-8">
                         <p class="text-slate-500">レビューを読み込んでいます...</p>
                     </div>
                 </div>
             </section>
-            
+
+            {/* アクセスマップセクション */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold">アクセスマップ</h2>
                 <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
-                    <iframe width="100%" height="100%" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade" src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}></iframe>
+                    {/* ★★★ iframeに title を追加 ★★★ */}
+                    <iframe
+                        title="アクセスマップ"
+                        width="100%"
+                        height="100%"
+                        style="border:0;"
+                        loading="lazy"
+                        allowfullscreen=""
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}>
+                    </iframe>
                 </div>
             </section>
 
+            {/* レビュー投稿フォーム (初期状態は非表示) */}
             <div id="review-form-wrapper" class="hidden">
-                <ReviewSection range={range} />
+                <ReviewSection range={range} /> {/* レビュー投稿コンポーネント */}
             </div>
         </div>
     </main>
 </BaseLayout>
 
 
+{/* クライアントサイドJavaScript */}
 <script define:vars={{ rangeId: range.id, passedConfig: clientFirebaseConfig }}>
 
-    // v10モジュール版SDK（ReviewSectionが使っているものと同じ）をインポート
+    // --- Firebase Modulesの遅延インポート ---
     async function getFirebaseModules() {
         const [
             { initializeApp },
@@ -274,61 +339,73 @@ const clientFirebaseConfig = {
         ]);
         return { initializeApp, getFirestore, collection, query, orderBy, getDocs };
     }
-    
-    // --- 4つのヘルパー関数 (タイプミス修正済) ---
+
+    // --- HTMLエスケープ関数 ---
     const escapeHTML = (str) => {
         if (typeof str !== 'string' || !str) return '';
-        // ★★★ v6: ここが今度こそ本当に修正された箇所です ★★★
         return str.replace(/[&<>"']/g, (match) => ({
-            '&': '&',
-            '<': '<',
-            '>': '>',
-            '"': '"',
-            "'": '&#39;' // ←←← v5では ''' というバグが残っていました。これが正しいコードです。
+            '&': '&amp;', // '&' をエスケープ
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
         }[match]));
     };
 
+    // --- 公開URL取得関数 ---
     function getPublicUrl(originalUrl) {
-        if (!originalUrl) return '';
+        if (!originalUrl || typeof originalUrl !== 'string') return '';
         const urlParts = originalUrl.split('?');
         const path = urlParts[0];
+        // すでに ?alt=media がついている場合はそのまま返す
+        if (urlParts.length > 1 && urlParts[1].includes('alt=media')) {
+          return originalUrl;
+        }
         return `${path}?alt=media`;
     }
 
+
+    // --- レビュー記事HTML生成関数 ---
     function createReviewArticle(review) {
         const article = document.createElement('article');
         article.className = 'border-b border-slate-200 pb-6';
-        const ratingVal = review.rating ? Math.round(review.rating) : 0;
+        const ratingVal = review?.rating ? Math.round(review.rating) : 0; // ?. で安全にアクセス
         const stars = '★'.repeat(ratingVal) + '☆'.repeat(5 - ratingVal);
         let date = '日付不明';
         try {
-            if (review.createdAt && typeof review.createdAt.toDate === 'function') {
-                date = review.createdAt.toDate().toLocaleDateString('ja-JP'); // Firestore Timestamp
-            } else if (review.createdAt && review.createdAt.seconds) { // シリアライズされたTimestamp
-                date = new Date(review.createdAt.seconds * 1000).toLocaleDateString('ja-JP');
-            } else if (review.createdAt instanceof Date) { // reviewPosted イベントから来た Date オブジェクト
-                date = review.createdAt.toLocaleDateString('ja-JP');
-            }
-        } catch (e) { console.warn("日付のフォーマットに失敗:", review.createdAt); }
-        const isAdminReview = review.author === "関＠シガゴル管理人";
-        const safeTitle = escapeHTML(review.title || '');
-        const safeBody = review.body ? escapeHTML(review.body).replace(/\n/g, '<br>') : '';
-        const safeAuthor = escapeHTML(review.author || '匿名');
+             if (review?.createdAt && typeof review.createdAt.toDate === 'function') { date = review.createdAt.toDate().toLocaleDateString('ja-JP'); } else if (review?.createdAt && review.createdAt.seconds) { date = new Date(review.createdAt.seconds * 1000).toLocaleDateString('ja-JP'); } else if (review?.createdAt instanceof Date) { date = review.createdAt.toLocaleDateString('ja-JP'); }
+        } catch (e) { console.warn("日付のフォーマットに失敗:", review?.createdAt); }
+        const isAdminReview = review?.author === "関＠シガゴル管理人";
+        const safeTitle = escapeHTML(review?.title || '');
+        const safeBody = review?.body ? escapeHTML(review.body).replace(/\n/g, '<br>') : '';
+        const safeAuthor = escapeHTML(review?.author || '匿名');
+
+        // レビュー画像のHTMLを生成
         let imagesHTML = '';
-        if (review.imageUrls && review.imageUrls.length > 0) {
+        if (review?.imageUrls && Array.isArray(review.imageUrls) && review.imageUrls.length > 0) {
             imagesHTML = `<div class="mt-4 flex flex-wrap gap-3">${
-                review.imageUrls.map(url => {
+                // ★★★ alt属性を変更 ★★★
+                review.imageUrls.map((url, index) => {
+                    if (!url) return ''; // URLが空の場合はスキップ
                     const publicUrl = getPublicUrl(url);
-                    return `<a href="${publicUrl}" target="_blank" rel="noopener noreferrer" class="block"><img src="${publicUrl}" alt="投稿写真" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" /></a>`
+                    // altに番号を追加してユニークにする
+                    return `<a href="${publicUrl}" target="_blank" rel="noopener noreferrer" class="block"><img src="${publicUrl}" alt="投稿写真 ${index + 1}" class="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 object-cover rounded-md hover:opacity-80 transition" loading="lazy" /></a>`
                 }).join('')
             }</div>`;
         }
+
+        // 管理人レビューの場合、レーダーチャート用のcanvasを追加
         let scoresHTML = '';
-        if (isAdminReview && review.scores) {
-            const safeScoresData = escapeHTML(JSON.stringify(review.scores));
-            scoresHTML = `<div class="my-4 max-w-sm mx-auto"><canvas class="radar-chart-canvas" data-scores='${safeScoresData}'></canvas></div>`;
+        if (isAdminReview && review?.scores) {
+            try {
+                const safeScoresData = escapeHTML(JSON.stringify(review.scores)); // JSON文字列に変換してからエスケープ
+                scoresHTML = `<div class="my-4 max-w-sm mx-auto"><canvas class="radar-chart-canvas" data-scores='${safeScoresData}'></canvas></div>`;
+            } catch (e) { console.error("スコアデータのJSON変換に失敗:", e, review.scores); }
         }
-        const safeRatingString = escapeHTML(String(review.rating || 'N/A'));
+
+        const safeRatingString = escapeHTML(String(review?.rating || 'N/A'));
+
+        // 記事全体のHTMLを組み立て
         article.innerHTML = `
             <div class="flex items-center gap-x-4">
                 <div class="text-amber-500 text-xl" title="${safeRatingString}つ星">${stars}</div>
@@ -338,142 +415,231 @@ const clientFirebaseConfig = {
             ${scoresHTML}
             <p class="text-slate-600 my-4 whitespace-pre-wrap">${safeBody}</p>
             ${imagesHTML}
-            <p class="text-sm text-slate-400 text-right mt-4">投稿者: ${safeAuthor} / 投稿日: ${date}</p>
+            {/* ★★★ text-slate-500 に変更 (コントラスト改善) ★★★ */}
+            <p class="text-sm text-slate-500 text-right mt-4">投稿者: ${safeAuthor} / 投稿日: ${date}</p>
         `;
         return article;
     }
 
+    // --- レーダーチャート描画関数 ---
     function renderRadarCharts() {
+        // Chart.jsが読み込まれていなければ何もしない (BaseLayoutでdefer読み込みされる)
         if (typeof Chart === 'undefined') {
-             // BaseLayoutで defer 読み込みされるのを待つ
              console.log("Chart.js is not loaded yet...");
-             return; 
+             return;
         }
-        document.querySelectorAll('.radar-chart-canvas').forEach(canvas => {
-            if (canvas.chart) return; 
+        // まだ描画されていないcanvas要素を探してチャートを描画
+        document.querySelectorAll('.radar-chart-canvas:not(.chartjs-render-monitor)').forEach(canvas => {
+            // canvas要素に chart インスタンスがすでにあれば描画済みとみなす
+            if (canvas.chart) return;
             try {
                 const scoresData = JSON.parse(canvas.dataset.scores);
+                // Chart.jsのインスタンスを作成し、canvas要素に紐付ける
                 const chart = new Chart(canvas, {
                     type: 'radar',
-                    data: { labels: Object.keys(scoresData), datasets: [{ label: '評価スコア', data: Object.values(scoresData), fill: true, backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: 'rgb(22, 163, 74)', pointBackgroundColor: 'rgb(22, 163, 74)', pointBorderColor: '#fff', pointHoverBackgroundColor: '#fff', pointHoverBorderColor: 'rgb(22, 163, 74)' }] },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { r: { angleLines: { display: false }, suggestedMin: 0, suggestedMax: 5, pointLabels: { font: { size: 10 } } } }, plugins: { legend: { display: false } } }
+                    data: {
+                        labels: Object.keys(scoresData), // 各評価項目名
+                        datasets: [{
+                            label: '評価スコア',
+                            data: Object.values(scoresData), // 各評価スコア
+                            fill: true,
+                            backgroundColor: 'rgba(34, 197, 94, 0.2)', // 緑 (塗りつぶし)
+                            borderColor: 'rgb(22, 163, 74)',     // 緑 (線)
+                            pointBackgroundColor: 'rgb(22, 163, 74)', // 緑 (点)
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(22, 163, 74)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // アスペクト比を維持しない
+                        scales: {
+                            r: { // レーダースケール(放射軸)の設定
+                                angleLines: { display: true }, // 角度線を表示
+                                suggestedMin: 0,
+                                suggestedMax: 5,
+                                ticks: { // 目盛りの設定
+                                  stepSize: 1, // 1刻み
+                                  backdropColor: 'rgba(255, 255, 255, 0.75)', // 目盛り背景色
+                                  color: '#64748b', // 目盛り文字色 (slate-500)
+                                },
+                                pointLabels: { // 項目ラベルの設定
+                                    font: { size: 10 },
+                                    color: '#334155' // ラベル文字色 (slate-700)
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false } // 凡例は非表示
+                        }
+                    }
                 });
-                canvas.chart = chart;
-            } catch (e) { console.error("レーダーチャートの描画に失敗:", e, canvas.dataset.scores); }
+                canvas.chart = chart; // 描画済みフラグとしてインスタンスを保持
+            } catch (e) {
+                console.error("レーダーチャートの描画に失敗:", e, canvas.dataset.scores);
+                canvas.outerHTML = `<p class="text-center text-red-500 text-sm">チャート描画エラー</p>`; // エラーメッセージを表示
+            }
         });
     }
 
-    // --- メインロジック (v10モジュール構文) (変更なし) ---
+
+    // --- Firestoreからレビューを読み込む関数 ---
     async function loadReviews() {
         const reviewsListContainer = document.getElementById('reviews-list');
-        if (!reviewsListContainer) return;
-        
+        if (!reviewsListContainer) return; // コンテナがなければ処理中断
+
         try {
+            // Firebaseモジュールを非同期で取得
             const { initializeApp, getFirestore, collection, query, orderBy, getDocs } = await getFirebaseModules();
 
+            // Firebaseアプリの初期化 (シングルトンパターン)
             let app;
-            if (!window._firebaseAppV10) { 
+            if (!window._firebaseAppV10) {
                  window._firebaseAppV10 = initializeApp(passedConfig);
             }
             app = window._firebaseAppV10;
-            const db = getFirestore(app);
+            const db = getFirestore(app); // Firestoreインスタンスを取得
 
+            // レビューコレクションへのパスを構築
             const appId = passedConfig.appId;
             const publicDataPath = `artifacts/${appId}/public/data`;
             const fullReviewPath = `${publicDataPath}/practice_ranges/${rangeId}/reviews`;
             const reviewsCollectionRef = collection(db, fullReviewPath);
-            
+
+            // createdAtフィールドで降順にソートするクエリを作成
             const q = query(reviewsCollectionRef, orderBy("createdAt", "desc"));
-            const querySnapshot = await getDocs(q); 
+            // クエリを実行してドキュメントスナップショットを取得
+            const querySnapshot = await getDocs(q);
 
-            reviewsListContainer.innerHTML = ''; 
+            reviewsListContainer.innerHTML = ''; // ローディング表示をクリア
 
+            // レビューがない場合のメッセージ表示
             if (querySnapshot.empty) {
                 reviewsListContainer.innerHTML = `<p id="no-reviews-message" class="text-center text-slate-500 py-8">この練習場にはまだレビューがありません。</p>`;
                 return;
             }
 
+            // 管理人レビューとユーザーレビューを分ける
             const adminReviews = [];
             const userReviews = [];
             querySnapshot.forEach(doc => {
                  const review = doc.data();
-                 if (review.author === "関＠シガゴル管理人") {
+                 // authorフィールドで判定
+                 if (review?.author === "関＠シガゴル管理人") {
                     adminReviews.push(review);
                  } else {
                     userReviews.push(review);
                  }
             });
-            
-            const sortedReviews = [...adminReviews, ...userReviews]; // 管理人レビューを先頭に
 
+            // 管理人レビューを先頭にして結合
+            const sortedReviews = [...adminReviews, ...userReviews];
+
+            // DocumentFragmentを使ってDOM操作を効率化
             const fragment = document.createDocumentFragment();
             sortedReviews.forEach(review => {
-                const article = createReviewArticle(review);
-                fragment.appendChild(article);
+                if (review) { // reviewデータが存在する場合のみ記事を生成
+                    const article = createReviewArticle(review);
+                    fragment.appendChild(article);
+                }
             });
+            // 組み立てたHTMLを一括でDOMに追加
             reviewsListContainer.appendChild(fragment);
-            
+
+            // Chart.jsが読み込まれていればレーダーチャートを描画、なければloadイベント後に描画
             if (typeof Chart !== 'undefined') {
                 renderRadarCharts();
             } else {
-                window.addEventListener('load', renderRadarCharts); 
+                // BaseLayoutでChart.jsがdefer読み込みされるのを待つ
+                window.addEventListener('load', renderRadarCharts, { once: true });
             }
 
         } catch (error) {
-            console.error("レビューの読み込みに失敗しました (v10 script):", error); 
+            console.error("レビューの読み込みに失敗しました:", error);
+            // エラーメッセージを表示
             if (reviewsListContainer) {
                  reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`;
             }
         }
     }
 
-    // --- 静的スクリプトとイベントリスナー (変更なし) ---
+    // --- 静的要素の初期化関数 (レビュー投稿ボタン、もっと見るボタン) ---
     function initializeStaticScripts() {
+        // レビュー投稿フォーム表示ボタン
         const showButton = document.getElementById("show-review-form-btn");
         const formWrapper = document.getElementById("review-form-wrapper");
         if (showButton && formWrapper) {
             showButton.addEventListener("click", () => {
-                formWrapper.classList.remove("hidden");
-                showButton.style.display = "none";
-                formWrapper.scrollIntoView({ behavior: "smooth" });
+                formWrapper.classList.remove("hidden"); // フォームを表示
+                showButton.style.display = "none";      // ボタンを非表示
+                formWrapper.scrollIntoView({ behavior: "smooth" }); // フォームへスクロール
             });
         }
+
+        // ギャラリーのもっと見るボタン
         const galleryItems = document.querySelectorAll('.gallery-item');
         const showMoreBtn = document.getElementById('show-more-gallery-btn');
+        const initialVisibleCount = 8; // 初期表示数
+
         if (galleryItems.length > 0) {
+            // 初期表示分だけ表示
             galleryItems.forEach((item, index) => {
-                if (index < 8) item.classList.remove('hidden');
+                if (index < initialVisibleCount) {
+                  item.classList.remove('hidden');
+                } else {
+                  item.classList.add('hidden'); // 念のため非表示に
+                }
             });
+            // 初期表示数以下ならボタンを非表示
+            if (galleryItems.length <= initialVisibleCount) {
+                if(showMoreBtn) showMoreBtn.style.display = 'none';
+            }
+        } else {
+             if(showMoreBtn) showMoreBtn.style.display = 'none'; // 画像がなければボタン非表示
         }
+
+
         if (showMoreBtn) {
             showMoreBtn.addEventListener('click', () => {
-                galleryItems.forEach((item, index) => {
-                    if (index >= 8) item.classList.remove('hidden');
+                // 全てのギャラリーアイテムを表示
+                galleryItems.forEach((item) => {
+                    item.classList.remove('hidden');
                 });
-                showMoreBtn.style.display = 'none';
+                showMoreBtn.style.display = 'none'; // ボタンを非表示
             });
         }
     }
-    
+
+    // --- DOMContentLoadedイベントリスナー (初期化処理の実行) ---
     document.addEventListener('DOMContentLoaded', () => {
-        initializeStaticScripts();
-        loadReviews();
+        initializeStaticScripts(); // 静的要素の初期化
+        loadReviews();             // レビューの読み込み開始
     });
 
-    // このリスナーが、あなたが修正した ReviewSection からのイベントを受け取ります
+    // --- カスタムイベント 'reviewPosted' のリスナー (レビュー投稿後の処理) ---
     document.addEventListener('reviewPosted', (event) => {
-        console.log('新規レビュー投稿を検知 (v10 script):', event.detail);
-        const newReviewData = event.detail;
+        console.log('新規レビュー投稿を検知:', event.detail);
+        const newReviewData = event.detail; // イベントから新しいレビューデータを取得
         const reviewsListContainer = document.getElementById('reviews-list');
         const noReviewsEl = document.getElementById('no-reviews-message');
-        if (!reviewsListContainer) return;
+        if (!reviewsListContainer) return; // コンテナがなければ中断
+
+        // 「レビューがありません」メッセージがあれば削除
         if (noReviewsEl) {
             noReviewsEl.remove();
         }
+
+        // 新しいレビュー記事HTMLを生成
         const article = createReviewArticle(newReviewData);
-        reviewsListContainer.prepend(article); // リストの先頭に追加
-        if (newReviewData.author === "関＠シガゴル管理人" && newReviewData.scores) {
-             renderRadarCharts(); // 管理人ならチャートも再描画
+        reviewsListContainer.prepend(article); // リストの**先頭**に追加
+
+        // もし管理人レビューでスコアがあれば、レーダーチャートを再描画
+        if (newReviewData?.author === "関＠シガゴル管理人" && newReviewData?.scores) {
+             // 少し待ってから描画しないとcanvas要素の準備が間に合わない場合がある
+             setTimeout(renderRadarCharts, 100);
         }
     });
+
 </script>
+
