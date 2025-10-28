@@ -317,10 +317,19 @@ const clientFirebaseConfig = {
     }
 
     // --- Helper Functions ---
+    // ★★★ 変更点: SyntaxErrorの原因だった 'escapeHTML' 関数を修正 ★★★
     const escapeHTML = (str) => {
         if (typeof str !== 'string' || !str) return '';
-        return str.replace(/[&<>"']/g, (match) => ({ '&': '&', '<': '<', '>': '>', '"': '"', "'": ''' }[match]));
+        // ' ' ' という不正なトークンを修正し、正しくHTMLエスケープする
+        return str.replace(/[&<>"']/g, (match) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[match]));
     };
+    
     function getPublicUrl(originalUrl) {
          if (!originalUrl || typeof originalUrl !== 'string') return '';
          const urlParts = originalUrl.split('?');
@@ -443,17 +452,15 @@ const clientFirebaseConfig = {
         const galleryItems = document.querySelectorAll('.gallery-item');
         const showMoreBtn = document.getElementById('show-more-gallery-btn');
         const initialVisibleCount = 8;
-
-        // ★ デバッグログ
+        
         console.log(`[Shigagolf Debug] initializeStaticScripts: Found ${galleryItems.length} gallery items.`);
         
         if (galleryItems.length > 0) { 
             galleryItems.forEach((item, index) => { 
-                // ★ 変更点: 明示的に remove / add
                 if (index < initialVisibleCount) {
                     item.classList.remove('hidden');
                 } else {
-                    item.classList.add('hidden'); // 8件目以降は hidden のまま
+                    item.classList.add('hidden');
                 }
             }); 
             if (galleryItems.length <= initialVisibleCount && showMoreBtn) {
@@ -475,7 +482,6 @@ const clientFirebaseConfig = {
     function createLazyLoader(targetSelector, callback, rootMargin = '200px') {
         const targetElement = document.querySelector(targetSelector);
         if (!targetElement) {
-            // ★ デバッグログ
             console.warn(`[Shigagolf Debug] createLazyLoader: Target ${targetSelector} not found.`);
             return;
         }
@@ -516,7 +522,7 @@ const clientFirebaseConfig = {
     // --- スクリプトの実行（DOMの準備を待つ） ---
     function runScripts() {
         try {
-            console.log("[Shigagolf Debug] runScripts: Executing."); // ★デバッグ
+            console.log("[Shigagolf Debug] runScripts: Executing.");
             initializeStaticScripts();
             createLazyLoader('#reviews-list', loadReviews, '300px');
             createLazyLoader('#map-section', () => {
@@ -524,22 +530,21 @@ const clientFirebaseConfig = {
                 if (mapIframe && mapIframe.dataset.src) {
                     mapIframe.src = mapIframe.dataset.src;
                 } else {
-                     console.warn("[Shigagolf Debug] Map iframe or data-src not found."); // ★デバッグ
+                     console.warn("[Shigagolf Debug] Map iframe or data-src not found.");
                 }
             }, '100px');
         } catch (e) {
-            console.error("[Shigagolf Debug] runScripts: Initialization failed.", e); // ★デバッグ
+            console.error("[Shigagolf Debug] runScripts: Initialization failed.", e);
         }
     }
 
     // ★★★ 変更点: DOMContentLoaded ではなく、readyState をチェック ★★★
     if (document.readyState === 'loading') {
-        // まだロード中の場合は、イベントを待つ (通常Astroではここに来ないはず)
-        console.log("[Shigagolf Debug] DOM is loading, adding DOMContentLoaded listener."); // ★デバッグ
+        console.log("[Shigagolf Debug] DOM is loading, adding DOMContentLoaded listener.");
         document.addEventListener('DOMContentLoaded', runScripts);
     } else {
         // 'interactive' または 'complete' (Astroの <script> は通常ここ)
-        console.log(`[Shigagolf Debug] DOM is ${document.readyState}, running scripts directly.`); // ★デバッグ
+        console.log(`[Shigagolf Debug] DOM is ${document.readyState}, running scripts directly.`);
         runScripts();
     }
 
