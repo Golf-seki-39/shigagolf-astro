@@ -77,6 +77,8 @@ try {
                     placeholder="練習場名で検索..."
                     class="w-full p-2 border border-slate-300 rounded-md"
                 />
+                <div> {/* labelとselectをグループ化 */}
+                  <label for="filter-area" class="sr-only">エリアで絞り込み</label>
                 <select
                     id="filter-area"
                     class="w-full p-2 border border-slate-300 rounded-md"
@@ -93,6 +95,9 @@ try {
                     <option value="湖北">湖北エリア</option>
                     <option value="湖西">湖西エリア</option>
                 </select>
+                </div>
+                <div> {/* labelとselectをグループ化 */}
+                  <label for="sort-order" class="sr-only">並び順</label>
                 <select
                     id="sort-order"
                     class="w-full p-2 border border-slate-300 rounded-md"
