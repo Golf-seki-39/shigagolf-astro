@@ -1,5 +1,5 @@
 ---
-// ★★★ [rangeId].astro - 完全版 (LCP / JS遅延読み込み / アクセシビリティ修正) ★★★
+// ★★★ [rangeId].astro - 完全版 (DOMContentLoaded 修正版) ★★★
 
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import ReviewSection from "../../../components/ReviewSection.astro";
@@ -26,7 +26,6 @@ export async function getStaticPaths() {
 
 // 2. Props と静的変数の定義
 const { range } = Astro.props; // getStaticPathsから渡された練習場データ
-// 練習場データの各フィールドを変数に展開 (galleryImagesはデフォルトで空配列)
 const {
     id, name, address, phone, business_hours, website, scores, area, city, postalCode, reviewCount, avgRating, imageUrl,
     isIndoor = false, is_beginner_friendly = false, hasTracer = false, tracer_brand, tags = [], galleryImages= [],
@@ -56,7 +55,7 @@ const ldJson = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: name,
-    image: imageUrl, // メイン画像URL
+    image: imageUrl, 
     telephone: phone,
     address: {
         "@type": "PostalAddress",
@@ -66,11 +65,10 @@ const ldJson = {
         postalCode: postalCode,
         addressCountry: "JP",
     },
-    // レビューがある場合のみ評価情報を追加
     ...(reviewCount > 0 && {
         aggregateRating: {
             "@type": "AggregateRating",
-            ratingValue: avgRating ? parseFloat(avgRating).toFixed(1) : undefined, // 数値に変換
+            ratingValue: avgRating ? parseFloat(avgRating).toFixed(1) : undefined,
             reviewCount: reviewCount,
         },
     }),
@@ -81,14 +79,11 @@ function getPublicUrl(originalUrl) {
     if (!originalUrl || typeof originalUrl !== 'string') return '';
     const urlParts = originalUrl.split('?');
     const path = urlParts[0];
-    // すでに ?alt=media がついている場合はそのまま返す
     if (urlParts.length > 1 && urlParts[1].includes('alt=media')) {
       return originalUrl;
     }
-    // ? 以降を除去して ?alt=media を付与
     return `${path}?alt=media`;
 }
-
 
 // Firebase Config (クライアントサイドスクリプト用)
 const clientFirebaseConfig = {
@@ -101,14 +96,12 @@ const clientFirebaseConfig = {
 };
 ---
 
-{/* ★ 変更点: headでのchart.js読み込みを削除 (JS側で動的インポートするため) */}
+{/* headでのchart.js読み込みは削除済み */}
 
 <BaseLayout title={title} description={description}>
-    {/* SEO用JSON-LD */}
     <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
 
     <main class="container mx-auto p-4 md:p-6">
-        {/* 戻るリンク */}
         <div class="mb-4">
             <a href="/" class="text-green-700 font-semibold hover:underline">
                 ‹ 練習場一覧に戻る
@@ -119,7 +112,6 @@ const clientFirebaseConfig = {
 
             {/* ヘッダーセクション */}
             <header>
-               {/* メイン画像 (LCP最適化済み) */}
                {imageUrl && (
                  <Image
                     src={imageUrl}
@@ -128,12 +120,11 @@ const clientFirebaseConfig = {
                     width={1200}
                     height={630}
                     format="webp"
-                    loading="eager"      {/* LCP要素なので eager */}
-                    fetchpriority="high" {/* LCP要素なので high */}
-                    quality={75}         {/* ★ 変更点: quality を明示的に指定 */}
+                    loading="eager"
+                    fetchpriority="high"
+                    quality={75} {/* LCP画像の品質指定 */}
                 />
                )}
-                {/* 練習場名、エリア、バッジ */}
                 <div>
                     <p class="text-lg text-green-700 font-semibold">{area || '滋賀県'}エリア</p>
                     <h1 class="text-4xl font-bold mt-1">{name}</h1>
@@ -145,7 +136,6 @@ const clientFirebaseConfig = {
                         </div>
                     )}
                 </div>
-                {/* ヤード数、打席数 */}
                 <div class="my-6 grid grid-cols-2 gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden text-center">
                     <div class="bg-white p-4">
                         <p class="text-sm text-slate-500">ヤード数</p>
@@ -164,10 +154,9 @@ const clientFirebaseConfig = {
                 <h2 class="text-2xl font-bold">フォトギャラリー</h2>
                 <div id="gallery-grid" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                   {galleryImages.map((image, index) => (
-                    // 各ギャラリーアイテム
-                    <div class="gallery-item hidden">
+                    // ★ 変更点: ここで 'hidden' を付与
+                    <div class="gallery-item hidden"> 
                       <a href={getPublicUrl(image?.url)} target="_blank" rel="noopener noreferrer" class="block aspect-square group">
-                        {/* URLが存在する場合のみ画像を表示 */}
                         {image?.url && (
                           <Image
                             src={getPublicUrl(image.url)}
@@ -185,7 +174,6 @@ const clientFirebaseConfig = {
                     </div>
                   ))}
                 </div>
-                {/* もっと見るボタン */}
                 {galleryImages.length > 8 && (
                   <div class="mt-6 text-center">
                     <button id="show-more-gallery-btn" class="bg-slate-200 text-slate-800 font-bold py-2 px-6 rounded-lg hover:bg-slate-300 transition">もっと見る</button>
@@ -214,7 +202,6 @@ const clientFirebaseConfig = {
                     <div class="mt-2 overflow-x-auto border border-slate-200 rounded-lg">
                         <table class="min-w-full text-sm">
                             <tbody class="text-slate-600">
-                                {/* 屋外練習場のみ球単価を表示 */}
                                 {!isIndoor && (
                                     <>
                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 whitespace-nowrap">球単価（平日）</th><td class="py-3 px-4" set:html={price_ball_weekday_str ? price_ball_weekday_str.replace(/\//g, "<br>").replace(/\(/g, "<br>(") : "情報なし"} /></tr>
@@ -228,7 +215,6 @@ const clientFirebaseConfig = {
                             </tbody>
                         </table>
                     </div>
-                    {/* 支払い方法、最低料金目安 */}
                     <ul class="mt-4 space-y-2 text-slate-600 text-sm">
                         <li><strong>支払い方法:</strong> {payment_methods || "情報なし"}</li>
                         <li><strong>最低料金の目安:</strong> {initial_cost || "情報なし"}</li>
@@ -257,19 +243,16 @@ const clientFirebaseConfig = {
                 <section>
                     <h2 class="text-2xl font-bold">関連リンク</h2>
                     <div class="mt-2 space-y-3">
-                        {/* 管理人レビューへのリンク */}
                         {managerReviewUrl && (
                           <a href={managerReviewUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                             <span class="font-semibold text-slate-800 group-hover:underline">この練習場の管理人の体験談を見る</span>
                           </a>
                         )}
-                        {/* お役立ち情報一覧へのリンク */}
                         <a href="/articles/" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m0 0h2m-2 0V5m0 2v2m0 0h2"/></svg>
                            <span class="font-semibold text-slate-800 group-hover:underline">お役立ち情報一覧</span>
                         </a>
-                        {/* 公式サイトへのリンク */}
                         {website && (
                           <a href={website} target="_blank" rel="noopener noreferrer" class="flex items-center gap-x-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition group border">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
@@ -282,14 +265,13 @@ const clientFirebaseConfig = {
 
             {/* レビューを書くボタン */}
             <div class="my-8 text-center">
-                {/* ★ 変更点: bg-amber-500 を bg-amber-600 に変更 (コントラスト比の改善) */}
+                {/* コントラスト修正済み */}
                 <button id="show-review-form-btn" class="bg-amber-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-amber-700 transition text-lg">この練習場のレビューを書く</button>
             </div>
 
             {/* ユーザーレビューセクション */}
             <section class="mt-8 pt-6 border-t border-slate-200">
                 <h2 class="text-2xl font-bold mb-4">ユーザーレビュー</h2>
-                {/* レビューリストはクライアントサイドJSで描画 */}
                 <div id="reviews-list" class="space-y-6">
                     <div id="loading-reviews" class="text-center py-8">
                         <p class="text-slate-500">レビューを読み込んでいます...</p>
@@ -298,12 +280,11 @@ const clientFirebaseConfig = {
             </section>
 
             {/* アクセスマップセクション */}
-            {/* ★ 変更点: section に id="map-section" を追加 */}
-            <section id="map-section" class="mt-8 pt-6 border-t border-slate-200">
+            <section id="map-section" class="mt-8 pt-6 border-t border-slate-200"> {/* id="map-section" */}
                 <h2 class="text-2xl font-bold">アクセスマップ</h2>
                 <div class="mt-4 aspect-video w-full overflow-hidden rounded-lg border border-slate-200">
                     <iframe
-                        id="map-iframe" {/* ★ 変更点: id="map-iframe" を追加 */}
+                        id="map-iframe" {/* id="map-iframe" */}
                         title="アクセスマップ"
                         width="100%"
                         height="100%"
@@ -311,15 +292,14 @@ const clientFirebaseConfig = {
                         loading="lazy"
                         allowfullscreen=""
                         referrerpolicy="no-referrer-when-downgrade"
-                        {/* ★ 変更点: src を data-src に変更 (遅延読み込みのため) */}
-                        data-src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}>
+                        data-src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(name + " " + address)}`}> {/* src を data-src に */}
                     </iframe>
                 </div>
             </section>
 
             {/* レビュー投稿フォーム (初期状態は非表示) */}
             <div id="review-form-wrapper" class="hidden">
-                <ReviewSection range={range} /> {/* レビュー投稿コンポーネント */}
+                <ReviewSection range={range} />
             </div>
         </div>
     </main>
@@ -396,17 +376,18 @@ const clientFirebaseConfig = {
         return article;
     }
 
-    // --- Render Radar Charts (★ 変更点: Chart.jsを動的インポート) ---
-    async function renderRadarCharts() { // ★ async を追加
-        
-        // ★ Chart.js が未ロードの場合、ここで動的にインポートする
+    // --- Render Radar Charts (Chart.jsを動的インポート) ---
+    async function renderRadarCharts() { 
         if (typeof Chart === 'undefined') {
             try {
-                // グローバルスコープ (window.Chart) に Chart をロードする
+                // UMD版をインポートしてグローバル (window.Chart) に登録
                 await import('https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.js');
+                if (typeof Chart === 'undefined') {
+                     throw new Error("Chart.js UMD module did not register window.Chart");
+                }
             } catch (e) {
                 console.error("Chart.jsの読み込みに失敗しました:", e);
-                return; // 読み込めなければ処理を中断
+                return;
             }
         }
 
@@ -420,7 +401,7 @@ const clientFirebaseConfig = {
         });
     }
 
-    // --- Load Reviews (★ 変更点: renderRadarChartsの呼び出し方を修正) ---
+    // --- Load Reviews ---
     async function loadReviews() {
         const reviewsListContainer = document.getElementById('reviews-list');
         if (!reviewsListContainer) return;
@@ -443,25 +424,48 @@ const clientFirebaseConfig = {
             sortedReviews.forEach(review => { if (review) { fragment.appendChild(createReviewArticle(review)); } });
             reviewsListContainer.appendChild(fragment);
             
-            // ★ 変更点: Chart.jsのロードチェックを削除し、awaitで呼び出す
-            await renderRadarCharts();
+            await renderRadarCharts(); // チャートを描画
 
         } catch (error) { console.error("レビューの読み込みに失敗しました:", error); if (reviewsListContainer) { reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`; } }
     }
 
-    // --- Initialize Static Scripts ---
+    // --- Initialize Static Scripts (フォトギャラリーの表示切替など) ---
     function initializeStaticScripts() {
         const showButton = document.getElementById("show-review-form-btn");
         const formWrapper = document.getElementById("review-form-wrapper");
-        if (showButton && formWrapper) { showButton.addEventListener("click", () => { formWrapper.classList.remove("hidden"); showButton.style.display = "none"; formWrapper.scrollIntoView({ behavior: "smooth" }); }); }
+        if (showButton && formWrapper) { 
+            showButton.addEventListener("click", () => { 
+                formWrapper.classList.remove("hidden"); 
+                showButton.style.display = "none"; 
+                formWrapper.scrollIntoView({ behavior: "smooth" }); 
+            });
+        }
+        
         const galleryItems = document.querySelectorAll('.gallery-item');
         const showMoreBtn = document.getElementById('show-more-gallery-btn');
         const initialVisibleCount = 8;
-        if (galleryItems.length > 0) { galleryItems.forEach((item, index) => { item.classList.toggle('hidden', index >= initialVisibleCount); }); if (galleryItems.length <= initialVisibleCount && showMoreBtn) showMoreBtn.style.display = 'none'; } else if (showMoreBtn) { showMoreBtn.style.display = 'none'; }
-        if (showMoreBtn) { showMoreBtn.addEventListener('click', () => { galleryItems.forEach(item => item.classList.remove('hidden')); showMoreBtn.style.display = 'none'; }); }
+        
+        if (galleryItems.length > 0) { 
+            galleryItems.forEach((item, index) => { 
+                // ★ 変更点: 'hidden' クラスの付け外し
+                item.classList.toggle('hidden', index >= initialVisibleCount); 
+            }); 
+            if (galleryItems.length <= initialVisibleCount && showMoreBtn) {
+                showMoreBtn.style.display = 'none'; 
+            }
+        } else if (showMoreBtn) { 
+            showMoreBtn.style.display = 'none'; 
+        }
+        
+        if (showMoreBtn) { 
+            showMoreBtn.addEventListener('click', () => { 
+                galleryItems.forEach(item => item.classList.remove('hidden')); 
+                showMoreBtn.style.display = 'none'; 
+            }); 
+        }
     }
 
-    // ★ 変更点: 汎用的な遅延読み込みオブザーバーを追加
+    // --- 汎用的な遅延読み込みオブザーバー ---
     function createLazyLoader(targetSelector, callback, rootMargin = '200px') {
         const targetElement = document.querySelector(targetSelector);
         if (!targetElement) {
@@ -469,15 +473,15 @@ const clientFirebaseConfig = {
             return;
         }
         const observerOptions = {
-            root: null, // ビューポートを基準
-            rootMargin: rootMargin, // ビューポートに入る手前から
-            threshold: 0.01 // 少しでも見えたら
+            root: null, 
+            rootMargin: rootMargin, 
+            threshold: 0.01 
         };
         const observerCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    callback(); // ターゲットが見えたらコールバック実行
-                    observer.unobserve(targetElement); // 実行したら監視を停止
+                    callback(); 
+                    observer.unobserve(targetElement); 
                     console.log(`${targetSelector} loaded lazily.`);
                 }
             });
@@ -486,26 +490,8 @@ const clientFirebaseConfig = {
         observer.observe(targetElement);
     }
 
-    // ★ 変更点: lazyLoadMap 関数を削除 (createLazyLoaderが代わりになる)
-
-    // --- DOMContentLoadedイベントリスナー (★ 変更点: JSの遅延読み込みを IntersectionObserver に変更) ---
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeStaticScripts();
-        
-        // ★ 変更: レビューリストが見えたら loadReviews を実行 (rootMargin 300px で少し早めに)
-        createLazyLoader('#reviews-list', loadReviews, '300px');
-
-        // ★ 変更: マップセクションが見えたら マップのsrc を設定 (rootMargin 100px で遅めに)
-        createLazyLoader('#map-section', () => {
-            const mapIframe = document.getElementById('map-iframe');
-            if (mapIframe && mapIframe.dataset.src) {
-                mapIframe.src = mapIframe.dataset.src;
-            }
-        }, '100px');
-    });
-
-    // --- カスタムイベント 'reviewPosted' のリスナー (★ 変更点: async対応) ---
-    document.addEventListener('reviewPosted', async (event) => { // ★ async を追加
+    // --- カスタムイベント 'reviewPosted' のリスナー ---
+    document.addEventListener('reviewPosted', async (event) => { 
         console.log('新規レビュー投稿を検知:', event.detail);
         const newReviewData = event.detail;
         const reviewsListContainer = document.getElementById('reviews-list');
@@ -515,10 +501,29 @@ const clientFirebaseConfig = {
         const article = createReviewArticle(newReviewData);
         reviewsListContainer.prepend(article);
         
-        // ★ 変更: setTimeout を削除し、awaitで呼び出す
         if (newReviewData?.author === "関＠シガゴル管理人" && newReviewData?.scores) { 
             await renderRadarCharts(); 
         }
     });
+
+    // ★★★ 変更点: DOMContentLoaded を削除し、スクリプトの最後で直接実行 ★★★
+    // このスクリプトは defer 動作するため、実行時点で DOM は準備完了しています。
+    try {
+        // (1) フォトギャラリーの表示を初期化
+        initializeStaticScripts();
+        
+        // (2) レビューリストが見えたら loadReviews を実行
+        createLazyLoader('#reviews-list', loadReviews, '300px');
+
+        // (3) マップセクションが見えたら マップのsrc を設定
+        createLazyLoader('#map-section', () => {
+            const mapIframe = document.getElementById('map-iframe');
+            if (mapIframe && mapIframe.dataset.src) {
+                mapIframe.src = mapIframe.dataset.src;
+            }
+        }, '100px');
+    } catch (e) {
+        console.error("スクリプトの初期化に失敗しました:", e);
+    }
 
 </script>
