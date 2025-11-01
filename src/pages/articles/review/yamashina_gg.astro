@@ -172,7 +172,7 @@ const reviewSchema = {
         address: {
             "@type": "PostalAddress",
             streetAddress: rangeData?.address || rangeData?.city || "大津市", // 例：住所がない場合、市だけでも入れる
-            locality: rangeData?.city || "大津市",
+            addressLocality: rangeData?.city || "大津市",
             addressRegion: "滋賀県",
             postalCode: rangeData?.postalCode || "", // 例：空文字列をフォールバックにする
             addressCountry: "JP",
