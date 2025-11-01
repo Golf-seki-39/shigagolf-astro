@@ -41,9 +41,11 @@ if (docSnap.exists()) {
 // --- [6] 関連記事リストの定義 (★大津エリアに更新) ---
 const experienceReports = [
     { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png' },
-];
+    { url: '/articles/yamashina_gg/', title: '山科ゴルフガーデン 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/シガゴル (2).jpg' },
+]
+;
 const comparisonArticles = [
-    { url: '/articles/comparison/otsu-area-guide/', title: '【大津市】ゴルフ練習場まとめ｜料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/otsu_area.jpg' },
+    { url: '/articles/comparison/otsu-area-guide/', title: '【掲載予定】ゴルフ練習場まとめ｜料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/otsu_area.jpg' },
 ]; 
 
 // --- [7] 料金シミュレーター用のデータ定義 (★★★ 全面的に更新 ★★★) ---
@@ -441,7 +443,7 @@ const faqSchema = {
 
             <!-- [14] 料金シミュレーター (★★★ HTML構造を全面的に更新 ★★★) -->
             <h2 id="section-simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                【料金シミュレーター】<br/>会員別の最強活用術まとめ（関の裏技）
+                【料金シミュレーター】<br/>会員別の最強活用術まとめ
             </h2>
             <p>では、この練習場のポテンシャルを最大限に引き出すには、どう使えばいいでしょうか？<br/>
             提供いただいた詳細な料金プランに基づき、あなたに最適なプランを計算するシミュレーターをご用意しました。</p>
@@ -790,119 +792,7 @@ const faqSchema = {
     </style>
 
     
-<!-- [14] 料金シミュレーター (★★★ HTML構造を全面的に更新 ★★★) -->
-<h2 id="section-simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-    【料金シミュレーター】<br/>会員別の最強活用術まとめ（関の裏技）
-</h2>
-<p>では、この練習場のポテンシャルを最大限に引き出すには、どう使えばいいでしょうか？<br/>
-提供いただいた詳細な料金プランに基づき、あなたに最適なプランを計算するシミュレーターをご用意しました。</p>
 
-<div id="price-simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8 overflow-hidden"> 
-    <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
-        かんたん料金シミュレーション
-    </h3>
-
-    <div class="space-y-4">
-        
-        <div id="step-1" class="step-container"> 
-            <label for="plan-select" class="font-semibold text-slate-700">① 会員プランを選択</label>
-            <select id="plan-select" class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white">
-                <option value="" disabled selected>--- プランを選択 ---</option>
-                <option value="visitor">ビジター (入会金なし)</option>
-                <option value="regular">レギュラー会員 (一般)</option>
-                <option value="gold">ゴールド会員 (年会費{priceData.initFee.gold.toLocaleString()}円)</option>
-                <option value="senior">シニア会員 (70歳以上)</option>
-                <option value="ladies">レディース会員</option>
-                <option value="student">学割 (大学生・専門学生)</option>
-                <option value="junior">ジュニア (高校生以下)</option>
-            </select>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div id="step-2" class="step-container"> 
-                <label class="font-semibold text-slate-700">② 利用日</label>
-                <div class="flex gap-4 mt-2" id="day-options">
-                    <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekday" class="mr-2"> 平日</label>
-                    <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekend" class="mr-2"> 土日祝</label>
-                </div>
-            </div>
-
-            <div id="step-3" class="step-container"> 
-                <label class="font-semibold text-slate-700">③ 利用打席</label>
-                <div class="flex gap-4 mt-2" id="floor-options">
-                    <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="1F/2F" class="mr-2"> 1F / 2F</label>
-                    <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="3F" class="mr-2"> 3F</label>
-                </div>
-            </div>
-        </div>
-
-        <div id="step-4" class="step-container"> 
-            <label class="font-semibold text-slate-700">④ 利用時間帯</label>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2" id="time-options">
-                <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
-                    <input type="radio" name="time" value="morning" class="mr-2"> 早朝 (9-10時半)
-                </label>
-                <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
-                    <input type="radio" name="time" value="daytime_am" class="mr-2"> 日中 (10時半-16時)
-                </label>
-                <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
-                    <input type="radio" name="time" value="daytime_pm" class="mr-2"> 夕方 (16時-21時)
-                </label>
-                <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
-                    <input type="radio" name="time" value="night" class="mr-2"> 夜間 (21時〜)
-                </label>
-            </div>
-        </div>
-
-        <!-- レディースデー選択 (動的表示) -->
-        <div id="step-ladies" class="step-container hidden"> 
-            <label class="font-semibold text-slate-700">⑤ レディースデー？</label>
-            <div class="flex gap-4 mt-2" id="ladies-day-options">
-                <label class="flex items-center cursor-pointer"><input type="radio" name="ladies-day" value="yes" class="mr-2"> はい (月・木曜)</label>
-                <label class="flex items-center cursor-pointer"><input type="radio" name="ladies-day" value="no" class="mr-2"> いいえ (それ以外)</label>
-            </div>
-        </div>
-
-        <!-- 月金 16時まで (動的表示) -->
-        <div id="step-monfri" class="step-container hidden"> 
-            <label class="font-semibold text-slate-700">⑤ 利用日（3F 120分）</label>
-            <div class="flex gap-4 mt-2" id="monfri-day-options">
-                <label class="flex items-center cursor-pointer"><input type="radio" name="monfri-day" value="yes" class="mr-2"> 月・金曜 (16時まで)</label>
-                <label class="flex items-center cursor-pointer"><input type="radio" name="monfri-day" value="no" class="mr-2"> いいえ (それ以外)</label>
-            </div>
-        </div>
-
-
-        <div id="step-5" class="step-container pt-2"> 
-            <div class="mb-4">
-                <label for="ball-count" class="font-semibold text-slate-700">⑥ 何球打ちますか？ (打ち放題と比較)</label>
-                <input type="range" id="ball-count" min="20" max="800" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
-                <div class="text-center font-bold text-green-700 text-lg mt-2" id="ball-count-display">150球</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300 mt-6">
-        <p class="text-slate-600 mb-1 text-sm">あなたの最適プラン（目安）</p>
-        <p class="text-3xl font-bold text-green-700" id="total-price-display">
-            ¥<span id="total-price">----</span>
-        </p>
-        <p class="text-sm font-bold text-blue-600 mt-2 hidden" id="best-plan-display"></p>
-    </div>
-    
-    <div class="text-center mt-4">
-        <button id="reset-button" class="hidden bg-slate-200 text-slate-600 text-sm py-1 px-3 rounded-full">
-            やり直す
-        </button>
-    </div>
-
-    <p class="text-xs text-center text-slate-500 mt-4">
-        ※あくまでシミュレーションです。実際の金額は練習場でご確認ください。<br/>
-        ※打ち放題プランは、カゴ打ちの料金を上回る場合に自動で推奨されます。<br/>
-        ※延長料金はシミュレーションに含まれていません。
-    </p>
-</div>
 
 <!-- [19] 料金シミュレーター・スクリプト (★★★ ロジックを全面的に更新 ★★★) -->
     <script define:vars={{ priceData }}>
