@@ -6,25 +6,29 @@ import { doc, getDoc } from "firebase/firestore";
 import { Image } from "astro:assets";
 
 // --- [2] 共通コンポーポーネントをインポート ---
-import MySlider from '../../../components/MySlider.astro';
-import ShareButtons from '../../../components/ShareButtons.astro';
-import AuthorProfile from '../../../components/AuthorProfile.astro';
+import MySlider from "../../../components/MySlider.astro";
+import ShareButtons from "../../../components/ShareButtons.astro";
+import AuthorProfile from "../../../components/AuthorProfile.astro";
 
 // --- [3] この記事固有の情報 ---
-// ★★★ 要確認 ★★★ 
-const title = "【山科ゴルフガーデン体験記】京都・滋賀エリアで“神対応”の打ちっぱなし｜料金・口コミ・レッスン内容を本音レビュー";
-const description = "営業時間前に着いたのに神対応…？「山科ゴルフガーデン」の料金・口コミ・レッスン内容を、手動ティーの面倒くささも隠さず本音でレビューします。";
+// ★★★ 要確認 ★★★
+const title =
+    "【山科ゴルフガーデン体験記】京都・滋賀エリアで“神対応”の打ちっぱなし｜料金・口コミ・レッスン内容を本音レビュー";
+const description =
+    "営業時間前に着いたのに神対応…？「山科ゴルフガーデン」の料金・口コミ・レッスン内容を、手動ティーの面倒くささも隠さず本音でレビューします。";
 const category = "体験談"; // カテゴリ
 const pubDate = "2025-11-01"; // ★記事の公開日
 const pubDateISO = "2025-11-01T11:00:00+09:00"; // ★記事の公開日(ISO)
 // ↓↓↓ OGP画像（アイキャッチ）
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/シガゴル (2).jpg"; // ★更新
-const rangeId = "yamashina_gg"; // ★Firebaseの練習場ID 
+const imageUrl =
+    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/シガゴル (2).jpg"; // ★更新
+const rangeId = "yamashina_gg"; // ★Firebaseの練習場ID
 
 // --- [4] シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/review/yamashina_gg/`; // ★記事のURL
-const headline = "【山科ゴルフガーデン体験記】京都・滋賀エリアで“神対応”の打ちっぱなし｜料金・口コミ・レッスン内容を本音レビュー";
+const headline =
+    "【山科ゴルフガーデン体験記】京都・滋賀エリアで“神対応”の打ちっぱなし｜料金・口コミ・レッスン内容を本音レビュー";
 
 // --- [5] Firebaseから練習場データを取得 ---
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
@@ -40,13 +44,24 @@ if (docSnap.exists()) {
 
 // --- [6] 関連記事リストの定義 (★大津エリアに更新) ---
 const experienceReports = [
-    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png' },
-    { url: '/articles/yamashina_gg/', title: '山科ゴルフガーデン 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/シガゴル (2).jpg' },
-]
-;
+    {
+        url: "/articles/isiyama-review/",
+        title: "石山ゴルフ練習場 体験レポート",
+        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png",
+    },
+    {
+        url: "/articles/yamashina_gg/",
+        title: "山科ゴルフガーデン 体験レポート",
+        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/シガゴル (2).jpg",
+    },
+];
 const comparisonArticles = [
-    { url: '/articles/comparison/otsu-area-guide/', title: '【掲載予定】ゴルフ練習場まとめ｜料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/otsu_area.jpg' },
-]; 
+    {
+        url: "/articles/comparison/otsu-area-guide/",
+        title: "【掲載予定】ゴルフ練習場まとめ｜料金・設備で徹底比較",
+        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/otsu_area.jpg",
+    },
+];
 
 // --- [7] 料金シミュレーター用のデータ定義 (★★★ 全面的に更新 ★★★) ---
 const priceData = {
@@ -54,23 +69,24 @@ const priceData = {
         // ★ カゴ打ち・ちょこ打ち専用の入場料
         visitor: 600,
         regular: 400, // レギュラー
-        gold: 0,      // ゴールド
-        senior: 300,  // シニア
-        ladies: 400,  // レディース (レギュラーに準ずると仮定)
+        gold: 0, // ゴールド
+        senior: 300, // シニア
+        ladies: 400, // レディース (レギュラーに準ずると仮定)
         student: 400, // 学割 (レギュラーに準ずると仮定)
-        junior: 0     // ジュニア
+        junior: 0, // ジュニア
     },
     kago: {
         price: 650,
-        balls: { weekday: 60, weekend: 50 } // 平日60球, 土日祝50球
+        balls: { weekday: 60, weekend: 50 }, // 平日60球, 土日祝50球
     },
-    choko: { // ゴールド会員のみ -> 会員のみ
+    choko: {
+        // ゴールド会員のみ -> 会員のみ
         weekday: { price: 220, balls: 20 },
-        weekend: { price: 260, balls: 20 }
+        weekend: { price: 260, balls: 20 },
     },
     initFee: {
         regular: 200,
-        gold: 22000
+        gold: 22000,
     },
     // 打ち放題プラン (ジュニアは別枠で処理)
     uchihodai: {
@@ -78,106 +94,121 @@ const priceData = {
         // ★ すべて入場料込みの価格
         general: {
             weekday: [
-                { duration: 60, price: 1500, floor: 'all' },
-                { duration: 90, price: 1800, floor: 'all' },
-                { duration: 120, price: 2100, floor: 'all' },
-                { duration: 180, price: 2100, floor: '3F' } // 3F限定
+                { duration: 60, price: 1500, floor: "all" },
+                { duration: 90, price: 1800, floor: "all" },
+                { duration: 120, price: 2100, floor: "all" },
+                { duration: 180, price: 2100, floor: "3F" }, // 3F限定
             ],
             weekend: [
-                { duration: 60, price: 1900, floor: 'all' },
-                { duration: 90, price: 2200, floor: 'all' },
-                { duration: 120, price: 2500, floor: 'all' },
-                { duration: 180, price: 2500, floor: '3F' } // 3F限定
-            ]
+                { duration: 60, price: 1900, floor: "all" },
+                { duration: 90, price: 2200, floor: "all" },
+                { duration: 120, price: 2500, floor: "all" },
+                { duration: 180, price: 2500, floor: "3F" }, // 3F限定
+            ],
         },
         // 会員限定 (レギュラー, ゴールド, シニア, レディース, 学割)
         // ★ すべて入場料込みの価格
         member_only: {
             senior: {
-                weekday: [{ duration: 120, price: 1800, floor: 'all' }],
-                weekend: [{ duration: 120, price: 2100, floor: 'all' }]
+                weekday: [{ duration: 120, price: 1800, floor: "all" }],
+                weekend: [{ duration: 120, price: 2100, floor: "all" }],
             },
             ladies: {
-                weekday: [{ duration: 120, price: 1800, floor: 'all' }],
-                weekend: [{ duration: 120, price: 2200, floor: 'all' }],
-                specialDay: { // 月・木
-                    duration: 120, price: 1600, floor: 'all'
-                }
+                weekday: [{ duration: 120, price: 1800, floor: "all" }],
+                weekend: [{ duration: 120, price: 2200, floor: "all" }],
+                specialDay: {
+                    // 月・木
+                    duration: 120,
+                    price: 1600,
+                    floor: "all",
+                },
             },
             student: {
-                weekday: [{ duration: 120, price: 1600, floor: 'all' }],
-                weekend: [{ duration: 120, price: 2000, floor: 'all' }]
+                weekday: [{ duration: 120, price: 1600, floor: "all" }],
+                weekend: [{ duration: 120, price: 2000, floor: "all" }],
             },
-            floor3: { // 3F限定 (レギュラー会員以上)
-                weekday: [{ duration: 120, price: 1600, floor: '3F' }], // 月金は16時まで
-                weekend: [{ duration: 120, price: 1600, floor: '3F' }]
+            floor3: {
+                // 3F限定 (レギュラー会員以上)
+                weekday: [{ duration: 120, price: 1600, floor: "3F" }], // 月金は16時まで
+                weekend: [{ duration: 120, price: 1600, floor: "3F" }],
             },
-            morning: { // 朝 (レギュラー会員以上)
+            morning: {
+                // 朝 (レギュラー会員以上)
                 weekday: [
-                    { duration: 90, price: 1300, floor: '3F', time: 'morning' },
-                    { duration: 180, price: 2500, floor: '1F/2F', time: 'morning' }
+                    { duration: 90, price: 1300, floor: "3F", time: "morning" },
+                    {
+                        duration: 180,
+                        price: 2500,
+                        floor: "1F/2F",
+                        time: "morning",
+                    },
                 ],
-                weekend: []
+                weekend: [],
             },
             // ★★★ [新規] ナイタープラン (全会員・全日) ★★★
             night: {
                 price: 1300,
-                duration: '閉店まで',
-                floor: 'all'
-            }
+                duration: "閉店まで",
+                floor: "all",
+            },
         },
         // ジュニア (入場料込みで常に1000円)
         junior: {
-            price: 1000
-        }
-    }
+            price: 1000,
+        },
+    },
 };
-
 
 // --- [8] 構造化データ用のオブジェクトを定義 (★修正: Review + FAQ) ---
 const reviewSchema = {
     "@context": "https://schema.org",
     "@type": "Review",
-    "itemReviewed": {
+    itemReviewed: {
         "@type": "LocalBusiness",
-        "name": rangeData?.name || "山科ゴルフガーデン",
-        "image": rangeData?.imageUrl || imageUrl,
-        "telephone": rangeData?.phone,
-        "priceRange": rangeData?.priceRange || "1000円〜2000円",
-        "address": {
+        name: rangeData?.name || "山科ゴルフガーデン",
+        image: rangeData?.imageUrl || imageUrl,
+        telephone: rangeData?.phone,
+        priceRange: rangeData?.priceRange || "1000円〜2000円",
+        address: {
             "@type": "PostalAddress",
-            "streetAddress": rangeData?.address,
-            "locality": rangeData?.city || "大津市",
-            "addressRegion": "滋賀県",
-            "postalCode": rangeData?.postalCode,
-            "addressCountry": "JP"
-        }
+            streetAddress: rangeData?.address || rangeData?.city || "大津市", // 例：住所がない場合、市だけでも入れる
+            locality: rangeData?.city || "大津市",
+            addressRegion: "滋賀県",
+            postalCode: rangeData?.postalCode || "", // 例：空文字列をフォールバックにする
+            addressCountry: "JP",
+        },
     },
-    "author": {
+    author: {
         "@type": "Person",
-        "name": "関（せき）",
-        "url": "https://shigolf.com/about/",
-        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
+        name: "関（せき）",
+        url: "https://shigolf.com/about/",
+        image: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
     },
-    "reviewBody": description,
-    "reviewRating": {
+    reviewBody: description,
+    reviewRating: {
         "@type": "Rating",
-        "ratingValue": rangeData?.avgRating ? parseFloat(rangeData.avgRating).toFixed(1) : "4.0", // ★仮の評価
-        "bestRating": "5",
-        "worstRating": "1"
+        ratingValue: rangeData?.avgRating
+            ? parseFloat(rangeData.avgRating).toFixed(1)
+            : "4.0", // ★仮の評価
+        bestRating: "5",
+        worstRating: "1",
     },
-    "publisher": {
+    publisher: {
         "@type": "Organization",
-        "name": "シガゴル",
-        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+        name: "シガゴル",
+        logo: {
+            "@type": "ImageObject",
+            url: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png",
+        },
     },
-    "datePublished": pubDateISO,
-    "dateModified": pubDateISO,
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": articleUrl
+    datePublished: pubDateISO,
+    dateModified: pubDateISO,
+    mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": articleUrl,
     },
-    "image": [ // ★全画像URLをSEOのためリスト化
+    image: [
+        // ★全画像URLをSEOのためリスト化
         imageUrl,
         "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/000000img.png", // 外観
         "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0271.png", // 受付
@@ -190,468 +221,982 @@ const reviewSchema = {
         "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0235.png", // 手動ティー
         "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0234.png", // ボール
         "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0215.png", // フェアウェイ
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0247.png"  // パターマット
-    ]
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0247.png", // パターマット
+    ],
 };
 
 // ★★★ [新規] FAQ構造化データ ★★★
 const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [
+    mainEntity: [
         {
             "@type": "Question",
-            "name": "予約は必要ですか？",
-            "acceptedAnswer": {
+            name: "予約は必要ですか？",
+            acceptedAnswer: {
                 "@type": "Answer",
-                "text": "打席の予約は不要です。レッスンのみ、お電話かフロントでの予約が必要です。"
-            }
+                text: "打席の予約は不要です。レッスンのみ、お電話かフロントでの予約が必要です。",
+            },
         },
         {
             "@type": "Question",
-            "name": "レンタルクラブやシューズはありますか？",
-            "acceptedAnswer": {
+            name: "レンタルクラブやシューズはありますか？",
+            acceptedAnswer: {
                 "@type": "Answer",
-                "text": "はい、あります（110円）。"
-            }
+                text: "はい、あります（110円）。",
+            },
         },
         {
             "@type": "Question",
-            "name": "クレジットカードは使えますか？",
-            "acceptedAnswer": {
+            name: "クレジットカードは使えますか？",
+            acceptedAnswer: {
                 "@type": "Answer",
-                "text": "いいえ、現金のみの対応です。"
-            }
+                text: "いいえ、現金のみの対応です。",
+            },
         },
         {
             "@type": "Question",
-            "name": "左利きの打席はありますか？",
-            "acceptedAnswer": {
+            name: "左利きの打席はありますか？",
+            acceptedAnswer: {
                 "@type": "Answer",
-                "text": "はい、あります。各フロアに3打席、合計9打席です。"
-            }
-        }
-    ]
+                text: "はい、あります。各フロアに3打席、合計9打席です。",
+            },
+        },
+    ],
 };
 ---
 
 <!-- [8] 構造化データ (★修正: Review + FAQを配列で出力) -->
-<script slot="head" type="application/ld+json" set:html={JSON.stringify([reviewSchema, faqSchema])} />
-
+<script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify([reviewSchema, faqSchema])}
+/>
 
 <!-- [9] メインレイアウト -->
-<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
-    
+<BaseLayout
+    title={title}
+    description={description}
+    pubDate={pubDate}
+    ogImage={imageUrl}
+>
     <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
-        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+        <a
+            href="/articles/"
+            class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
+        >
             ‹ お役立ち記事一覧に戻る
         </a>
-        
-        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
-            
+
+        <article
+            class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
+        >
             <header>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
+                    {headline}
+                </h1>
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
 
             <!-- [10] 導入 -->
-            <p>ゴルフ練習場で、私は時々「やらかす」ことがあります。<br/>
-            それは、ナビの到着予測を鵜呑みにして、営業開始時間（午前9時）より少し早く着いてしまうということです。</p>
+            <p>
+                ゴルフ練習場で、私は時々「やらかす」ことがあります。<br />
+                それは、ナビの到着予測を鵜呑みにして、営業開始時間（午前9時）より少し早く着いてしまうということです。
+            </p>
 
-            <p>駐車場に他の車が1台停まっていたので、私も「入れるかな？」と中に入ってみたのです。</p>
+            <p>
+                駐車場に他の車が1台停まっていたので、私も「入れるかな？」と中に入ってみたのです。
+            </p>
 
-            <p><br>——ゴルフ練習場の“早く着きすぎた問題”、経験ある方も多いのではないでしょうか。</p>
+            <p>
+                <br
+                />——ゴルフ練習場の“早く着きすぎた問題”、経験ある方も多いのではないでしょうか。
+            </p>
 
             <p>「あ、まだ開いてないか…」</p>
 
-            <p>普通なら、「まだ営業時間外ですので」と待たされる場面です。<br/>
-            しかし、返ってきたのは「あ、どうぞどうぞ！準備しますね！」という、嫌な顔一つない笑顔でした。</p>
-            
+            <p>
+                普通なら、「まだ営業時間外ですので」と待たされる場面です。<br />
+                しかし、返ってきたのは「あ、どうぞどうぞ！準備しますね！」という、嫌な顔一つない笑顔でした。
+            </p>
+
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/000000img.png" alt="山科ゴルフガーデンの外観" class="w-full h-auto object-cover rounded-lg" width={1200} height={800} format="webp" quality={80} loading="eager" fetchpriority="high"/>
-                <figcaption class="text-center text-sm text-slate-500 mt-2">リフォームされて綺麗な外観の山科ゴルフガーデン</figcaption>
+                <Image
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/000000img.png"
+                    alt="山科ゴルフガーデンの外観"
+                    class="w-full h-auto object-cover rounded-lg"
+                    width={1200}
+                    height={800}
+                    format="webp"
+                    quality={80}
+                    loading="eager"
+                    fetchpriority="high"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">
+                    リフォームされて綺麗な外観の山科ゴルフガーデン
+                </figcaption>
             </figure>
 
-            <p>正直、驚きました。<br/>
-            施設自体は高級感があるわけではなく、こじんまりとして実用的です。ですが、その瞬間に感じた「懐の深さ」こそが、この「山科ゴルフガーデン」の本質を物語っていたのかもしれません。<br/>
-            まさに“打ちっぱなし”という言葉が似合う、実直な練習場です。</p>
+            <p>
+                正直、驚きました。<br />
+                施設自体は高級感があるわけではなく、こじんまりとして実用的です。ですが、その瞬間に感じた「懐の深さ」こそが、この「山科ゴルフガーデン」の本質を物語っていたのかもしれません。<br
+                />
+                まさに“打ちっぱなし”という言葉が似合う、実直な練習場です。
+            </p>
 
             <!-- [11] 目次 -->
-            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
-                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+            <div
+                class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose"
+            >
+                <h2 class="text-xl font-bold mb-4 text-slate-800">
+                    この記事の目次
+                </h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#section-hikari" class="text-green-700 hover:underline">【料金・接客】山科ゴルフガーデンが“神対応”と言われる理由</a></li>
-                    <li><a href="#section-kage" class="text-green-700 hover:underline">【デメリット】アクセス・設備・ボール品質を本音レビュー</a></li>
-                    <li><a href="#section-simulator" class="text-green-700 hover:underline">【料金シミュレーター】会員別の最強活用術まとめ</a></li>
-                    <li><a href="#section-conclusion" class="text-green-700 hover:underline">【まとめ】山科ゴルフガーデンは「人で選ぶ」練習場だった</a></li>
-                    <li><a href="#info-summary" class="text-green-700 hover:underline">山科ゴルフガーデン 基本情報</a></li>
+                    <li>
+                        <a
+                            href="#section-hikari"
+                            class="text-green-700 hover:underline"
+                            >【料金・接客】山科ゴルフガーデンが“神対応”と言われる理由</a>
+                    </li>
+                    <li>
+                        <a
+                            href="#section-kage"
+                            class="text-green-700 hover:underline"
+                            >【デメリット】アクセス・設備・ボール品質を本音レビュー</a>
+                    </li>
+                    <li>
+                        <a
+                            href="#section-simulator"
+                            class="text-green-700 hover:underline"
+                            >【料金シミュレーター】会員別の最強活用術まとめ</a>
+                    </li>
+                    <li>
+                        <a
+                            href="#section-conclusion"
+                            class="text-green-700 hover:underline"
+                            >【まとめ】山科ゴルフガーデンは「人で選ぶ」練習場だった</a>
+                    </li>
+                    <li>
+                        <a
+                            href="#info-summary"
+                            class="text-green-700 hover:underline"
+                            >山科ゴルフガーデン 基本情報</a>
+                    </li>
                 </ul>
             </div>
 
             <!-- [12] 光の章 -->
-            <h2 id="section-hikari" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                【料金・接客】山科ゴルフガーデンが<br/>“神対応”と言われる理由
+            <h2
+                id="section-hikari"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
+                【料金・接客】山科ゴルフガーデンが<br />“神対応”と言われる理由
             </h2>
-            <p>この練習場の素敵な部分は、最新設備ではなく、圧倒的な「人」と「レッスンへの本気度」にあります。</p>
+            <p>
+                この練習場の素敵な部分は、最新設備ではなく、圧倒的な「人」と「レッスンへの本気度」にあります。
+            </p>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">1. 神対応な「料金提案」：マニュアルを超えた受付スタッフ</h3>
-            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+                1. 神対応な「料金提案」：マニュアルを超えた受付スタッフ
+            </h3>
+
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0271.png" alt="山科ゴルフガーデンの受付フロント" class="w-full h-auto object-cover rounded-lg" width={1200} height={800} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">実用的なフロント。ここで神対応が。</figcaption>
+                <Image
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0271.png"
+                    alt="山科ゴルフガーデンの受付フロント"
+                    class="w-full h-auto object-cover rounded-lg"
+                    width={1200}
+                    height={800}
+                    format="webp"
+                    quality={80}
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">
+                    実用的なフロント。ここで神対応が。
+                </figcaption>
             </figure>
 
-            <p>初めての訪問だと伝えると、受付のスタッフは流れ作業の表情から一変、非常に親身なモードに切り替わりました。</p>
+            <p>
+                初めての訪問だと伝えると、受付のスタッフは流れ作業の表情から一変、非常に親身なモードに切り替わりました。
+            </p>
 
-            <div class="not-prose my-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+            <div
+                class="not-prose my-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg"
+            >
                 <p class="font-bold text-slate-700">実際のやり取り</p>
-                <p><strong>スタッフさん</strong>：「普段は何球くらい打たれますか？ 今日はお時間はありますか？」<br/>
-                <strong>私</strong>：「100球前後は打ちたいです。時間は特に制限ないですが…」<br/>
-                <strong>スタッフさん</strong>：「なるほど。カゴ打ち（60球650円）だと2カゴで1,300円。それにビジター入場料600円で<strong>合計1,900円</strong>ですね。もし今後も来られるなら、レギュラー会員（入会費200円）になると入場料が400円になるので、今日入っても<strong>合計1,900円</strong>です」</p>
+                <p>
+                    <strong>スタッフさん</strong
+                    >：「普段は何球くらい打たれますか？
+                    今日はお時間はありますか？」<br />
+                    <strong>私</strong
+                    >：「100球前後は打ちたいです。時間は特に制限ないですが…」<br
+                    />
+                    <strong>スタッフさん</strong
+                    >：「なるほど。カゴ打ち（60球650円）だと2カゴで1,300円。それにビジター入場料600円で<strong
+                        >合計1,900円</strong
+                    >ですね。もし今後も来られるなら、レギュラー会員（入会費200円）になると入場料が400円になるので、今日入っても<strong
+                        >合計1,900円</strong
+                    >です」
+                </p>
                 <p>（ここまでは、よくある説明です。しかし…）</p>
-                <p><strong>スタッフさん</strong>：「ただ、会員様限定で『朝の打ち放題（90分）』というプランがあります。これが1,300円です。今日会員になれば、入会費200円と合わせて<strong>合計1,500円</strong>で90分打ち放題です。その方がお得じゃないですか？」</p>
+                <p>
+                    <strong>スタッフさん</strong
+                    >：「ただ、会員様限定で『朝の打ち放題（90分）』というプランがあります。これが1,300円です。今日会員になれば、入会費200円と合わせて<strong
+                        >合計1,500円</strong
+                    >で90分打ち放題です。その方がお得じゃないですか？」
+                </p>
             </div>
 
-            <p>なんと、<strong>400円も安くなるプラン</strong>を即座に提案してくれたのです。<br/>
-            さらに凄いのは、ただ安いプランを勧めるだけではないことです。</p>
+            <p>
+                なんと、<strong>400円も安くなるプラン</strong
+                >を即座に提案してくれたのです。<br />
+                さらに凄いのは、ただ安いプランを勧めるだけではないことです。
+            </p>
 
-            <p><strong>スタッフさん</strong>：「ただ、このプランは<strong>打席が3F限定</strong>になるんです。1Fや2Fと比べると、少しターゲットまでの距離感が変わるかもしれませんが、どうされますか？」</p>
+            <p>
+                <strong>スタッフさん</strong>：「ただ、このプランは<strong
+                    >打席が3F限定</strong
+                >になるんです。1Fや2Fと比べると、少しターゲットまでの距離感が変わるかもしれませんが、どうされますか？」
+            </p>
 
-            <p><br>安いプランの「デメリット」まで、きちんと伝えてくれました。この誠実さ。<br/>
-            迷っていると、横からレッスンプロらしき方が「3F、景色いいからよく打ちますよ！」と笑顔でアドバイス。</p>
+            <p>
+                <br
+                />安いプランの「デメリット」まで、きちんと伝えてくれました。この誠実さ。<br
+                />
+                迷っていると、横からレッスンプロらしき方が「3F、景色いいからよく打ちますよ！」と笑顔でアドバイス。
+            </p>
 
-            <p>なんだこのアットホーム感は、と思いました。<br/>
-            人との距離が近く、初心者や「初めての人」を絶対に戸惑わせない。そんな強い意志を感じる接客でした。（もちろん私は、迷わず3F打ち放題プランを選びました）</p>
+            <p>
+                なんだこのアットホーム感は、と思いました。<br />
+                人との距離が近く、初心者や「初めての人」を絶対に戸惑わせない。そんな強い意志を感じる接客でした。（もちろん私は、迷わず3F打ち放題プランを選びました）
+            </p>
 
             <!-- ★★★ [新規] 料金表の画像挿入 ★★★ -->
             <figure class="my-8">
-                 <h4 class="text-lg font-bold text-slate-800 mt-0 mb-3 text-center">実際の料金表（抜粋）</h4>
-                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0194.png" alt="山科ゴルフガーデン 料金表（カゴ打ち）" class="w-full h-auto object-cover rounded-lg border" width={800} height={1000} format="webp" quality={80} />
-                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0195.png" alt="山科ゴルフガーデン 料金表（打ち放題）" class="w-full h-auto object-cover rounded-lg border" width={800} height={1000} format="webp" quality={80} />
-                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0282.png" alt="山科ゴルフガーデン 料金表（会員限定プラン）" class="w-full h-auto object-cover rounded-lg border" width={800} height={1000} format="webp" quality={80} />
-                 </div>
-                 <figcaption class="text-center text-sm text-slate-500 mt-2">カゴ打ち、打ち放題、そして「朝」「夜」のお得なプランが用意されています。</figcaption>
+                <h4
+                    class="text-lg font-bold text-slate-800 mt-0 mb-3 text-center"
+                >
+                    実際の料金表（抜粋）
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0194.png"
+                        alt="山科ゴルフガーデン 料金表（カゴ打ち）"
+                        class="w-full h-auto object-cover rounded-lg border"
+                        width={800}
+                        height={1000}
+                        format="webp"
+                        quality={80}
+                    />
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0195.png"
+                        alt="山科ゴルフガーデン 料金表（打ち放題）"
+                        class="w-full h-auto object-cover rounded-lg border"
+                        width={800}
+                        height={1000}
+                        format="webp"
+                        quality={80}
+                    />
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0282.png"
+                        alt="山科ゴルフガーデン 料金表（会員限定プラン）"
+                        class="w-full h-auto object-cover rounded-lg border"
+                        width={800}
+                        height={1000}
+                        format="webp"
+                        quality={80}
+                    />
+                </div>
+                <figcaption class="text-center text-sm text-slate-500 mt-2">
+                    カゴ打ち、打ち放題、そして「朝」「夜」のお得なプランが用意されています。
+                </figcaption>
             </figure>
             <!-- ★★★ [挿入ここまで] ★★★ -->
 
-
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">2. レッスン内容：「実質1,100円」の衝撃。PGA公認スクールの本気度</h3>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+                2. レッスン内容：「実質1,100円」の衝撃。PGA公認スクールの本気度
+            </h3>
 
             <!-- ★★★ [新規] レッスン案内の画像挿入 ★★★ -->
             <figure class="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0241.png" alt="お試し2回レッスン 2200円の案内" class="w-full h-auto object-cover rounded-lg border" width={800} height={1000} format="webp" quality={80} />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">価格破壊の「お試しレッスン」。</figcaption>
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0241.png"
+                        alt="お試し2回レッスン 2200円の案内"
+                        class="w-full h-auto object-cover rounded-lg border"
+                        width={800}
+                        height={1000}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        価格破壊の「お試しレッスン」。
+                    </figcaption>
                 </div>
-                 <div>
-                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0275.png" alt="PGA公認ゴルフスクールの看板" class="w-full h-auto object-cover rounded-lg border" width={800} height={1000} format="webp" quality={80} />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">滋賀県唯一（※）のPGA公認スクール。</figcaption>
+                <div>
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0275.png"
+                        alt="PGA公認ゴルフスクールの看板"
+                        class="w-full h-auto object-cover rounded-lg border"
+                        width={800}
+                        height={1000}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        滋賀県唯一（※）のPGA公認スクール。
+                    </figcaption>
                 </div>
             </figure>
             <!-- ★★★ [挿入ここまで] ★★★ -->
 
-            <p>そして、この練習場の最大のウリが「レッスン」です。<br/>
-            特に「お試しレッスン（2回 2,200円）」は、正直、価格破壊です。</p>
+            <p>
+                そして、この練習場の最大のウリが「レッスン」です。<br />
+                特に「お試しレッスン（2回 2,200円）」は、正直、価格破壊です。
+            </p>
 
-            <p>ボール代・レッスン代・消費税込みで、1回あたり1,100円。<br/>
-            つまり、<strong>普通に1回練習するのとほぼ同じ値段で、プロのレッスンがついてくる</strong>計算になります。<br><br>これは「羨ましい」を通り越して「衝撃」です。</p>
+            <p>
+                ボール代・レッスン代・消費税込みで、1回あたり1,100円。<br />
+                つまり、<strong
+                    >普通に1回練習するのとほぼ同じ値段で、プロのレッスンがついてくる</strong
+                >計算になります。<br /><br
+                />これは「羨ましい」を通り越して「衝撃」です。
+            </p>
 
-            <p>しかも、ただのスクールではないのです。<br/>
-            PGAの公式サイトで確認した限り、ここは滋賀県で唯一（※）の<a href="https://pga.or.jp/lesson/school/detail/kinki_chugoku" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline"><strong>「PGA公認ゴルフスクール」</strong></a>でした。（※シガゴル調べ）</p>
+            <p>
+                しかも、ただのスクールではないのです。<br />
+                PGAの公式サイトで確認した限り、ここは滋賀県で唯一（※）の<a
+                    href="https://pga.or.jp/lesson/school/detail/kinki_chugoku"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-green-700 hover:underline"
+                    ><strong>「PGA公認ゴルフスクール」</strong></a
+                >でした。（※シガゴル調べ）
+            </p>
 
-            <p>PGA認定プロは多くいますが、「公認スクール」となると話は別です。それだけ本気で「ゴルファーを育てる」という覚悟が感じられます。</p>
+            <p>
+                PGA認定プロは多くいますが、「公認スクール」となると話は別です。それだけ本気で「ゴルファーを育てる」という覚悟が感じられます。
+            </p>
 
-            <p>今回は体験できませんでしたが、ゴルフを始めたい、あるいは本気で習いたいと思っている人にとって、これ以上の「入口」は京滋エリアに存在しないのではないでしょうか。<br/>
-            本気で打ちっぱなしの練習を始めたい人にとって、これほど心強い環境はありません。</p>
+            <p>
+                今回は体験できませんでしたが、ゴルフを始めたい、あるいは本気で習いたいと思っている人にとって、これ以上の「入口」は京滋エリアに存在しないのではないでしょうか。<br
+                />
+                本気で打ちっぱなしの練習を始めたい人にとって、これほど心強い環境はありません。
+            </p>
 
             <!-- [13] 影の章 -->
-            <h2 id="section-kage" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                【デメリット】アクセス・設備・ボール品質を<br/>本音レビュー
+            <h2
+                id="section-kage"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
+                【デメリット】アクセス・設備・ボール品質を<br />本音レビュー
             </h2>
-            <p>もちろん、良いことばかりではありません。<br>「シガゴル」は本音で語るメディアです。</p>
+            <p>
+                もちろん、良いことばかりではありません。<br
+                />「シガゴル」は本音で語るメディアです。
+            </p>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">1. アクセスの注意点：生活道路と「申し訳ない」の心境</h3>
-            <p>ICから5分ほどの距離ですが、最後のルートはいわゆる「生活道路」です。<br/>
-            （※今回、路駐の車が多く写真は撮れませんでした）</p>
-            <p>道幅が極端に狭いわけではないですが、正直、あまり進んで走りたくはありません。</p>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+                1. アクセスの注意点：生活道路と「申し訳ない」の心境
+            </h3>
+            <p>
+                ICから5分ほどの距離ですが、最後のルートはいわゆる「生活道路」です。<br
+                />
+                （※今回、路駐の車が多く写真は撮れませんでした）
+            </p>
+            <p>
+                道幅が極端に狭いわけではないですが、正直、あまり進んで走りたくはありません。
+            </p>
 
-            <p>たまたまかもしれませんが、平日の朝8時半頃に行くと、<strong>ゴミ収集車が作業中で、一時的に通行できない瞬間がありました。</strong></p>
+            <p>
+                たまたまかもしれませんが、平日の朝8時半頃に行くと、<strong
+                    >ゴミ収集車が作業中で、一時的に通行できない瞬間がありました。</strong>
+            </p>
 
-            <p>自転車や歩行者こそ見かけませんでしたが、「もし自分が地域住民だったら、ゴルフバッグを積んだ車が生活道路を通るのは、あまり良い気分はしないかもな…」と、逆に申し訳ない気持ちになりました。運転は細心の注意が必要です。</p>
+            <p>
+                自転車や歩行者こそ見かけませんでしたが、「もし自分が地域住民だったら、ゴルフバッグを積んだ車が生活道路を通るのは、あまり良い気分はしないかもな…」と、逆に申し訳ない気持ちになりました。運転は細心の注意が必要です。
+            </p>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">2. 設備の口コミ：手動ティーとボール品質の「本音」</h3>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+                2. 設備の口コミ：手動ティーとボール品質の「本音」
+            </h3>
 
             <!-- ★★★ [新規] レンジ雰囲気の写真挿入 ★★★ -->
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0210.png" alt="山科ゴルフガーデンの3F打席からの眺め" class="w-full h-auto object-cover rounded-lg" width={1200} height={800} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">私が練習した3F打席の風景。開放感はありますが、設備は昔ながらです。</figcaption>
+                <Image
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0210.png"
+                    alt="山科ゴルフガーデンの3F打席からの眺め"
+                    class="w-full h-auto object-cover rounded-lg"
+                    width={1200}
+                    height={800}
+                    format="webp"
+                    quality={80}
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">
+                    私が練習した3F打席の風景。開放感はありますが、設備は昔ながらです。
+                </figcaption>
             </figure>
             <!-- ★★★ [挿入ここまで] ★★★ -->
 
-            <p>ここの打席は、すべて「手動ティーアップ」です。<br/>
-            正直に言います。<strong>やっぱり、めんどくさいです。</strong></p>
+            <p>
+                ここの打席は、すべて「手動ティーアップ」です。<br />
+                正直に言います。<strong>やっぱり、めんどくさいです。</strong>
+            </p>
 
             <figure class="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0235.png" alt="山科ゴルフガーデンの手動ティーアップ" class="w-full h-auto object-cover rounded-lg" width={800} height={800} format="webp" quality={80} />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">昔ながらの手動式。1球ずつセットします。</figcaption>
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0235.png"
+                        alt="山科ゴルフガーデンの手動ティーアップ"
+                        class="w-full h-auto object-cover rounded-lg"
+                        width={800}
+                        height={800}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        昔ながらの手動式。1球ずつセットします。
+                    </figcaption>
                 </div>
-                 <div>
-                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0234.png" alt="山科ゴルフガーデンのレンジボール" class="w-full h-auto object-cover rounded-lg" width={800} height={800} format="webp" quality={80} />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">ボールはいい感じに使い込まれています。</figcaption>
+                <div>
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0234.png"
+                        alt="山科ゴルフガーデンのレンジボール"
+                        class="w-full h-auto object-cover rounded-lg"
+                        width={800}
+                        height={800}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        ボールはいい感じに使い込まれています。
+                    </figcaption>
                 </div>
             </figure>
 
-            <p>特に、前の人が低いティーを使っていた場合、自分で交換しなくてはなりません。<br/>
-            「雨の日や湿度の高い日に、あのゴムティーを触りたくないな…」と思う人もいるでしょう。さらに言えば、ティーを交換するには<strong>マット自体も一度持ち上げる必要があります。</strong>湿気で汚れたマットの裏側もあまり触りたくない、という人も少なくないかもしれません。</p>
+            <p>
+                特に、前の人が低いティーを使っていた場合、自分で交換しなくてはなりません。<br
+                />
+                「雨の日や湿度の高い日に、あのゴムティーを触りたくないな…」と思う人もいるでしょう。さらに言えば、ティーを交換するには<strong
+                    >マット自体も一度持ち上げる必要があります。</strong
+                >湿気で汚れたマットの裏側もあまり触りたくない、という人も少なくないかもしれません。
+            </p>
 
-            <p>ただ、私の練習はアイアンショットが中心で、ドライバーはそこまで多く打たないため、「絶対に嫌」というほどではありませんでした。</p>
+            <p>
+                ただ、私の練習はアイアンショットが中心で、ドライバーはそこまで多く打たないため、「絶対に嫌」というほどではありませんでした。
+            </p>
 
-            <p>ボールは、２ピースボールで割と使い込んでいます。<br/>
-            ピカピカの新品ボールを期待していくと裏切られます。</p>
+            <p>
+                ボールは、２ピースボールで割と使い込んでいます。<br />
+                ピカピカの新品ボールを期待していくと裏切られます。
+            </p>
 
-            <p>ですが、これも練習です。「ボールの質が気になる」というレベルの人は、そもそもインドアの高精度シミュレーターを選ぶべきでしょう。私は、打感や弾道が極端におかしいとは感じなかったので、全く気になりませんでした。</p>
+            <p>
+                ですが、これも練習です。「ボールの質が気になる」というレベルの人は、そもそもインドアの高精度シミュレーターを選ぶべきでしょう。私は、打感や弾道が極端におかしいとは感じなかったので、全く気になりませんでした。
+            </p>
 
-            <div class="not-prose my-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
-                <p class="font-bold m-0">結局、ここは「設備」ではなく「人」で記憶に残る場所。<br/>そんな練習場は、そう多くありません。</p>
+            <div
+                class="not-prose my-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg"
+            >
+                <p class="font-bold m-0">
+                    結局、ここは「設備」ではなく「人」で記憶に残る場所。<br
+                    />そんな練習場は、そう多くありません。
+                </p>
             </div>
 
-            <p>快適な自動ティーでの“打ちっぱなし”を求める人や、<strong>「最新設備」や「快適さ」を最優先する人には、ここは向きません。</strong></p>
+            <p>
+                快適な自動ティーでの“打ちっぱなし”を求める人や、<strong
+                    >「最新設備」や「快適さ」を最優先する人には、ここは向きません。</strong>
+            </p>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">3. 練習環境の割り切り：「アプローチ・バンカー」は無し</h3>
-            <p>ここは「ショット練習に特化した練習場」です。<br/>
-            バンカー練習場も、アプローチ専用練習場もありません。パター練習設備も、休憩室のパターマットだけです。</p>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+                3. 練習環境の割り切り：「アプローチ・バンカー」は無し
+            </h3>
+            <p>
+                ここは「ショット練習に特化した練習場」です。<br />
+                バンカー練習場も、アプローチ専用練習場もありません。パター練習設備も、休憩室のパターマットだけです。
+            </p>
 
             <!-- ★★★ [新規] パターマットの写真挿入 ★★★ -->
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0247.png" alt="山科ゴルフガーデンの休憩室にあるパターマット" class="w-full h-auto object-cover rounded-lg" width={1200} height={800} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">パター練習は、休憩室のこのマット（2カ所）です。</figcaption>
+                <Image
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0247.png"
+                    alt="山科ゴルフガーデンの休憩室にあるパターマット"
+                    class="w-full h-auto object-cover rounded-lg"
+                    width={1200}
+                    height={800}
+                    format="webp"
+                    quality={80}
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">
+                    パター練習は、休憩室のこのマット（2カ所）です。
+                </figcaption>
             </figure>
             <!-- ★★★ [挿入ここまで] ★★★ -->
-            
+
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0215.png" alt="山科ゴルフガーデンのフェアウェイ" class="w-full h-auto object-cover rounded-lg" width={1200} height={800} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">180ヤードのシンプルなフェアウェイ。ショット練習に特化。</figcaption>
+                <Image
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/IMG_0215.png"
+                    alt="山科ゴルフガーデンのフェアウェイ"
+                    class="w-full h-auto object-cover rounded-lg"
+                    width={1200}
+                    height={800}
+                    format="webp"
+                    quality={80}
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">
+                    180ヤードのシンプルなフェアウェイ。ショット練習に特化。
+                </figcaption>
             </figure>
 
-            <p>「一つの施設ですべて完結させたい」<br/>
-            そう思うのも分かりますが、アプローチ練習場がない施設は意外と多いものです。</p>
+            <p>
+                「一つの施設ですべて完結させたい」<br />
+                そう思うのも分かりますが、アプローチ練習場がない施設は意外と多いものです。
+            </p>
 
-            <p>私自身は「アプローチはA練習場、ショットはB練習場」と使い分けるスタイルなので、この割り切りは「アリ」です。<br/>
-            ここは「ショットを撃ち込む場所」と明確に認識して使うべきでしょう。</p>
+            <p>
+                私自身は「アプローチはA練習場、ショットはB練習場」と使い分けるスタイルなので、この割り切りは「アリ」です。<br
+                />
+                ここは「ショットを撃ち込む場所」と明確に認識して使うべきでしょう。
+            </p>
 
             <!-- [14] 料金シミュレーター (★★★ HTML構造を全面的に更新 ★★★) -->
-            <h2 id="section-simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                【料金シミュレーター】<br/>会員別の最強活用術まとめ
+            <h2
+                id="section-simulator"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
+                【料金シミュレーター】<br />会員別の最強活用術まとめ
             </h2>
-            <p>では、この練習場のポテンシャルを最大限に引き出すには、どう使えばいいでしょうか？<br/>
-            提供いただいた詳細な料金プランに基づき、あなたに最適なプランを計算するシミュレーターをご用意しました。</p>
+            <p>
+                では、この練習場のポテンシャルを最大限に引き出すには、どう使えばいいでしょうか？<br
+                />
+                提供いただいた詳細な料金プランに基づき、あなたに最適なプランを計算するシミュレーターをご用意しました。
+            </p>
 
-            <div id="price-simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8 overflow-hidden"> 
-                <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+            <div
+                id="price-simulator"
+                class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8 overflow-hidden"
+            >
+                <h3
+                    class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6 inline-block mr-2 -mt-1"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        ><path
+                            fill-rule="evenodd"
+                            d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                            clip-rule="evenodd"></path></svg
+                    >
                     かんたん料金シミュレーション
                 </h3>
-            
+
                 <div class="space-y-4">
-                    
-                    <div id="step-1" class="step-container"> 
-                        <label for="plan-select" class="font-semibold text-slate-700">① 会員プランを選択</label>
+                    <div id="step-1" class="step-container">
+                        <label
+                            for="plan-select"
+                            class="font-semibold text-slate-700"
+                            >① 会員プランを選択</label
+                        >
                         <!-- ★ 修正: disabled selected を追加し、regularのselectedを削除 -->
-                        <select id="plan-select" class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white">
-                            <option value="" disabled selected>--- プランを選択 ---</option>
-                            <option value="visitor">ビジター (入会金なし)</option>
-                            <option value="regular">レギュラー会員 (一般)</option>
-                            <option value="gold">ゴールド会員 (年会費{priceData.initFee.gold.toLocaleString()}円)</option>
-                            <option value="senior">シニア会員 (70歳以上)</option>
+                        <select
+                            id="plan-select"
+                            class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white"
+                        >
+                            <option value="" disabled selected
+                                >--- プランを選択 ---</option
+                            >
+                            <option value="visitor"
+                                >ビジター (入会金なし)</option
+                            >
+                            <option value="regular"
+                                >レギュラー会員 (一般)</option
+                            >
+                            <option value="gold"
+                                >ゴールド会員 (年会費{
+                                    priceData.initFee.gold.toLocaleString()
+                                }円)</option
+                            >
+                            <option value="senior">シニア会員 (70歳以上)</option
+                            >
                             <option value="ladies">レディース会員</option>
-                            <option value="student">学割 (大学生・専門学生)</option>
-                            <option value="junior">ジュニア (高校生以下)</option>
+                            <option value="student"
+                                >学割 (大学生・専門学生)</option
+                            >
+                            <option value="junior">ジュニア (高校生以下)</option
+                            >
                         </select>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div id="step-2" class="step-container"> 
-                            <label class="font-semibold text-slate-700">② 利用日</label>
+                        <div id="step-2" class="step-container">
+                            <label class="font-semibold text-slate-700"
+                                >② 利用日</label
+                            >
                             <div class="flex gap-4 mt-2" id="day-options">
                                 <!-- ★ 修正: checkedを削除 -->
-                                <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekday" class="mr-2"> 平日</label>
-                                <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekend" class="mr-2"> 土日祝</label>
+                                <label class="flex items-center cursor-pointer"
+                                    ><input
+                                        type="radio"
+                                        name="day"
+                                        value="weekday"
+                                        class="mr-2"
+                                    /> 平日</label
+                                >
+                                <label class="flex items-center cursor-pointer"
+                                    ><input
+                                        type="radio"
+                                        name="day"
+                                        value="weekend"
+                                        class="mr-2"
+                                    /> 土日祝</label
+                                >
                             </div>
                         </div>
 
-                        <div id="step-3" class="step-container"> 
-                            <label class="font-semibold text-slate-700">③ 利用打席</label>
+                        <div id="step-3" class="step-container">
+                            <label class="font-semibold text-slate-700"
+                                >③ 利用打席</label
+                            >
                             <div class="flex gap-4 mt-2" id="floor-options">
                                 <!-- ★ 修正: checkedを削除 -->
-                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="1F/2F" class="mr-2"> 1F / 2F</label>
-                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="3F" class="mr-2"> 3F</label>
+                                <label class="flex items-center cursor-pointer"
+                                    ><input
+                                        type="radio"
+                                        name="floor"
+                                        value="1F/2F"
+                                        class="mr-2"
+                                    /> 1F / 2F</label
+                                >
+                                <label class="flex items-center cursor-pointer"
+                                    ><input
+                                        type="radio"
+                                        name="floor"
+                                        value="3F"
+                                        class="mr-2"
+                                    /> 3F</label
+                                >
                             </div>
                         </div>
                     </div>
 
-                    <div id="step-4" class="step-container"> 
-                        <label class="font-semibold text-slate-700">④ 利用時間帯</label>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2" id="time-options">
-                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
-                                <input type="radio" name="time" value="morning" class="mr-2"> 早朝 (9-10時半)
+                    <div id="step-4" class="step-container">
+                        <label class="font-semibold text-slate-700"
+                            >④ 利用時間帯</label
+                        >
+                        <div
+                            class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2"
+                            id="time-options"
+                        >
+                            <label
+                                class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400"
+                            >
+                                <input
+                                    type="radio"
+                                    name="time"
+                                    value="morning"
+                                    class="mr-2"
+                                /> 早朝 (9-10時半)
                             </label>
                             <!-- ★ 修正: checkedを削除 -->
-                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
-                                <input type="radio" name="time" value="daytime_am" class="mr-2"> 日中 (10時半-16時)
+                            <label
+                                class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400"
+                            >
+                                <input
+                                    type="radio"
+                                    name="time"
+                                    value="daytime_am"
+                                    class="mr-2"
+                                /> 日中 (10時半-16時)
                             </label>
-                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
-                                <input type="radio" name="time" value="daytime_pm" class="mr-2"> 夕方 (16時-21時)
+                            <label
+                                class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400"
+                            >
+                                <input
+                                    type="radio"
+                                    name="time"
+                                    value="daytime_pm"
+                                    class="mr-2"
+                                /> 夕方 (16時-21時)
                             </label>
-                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
-                                <input type="radio" name="time" value="night" class="mr-2"> 夜間 (21時〜)
+                            <label
+                                class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400"
+                            >
+                                <input
+                                    type="radio"
+                                    name="time"
+                                    value="night"
+                                    class="mr-2"
+                                /> 夜間 (21時〜)
                             </label>
                         </div>
                     </div>
 
                     <!-- レディースデー選択 (動的表示) -->
-                    <div id="step-ladies" class="step-container hidden"> 
-                        <label class="font-semibold text-slate-700">⑤ レディースデー？</label>
+                    <div id="step-ladies" class="step-container hidden">
+                        <label class="font-semibold text-slate-700"
+                            >⑤ レディースデー？</label
+                        >
                         <div class="flex gap-4 mt-2" id="ladies-day-options">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="ladies-day" value="yes" class="mr-2"> はい (月・木曜)</label>
+                            <label class="flex items-center cursor-pointer"
+                                ><input
+                                    type="radio"
+                                    name="ladies-day"
+                                    value="yes"
+                                    class="mr-2"
+                                /> はい (月・木曜)</label
+                            >
                             <!-- ★ 修正: checkedを削除 -->
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="ladies-day" value="no" class="mr-2"> いいえ (それ以外)</label>
+                            <label class="flex items-center cursor-pointer"
+                                ><input
+                                    type="radio"
+                                    name="ladies-day"
+                                    value="no"
+                                    class="mr-2"
+                                /> いいえ (それ以外)</label
+                            >
                         </div>
                     </div>
 
                     <!-- 月金 16時まで (動的表示) -->
-                    <div id="step-monfri" class="step-container hidden"> 
-                        <label class="font-semibold text-slate-700">⑤ 利用日（3F 120分）</label>
+                    <div id="step-monfri" class="step-container hidden">
+                        <label class="font-semibold text-slate-700"
+                            >⑤ 利用日（3F 120分）</label
+                        >
                         <div class="flex gap-4 mt-2" id="monfri-day-options">
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="monfri-day" value="yes" class="mr-2"> 月・金曜 (16時まで)</label>
+                            <label class="flex items-center cursor-pointer"
+                                ><input
+                                    type="radio"
+                                    name="monfri-day"
+                                    value="yes"
+                                    class="mr-2"
+                                /> 月・金曜 (16時まで)</label
+                            >
                             <!-- ★ 修正: checkedを削除 -->
-                            <label class="flex items-center cursor-pointer"><input type="radio" name="monfri-day" value="no" class="mr-2"> いいえ (それ以外)</label>
+                            <label class="flex items-center cursor-pointer"
+                                ><input
+                                    type="radio"
+                                    name="monfri-day"
+                                    value="no"
+                                    class="mr-2"
+                                /> いいえ (それ以外)</label
+                            >
                         </div>
                     </div>
 
-
-                    <div id="step-5" class="step-container pt-2"> 
+                    <div id="step-5" class="step-container pt-2">
                         <div class="mb-4">
-                            <label for="ball-count" class="font-semibold text-slate-700">⑥ 何球打ちますか？ (打ち放題と比較)</label>
-                            <input type="range" id="ball-count" min="20" max="800" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
-                            <div class="text-center font-bold text-green-700 text-lg mt-2" id="ball-count-display">150球</div>
+                            <label
+                                for="ball-count"
+                                class="font-semibold text-slate-700"
+                                >⑥ 何球打ちますか？ (打ち放題と比較)</label
+                            >
+                            <input
+                                type="range"
+                                id="ball-count"
+                                min="20"
+                                max="800"
+                                step="10"
+                                value="150"
+                                class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                            />
+                            <div
+                                class="text-center font-bold text-green-700 text-lg mt-2"
+                                id="ball-count-display"
+                            >
+                                150球
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300 mt-6">
-                    <p class="text-slate-600 mb-1 text-sm">あなたの最適プラン（目安）</p>
-                    <p class="text-3xl font-bold text-green-700" id="total-price-display">
+                <div
+                    class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300 mt-6"
+                >
+                    <p class="text-slate-600 mb-1 text-sm">
+                        あなたの最適プラン（目安）
+                    </p>
+                    <p
+                        class="text-3xl font-bold text-green-700"
+                        id="total-price-display"
+                    >
                         ¥<span id="total-price">----</span>
                     </p>
-                    <p class="text-sm font-bold text-blue-600 mt-2 hidden" id="best-plan-display"></p>
+                    <p
+                        class="text-sm font-bold text-blue-600 mt-2 hidden"
+                        id="best-plan-display"
+                    >
+                    </p>
                 </div>
-                
+
                 <div class="text-center mt-4">
-                    <button id="reset-button" class="hidden bg-slate-200 text-slate-600 text-sm py-1 px-3 rounded-full">
+                    <button
+                        id="reset-button"
+                        class="hidden bg-slate-200 text-slate-600 text-sm py-1 px-3 rounded-full"
+                    >
                         やり直す
                     </button>
                 </div>
 
                 <p class="text-xs text-center text-slate-500 mt-4">
-                    ※あくまでシミュレーションです。実際の金額は練習場でご確認ください。<br/>
-                    ※打ち放題プランは、カゴ打ちの料金を上回る場合に自動で推奨されます。<br/>
+                    ※あくまでシミュレーションです。実際の金額は練習場でご確認ください。<br
+                    />
+                    ※打ち放題プランは、カゴ打ちの料金を上回る場合に自動で推奨されます。<br
+                    />
                     ※延長料金はシミュレーションに含まれていません。
                 </p>
             </div>
 
-
             <!-- [15] 結論 -->
-            <h2 id="section-conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                【まとめ】山科ゴルフガーデンは<br/>「人で選ぶ」練習場だった
+            <h2
+                id="section-conclusion"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
+                【まとめ】山科ゴルフガーデンは<br />「人で選ぶ」練習場だった
             </h2>
-            <p>ゴルフメドレー版では「レッスン重視の初心者・初級者に最適」と書きました。<br/>
-            それは事実です。ですが、シガゴルの結論は、もう少し踏み込みたいと思います。</p>
+            <p>
+                ゴルフメドレー版では「レッスン重視の初心者・初級者に最適」と書きました。<br
+                />
+                それは事実です。ですが、シガゴルの結論は、もう少し踏み込みたいと思います。
+            </p>
 
             <div class="not-prose my-8 grid md:grid-cols-2 gap-6">
                 <div class="bg-red-50 border-2 border-red-200 rounded-lg p-4">
-                    <h4 class="text-lg font-bold text-red-800 mt-0 text-center">❌ おすすめしない人</h4>
+                    <h4 class="text-lg font-bold text-red-800 mt-0 text-center">
+                        ❌ おすすめしない人
+                    </h4>
                     <ul class="list-none p-0 m-0 space-y-2">
-                        <li class="flex items-start"><span class="mr-2">🚫</span>最新のオートティーアップが必須な人</li>
-                        <li class="flex items-start"><span class="mr-2">🚫</span>アプローチ練習も全部ここでやりたい人</li>
+                        <li class="flex items-start">
+                            <span class="mr-2">🚫</span
+                            >最新のオートティーアップが必須な人
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">🚫</span
+                            >アプローチ練習も全部ここでやりたい人
+                        </li>
                     </ul>
                 </div>
-                <div class="bg-green-50 border-2 border-green-200 rounded-lg p-4">
-                    <h4 class="text-lg font-bold text-green-800 mt-0 text-center">🎯 こんな人におすすめ</h4>
+                <div
+                    class="bg-green-50 border-2 border-green-200 rounded-lg p-4"
+                >
+                    <h4
+                        class="text-lg font-bold text-green-800 mt-0 text-center"
+                    >
+                        🎯 こんな人におすすめ
+                    </h4>
                     <ul class="list-none p-0 m-0 space-y-2">
-                        <li class="flex items-start"><span class="mr-2">✅</span>本気でゴルフを習いたい、基礎から学びたい初心者の方</li>
-                        <li class="flex items-start"><span class="mr-2">✅</span>練習場は「使い分ける派」で、ショット練習に集中したい方</li>
-                        <li class="flex items-start"><span class="mr-2">✅</span>「人の温かさ」や「アットホームな雰囲気」を大切にする方</li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✅</span
+                            >本気でゴルフを習いたい、基礎から学びたい初心者の方
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✅</span
+                            >練習場は「使い分ける派」で、ショット練習に集中したい方
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✅</span
+                            >「人の温かさ」や「アットホームな雰囲気」を大切にする方
+                        </li>
                     </ul>
                 </div>
             </div>
 
-            <p>であるならば、「山科ゴルフガーデン」は最高の場所です。<br/>
-            営業時間前に着いた私を笑顔で受け入れてくれた、あのスタッフの温かさ。<br/>
-            「手動ティーの面倒くささ」なんて、どうでも良くなる。私にとって、ここはそんな練習場でした。</p>
+            <p>
+                であるならば、「山科ゴルフガーデン」は最高の場所です。<br />
+                営業時間前に着いた私を笑顔で受け入れてくれた、あのスタッフの温かさ。<br
+                />
+                「手動ティーの面倒くささ」なんて、どうでも良くなる。私にとって、ここはそんな練習場でした。
+            </p>
 
             <!-- [16] CTA -->
-            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+            <h2
+                class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
                 あなたの「練習場選び」の基準は何ですか？
             </h2>
-            <p>あなたは「人で選ぶ練習場派」ですか？ それとも「設備優先派」ですか？<br/>
-            ぜひレビュー欄やSNSで、あなたの“神対応”エピソードや、練習場選びのこだわりを教えてください。</p>
-            
-            
+            <p>
+                あなたは「人で選ぶ練習場派」ですか？
+                それとも「設備優先派」ですか？<br />
+                ぜひレビュー欄やSNSで、あなたの“神対応”エピソードや、練習場選びのこだわりを教えてください。
+            </p>
+
             <!-- ★★★ [新規] よくある質問 (FAQ) ★★★ -->
-            <h2 id="faq" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+            <h2
+                id="faq"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
                 山科ゴルフガーデン よくある質問 (FAQ)
             </h2>
             <div class="faq-container not-prose space-y-4">
                 <div class="faq-item border-b pb-4">
                     <h3 class="text-lg font-semibold text-slate-800 m-0">
-                        <span class="text-green-700 font-bold mr-2">Q.</span>予約は必要ですか？
+                        <span class="text-green-700 font-bold mr-2">Q.</span
+                        >予約は必要ですか？
                     </h3>
                     <p class="text-base text-slate-700 m-0 mt-2 pl-6">
-                        <span class="font-bold mr-1">A.</span>打席の予約は不要です。レッスンのみ、お電話かフロントでの予約が必要です。
+                        <span class="font-bold mr-1">A.</span
+                        >打席の予約は不要です。レッスンのみ、お電話かフロントでの予約が必要です。
                     </p>
                 </div>
                 <div class="faq-item border-b pb-4">
                     <h3 class="text-lg font-semibold text-slate-800 m-0">
-                        <span class="text-green-700 font-bold mr-2">Q.</span>レンタルクラブやシューズはありますか？
+                        <span class="text-green-700 font-bold mr-2">Q.</span
+                        >レンタルクラブやシューズはありますか？
                     </h3>
                     <p class="text-base text-slate-700 m-0 mt-2 pl-6">
-                        <span class="font-bold mr-1">A.</span>はい、あります（110円）。
+                        <span class="font-bold mr-1">A.</span
+                        >はい、あります（110円）。
                     </p>
                 </div>
                 <div class="faq-item border-b pb-4">
                     <h3 class="text-lg font-semibold text-slate-800 m-0">
-                        <span class="text-green-700 font-bold mr-2">Q.</span>クレジットカードは使えますか？
+                        <span class="text-green-700 font-bold mr-2">Q.</span
+                        >クレジットカードは使えますか？
                     </h3>
                     <p class="text-base text-slate-700 m-0 mt-2 pl-6">
-                        <span class="font-bold mr-1">A.</span>いいえ、現金のみの対応です。
+                        <span class="font-bold mr-1">A.</span
+                        >いいえ、現金のみの対応です。
                     </p>
                 </div>
                 <div class="faq-item">
                     <h3 class="text-lg font-semibold text-slate-800 m-0">
-                        <span class="text-green-700 font-bold mr-2">Q.</span>左利きの打席はありますか？
+                        <span class="text-green-700 font-bold mr-2">Q.</span
+                        >左利きの打席はありますか？
                     </h3>
                     <p class="text-base text-slate-700 m-0 mt-2 pl-6">
-                        <span class="font-bold mr-1">A.</span>はい、あります。各フロアに3打席、合計9打席です。
+                        <span class="font-bold mr-1">A.</span
+                        >はい、あります。各フロアに3打席、合計9打席です。
                     </p>
                 </div>
             </div>
             <!-- ★★★ [FAQ ここまで] ★★★ -->
 
-
             <!-- [17] 共通コンポーネント -->
             <div class="not-prose my-12 space-y-12">
-                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
-                <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                <MySlider
+                    articles={experienceReports}
+                    title="あわせて読みたい「体験談」"
+                />
+                <MySlider
+                    articles={comparisonArticles}
+                    title="あわせて読みたい「比較記事」"
+                />
             </div>
 
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
-            
+
             <!-- [18] 施設情報 -->
-            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                {rangeData ? `「${rangeData.name}」の基本情報` : "「山科ゴルフガーデン」の基本情報"}
+            <h2
+                id="info-summary"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
+                {
+                    rangeData
+                        ? `「${rangeData.name}」の基本情報`
+                        : "「山科ゴルフガーデン」の基本情報"
+                }
             </h2>
             {
                 rangeData ? (
@@ -659,37 +1204,67 @@ const faqSchema = {
                         <table class="w-full text-left border-collapse">
                             <tbody>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
+                                        練習場名
+                                    </th>
                                     <td class="py-3 px-4">{rangeData.name}</td>
                                 </tr>
                                 {rangeData.avgRating && (
                                     <tr class="border-b border-slate-200">
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            総合評価
+                                        </th>
                                         <td class="py-3 px-4">
-                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
-                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
-                                                {Array.from({ length: 5 }).map((_, i) => (
-                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                    </svg>
-                                                ))}
+                                            <div
+                                                class="flex items-center"
+                                                role="img"
+                                                aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}
+                                            >
+                                                <span class="font-bold text-amber-500 mr-2">
+                                                    {parseFloat(
+                                                        rangeData.avgRating,
+                                                    ).toFixed(1)}
+                                                </span>
+                                                {Array.from({ length: 5 }).map(
+                                                    (_, i) => (
+                                                        <svg
+                                                            class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? "text-amber-400" : "text-slate-300"}`}
+                                                            fill="currentColor"
+                                                            viewBox="0 0 20 20"
+                                                        >
+                                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                        </svg>
+                                                    ),
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
                                 )}
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        住所
+                                    </th>
                                     <td class="py-3 px-4">
-                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                        <a
+                                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-green-700 hover:underline"
+                                        >
                                             {rangeData.address}
                                         </a>
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        電話番号
+                                    </th>
                                     <td class="py-3 px-4">
                                         {rangeData.phone ? (
-                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                            <a
+                                                href={`tel:${rangeData.phone?.replace(/-/g, "")}`}
+                                                class="text-green-700 hover:underline"
+                                            >
                                                 {rangeData.phone}
                                             </a>
                                         ) : (
@@ -698,42 +1273,95 @@ const faqSchema = {
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
-                                    <td class="py-3 px-4" set:html={rangeData.business_hours?.replace(/\n/g, '<br />') || "-"} />
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        営業時間
+                                    </th>
+                                    <td
+                                        class="py-3 px-4"
+                                        set:html={
+                                            rangeData.business_hours?.replace(
+                                                /\n/g,
+                                                "<br />",
+                                            ) || "-"
+                                        }
+                                    />
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        料金（代表例）
+                                    </th>
                                     <td class="py-3 px-4">
-                                        <b>【カゴ打ち】</b> 650円/カゴ<br/>
-                                        (平日60球, 土日祝50球)<br/>
-                                        <b>【打ち放題 (会員)】</b> 1,300円〜<br/>
-                                        <b>【入場料】</b><br/>
-                                        ビジター: 600円<br/>
-                                        レギュラー会員: 400円<br/>
-                                        <small>※詳細は<a href="#section-simulator" class="text-green-700 hover:underline">料金シミュレーター</a>でご確認ください。</small>
+                                        <b>【カゴ打ち】</b> 650円/カゴ
+                                        <br />
+                                        (平日60球, 土日祝50球)
+                                        <br />
+                                        <b>【打ち放題 (会員)】</b> 1,300円〜
+                                        <br />
+                                        <>
+                                            <b>【入場料】</b>
+                                            <br />
+                                        </>
+                                        ビジター: 600円
+                                        <br />
+                                        レギュラー会員: 400円
+                                        <br />
+                                        <small>
+                                            ※詳細は
+                                            <a
+                                                href="#section-simulator"
+                                                class="text-green-700 hover:underline"
+                                            >
+                                                料金シミュレーター
+                                            </a>
+                                            でご確認ください。
+                                        </small>
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
-                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        ヤード数
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.yardage
+                                            ? `${rangeData.yardage}ヤード`
+                                            : "-"}
+                                    </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
-                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        打席数
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.bays
+                                            ? `${rangeData.bays}打席`
+                                            : "-"}
+                                    </td>
                                 </tr>
                                 {rangeData.website && (
                                     <tr class="border-b border-slate-200">
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">公式サイト</th>
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                            公式サイト
+                                        </th>
                                         <td class="py-3 px-4">
-                                            <a href={rangeData.website} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            <a
+                                                href={rangeData.website}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="text-green-700 hover:underline"
+                                            >
                                                 {rangeData.website}
                                             </a>
                                         </td>
                                     </tr>
                                 )}
                                 <tr>
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
-                                    <td class="py-3 px-4">{rangeData.access || "京都東ICから約5分"}</td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                        アクセス
+                                    </th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.access ||
+                                            "京都東ICから約5分"}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -749,20 +1377,28 @@ const faqSchema = {
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
-                            width="100%" height="450" style="border:0;"
-                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                        ></iframe>
+                            width="100%"
+                            height="450"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                        />
                     </div>
                 )
             }
-             <p class="text-center font-bold text-lg mt-8">
+            <p class="text-center font-bold text-lg mt-8">
                 🎯 さらに詳しい情報や口コミはこちら！
                 <br />
                 <a
-                    href={`https://shigagolf.com/ranges/${rangeId}/`} 
+                    href={`https://shigagolf.com/ranges/${rangeId}/`}
                     class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
                 >
-                    {rangeData ? `「${rangeData.name}」のシガゴル公式レビューページへ →` : "公式レビューページへ →"}
+                    {
+                        rangeData
+                            ? `「${rangeData.name}」のシガゴル公式レビューページへ →`
+                            : "公式レビューページへ →"
+                    }
                 </a>
             </p>
         </article>
@@ -770,13 +1406,31 @@ const faqSchema = {
 
     <!-- ★★★ [新規] スマホ対応シミュレーター用CSS ★★★ -->
     <style>
-        .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
-        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .scroll-mt-24 { scroll-margin-top: 6rem; }
+        .map-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            height: 450px;
+        }
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .scroll-mt-24 {
+            scroll-margin-top: 6rem;
+        }
 
         @media (max-width: 767px) {
             .step-container {
-                transition: opacity 0.3s ease-out, max-height 0.3s ease-out, margin 0.3s ease-out, padding 0.3s ease-out;
+                transition:
+                    opacity 0.3s ease-out,
+                    max-height 0.3s ease-out,
+                    margin 0.3s ease-out,
+                    padding 0.3s ease-out;
                 overflow: hidden;
             }
             .step-container.hidden {
@@ -791,90 +1445,113 @@ const faqSchema = {
         }
     </style>
 
-    
-
-
-<!-- [19] 料金シミュレーター・スクリプト (★★★ ロジックを全面的に更新 ★★★) -->
+    <!-- [19] 料金シミュレーター・スクリプト (★★★ ロジックを全面的に更新 ★★★) -->
     <script define:vars={{ priceData }}>
-        document.addEventListener('DOMContentLoaded', () => {
-            const simulator = document.getElementById('price-simulator'); 
+        document.addEventListener("DOMContentLoaded", () => {
+            const simulator = document.getElementById("price-simulator");
             if (!simulator) return;
 
             // --- 入力要素 ---
-            const planSelect = simulator.querySelector('#plan-select');
+            const planSelect = simulator.querySelector("#plan-select");
             const dayRadios = simulator.querySelectorAll('input[name="day"]');
-            const floorRadios = simulator.querySelectorAll('input[name="floor"]');
+            const floorRadios = simulator.querySelectorAll(
+                'input[name="floor"]',
+            );
             const timeRadios = simulator.querySelectorAll('input[name="time"]');
-            const ladiesDayRadios = simulator.querySelectorAll('input[name="ladies-day"]');
-            const monfriDayRadios = simulator.querySelectorAll('input[name="monfri-day"]');
-            const ballCountSlider = simulator.querySelector('#ball-count');
-            const resetButton = simulator.querySelector('#reset-button');
+            const ladiesDayRadios = simulator.querySelectorAll(
+                'input[name="ladies-day"]',
+            );
+            const monfriDayRadios = simulator.querySelectorAll(
+                'input[name="monfri-day"]',
+            );
+            const ballCountSlider = simulator.querySelector("#ball-count");
+            const resetButton = simulator.querySelector("#reset-button");
 
             // --- 出力要素 ---
-            const ballCountDisplay = simulator.querySelector('#ball-count-display');
-            const totalPriceDisplay = simulator.querySelector('#total-price');
-            const bestPlanDisplay = simulator.querySelector('#best-plan-display');
+            const ballCountDisplay = simulator.querySelector(
+                "#ball-count-display",
+            );
+            const totalPriceDisplay = simulator.querySelector("#total-price");
+            const bestPlanDisplay =
+                simulator.querySelector("#best-plan-display");
 
             // --- ステップコンテナ ---
-            const stepLadies = simulator.querySelector('#step-ladies');
-            const stepMonfri = simulator.querySelector('#step-monfri');
+            const stepLadies = simulator.querySelector("#step-ladies");
+            const stepMonfri = simulator.querySelector("#step-monfri");
             const steps = [
-                simulator.querySelector('#step-1'), // plan
-                simulator.querySelector('#step-2'), // day
-                simulator.querySelector('#step-3'), // floor
-                simulator.querySelector('#step-4'), // time
+                simulator.querySelector("#step-1"), // plan
+                simulator.querySelector("#step-2"), // day
+                simulator.querySelector("#step-3"), // floor
+                simulator.querySelector("#step-4"), // time
                 stepLadies, // dynamic
                 stepMonfri, // dynamic
-                simulator.querySelector('#step-5')  // balls
+                simulator.querySelector("#step-5"), // balls
             ];
 
             // --- 状態管理 ---
             const isMobile = () => window.innerWidth < 768;
 
-              // --- メインの計算処理 ---
+            // --- メインの計算処理 ---
             function calculatePrice() {
                 // 1. 入力値の取得
                 const plan = planSelect.value; // 'visitor', 'regular', ...
-                const day = simulator.querySelector('input[name="day"]:checked')?.value; // ★ 修正: ? (optional chaining) を追加
-                const floor = simulator.querySelector('input[name="floor"]:checked')?.value; // ★ 修正: ? を追加
-                const time = simulator.querySelector('input[name="time"]:checked')?.value; // ★ 修正: ? を追加
-                const isLadiesDay = simulator.querySelector('input[name="ladies-day"]:checked')?.value === 'yes'; // ★ 修正: ? を追加
-                const isMonFri = simulator.querySelector('input[name="monfri-day"]:checked')?.value === 'yes'; // ★ 修正: ? と nameM を修正
+                const day = simulator.querySelector(
+                    'input[name="day"]:checked',
+                )?.value; // ★ 修正: ? (optional chaining) を追加
+                const floor = simulator.querySelector(
+                    'input[name="floor"]:checked',
+                )?.value; // ★ 修正: ? を追加
+                const time = simulator.querySelector(
+                    'input[name="time"]:checked',
+                )?.value; // ★ 修正: ? を追加
+                const isLadiesDay =
+                    simulator.querySelector('input[name="ladies-day"]:checked')
+                        ?.value === "yes"; // ★ 修正: ? を追加
+                const isMonFri =
+                    simulator.querySelector('input[name="monfri-day"]:checked')
+                        ?.value === "yes"; // ★ 修正: ? と nameM を修正
                 const balls = parseInt(ballCountSlider.value);
 
                 // ★ [修正] 未入力時は計算しない (nullチェック)
                 if (!plan || !day || !floor || !time) {
-                    totalPriceDisplay.textContent = '----';
-                    bestPlanDisplay.classList.add('hidden');
+                    totalPriceDisplay.textContent = "----";
+                    bestPlanDisplay.classList.add("hidden");
                     return; // 必須項目が揃うまで計算中断
                 }
-                
+
                 ballCountDisplay.textContent = `${balls}球`;
 
                 // --- 動的ステップの表示制御 ---
-                const showLadiesStep = (plan === 'ladies' && day === 'weekday');
-                stepLadies.classList.toggle('hidden', !showLadiesStep);
-                
-                const isMember = (plan !== 'visitor' && plan !== 'junior');
-                const showMonFriStep = (isMember && day === 'weekday' && floor === '3F' && (time === 'daytime_am' || time === 'daytime_pm'));
-                stepMonfri.classList.toggle('hidden', !showMonFriStep);
+                const showLadiesStep = plan === "ladies" && day === "weekday";
+                stepLadies.classList.toggle("hidden", !showLadiesStep);
 
+                const isMember = plan !== "visitor" && plan !== "junior";
+                const showMonFriStep =
+                    isMember &&
+                    day === "weekday" &&
+                    floor === "3F" &&
+                    (time === "daytime_am" || time === "daytime_pm");
+                stepMonfri.classList.toggle("hidden", !showMonFriStep);
 
                 // 2. 最適プランの探索 (カゴ打ち系)
                 // ★ 修正: 変数名変更
-                let bestKagoOption = { name: 'カゴ打ち', price: Infinity }; 
+                let bestKagoOption = { name: "カゴ打ち", price: Infinity };
                 let admission = 0; // ★カゴ打ち・ちょこ打ち用の入場料
 
                 // 3. プラン別の入場料を決定 (カゴ・ちょこ用)
-                if (plan === 'junior') {
+                if (plan === "junior") {
                     admission = priceData.admission.junior; // 0円
-                } else if (plan === 'visitor') {
+                } else if (plan === "visitor") {
                     admission = priceData.admission.visitor; // 600円
-                } else if (plan === 'gold') {
+                } else if (plan === "gold") {
                     admission = priceData.admission.gold; // 0円
-                } else if (plan === 'senior') {
+                } else if (plan === "senior") {
                     admission = priceData.admission.senior; // 300円
-                } else if (plan === 'regular' || plan === 'ladies' || plan === 'student') {
+                } else if (
+                    plan === "regular" ||
+                    plan === "ladies" ||
+                    plan === "student"
+                ) {
                     admission = priceData.admission.regular; // 400円
                 }
 
@@ -882,52 +1559,73 @@ const faqSchema = {
                 const kagoPrice = priceData.kago.price;
                 const kagoBalls = priceData.kago.balls[day];
                 const kagoCount = Math.ceil(balls / kagoBalls);
-                const kagoCost = (kagoCount * kagoPrice) + admission;
+                const kagoCost = kagoCount * kagoPrice + admission;
                 bestKagoOption.price = kagoCost;
 
                 // 5. 「ちょこ打ち」系料金 (★会員のみ)
-                if (plan !== 'visitor' && plan !== 'junior') { // ★★★ 修正: 'gold' から 'visitor'と'junior'以外に変更
+                if (plan !== "visitor" && plan !== "junior") {
+                    // ★★★ 修正: 'gold' から 'visitor'と'junior'以外に変更
                     const chokoPrice = priceData.choko[day].price;
                     const chokoBalls = priceData.choko[day].balls;
 
                     // 5a. ちょこ打ちオンリー
                     const chokoCountOnly = Math.ceil(balls / chokoBalls);
-                    const chokoCost = (chokoCountOnly * chokoPrice) + admission; // admission is 0
+                    const chokoCost = chokoCountOnly * chokoPrice + admission; // admission is 0
                     if (chokoCost < bestKagoOption.price) {
-                        bestKagoOption = { name: 'ちょこ打ち', price: chokoCost };
+                        bestKagoOption = {
+                            name: "ちょこ打ち",
+                            price: chokoCost,
+                        };
                     }
 
                     // ★★★ [新規] 5b. カゴ打ち + ちょこ打ち (複合プラン) ★★★
                     // 60球/50球のカゴをできるだけ使い、余りを20球のちょこ打ちで補う
                     const kagoCountCompound = Math.floor(balls / kagoBalls); // 切り捨て
                     const remainderBalls = balls % kagoBalls;
-                    const chokoCountCompound = Math.ceil(remainderBalls / chokoBalls); // 余りをちょこ打ち
-                    
-                    const kagoPlusChokoCost = (kagoCountCompound * kagoPrice) + (chokoCountCompound * chokoPrice) + admission;
-                    
+                    const chokoCountCompound = Math.ceil(
+                        remainderBalls / chokoBalls,
+                    ); // 余りをちょこ打ち
+
+                    const kagoPlusChokoCost =
+                        kagoCountCompound * kagoPrice +
+                        chokoCountCompound * chokoPrice +
+                        admission;
+
                     if (kagoPlusChokoCost < bestKagoOption.price) {
-                         bestKagoOption = { name: 'カゴ打ち + ちょこ打ち', price: kagoPlusChokoCost };
+                        bestKagoOption = {
+                            name: "カゴ打ち + ちょこ打ち",
+                            price: kagoPlusChokoCost,
+                        };
                     }
                 }
-
 
                 // 6. 「打ち放題」料金の探索 (★入場料を加算しないロジックに修正)
                 let availableUchihodai = [];
 
                 // 6a. ジュニアプラン (カゴ打ちと比較)
-                if (plan === 'junior') {
+                if (plan === "junior") {
                     // ★ 修正: ジュニアプランはここで availableUchihodai に追加
-                    availableUchihodai.push({ name: 'ジュニアプラン (すべての放題)', price: priceData.uchihodai.junior.price });
+                    availableUchihodai.push({
+                        name: "ジュニアプラン (すべての放題)",
+                        price: priceData.uchihodai.junior.price,
+                    });
                 }
 
                 // 6b. 一般プラン (全員対象, ジュニア以外)
                 // ★ 修正: 日中・夕方のみ適用
-                if (plan !== 'junior' && (time === 'daytime_am' || time === 'daytime_pm')) {
+                if (
+                    plan !== "junior" &&
+                    (time === "daytime_am" || time === "daytime_pm")
+                ) {
                     const genPlans = priceData.uchihodai.general[day];
-                    if (genPlans) { // ★ 修正: genPlans が存在するかチェック
-                        genPlans.forEach(p => {
-                            if (p.floor === 'all' || p.floor === floor) {
-                                availableUchihodai.push({ name: `一般 (${p.duration}分${p.floor === '3F' ? ' 3F限定' : ''})`, price: p.price });
+                    if (genPlans) {
+                        // ★ 修正: genPlans が存在するかチェック
+                        genPlans.forEach((p) => {
+                            if (p.floor === "all" || p.floor === floor) {
+                                availableUchihodai.push({
+                                    name: `一般 (${p.duration}分${p.floor === "3F" ? " 3F限定" : ""})`,
+                                    price: p.price,
+                                });
                             }
                         });
                     }
@@ -935,79 +1633,135 @@ const faqSchema = {
 
                 // 6c. 会員限定プラン (ビジター・ジュニア以外)
                 // ★★★ [修正] 表示するプランを選択中の会員種別に限定する ★★★
-                if (plan !== 'visitor' && plan !== 'junior') {
+                if (plan !== "visitor" && plan !== "junior") {
                     const memberPlans = priceData.uchihodai.member_only;
 
                     // ★★★ [修正] nullチェックの追加 ★★★
                     if (!memberPlans) return; // memberPlans自体がなければ終了
 
                     // ★★★ [新規] ナイタープラン (21時〜) ★★★
-                    if (time === 'night' && memberPlans.night) {
+                    if (time === "night" && memberPlans.night) {
                         const p = memberPlans.night;
-                        availableUchihodai.push({ name: `ナイター割 (${p.duration})`, price: p.price });
+                        availableUchihodai.push({
+                            name: `ナイター割 (${p.duration})`,
+                            price: p.price,
+                        });
                     }
 
                     // シニア (シニア会員の時のみ表示)
-                    if (plan === 'senior' && memberPlans.senior && memberPlans.senior[day]) {
-                        memberPlans.senior[day].forEach(p => {
-                            availableUchihodai.push({ name: `シニア割 (${p.duration}分)`, price: p.price });
+                    if (
+                        plan === "senior" &&
+                        memberPlans.senior &&
+                        memberPlans.senior[day]
+                    ) {
+                        memberPlans.senior[day].forEach((p) => {
+                            availableUchihodai.push({
+                                name: `シニア割 (${p.duration}分)`,
+                                price: p.price,
+                            });
                         });
                     }
-                    
+
                     // レディース (レディース会員の時のみ表示)
-                    if (plan === 'ladies' && memberPlans.ladies && (memberPlans.ladies[day] || memberPlans.ladies.specialDay)) {
-                        if (day === 'weekday' && isLadiesDay) {
+                    if (
+                        plan === "ladies" &&
+                        memberPlans.ladies &&
+                        (memberPlans.ladies[day] ||
+                            memberPlans.ladies.specialDay)
+                    ) {
+                        if (day === "weekday" && isLadiesDay) {
                             const p = memberPlans.ladies.specialDay;
-                            availableUchihodai.push({ name: `レディースデー (${p.duration}分)`, price: p.price });
+                            availableUchihodai.push({
+                                name: `レディースデー (${p.duration}分)`,
+                                price: p.price,
+                            });
                         } else if (memberPlans.ladies[day]) {
-                            memberPlans.ladies[day].forEach(p => {
-                                availableUchihodai.push({ name: `レディース割 (${p.duration}分)`, price: p.price });
+                            memberPlans.ladies[day].forEach((p) => {
+                                availableUchihodai.push({
+                                    name: `レディース割 (${p.duration}分)`,
+                                    price: p.price,
+                                });
                             });
                         }
                     }
 
                     // 学割 (学割会員の時のみ表示)
-                    if (plan === 'student' && memberPlans.student && memberPlans.student[day]) {
-                        memberPlans.student[day].forEach(p => {
-                            availableUchihodai.push({ name: `学割 (${p.duration}分)`, price: p.price });
+                    if (
+                        plan === "student" &&
+                        memberPlans.student &&
+                        memberPlans.student[day]
+                    ) {
+                        memberPlans.student[day].forEach((p) => {
+                            availableUchihodai.push({
+                                name: `学割 (${p.duration}分)`,
+                                price: p.price,
+                            });
                         });
                     }
 
                     // 3F限定 (月金16時までの考慮) (会員共通)
-                    if (floor === '3F' && memberPlans.floor3 && memberPlans.floor3[day]) {
-                        memberPlans.floor3[day].forEach(p => {
+                    if (
+                        floor === "3F" &&
+                        memberPlans.floor3 &&
+                        memberPlans.floor3[day]
+                    ) {
+                        memberPlans.floor3[day].forEach((p) => {
                             let valid = true;
                             // 平日 かつ (夕方 or 夜) かつ (月金) => 無効
-                            if (day === 'weekday' && (time === 'daytime_pm' || time === 'night') && isMonFri) {
+                            if (
+                                day === "weekday" &&
+                                (time === "daytime_pm" || time === "night") &&
+                                isMonFri
+                            ) {
                                 valid = false;
                             }
                             // 朝は対象外
-                            if (time === 'morning') valid = false; 
-                            
-                            if(valid) {
-                                availableUchihodai.push({ name: `会員 3F割 (${p.duration}分)`, price: p.price });
+                            if (time === "morning") valid = false;
+
+                            if (valid) {
+                                availableUchihodai.push({
+                                    name: `会員 3F割 (${p.duration}分)`,
+                                    price: p.price,
+                                });
                             }
                         });
                     }
 
                     // 朝プラン (会員共通)
-                    if (time === 'morning' && day === 'weekday' && memberPlans.morning && memberPlans.morning[day]) {
-                        memberPlans.morning[day].forEach(p => {
-                            if (p.floor === floor || (p.floor === '1F/2F' && floor === '1F/2F')) {
-                                availableUchihodai.push({ name: `朝割 (${p.duration}分 ${p.floor})`, price: p.price });
+                    if (
+                        time === "morning" &&
+                        day === "weekday" &&
+                        memberPlans.morning &&
+                        memberPlans.morning[day]
+                    ) {
+                        memberPlans.morning[day].forEach((p) => {
+                            if (
+                                p.floor === floor ||
+                                (p.floor === "1F/2F" && floor === "1F/2F")
+                            ) {
+                                availableUchihodai.push({
+                                    name: `朝割 (${p.duration}分 ${p.floor})`,
+                                    price: p.price,
+                                });
                             }
                         });
                     }
                 }
 
                 // 7. カゴ打ち vs 打ち放題 (ジュニア以外)
-                // ★★★ [修正] 
+                // ★★★ [修正]
                 // 7. 全プランをリスト化し、最安値を決定
                 let allOptions = [bestKagoOption]; // 'bestKagoOption' はカゴ打ち or ちょこ or 複合
-                
-                if (plan === 'junior') {
+
+                if (plan === "junior") {
                     // ジュニアの場合は、カゴ打ちとジュニアプランのみ比較
-                    allOptions = [bestKagoOption, { name: 'ジュニアプラン (すべての放題)', price: priceData.uchihodai.junior.price }];
+                    allOptions = [
+                        bestKagoOption,
+                        {
+                            name: "ジュニアプラン (すべての放題)",
+                            price: priceData.uchihodai.junior.price,
+                        },
+                    ];
                 } else {
                     // それ以外は、カゴ打ち/ちょこ打ち + 利用可能なすべての打ち放題
                     allOptions = allOptions.concat(availableUchihodai);
@@ -1016,14 +1770,15 @@ const faqSchema = {
                 // 8. 結果の表示
                 // 8a. 全選択肢の中から最安値を見つける
                 const cheapestOverall = allOptions.reduce((prev, curr) => {
-                    return (curr.price < prev.price) ? curr : prev;
+                    return curr.price < prev.price ? curr : prev;
                 }, allOptions[0]); // 開始点を設定
-                
-                totalPriceDisplay.textContent = cheapestOverall.price.toLocaleString();
+
+                totalPriceDisplay.textContent =
+                    cheapestOverall.price.toLocaleString();
 
                 // 8b. 表示用HTMLを構築
                 let planListHTML = "";
-                
+
                 if (allOptions.length === 1) {
                     // 選択肢が1つ（カゴ打ちのみ等）の場合
                     // ★ 修正: 「が最適です。」を nowrap スパンで囲む
@@ -1032,9 +1787,9 @@ const faqSchema = {
                     // 選択肢が複数ある場合
                     // ★ 修正: 「が最適です！」を nowrap スパンで囲む
                     planListHTML = `💡 <strong>${cheapestOverall.name} (¥${cheapestOverall.price.toLocaleString()})</strong><span style="white-space: nowrap;"> が最適です！</span><br>---<br>👇 全ての選択肢:<br>`;
-                    
-                    allOptions.forEach(p => {
-                         if (p.name === cheapestOverall.name) {
+
+                    allOptions.forEach((p) => {
+                        if (p.name === cheapestOverall.name) {
                             planListHTML += `<strong>▶ ${p.name} (¥${p.price.toLocaleString()})</strong><br>`;
                         } else {
                             planListHTML += `&nbsp;&nbsp; ${p.name} (¥${p.price.toLocaleString()})<br>`;
@@ -1043,7 +1798,7 @@ const faqSchema = {
                 }
 
                 bestPlanDisplay.innerHTML = planListHTML;
-                bestPlanDisplay.classList.remove('hidden');
+                bestPlanDisplay.classList.remove("hidden");
             }
 
             // --- スマホ用ステップ制御 ---
@@ -1052,127 +1807,170 @@ const faqSchema = {
 
                 // ★ [修正] nullチェックの追加
                 const plan = planSelect.value;
-                const dayRadio = simulator.querySelector('input[name="day"]:checked');
-                const floorRadio = simulator.querySelector('input[name="floor"]:checked');
-                const timeRadio = simulator.querySelector('input[name="time"]:checked');
-                
+                const dayRadio = simulator.querySelector(
+                    'input[name="day"]:checked',
+                );
+                const floorRadio = simulator.querySelector(
+                    'input[name="floor"]:checked',
+                );
+                const timeRadio = simulator.querySelector(
+                    'input[name="time"]:checked',
+                );
+
                 const day = dayRadio ? dayRadio.value : null;
                 const floor = floorRadio ? floorRadio.value : null;
                 const time = timeRadio ? timeRadio.value : null;
 
-
                 // まずすべて隠す (stepLadies, stepMonfri も含む)
-                steps.forEach(step => {
-                    if(step) step.classList.add('hidden');
+                steps.forEach((step) => {
+                    if (step) step.classList.add("hidden");
                 });
 
                 // 表示するステップを可視化
-                if (stepToShow) stepToShow.classList.remove('hidden');
-                resetButton.classList.remove('hidden');
+                if (stepToShow) stepToShow.classList.remove("hidden");
+                resetButton.classList.remove("hidden");
 
                 // --- 追加の動的表示 ---
                 // stepToShow が動的ステップ(ladies/monfri) または 最後の球数ステップ(steps[6]) の場合
-                if (stepToShow === stepLadies || stepToShow === stepMonfri || stepToShow === steps[6]) {
-                    
-                    if(plan && day && floor && time) { // ★ 修正: 値が揃っているか確認
-                        const showLadiesStep = (plan === 'ladies' && day === 'weekday');
-                        const isMember = (plan !== 'visitor' && plan !== 'junior');
-                        const showMonFriStep = (isMember && day === 'weekday' && floor === '3F' && (time === 'daytime_am' || time === 'daytime_pm'));
+                if (
+                    stepToShow === stepLadies ||
+                    stepToShow === stepMonfri ||
+                    stepToShow === steps[6]
+                ) {
+                    if (plan && day && floor && time) {
+                        // ★ 修正: 値が揃っているか確認
+                        const showLadiesStep =
+                            plan === "ladies" && day === "weekday";
+                        const isMember =
+                            plan !== "visitor" && plan !== "junior";
+                        const showMonFriStep =
+                            isMember &&
+                            day === "weekday" &&
+                            floor === "3F" &&
+                            (time === "daytime_am" || time === "daytime_pm");
 
-                        if(showLadiesStep) stepLadies.classList.remove('hidden');
-                        if(showMonFriStep) stepMonfri.classList.remove('hidden');
+                        if (showLadiesStep)
+                            stepLadies.classList.remove("hidden");
+                        if (showMonFriStep)
+                            stepMonfri.classList.remove("hidden");
                     }
-                    
-                    if (steps[6]) steps[6].classList.remove('hidden'); // 球数ステップ
+
+                    if (steps[6]) steps[6].classList.remove("hidden"); // 球数ステップ
                 }
             }
-            
+
             // --- スマホ/PC表示とフォームをリセット ---
             function resetSimulator() {
                 // デフォルト値を解除
                 planSelect.value = ""; // ★ 修正: selected を削除
-                simulator.querySelectorAll('input[type="radio"]').forEach(radio => {
-                    radio.checked = false; // ★ 修正: checked を削除
-                });
-                
+                simulator
+                    .querySelectorAll('input[type="radio"]')
+                    .forEach((radio) => {
+                        radio.checked = false; // ★ 修正: checked を削除
+                    });
+
                 ballCountSlider.value = 150;
-                
+
                 if (isMobile()) {
                     // スマホ: ステップ1のみ表示
                     steps.forEach((step, index) => {
                         if (step) {
-                            if (index === 0) step.classList.remove('hidden'); // ステップ1
-                            else step.classList.add('hidden');
+                            if (index === 0)
+                                step.classList.remove("hidden"); // ステップ1
+                            else step.classList.add("hidden");
                         }
                     });
-                    resetButton.classList.add('hidden');
+                    resetButton.classList.add("hidden");
                 } else {
                     // PC: 全ステップ表示 (動的ステップは calculatePrice で制御)
-                    steps.forEach(step => {
-                        if(step) step.classList.remove('hidden');
+                    steps.forEach((step) => {
+                        if (step) step.classList.remove("hidden");
                     });
-                    resetButton.classList.add('hidden'); // PCではリセット非表示
+                    resetButton.classList.add("hidden"); // PCではリセット非表示
                 }
                 calculatePrice(); // 最後に初期計算 (動的ステップの表示もここで処理)
             }
 
             // --- イベントリスナーの設定 ---
             function setupListeners() {
-                planSelect.addEventListener('change', () => {
+                planSelect.addEventListener("change", () => {
                     calculatePrice();
                     if (isMobile()) goToStep(steps[1]); // ステップ2(利用日)へ
                 });
 
-                dayRadios.forEach(radio => radio.addEventListener('change', () => {
-                    calculatePrice();
-                    if (isMobile()) goToStep(steps[2]); // ステップ3(打席)へ
-                }));
+                dayRadios.forEach((radio) =>
+                    radio.addEventListener("change", () => {
+                        calculatePrice();
+                        if (isMobile()) goToStep(steps[2]); // ステップ3(打席)へ
+                    }),
+                );
 
-                floorRadios.forEach(radio => radio.addEventListener('change', () => {
-                    calculatePrice();
-                    if (isMobile()) goToStep(steps[3]); // ステップ4(時間帯)へ
-                }));
+                floorRadios.forEach((radio) =>
+                    radio.addEventListener("change", () => {
+                        calculatePrice();
+                        if (isMobile()) goToStep(steps[3]); // ステップ4(時間帯)へ
+                    }),
+                );
 
-                timeRadios.forEach(radio => radio.addEventListener('change', () => {
-                    calculatePrice(); // 先に計算して動的ステップの表示判定
-                    
-                    if (isMobile()) {
-                        // ★ [修正] nullチェック
-                        const plan = planSelect.value;
-                        const dayRadio = simulator.querySelector('input[name="day"]:checked');
-                        const floorRadio = simulator.querySelector('input[name="floor"]:checked');
-                        const timeRadio = simulator.querySelector('input[name="time"]:checked');
+                timeRadios.forEach((radio) =>
+                    radio.addEventListener("change", () => {
+                        calculatePrice(); // 先に計算して動的ステップの表示判定
 
-                        if (plan && dayRadio && floorRadio && timeRadio) {
-                            const day = dayRadio.value;
-                            const floor = floorRadio.value;
-                            const time = timeRadio.value;
+                        if (isMobile()) {
+                            // ★ [修正] nullチェック
+                            const plan = planSelect.value;
+                            const dayRadio = simulator.querySelector(
+                                'input[name="day"]:checked',
+                            );
+                            const floorRadio = simulator.querySelector(
+                                'input[name="floor"]:checked',
+                            );
+                            const timeRadio = simulator.querySelector(
+                                'input[name="time"]:checked',
+                            );
 
-                            const showLadiesStep = (plan === 'ladies' && day === 'weekday');
-                            const isMember = (plan !== 'visitor' && plan !== 'junior');
-                            const showMonFriStep = (isMember && day === 'weekday' && floor === '3F' && (time === 'daytime_am' || time === 'daytime_pm'));
+                            if (plan && dayRadio && floorRadio && timeRadio) {
+                                const day = dayRadio.value;
+                                const floor = floorRadio.value;
+                                const time = timeRadio.value;
 
-                            if(showLadiesStep) goToStep(stepLadies);
-                            else if(showMonFriStep) goToStep(stepMonfri);
-                            else goToStep(steps[6]); // 球数ステップ(step-5)へ
-                        } else {
-                             goToStep(steps[6]); // 予期せぬ場合は球数へ
+                                const showLadiesStep =
+                                    plan === "ladies" && day === "weekday";
+                                const isMember =
+                                    plan !== "visitor" && plan !== "junior";
+                                const showMonFriStep =
+                                    isMember &&
+                                    day === "weekday" &&
+                                    floor === "3F" &&
+                                    (time === "daytime_am" ||
+                                        time === "daytime_pm");
+
+                                if (showLadiesStep) goToStep(stepLadies);
+                                else if (showMonFriStep) goToStep(stepMonfri);
+                                else goToStep(steps[6]); // 球数ステップ(step-5)へ
+                            } else {
+                                goToStep(steps[6]); // 予期せぬ場合は球数へ
+                            }
                         }
-                    }
-                }));
-                
-                ladiesDayRadios.forEach(radio => radio.addEventListener('change', () => {
-                    calculatePrice();
-                    if (isMobile()) goToStep(steps[6]); // 球数ステップへ
-                }));
-                
-                monfriDayRadios.forEach(radio => radio.addEventListener('change', () => {
-                    calculatePrice();
-                    if (isMobile()) goToStep(steps[6]); // 球数ステップへ
-                }));
+                    }),
+                );
 
-                ballCountSlider.addEventListener('input', calculatePrice);
-                resetButton.addEventListener('click', resetSimulator);
+                ladiesDayRadios.forEach((radio) =>
+                    radio.addEventListener("change", () => {
+                        calculatePrice();
+                        if (isMobile()) goToStep(steps[6]); // 球数ステップへ
+                    }),
+                );
+
+                monfriDayRadios.forEach((radio) =>
+                    radio.addEventListener("change", () => {
+                        calculatePrice();
+                        if (isMobile()) goToStep(steps[6]); // 球数ステップへ
+                    }),
+                );
+
+                ballCountSlider.addEventListener("input", calculatePrice);
+                resetButton.addEventListener("click", resetSimulator);
             }
 
             // --- 初期化実行 ---
@@ -1180,7 +1978,7 @@ const faqSchema = {
             resetSimulator();
 
             let resizeTimer;
-            window.addEventListener('resize', () => {
+            window.addEventListener("resize", () => {
                 clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(() => {
                     resetSimulator();
@@ -1188,6 +1986,4 @@ const faqSchema = {
             });
         });
     </script>
-    
 </BaseLayout>
-
