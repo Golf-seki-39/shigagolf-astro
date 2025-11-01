@@ -543,7 +543,7 @@ const clientFirebaseConfig = {
         console.log("[Shigagolf Debug] DOM is loading, adding DOMContentLoaded listener.");
         document.addEventListener('DOMContentLoaded', runScripts);
     } else {
-        // 'interactive' または 'complete' (Astroの <script> は通常ここ)
+        
         console.log(`[Shigagolf Debug] DOM is ${document.readyState}, running scripts directly.`);
         runScripts();
     }
