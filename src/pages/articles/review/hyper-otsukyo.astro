@@ -1,0 +1,523 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報 ---
+// ★★★ 要確認 ★★★ 
+const title = "【体験記】月額1万円超えのインドアゴルフ。「無料体験」で突撃したら、屋外練習場に戻れなくなるほどの“衝撃データ分析体験”が待っていた。（HYPER GOLF 大津京）";
+const description = "「HYPER GOLF 大津京」の月額制インドアゴルフを「無料体験」で突撃レビュー。DITECTシミュレーターの衝撃的なデータ量、GOLFZONへの憧れ、屋外練習場との違いを本音で解説します。";
+const category = "体験談"; // カテゴリ
+const pubDate = "2025-11-02"; // ★記事の公開日
+const pubDateISO = "2025-11-02T11:00:00+09:00"; // ★記事の公開日(ISO)
+// ↓↓↓ OGP画像（アイキャッチ）
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/00000000AI.jpg";
+const rangeId = "hyper_otsukyo"; // ★Firebaseの練習場ID 
+
+// --- [4] シェアボタン用の変数を定義 ---
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/review/hyper-otsukyo/`; // ★記事のURL
+const headline = "【体験記】月額1万円超えのインドアゴルフ。「無料体験」で突撃したら、屋外練習場に戻れなくなるほどの“衝撃データ分析体験”が待っていた。（HYPER GOLF 大津京）";
+
+// --- [5] Firebaseから練習場データを取得 ---
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
+
+// --- [6] 関連記事リストの定義 (★大津エリア) ---
+const experienceReports = [
+    { url: '/articles/review/yamashina-golf-garden/', title: '山科ゴルフガーデン 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/シガゴル (2).jpg' },
+    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png' },
+    { url: '/articles/review/hyper-otsukyo/', title: 'HYPER GOLF 大津京 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/00000000AI.jpg' },
+];
+const comparisonArticles = [
+    { url: '/articles/comparison/otsu-area-guide/', title: '【大津市】ゴルフ練習場まとめ｜料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/otsu_area.jpg' },
+]; 
+
+// --- [7] 料金シミュレーター用のデータ定義 ---
+// ★ この記事ではシミュレーターは使用しません ★
+
+
+// --- [8] 構造化データ用のオブジェクトを定義 (★Review + FAQ) ---
+const reviewSchema = {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "itemReviewed": {
+        "@type": "LocalBusiness",
+        "name": rangeData?.name || "HYPER GOLF 大津京",
+        "image": rangeData?.imageUrl || imageUrl,
+        "telephone": rangeData?.phone,
+        "priceRange": rangeData?.priceRange || "10000円〜20000円",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": rangeData?.address || "滋賀県大津市松山町12-8 2階", // ★予備の値
+            "addressLocality": rangeData?.city || "大津市", // ★「locality」から「addressLocality」に変更
+            "addressRegion": "滋賀県",
+            "postalCode": rangeData?.postalCode || "520-0024", // ★予備の値
+            "addressCountry": "JP"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "関（せき）",
+        "url": "https://shigolf.com/about/",
+        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
+    },
+    "reviewBody": description,
+    "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": rangeData?.avgRating ? parseFloat(rangeData.avgRating).toFixed(1) : "0",
+        "bestRating": "5",
+        "worstRating": "1"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "シガゴル",
+        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+    },
+    "datePublished": pubDateISO,
+    "dateModified": pubDateISO,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": articleUrl
+    },
+    "image": [ // ★全画像URLをSEOのためリスト化
+        imageUrl,
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9267.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9270.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/img00001111.jpg",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/img0102.jpg",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9282.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9295.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9272.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9279.png"
+    ]
+};
+
+// ★★★ [新規] FAQ構造化データ ★★★
+const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "HYPER GOLF 大津京の料金体系は？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "月額制の会員プランが基本です。全日会員は月額10,890円、ナイト会員は月額5,390円など、複数のプランがあります。詳細は記事内の料金表をご確認ください。"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "ビジター（都度利用）は可能ですか？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "はい、可能です。ビジター料金は平日2,750円、休日3,300円（各55分）です。初めての方向けの「無料体験プラン」も用意されています。"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "レンタルクラブはありますか？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "はい、無料のレンタルクラブが用意されています。手ぶらで訪問可能です。"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "左利きの打席はありますか？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "いいえ、ありません。左利き打席はイオンモール草津店をご利用ください。"
+            }
+        }
+    ]
+};
+---
+
+<!-- [8] 構造化データ (★Review + FAQを配列で出力) -->
+<script slot="head" type="application/ld+json" set:html={JSON.stringify([reviewSchema, faqSchema])} />
+
+
+<!-- [9] メインレイアウト -->
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <!-- [10] 導入 -->
+            <p>「インドアゴルフって、正直どうなの？」<br/>
+            「月額料金が高いだけで、開放感もないし…」<br/>
+            私もそう思っていた一人です。</p>
+
+            <p>今回訪れた「HYPER GOLF 大津京」は、まさにそのイメージ通りの月額制インドアゴルフ施設。<br/>
+            事前にネットで料金体系は確認済み。全日会員は月額10,890円、傾斜台が動く最上級の「プレミアム会員」に至っては月額18,590円。</p>
+
+            <p>正直、気軽に「ちょっと練習に」と入れる金額ではありません。<br/>
+            「でも、一体どんな世界なんだ…？」</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9267.png" alt="HYPER GOLF 大津京の入り口" class="w-full h-auto object-cover rounded-lg" width={1200} height={800} format="webp" quality={80} loading="eager" fetchpriority="high"/>
+                <figcaption class="text-center text-sm text-slate-500 mt-2">スマホ認証で開ける（らしい）今風なシステム。こじんまりとした入り口です。</figcaption>
+            </figure>
+
+            <p>中に入ると、想像していたよりずっと「こじんまり」とした実用的な空間が広がっていました。<br/>
+            ここから“研究室のような練習体験”が始るとは、このとき想像もしていませんでした。</p>
+
+            <p>「全打席を体験するのは無理だ。でも、中身を知りたい」<br/>
+            そう考えた私は、この施設が提供している<strong>「無料体験プラン」</strong>を使って、“1打席だけ”突撃を敢行することにしました。</p>
+
+            <p>そして、その1打席で、私は屋外の「打ちっぱなし」では決して得られない、衝撃的な体験をすることになります。</p>
+
+
+            <!-- [11] 目次 -->
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#section-hikari" class="text-green-700 hover:underline">練習の常識が変わる。「DITECT」の衝撃と“人の温かさ”</a></li>
+                    <li><a href="#section-kage" class="text-green-700 hover:underline">唯一の心残り。最上級「GOLFZON」への憧れと、施設の“割り切り”</a></li>
+                    <li><a href="#section-otameshi" class="text-green-700 hover:underline">月額1万超えの施設を“賢く”試す方法</a></li>
+                    <li><a href="#section-conclusion" class="text-green-700 hover:underline">【最終結論】「週2回以上練習する人」には、屋外練習場より“安い”</a></li>
+                    <li><a href="#faq" class="text-green-700 hover:underline">HYPER GOLF 大津京 よくある質問 (FAQ)</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">HYPER GOLF 大津京 基本情報</a></li>
+                </ul>
+            </div>
+
+            <!-- [12] 光の章 -->
+            <h2 id="section-hikari" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                練習の常識が変わる。<br/>「DITECT」の衝撃と“人の温かさ”
+            </h2>
+            <p>この施設には、大きく分けて3種類のシミュレーターがあります。</p>
+            
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9270.png" alt="HYPER GOLF 大津京の施設案内とシミュレーターの種類" class="w-full h-auto object-cover rounded-lg border" width={1200} height={900} format="webp" quality={80} />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">3種類のシミュレーターが選べます。</figcaption>
+            </figure>
+
+            <ol class="list-decimal list-inside space-y-2 my-4">
+                <li><strong>GOLFZON (プレミアム会員用)</strong>：傾斜台が動く、個室の最上級打席。</li>
+                <li><strong>OKongolf</strong>：シミュレーションゴルフ用（今回は体験できず）</li>
+                <li><strong>DITECT</strong>：私が体験した、データ分析特化型打席。</li>
+            </ol>
+
+            <p>私が予約したのは「DITECT」の打席。<br/>
+            これが、私のゴルフ練習の常識を覆しました。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/img00001111.jpg" alt="DITECTの3画面カメラ映像" class="w-full h-auto object-cover rounded-lg border" width={1200} height={800} format="webp" quality={80} />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">DITECTの画面。3つのカメラ映像がスイングを丸裸にします。</figcaption>
+            </figure>
+
+            <p>まず、カメラが3つあります。正面、後方、そして<strong>「インパクトの瞬間」</strong>を撮影する超ハイスピードカメラ。</p>
+
+            <p>普段、私は屋外練習場のトップトレーサーで練習していますが、表示されるデータは「飛距離」「キャリー」「左右ブレ」など、結果が中心です。</p>
+
+            <p>しかし、このDITECTは違いました。<br/>
+            「ヘッドスピード」「ボールスピード」「バックスピン」「サイドスピン」といった基本的なデータはもちろん、トップトレーサーでは知り得ない<strong>「インパクトの瞬間のスロー映像」</strong>が、1球ごとに画面に叩きつけられるのです。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/img0102.jpg" alt="DITECTのインパクト瞬間のスロー映像" class="w-full h-auto object-cover rounded-lg border" width={1200} height={800} format="webp" quality={80} />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">この「インパクト映像」で、入射角やフェースの向きが視覚的にわかります。</figcaption>
+            </figure>
+
+            <p>「あ、今のショット、入射角がキツすぎたな…」<br/>
+            「インパクトの瞬間、フェースがこれだけ開いてるのか！」</p>
+
+            <p>自分のスイングが、スロー再生と数値によって丸裸にされていく感覚。これは、興奮します。<br/>
+            1球打ってはデータを確認し、課題を修正してまた打つ。こんなに効率的で知的な練習が他にあるでしょうか。<br/>
+            時間の感覚がなくなるほど、データと自分の動きに没頭していました。</p>
+
+            <p>「近くにあったら、絶対会員になってる…」<br/>
+            これが、練習開始わずか10分で出た、私の本音でした。</p>
+
+            <p>さらに、「光」は機械だけではありませんでした。<br/>
+            たまたま居合わせた店員さん（レッスンプロではない）が、ものすごいゴルフ好きの方で、気さくに話しかけてくれたのです。</p>
+
+            <p>「そのクラブ、ちょっと難しいですよね。よかったら俺の、試してみます？」</p>
+
+            <p>そう言って、ご自身のクラブまで試打させてくれました。挙げ句の果てには、私のスイングを見て「もう少しこうしたら？」と軽いレッスンまで…（笑）<br/>
+            機械は最先端ですが、人付き合いは温かい。このギャップも最高でした。</p>
+            
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9282.png" alt="HYPER GOLF 大津京のレッスンプロ紹介看板" class="w-full h-auto object-cover rounded-lg border" width={1200} height={900} format="webp" quality={80} />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">レッスンにも力を入れているようです。4名のプロが在籍。</figcaption>
+            </figure>
+
+
+            <!-- [13] 影の章 -->
+            <h2 id="section-kage" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                唯一の心残り。最上級「GOLFZON」への<br/>憧れと、施設の“割り切り”
+            </h2>
+            <p>これだけ「DITECT」に感動した私ですが、やはり「影」、つまり「心残り」もあります。</p>
+
+            <p>それは、<strong>プレミアム会員専用の「GOLFZON」</strong>です。</p>
+
+            <p>これは完全に個室になっていて、私が練習している間も、一組の夫婦が楽しそうに入っていくのを見かけました。（※内部は体験できなかったので写真はありません）</p>
+
+            <p>屋外の練習場とラウンドの最大の違い、それは「傾斜」です。<br/>
+            「GOLFZON」は、シミュレーションするコースに合わせて、<strong>打席の床が「右足上がり」「つま先下がり」と自動で動く</strong>らしいのです。<br/>
+            これ、反則じゃないですか？（笑）</p>
+
+            <p>「DITECT」でスイングのデータを固め、「GOLFZON」で傾斜地での対応力を磨く。<br/>
+            これができたら、どれだけ上達が早いことか…。<br/>
+            「無料体験」の身としては、あの個室のドアの向こう側は、憧れの対象でしかありませんでした。</p>
+
+            <p>また、施設全体が「こじんまり」しているのも特徴です。<br/>
+            洒落たラウンジや、広いパター練習場は<strong>ありません</strong>。<br/>
+            あるのは、マッサージチェア（これは嬉しい）と、有料の貸しロッカー。<br/>
+            あくまで「練習に特化」した、実用的な空間です。</p>
+            
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9295.png" alt="HYPER GOLF 大津京の有料ロッカー" class="w-full h-auto object-cover rounded-lg border" width={800} height={1200} format="webp" quality={80} />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">練習に特化した、実用的な設備（有料ロッカー）。</figcaption>
+            </figure>
+
+
+            <!-- [14] 関の裏技 -->
+            <h2 id="section-otameshi" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                月額1万超えの施設を<br/>“賢く”試す方法
+            </h2>
+            <p>私が今回この高額なインドア施設を体験できたのは、<strong>「無料体験プラン」</strong>を使ったからです。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9272.png" alt="HYPER GOLF 大津京の無料体験の看板" class="w-full h-auto object-cover rounded-lg border" width={1200} height={900} format="webp" quality={80} />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">これがオフィシャルに提供されている「賢い入口」です。</figcaption>
+            </figure>
+
+            <p>これは、入会を検討している人向けに提供されているプランで、もちろん私も入会を真剣に悩みました。</p>
+
+            <p>また、面白いのが会員システムです。<br/>
+            「HYPER GOLF 大津京」の会員になると、同じ系列の<strong>「イオンモール草津店」も相互利用できる</strong>ようになります。<br/>
+            （※彦根店は別システムだそうです）</p>
+
+            <p>「今日は大津京が予約でいっぱいだから、草津に行くか」<br/>
+            こんな使い方ができるのは、車移動が基本の滋賀県民にとって、かなり大きなメリットだと感じました。</p>
+
+
+            <!-- [15] 結論 -->
+            <h2 id="section-conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【最終結論】「週2回以上練習する人」には、<br/>屋外練習場より“安い”
+            </h2>
+            <p>「で、結局どうなの？」<br/>
+            「月額10,890円（全日会員）は、屋外の打ちっぱなしと比べて高いの？ 安いの？」</p>
+
+            <p>私の結論は、<strong>「週に2回以上練習する人、または本気で上達したい人にとっては、“打ちっぱなしより安い”」</strong>です。</p>
+
+            <p>なぜなら、大津エリアの屋外練習場には、<strong>弾道測定器（トップトレーサーなど）が設置されている場所が、ほぼ無い</strong>からです。（※シガゴル調べ）</p>
+
+            <p>屋外で「ただ打つ」練習に月1万円払うのと、室内で「全データを計測」しながら練習するのに月1万円払うのと、どちらが上達が早いか。答えは明白です。</p>
+
+            <p>もちろん、開放感がないのはデメリットです。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">私ならこう使う</h3>
+            <p>私なら、メインの練習場をここ（HYPER GOLF）にしてデータを取り、たまに屋外練習場でアプローチや開放感を味わいに行く、という使い方をします。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3" id="price-table">コストパフォーマンスについて</h3>
+            
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/IMG_9279.png" alt="HYPER GOLF 大津京の料金表" class="w-full h-auto object-cover rounded-lg border" width={1200} height={900} format="webp" quality={80} />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">多彩な会員プランが用意されています。</figcaption>
+            </figure>
+            
+            <p>さらに、この施設には「ナイト会員（0時〜6時 / 月5,390円）」や「DAY会員（10時〜17時 / 月8,690円）」というプランもあります。<br/>
+            自分のライフスタイルに合えば、とんでもないコストパフォーマンスを発揮するはずです。</p>
+
+            <p>「データ」と「効率」を求める現代のゴルファーにとって、「HYPER GOLF 大津京」は、間違いなく大津エリアにおける“最適解”の一つだと断言できます。</p>
+            
+            
+            <!-- ★★★ [新規] よくある質問 (FAQ) ★★★ -->
+            <h2 id="faq" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                HYPER GOLF 大津京 よくある質問 (FAQ)
+            </h2>
+            <div class="faq-container not-prose space-y-4">
+                <div class="faq-item border-b pb-4">
+                    <h3 class="text-lg font-semibold text-slate-800 m-0">
+                        <span class="text-green-700 font-bold mr-2">Q.</span>料金体系は？
+                    </h3>
+                    <p class="text-base text-slate-700 m-0 mt-2 pl-6">
+                        <span class="font-bold mr-1">A.</span>月額制の会員プランが基本です。全日会員は月額10,890円、ナイト会員は月額5,390円など、複数のプランがあります。詳細は<a href="#price-table" class="text-green-700 hover:underline">記事内の料金表</a>をご確認ください。
+                    </p>
+                </div>
+                <div class="faq-item border-b pb-4">
+                    <h3 class="text-lg font-semibold text-slate-800 m-0">
+                        <span class="text-green-700 font-bold mr-2">Q.</span>ビジター（都度利用）は可能ですか？
+                    </h3>
+                    <p class="text-base text-slate-700 m-0 mt-2 pl-6">
+                        <span class="font-bold mr-1">A.</span>はい、可能です。ビジター料金は平日2,750円、休日3,300円（各55分）です。<br/>初めての方向けの「無料体験プラン」も用意されています。</p>
+                </div>
+                <div class="faq-item border-b pb-4">
+                    <h3 class="text-lg font-semibold text-slate-800 m-0">
+                        <span class="text-green-700 font-bold mr-2">Q.</span>レンタルクラブはありますか？
+                    </h3>
+                    <p class="text-base text-slate-700 m-0 mt-2 pl-6">
+                        <span class="font-bold mr-1">A.</span>はい、無料のレンタルクラブが用意されています。手ぶらで訪問可能です。
+                    </p>
+                </div>
+                <div class="faq-item">
+                    <h3 class="text-lg font-semibold text-slate-800 m-0">
+                        <span class="text-green-700 font-bold mr-2">Q.</span>左利きの打席はありますか？
+                    </h3>
+                    <p class="text-base text-slate-700 m-0 mt-2 pl-6">
+                        <span class="font-bold mr-1">A.</span>いいえ、ありません。左利き打席はイオンモール草津店をご利用ください。</p>
+                </div>
+            </div>
+            <!-- ★★★ [FAQ ここまで] ★★★ -->
+
+
+            <!-- [17] 共通コンポーネント -->
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+            <!-- [18] 施設情報 -->
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」の基本情報` : "「HYPER GOLF 大津京」の基本情報"}
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto not-prose">
+                        <table class="w-full text-left border-collapse">
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                </tr>
+                                {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + (rangeData.address || "滋賀県大津市皇子が丘2丁目10-13"))}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            {rangeData.address || "滋賀県大津市皇子が丘2丁目10-13"}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4" set:html={rangeData.business_hours?.replace(/\n/g, '<br />') || "24時間営業"} />
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                    <td class="py-3 px-4">
+                                        <b>【月額制】</b><br/>
+                                        全日会員: 10,890円/月<br/>
+                                        ナイト会員: 5,390円/月<br/>
+                                        <b>【体験】</b><br/>
+                                        無料体験プランあり<br/>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">インドア・シミュレーター</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
+                                </tr>
+                                {rangeData.website && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">公式サイト</th>
+                                        <td class="py-3 px-4">
+                                            <a href={rangeData.website} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                                {rangeData.website}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                )}
+                                <tr>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access || "JR大津京駅から徒歩約5分"}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + (rangeData.address || "滋賀県大津市皇子が丘2丁目10-13"))}`}
+                            width="100%" height="450" style="border:0;"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
+             <p class="text-center font-bold text-lg mt-8">
+                🎯 さらに詳しい情報や口コミはこちら！
+                <br />
+                <a
+                    href={`https://shigolf.com/ranges/${rangeId}/`} 
+                    class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    {rangeData ? `「${rangeData.name}」のシガゴル公式レビューページへ →` : "公式レビューページへ →"}
+                </a>
+            </p>
+        </article>
+    </div>
+
+    <style>
+        .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
+        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .scroll-mt-24 { scroll-margin-top: 6rem; }
+    </style>
+    
+</BaseLayout>
+
