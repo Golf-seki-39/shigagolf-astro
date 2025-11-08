@@ -198,6 +198,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">駐車場(目安)</th>
                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">料金体系</th>
                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">打放題</th>
+                                <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">アプローチ</th>
+        <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">シガゴル評価</th>
                                 <th class="px-4 py-3 border border-slate-300 text-center">特徴</th>
                             </tr>
                         </thead>
@@ -208,6 +210,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <td data-label="駐車場" class="px-4 py-2 border text-center align-middle whitespace-nowrap">約40台</td>
                                 <td data-label="料金体系" class="px-4 py-2 border text-center align-middle">球貸し</td>
                                 <td data-label="打放題" class="px-4 py-2 border text-center align-middle"><strong>なし</strong></td>
+                                <td data-label="アプローチ" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><strong>◎ (会員有料)</strong></td>
+        <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><span class="font-bold text-amber-500">★★★★☆</span></td>
                                 <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">2025年6月に<strong>打席周り</strong>リニューアル</td>
                             </tr>
                             <tr class="bg-slate-50">
@@ -216,6 +220,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <td data-label="駐車場" class="px-4 py-2 border text-center align-middle whitespace-nowrap">約20台</td>
                                 <td data-label="料金体系" class="px-4 py-2 border text-center align-middle"><strong>時間制</strong></td>
                                 <td data-label="打放題" class="px-4 py-2 border text-center align-middle"><strong>◯</strong></td>
+                                <td data-label="アプローチ" class="px-4 py-2 border text-center align-middle whitespace-nowrap">◯ (インドア)</td>
+        <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><span class="font-bold text-amber-500">★★★☆☆</span></td>
                                 <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">インドア。大型扇風機あり</td>
                             </tr>
                             <tr class="bg-white">
@@ -224,6 +230,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <td data-label="駐車場" class="px-4 py-2 border text-center align-middle whitespace-nowrap">約50台</td>
                                 <td data-label="料金体系" class="px-4 py-2 border text-center align-middle">球貸し</td>
                                 <td data-label="打放題" class="px-4 py-2 border text-center align-middle"><strong>◯</strong></td>
+                                <td data-label="アプローチ" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><strong>◎ (無料)</strong></td>
+        <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><span class="font-bold text-amber-500">★★★★☆</span></td>
                                 <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">冷房が快適。一部駐車しにくい箇所あり</td>
                             </tr>
                         </tbody>
@@ -242,7 +250,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <p>2025年6月に打席周りがリニューアルされ、夏場はミストも出るなど、快適性もさらに向上しています。</p>
 
                      <VoiceBox 
-                        text="打ち放題がないのは正直痛いですが、練習の『質』は東近江でNo.1。特に無料パターグリーンのクオリティは素晴らしいです。本気でスコアアップしたい人向けですね。"
+                        text="打ち放題がないのは正直痛いですが、練習の『質』は東近江でNo.1。<br/>特に無料パターグリーンのクオリティは素晴らしいです。<br/>本気でスコアアップしたい人向けですね。"
                      />
 
                      <div class="not-prose text-center my-6">
@@ -261,7 +269,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <p>特に、月額5,000円のフリーパスは、練習頻度が高いゴルファーにとってまさに”最強”の選択肢です。</p>
 
                      <VoiceBox 
-                        text="月5,000円のフリーパスは『反則』です（笑）週に2回以上通うなら、もうここで決まり。蒲生スマートICすぐなので、アクセスも最高です。"
+                        text="月5,000円のフリーパスは『反則』です（笑）<br/>週に2回以上通うなら、もうここで決まり。<br/>蒲生スマートICすぐなので、アクセスも最高です。"
                      />
 
                     
@@ -288,9 +296,9 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <p>広々としたアプローチ練習場や初心者優先打席など、幅広い層への配慮が光る練習場です。</p>
 
                      <VoiceBox 
-                        text="夏場の冷房完備は本当に天国です…。女性やジュニアへの特典が手厚すぎるので、ご家族や女性ゴルファーにはここを一番にオススメします。"
+                        text="夏場の冷房完備はなかなかいい感じです…。<br/>女性やジュニアへの特典が手厚すぎるので、女性ゴルファーには圧倒的にここを一番にオススメします。"
                      />
-                     
+
                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
                          <a href="/ranges/sakura_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                               <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
