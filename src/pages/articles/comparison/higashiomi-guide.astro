@@ -8,6 +8,7 @@ import { Image } from "astro:assets";
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
+import VoiceBox from '../../../components/VoiceBox.astro'; 
 
 // --- この記事固有の情報 ---
 const baseUrl = "https://shigolf.com";
@@ -160,7 +161,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
               </ul>
             </div>
 
-            <p>東近江市でゴルフ練習場を探しているあなたへ。「リバーサイドとさくら、結局どっちがいいの？」...そんな悩みをこの記事一本で解決します。</p>
+            <p>東近江市でゴルフ練習場を探しているあなたへ。<br/>「リバーサイドとさくら、結局どっちがいいの？」...<br/>そんな悩みをこの記事一本で解決します。</p>
 <p>はじめまして、滋賀県在住で「シガゴル」運営者の関です。<strong>私自身が東近江市の全3施設（リバーサイド、がれーじぱーく、さくら）をすべて体験した</strong>上で、その疑問に本音でお答えします。</p>
 <p>この記事では、料金の安さだけでなく、アプローチ設備、練習環境の快適さまで、<strong>現地ライターの目線</strong>で徹底的に比較します。</p>
             <p>あなたの目的やライフスタイルに<strong>”完璧に”</strong>マッチする練習場が、必ず見つかります。さあ、東近江市最強のゴルフ練習場まとめの始まりです。</p>
@@ -239,6 +240,11 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <p>「安さ」よりも「練習の質」を徹底的に追求するゴルファーが集うのが、このリバーサイドジャンボゴルフです。無料で利用できる本格的なパターグリーンや、質の高い（会員限定有料）アプローチ練習場は、スコアアップへの投資価値十分。</p>
                      <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6450 2.jpg" alt="リバーサイドジャンボゴルフの手入れが行き届いた綺麗なパターグリーン" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <p>2025年6月に打席周りがリニューアルされ、夏場はミストも出るなど、快適性もさらに向上しています。</p>
+
+                     <VoiceBox 
+                        text="打ち放題がないのは正直痛いですが、練習の『質』は東近江でNo.1。特に無料パターグリーンのクオリティは素晴らしいです。本気でスコアアップしたい人向けですね。"
+                     />
+
                      <div class="not-prose text-center my-6">
                          <a href="/ranges/riverside_jumbo/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
@@ -253,6 +259,12 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <p>蒲生スマートICからわずか2分という抜群のアクセスを誇る、完全インドア練習場。天候を一切気にすることなく、弾道測定器が示す詳細なデータに基づいて、どこまでも効率的にご自身のスイングと向き合えます。</p>
                      <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9537.png" alt="がれーじぱーく東近江の弾道測定器の画面" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <p>特に、月額5,000円のフリーパスは、練習頻度が高いゴルファーにとってまさに”最強”の選択肢です。</p>
+
+                     <VoiceBox 
+                        text="月5,000円のフリーパスは『反則』です（笑）週に2回以上通うなら、もうここで決まり。蒲生スマートICすぐなので、アクセスも最高です。"
+                     />
+
+                    
                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
                          <a href="/ranges/garage_park/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                              <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
@@ -274,6 +286,11 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <p>女性やジュニアへの特典が非常に手厚く、対象者にとっては最高の練習環境がここにあります。夏場は冷房が効いており、厳しい暑さの中でも快適に練習に集中しやすいのが大きな魅力です。</p>
                      <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9788.png" alt="さくらゴルフ倶楽部の広々としたアプローチ練習場" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} decoding="async" format="webp" quality={80} />
                      <p>広々としたアプローチ練習場や初心者優先打席など、幅広い層への配慮が光る練習場です。</p>
+
+                     <VoiceBox 
+                        text="夏場の冷房完備は本当に天国です…。女性やジュニアへの特典が手厚すぎるので、ご家族や女性ゴルファーにはここを一番にオススメします。"
+                     />
+                     
                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
                          <a href="/ranges/sakura_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                               <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
