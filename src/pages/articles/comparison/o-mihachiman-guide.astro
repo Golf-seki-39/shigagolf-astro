@@ -16,10 +16,10 @@ const publicationDate = "2025-10-17"; // 公開日を固定
 const lastModified = new Date();
 
 // --- SEOコピー ---
-const title = "【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較 | シガゴル";
-const description = "近江八幡市のゴルフ練習場選びの決定版！グリーンピア、安土ゴルフクラブに加え、会員制インドアゴルフELGRACEまで全3施設を網羅。料金・設備・特徴を徹底比較し、あなたに最適な練習場を見つけます。";
+const title = "【滋賀・近江八幡市】ゴルフ練習場おすすめ3選！料金、アプローチ、選び方を現地ライターが徹底比較 | シガゴル";
+const description = "近江八幡市のゴルフ練習場3選を現地ライターが徹底レビュー。「安土ゴルフクラブ」と「グリーンピア」はどっちが安い？アプローチ練習は？初心者の選び方も解説。";
 const category = "比較記事";
-const headline = "【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較";
+const headline = "【滋賀・近江八幡市】ゴルフ練習場おすすめ3選！料金、アプローチ、選び方を現地ライターが徹底比較";
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg"; // 近江八幡に合わせた画像に変更推奨
 
 // --- Firebaseから各練習場の情報を取得 ---
@@ -157,9 +157,9 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
               </ul>
             </div>
 
-            <p>近江八幡市でゴルフ練習場を探しているあなたへ。「グリーンピアと安土、結局どっちがいいの？」――そんなゴルファーの永遠の疑問に、この記事が終止符を打ちます。</p>
-            <p>この記事では、近江八幡市内にある主要なゴルフ練習場2施設に、プレミアムな選択肢である会員制インドアゴルフ1施設を加えた合計3施設を、<strong>料金の安さ</strong>はもちろん、<strong>打ち放題プランのお得度</strong>、**練習設備**まで、あらゆる角度から徹底的に比較します。</p>
-
+            <p>「グリーンピアと安土、結局どっちがいいの？」――近江八幡市で練習場を探すゴルファーの、永遠の疑問かもしれません。</p>
+<p>はじめまして、滋賀県在住でゴルフメディア「シガゴル」運営者の関（<a href="/about/">@seki</a>）です。私自身が<strong>「グリーンピア」と「安土ゴルフクラブ」の両方を実際に体験した</strong>上で、その疑問に終止符を打ちます。</p>
+<p>この記事では、市内の主要2施設＋インドア1施設を、料金の安さ、アプローチなどの練習設備、初心者の通いやすさまで、<strong>現地ライターの目線</strong>で徹底的に比較します。</p>
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
@@ -231,6 +231,15 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                              この練習場の施設詳細ページへ
                          </a>
+                         {additionalData.greenpia_oh.reviewUrl && (
+        <div class="mt-4 md:mt-0">
+            <p class="text-sm text-slate-600 mb-2">実際に行ってみた体験レポートはこちら：</p>
+                <a href={additionalData.greenpia_oh.reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                管理人の詳細体験レポートを読む
+            </a>
+        </div>
+    )}
                      </div>
                  </div>
                  <div id="azuchi_gc" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
