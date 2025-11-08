@@ -200,6 +200,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">打放題</th>
                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">アプローチ</th>
         <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">シガゴル評価</th>
+        <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">マットの質</th>
+<th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">ボールの質</th>
                                 <th class="px-4 py-3 border border-slate-300 text-center">特徴</th>
                             </tr>
                         </thead>
@@ -212,6 +214,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <td data-label="打放題" class="px-4 py-2 border text-center align-middle"><strong>なし</strong></td>
                                 <td data-label="アプローチ" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><strong>◎ (会員有料)</strong></td>
         <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><span class="font-bold text-amber-500">★★★★☆</span></td>
+        <td data-label="マットの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★★☆ (良質)</td>
+<td data-label="ボールの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★☆☆ (標準的)</td>
                                 <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">2025年6月に<strong>打席周り</strong>リニューアル</td>
                             </tr>
                             <tr class="bg-slate-50">
@@ -222,6 +226,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <td data-label="打放題" class="px-4 py-2 border text-center align-middle"><strong>◯</strong></td>
                                 <td data-label="アプローチ" class="px-4 py-2 border text-center align-middle whitespace-nowrap">◯ (インドア)</td>
         <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><span class="font-bold text-amber-500">★★★☆☆</span></td>
+        <td data-label="マットの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★☆☆☆ (段差がきになる)</td>
+<td data-label="ボールの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★☆☆ (標準的)</td>
                                 <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">インドア。大型扇風機あり</td>
                             </tr>
                             <tr class="bg-white">
@@ -232,6 +238,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                 <td data-label="打放題" class="px-4 py-2 border text-center align-middle"><strong>◯</strong></td>
                                 <td data-label="アプローチ" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><strong>◎ (無料)</strong></td>
         <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><span class="font-bold text-amber-500">★★★★☆</span></td>
+        <td data-label="マットの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★☆☆ (標準的)</td>
+<td data-label="ボールの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★☆☆ (標準的)</td>
                                 <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">冷房が快適。一部駐車しにくい箇所有</td>
                             </tr>
                         </tbody>
@@ -304,7 +312,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <p>広々としたアプローチ練習場や初心者優先打席など、幅広い層への配慮が光る練習場です。</p>
 
                      <VoiceBox 
-                        text="夏場の冷房完備はなかなかいい感じです…。<br/>女性やジュニアへの特典が手厚すぎるので、女性ゴルファーには圧倒的にここを一番にオススメします。"
+                        text="夏場の冷房完備はなかなかいい感じです…。<br/><strong>特に2F右奥の『初心者優先打席』は、大きな仕切りがあって周りの目を気にせず練習できる</strong>ので、空振りしちゃうかも…と不安な方にこそ最強です。<br/>女性やジュニアへの特典が手厚すぎるので、女性ゴルファーには圧倒的にここを一番にオススメします。"
                      />
 
                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
@@ -490,6 +498,13 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                  </div>
                  <p class="text-sm text-slate-500 text-center mt-4">※料金は2025年10月時点のものです。最新情報は各練習場の公式サイトをご確認ください。</p>
             </section>
+
+<VoiceBox 
+    text="<strong>【筆者の料金まとめ】</strong><br/>
+    月5回以上通うなら『がれーじぱーく』の月額5,000円が反則級の安さです。<br/>
+    たまに100球だけサクッと練習したいなら、平日休日問わず安い『さくらゴルフ』が堅実。<br/>
+    『リバーサイド』は価格こそ高いですが、その分『質』に投資するイメージですね。"
+/>
             
             <section id="more-info" class="scroll-mt-24">
                 <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【目的別】さらに深掘り！東近江のゴルフ練習場ガイド</h2>
@@ -521,9 +536,10 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p>ここまでの情報を基に、あなたにピッタリの練習場を診断します！</p>
                 <div class="space-y-4 mt-4 not-prose">
                      <div class="bg-slate-50 border-l-4 border-green-600 p-4 rounded-r-lg">
-                        <h5 class="font-bold text-slate-800 mt-0">【平日・休日問わず、安く練習したい方】</h5>
-                        <p class="m-0 text-slate-700">➡️ <strong>さくらゴルフ倶楽部</strong><br/><span class="text-sm"><strong>理由:</strong> 入場料を含めた100球あたりの総額が最も安いため。</span></p>
-                    </div>
+    <h5 class="font-bold text-slate-800 mt-0">【周りの目を気にせず練習したい初心者】</h5>
+    <p class="m-0 text-slate-700">➡️ <strong>さくらゴルフ倶部</strong><br/>
+    <span class="text-sm"><strong>理由:</strong> 2F右奥に大きな仕切りのある「初心者優先打席」があり、空振りも気にせず安心して練習できるから。</span></p>
+</div>
                     <div class="bg-slate-50 border-l-4 border-green-600 p-4 rounded-r-lg">
                         <h5 class="font-bold text-slate-800 mt-0">【女性・ジュニアゴルファーの方】</h5>
                         <p class="m-0 text-slate-700">➡️ <strong>さくらゴルフ倶楽部</strong> (一択です！)<br/><span class="text-sm"><strong>理由:</strong> 入場料無料など、特典が圧倒的に充実しているため。</span></p>
