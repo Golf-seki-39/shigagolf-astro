@@ -1,12 +1,27 @@
 ---
 // VoiceBox.astro
-import { Image } from 'astro:assets';
+import { Image } from 'astro:assets'; // <Image>コンポーネントはそのまま使います
 const { text, position = 'left' } = Astro.props;
-import authorImage from '/public/images/author-icon.png'; // 筆者のアイコン画像をここに指定
+
+// Firebase Storage のURLを「文字列」として定義
+const authorImageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png";
 ---
 <div class={`flex items-start gap-4 my-8 ${position === 'right' ? 'flex-row-reverse' : ''}`}>
     <div class="flex-shrink-0">
-        <Image src={authorImage} alt="筆者アイコン" width={60} height={60} class="rounded-full border-2 border-green-500" />
+        
+        {/* src={...} にローカル変数ではなく、URL文字列の変数を渡す */}
+        <Image 
+            src={authorImageUrl} 
+            alt="筆者アイコン" 
+            width={60} 
+            height={60} 
+            class="rounded-full border-2 border-green-500"
+            format="webp"
+            quality={80}
+            loading="lazy"
+            decoding="async"
+        />
+
     </div>
     <div class="relative bg-green-50 p-4 rounded-lg shadow-sm max-w-[calc(100%-80px)]">
         <p class="font-bold text-green-800 mb-1">筆者の本音</p>
@@ -16,8 +31,7 @@ import authorImage from '/public/images/author-icon.png'; // 筆者のアイコ�
 </div>
 
 <style>
-/* 吹き出しの三角部分のスタイル（Tailwindだけだと難しい場合） */
-.border-green-50 { border-color: #ecfdf5; /* bg-green-50と同じ色 */ }
+.border-green-50 { border-color: #ecfdf5; }
 .left-\[-16px\] { left: -16px; }
 .right-\[-16px\] { right: -16px; }
 </style>
