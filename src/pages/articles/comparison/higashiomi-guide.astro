@@ -547,42 +547,19 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="bg-white">
-                                <td
-                                    data-label="練習場名"
-                                    class="px-4 py-2 border align-middle font-semibold whitespace-nowrap"
-                                    ><a
-                                        href="#riverside_jumbo"
-                                        class="text-blue-600 hover:underline"
-                                        >リバーサイドジャンボゴルフ</a
-                                    ></td
-                                >
-                                <td
-                                    data-label="打席/ヤード"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >60席/230yd</td
-                                >
-                                <td
-                                    data-label="駐車場"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >約40台</td
-                                >
-                                <td
-                                    data-label="料金体系"
-                                    class="px-4 py-2 border text-center align-middle"
-                                    >球貸し</td
-                                >
-                                <td
-                                    data-label="打放題"
-                                    class="px-4 py-2 border text-center align-middle"
-                                    ><strong>なし</strong></td
-                                >
-                                <td
-                                    data-label="アプローチ"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    ><strong>◎ (会員有料)</strong></td
-                                >
-                                <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap">
+    {/* --- リバーサイドジャンボ --- */}
+    <tr class="bg-white">
+        <td data-label="練習場名" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap">
+            <a href="#riverside_jumbo" class="text-blue-600 hover:underline">リバーサイドジャンボゴルフ</a>
+        </td>
+        <td data-label="打席/ヤード" class="px-4 py-2 border text-center align-middle whitespace-nowrap">60席/230yd</td>
+        <td data-label="駐車場" class="px-4 py-2 border text-center align-middle whitespace-nowrap">約40台</td>
+        <td data-label="料金体系" class="px-4 py-2 border text-center align-middle">球貸し</td>
+        <td data-label="打放題" class="px-4 py-2 border text-center align-middle"><strong>なし</strong></td>
+        <td data-label="アプローチ" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><strong>◎ (会員有料)</strong></td>
+        
+        {/* シガゴル評価（avgRatingを使用） */}
+        <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap">
             {rangesData.riverside_jumbo?.avgRating ? (
                 <div class="flex items-center justify-center" role="img" aria-label={`評価 ${parseFloat(rangesData.riverside_jumbo.avgRating).toFixed(1)}/5`}>
                     <span class="font-bold text-amber-500 mr-2">
@@ -598,59 +575,25 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <span class="font-bold text-amber-500">★★★★☆</span> {/* フォールバック */}
             )}
         </td>
-                                <td
-                                    data-label="マットの質"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >★★★★☆ (良質)</td
-                                >
-                                <td
-                                    data-label="ボールの質"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >★★★☆☆ (標準的)</td
-                                >
-                                <td
-                                    data-label="特徴"
-                                    class="px-4 py-2 border align-middle text-xs"
-                                    >2025年6月に<strong>打席周り</strong
-                                    >リニューアル</td
-                                >
-                            </tr>
-                            <tr class="bg-slate-50">
-                                <td
-                                    data-label="練習場名"
-                                    class="px-4 py-2 border align-middle font-semibold whitespace-nowrap"
-                                    ><a
-                                        href="#garage_park"
-                                        class="text-blue-600 hover:underline"
-                                        >がれーじぱーく東近江</a
-                                    ></td
-                                >
-                                <td
-                                    data-label="打席/ヤード"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >1席/インドア</td
-                                >
-                                <td
-                                    data-label="駐車場"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >約20台</td
-                                >
-                                <td
-                                    data-label="料金体系"
-                                    class="px-4 py-2 border text-center align-middle"
-                                    ><strong>時間制</strong></td
-                                >
-                                <td
-                                    data-label="打放題"
-                                    class="px-4 py-2 border text-center align-middle"
-                                    ><strong>◯</strong></td
-                                >
-                                <td
-                                    data-label="アプローチ"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >◯ (インドア)</td
-                                >
-                                <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap">
+        
+        <td data-label="マットの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★★☆ (良質)</td>
+        <td data-label="ボールの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★☆☆ (標準的)</td>
+        <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">2025年6月に<strong>打席周り</strong>リニューアル</td>
+    </tr>
+
+    {/* --- がれーじぱーく --- */}
+    <tr class="bg-slate-50">
+        <td data-label="練習場名" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap">
+            <a href="#garage_park" class="text-blue-600 hover:underline">がれーじぱーく東近江</a>
+        </td>
+        <td data-label="打席/ヤード" class="px-4 py-2 border text-center align-middle whitespace-nowrap">1席/インドア</td>
+        <td data-label="駐車場" class="px-4 py-2 border text-center align-middle whitespace-nowrap">約20台</td>
+        <td data-label="料金体系" class="px-4 py-2 border text-center align-middle"><strong>時間制</strong></td>
+        <td data-label="打放題" class="px-4 py-2 border text-center align-middle"><strong>◯</strong></td>
+        <td data-label="アプローチ" class="px-4 py-2 border text-center align-middle whitespace-nowrap">◯ (インドア)</td>
+        
+        {/* シガゴル評価（avgRatingを使用） */}
+        <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap">
             {rangesData.garage_park?.avgRating ? (
                 <div class="flex items-center justify-center" role="img" aria-label={`評価 ${parseFloat(rangesData.garage_park.avgRating).toFixed(1)}/5`}>
                     <span class="font-bold text-amber-500 mr-2">
@@ -666,58 +609,25 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <span class="font-bold text-amber-500">★★★☆☆</span> {/* フォールバック */}
             )}
         </td>
-                                <td
-                                    data-label="マットの質"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >★★☆☆☆ (段差がきになる)</td
-                                >
-                                <td
-                                    data-label="ボールの質"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >★★★☆☆ (標準的)</td
-                                >
-                                <td
-                                    data-label="特徴"
-                                    class="px-4 py-2 border align-middle text-xs"
-                                    >インドア。大型扇風機あり</td
-                                >
-                            </tr>
-                            <tr class="bg-white">
-                                <td
-                                    data-label="練習場名"
-                                    class="px-4 py-2 border align-middle font-semibold whitespace-nowrap"
-                                    ><a
-                                        href="#sakura_gc"
-                                        class="text-blue-600 hover:underline"
-                                        >さくらゴルフ倶楽部</a
-                                    ></td
-                                >
-                                <td
-                                    data-label="打席/ヤード"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >72席/230yd</td
-                                >
-                                <td
-                                    data-label="駐車場"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >約50台</td
-                                >
-                                <td
-                                    data-label="料金体系"
-                                    class="px-4 py-2 border text-center align-middle"
-                                    >球貸し</td
-                                >
-                                <td
-                                    data-label="打放題"
-                                    class="px-4 py-2 border text-center align-middle"
-                                    ><strong>◯</strong></td
-                                >
-                                <td
-                                    data-label="アプローチ"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    ><strong>◎ (無料)</strong></td
-                                >
-                                <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap">
+
+        <td data-label="マットの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★☆☆☆ (段差がきになる)</td>
+        <td data-label="ボールの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★☆☆ (標準的)</td>
+        <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">インドア。大型扇風機あり</td>
+    </tr>
+
+    {/* --- さくらゴルフ倶楽部 --- */}
+    <tr class="bg-white">
+        <td data-label="練習場名" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap">
+            <a href="#sakura_gc" class="text-blue-600 hover:underline">さくらゴルフ倶楽部</a>
+        </td>
+        <td data-label="打席/ヤード" class="px-4 py-2 border text-center align-middle whitespace-nowrap">72席/230yd</td>
+        <td data-label="駐車場" class="px-4 py-2 border text-center align-middle whitespace-nowrap">約50台</td>
+        <td data-label="料金体系" class="px-4 py-2 border text-center align-middle">球貸し</td>
+        <td data-label="打放題" class="px-4 py-2 border text-center align-middle"><strong>◯</strong></td>
+        <td data-label="アプローチ" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><strong>◎ (無料)</strong></td>
+        
+        {/* ↓↓↓ シガゴル評価（avgRatingを使用 / ★★★ 修正済み ★★★） ↓↓↓ */}
+        <td data-label="シガゴル評価" class="px-4 py-2 border text-center align-middle whitespace-nowrap">
              {rangesData.sakura_gc?.avgRating ? (
                 <div class="flex items-center justify-center" role="img" aria-label={`評価 ${parseFloat(rangesData.sakura_gc.avgRating).toFixed(1)}/5`}>
                     <span class="font-bold text-amber-500 mr-2">
@@ -733,23 +643,12 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <span class="font-bold text-amber-500">★★★★☆</span> {/* フォールバック */}
             )}
         </td>
-                                <td
-                                    data-label="マットの質"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >★★★☆☆ (標準的)</td
-                                >
-                                <td
-                                    data-label="ボールの質"
-                                    class="px-4 py-2 border text-center align-middle whitespace-nowrap"
-                                    >★★★☆☆ (標準的)</td
-                                >
-                                <td
-                                    data-label="特徴"
-                                    class="px-4 py-2 border align-middle text-xs"
-                                    >冷房が快適。一部駐車しにくい箇所有</td
-                                >
-                            </tr>
-                        </tbody>
+
+        <td data-label="マットの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★☆☆ (標準的)</td>
+        <td data-label="ボールの質" class="px-4 py-2 border text-center align-middle whitespace-nowrap">★★★☆☆ (標準的)</td>
+        <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">冷房が快適。一部駐車しにくい箇所有</td>
+    </tr>
+</tbody>
                     </table>
                 </div>
             </section>
