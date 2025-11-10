@@ -409,11 +409,13 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                          const range = rangesData[id];
                          if (!range) return null;
 
-                         // ★ 正しいGoogle Maps URL形式 ★
+                         // ★★★ 修正点① (Mixed Content Error) ★★★
+                         // 1. URLを "httpss://" に変更
+                         // 2. Google Maps APIの "正しい" エンドポイントに変更
                          const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                         const mapsSearchUrl = `http://googleusercontent.com/maps/google.com/0${searchQuery}`;
-                         const mapsEmbedUrl = `http://googleusercontent.com/maps/google.com/1${gmapsApiKey}&q=${searchQuery}`;
-                         // ★ 修正ここまで ★
+                         const mapsSearchUrl = `httpss://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+                         const mapsEmbedUrl = `httpss://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
+                         // ★★★ 修正点ここまで ★★★
 
                          return (
                              <div id={`${id}-info`} class="scroll-mt-24">
@@ -460,6 +462,13 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                                 <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
                                                 <td class="py-3 px-4" set:html={range.business_hours?.replace(/\n/g, '<br />') || "-"} />
                                             </tr>
+                                            
+                                            {range.price_example && (
+                                                <tr class="border-b border-slate-200">
+                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                                    <td class="py-3 px-4" set:html={range.price_example.replace(/\n/g, '<br />')} />
+                                                </tr>
+                                            )}
                                             <tr class="border-b border-slate-200">
                                                 <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
                                                 <td class="py-3 px-4">{range.yardage ? `${range.yardage}ヤード` : (id === 'elgrace_omihachiman' ? 'インドア' : '-')}</td>
