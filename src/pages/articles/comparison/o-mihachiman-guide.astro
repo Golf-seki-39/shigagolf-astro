@@ -8,19 +8,20 @@ import { Image } from "astro:assets";
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
+import VoiceBox from '../../../components/VoiceBox.astro'; // VoiceBoxコンポーネントをインポート
 
 // --- この記事固有の情報 ---
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/comparison/o-mihachiman-guide/`;
-const publicationDate = "2025-10-17"; // 公開日を固定
-const lastModified = new Date();
+const publicationDate = "2025-10-17"; // 元の公開日を維持
+const lastModified = new Date(); // 最終更新日を自動取得
 
-// --- SEOコピー ---
-const title = "【滋賀・近江八幡市】ゴルフ練習場おすすめ3選！料金、アプローチ、選び方を現地ライターが徹底比較 | シガゴル";
-const description = "近江八幡市のゴルフ練習場3選を現地ライターが徹底レビュー。「安土ゴルフクラブ」と「グリーンピア」はどっちが安い？アプローチ練習は？初心者の選び方も解説。";
+// ★★★ SEOコピーを「対決」型に全面変更 ★★★
+const title = "【近江八幡 打ちっぱなし】グリーンピア vs 安土 結局どっち？料金・質・アクセスを現地ライターが本音で徹底比較 | シガゴル";
+const description = "近江八幡の打ちっぱなし「グリーンピア」と「安土」結局どっち？SDカードの安さ、アクセスの悪さ、客層、マットの質まで、シガゴル運営者が本音で結論を出します。";
 const category = "比較記事";
-const headline = "【滋賀・近江八幡市】ゴルフ練習場おすすめ3選！料金、アプローチ、選び方を現地ライターが徹底比較";
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg"; // 近江八幡に合わせた画像に変更推奨
+const headline = "【近江八幡 打ちっぱなし】グリーンピア vs 安土ゴルフクラブ 結局どっち？料金・質・アクセスを現地ライターが本音で徹底比較！";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/omi-hachiman-vs-eyecatch.jpg"; // ★対決を煽るアイキャッチに変更推奨 (これは仮のURLです)
 
 // --- Firebaseから各練習場の情報を取得 ---
 const rangeIds = ['greenpia_oh', 'azuchi_gc', 'elgrace_omihachiman'];
@@ -36,20 +37,20 @@ const rangesData = rangeDocs.reduce((acc, docSnap, index) => {
 
 // --- データの手動修正 ---
 if (rangesData.greenpia_oh) {
-    rangesData.greenpia_oh.name = "グリーンピア近江八幡ゴルフ";
+  	rangesData.greenpia_oh.name = "グリーンピア近江八幡ゴルフ";
 }
 if (rangesData.azuchi_gc && !rangesData.azuchi_gc.access) {
     rangesData.azuchi_gc.access = 'JR安土駅から車で5分';
 }
 
-// --- 各施設の追加情報 ---
+// --- 各施設の追加情報 (体験レポートのURL) ---
 const additionalData = {
-    azuchi_gc: { reviewUrl: '/articles/azuchi-review/' },
+  	azuchi_gc: { reviewUrl: '/articles/azuchi-review/' },
     greenpia_oh: { reviewUrl: '/articles/review/greenpia-oh/' },
     elgrace_omihachiman: { reviewUrl: null }
 };
 
-// --- JSON-LD構造化データ ---
+// --- JSON-LD構造化データ (FAQを対決型に修正) ---
 const mainEntity = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -61,32 +62,29 @@ const mainEntity = {
     "datePublished": new Date(publicationDate).toISOString(), "dateModified": lastModified.toISOString()
 };
 
+// ★★★ FAQを「検索意図」に最適化 ★★★
 const faqElements = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "@id": articleUrl + "#faq",
   "mainEntity": [
-    { "@type": "Question", "name": "近江八幡市で一番安いゴルフ練習場はどこですか？", "acceptedAnswer": { "@type": "Answer", "text": "100球700円（入場料なし）で気軽に練習できる「安土ゴルフクラブ」が、多くの場合で最も安くなります。ただし、平日昼間にたくさん打つなら「グリーンピア近江八幡ゴルフ」のボール単価が非常に安くお得です。" } },
-    { "@type": "Question", "name": "近江八幡市で初心者におすすめのゴルフ練習場は？", "acceptedAnswer": { "@type": "Answer", "text": "「安土ゴルフクラブ」がおすすめです。現金払いのシンプルな料金体系で、ゴルフ練習場が初めての方でも安心して利用できます。" } }
+    { "@type": "Question", "name": "近江八幡で「グリーンピア」と「安土」結局どっちが安いの？", "acceptedAnswer": { "@type": "Answer", "text": "【結論】SDカード（セーフドライバーカード）等割引があるなら「グリーンピア」、ビジター（割引なし）なら「安土ゴルフクラブ」が安くなります。安土は入場料無料で100球700円とシンプル。グリーンピアは平日2Fなら1球5円ですが、SDカード提示で1球3円という驚異的な安さになります。" } },
+    { "@type": "Question", "name": "近江八幡市で初心者におすすめのゴルフ練習場は？", "acceptedAnswer": { "@type": "Answer", "text": "手軽さ・快適さ・アクセスの良さを重視するなら「安土ゴルフクラブ」がおすすめです。現金払いのシンプルな料金体系で、練習場の雰囲気も落ち着いているため、初めての方でも安心して利用できます。" } },
+    { "@type": "Question", "name": "近江八幡でアプローチ練習ができるのはどこ？", "acceptedAnswer": { "@type": "Answer", "text": "「グリーンピア近江八幡ゴルフ」はアプローチ練習場・バンカー・パタースペースが揃っています。「安土ゴルフクラブ」は無料のバンカー練習場が利用可能です。" } }
   ]
 };
 
-// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+// --- 関連記事リスト ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
-　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
     { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
     { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
     { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
     { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
-    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
-    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 
 const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -101,6 +99,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             ‹ お役立ち記事一覧に戻る
         </a>
         <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
             <style is:global>
               html { scroll-behavior: smooth; }
               section[id] { scroll-margin-top: 80px; }
@@ -113,23 +112,19 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
               .table-wrapper tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
             
               @media (max-width: 767px) and (orientation: portrait) {
-                #article-view .responsive-table {
-                    min-width: 100% !important;
-                }
+                #article-view .responsive-table { min-width: 100% !important; }
                 #article-view .responsive-table thead { display: none !important; }
                 #article-view .responsive-table tr { display: block !important; margin-bottom: 1.5rem !important; border: 1px solid #cbd5e1 !important; border-radius: 0.5rem !important; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important; overflow: hidden; }
                 #article-view .responsive-table td { display: block !important; text-align: right !important; position: relative !important; border-bottom: 1px solid #e2e8f0 !important; padding: 0.75rem 0.75rem 0.75rem 130px !important; left: auto !important; background-color: #fff !important; }
                 #article-view .responsive-table td:last-child { border-bottom: none !important; }
                 #article-view .responsive-table td::before { content: attr(data-label); position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-weight: 600; text-align: left; color: #475569; width: 110px; }
                 #article-view .responsive-table td:first-child { background-color: #f1f5f9 !important; font-weight: bold !important; text-align: center !important; padding-left: 0.75rem !important; }
+                
+                /* ★★★ エラー修正 ('') ★★★ */
                 #article-view .responsive-table td:first-child::before { content: '' !important; }
-              
-                #article-view .show-table-view.table-wrapper {
-                    overflow-x: auto !important;
-                }
-                #article-view .show-table-view .responsive-table {
-                    min-width: 600px !important;
-                }
+                
+                #article-view .show-table-view.table-wrapper { overflow-x: auto !important; }
+                #article-view .show-table-view .responsive-table { min-width: 600px !important; }
                 #article-view .show-table-view .responsive-table thead { display: table-header-group !important; }
                 #article-view .show-table-view .responsive-table tr { display: table-row !important; border: none !important; box-shadow: none !important; }
                 #article-view .show-table-view .responsive-table td { display: table-cell !important; border: 1px solid #cbd5e1 !important; padding: 0.5rem !important; position: static !important; text-align: center !important; }
@@ -146,35 +141,42 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>
             </header>
 
-            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg" alt="近江八幡市のゴルフ練習場比較" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={675} fetchpriority="high" decoding="async" format="webp" quality={80} />
+            <Image src={imageUrl} alt="近江八幡市のゴルフ練習場「グリーンピア」と「安土ゴルフクラブ」の対決" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={675} fetchpriority="high" decoding="async" format="webp" quality={80} />
+            
+            <p>近江八幡市で打ちっぱなし練習場を探すとき、多くのゴルファーが「<strong>グリーンピアと安土、結局どっちがいいの？</strong>」という疑問にぶつかります。</p>
+            <p>SDカード提示で1球3円という激安の「グリーンピア近江八幡ゴルフ」か。それとも、入場料なし・現金700円ポッキリの手軽さを誇る「安土ゴルフクラブ」か。</p>
+            <p>はじめまして、「シガゴル」運営者の関（<a href="/about/">@seki</a>）です。私自身が両方の練習場を使い倒した上で、その永遠の疑問に終止符を打ちます。</p>
+            <p>この記事では、料金の安さだけでなく、アクセスのストレス、客層（マナー）、打席マットの質といった「<strong>実際に行かないと分からない本音</strong>」で、あなたに最適な練習場を結論付けます。</p>
 
             <div class="not-prose bg-green-50 border border-l-4 border-green-500 p-4 rounded-lg my-6">
-              <h4 class="text-lg font-bold text-green-800 mb-2 mt-0">あなたにおすすめの選び方</h4>
+              <h4 class="text-lg font-bold text-green-800 mb-2 mt-0">【結論】あなたはどっちを選ぶべき？</h4>
               <ul class="list-disc list-inside text-slate-700 m-0 p-0">
-                <li class="mb-1">安さと手軽さ重視 → <a href="#azuchi_gc" class="text-green-700 hover:underline font-semibold">安土ゴルフクラブ</a></li>
-                <li class="mb-1">平日昼のコスパ重視 → <a href="#greenpia_oh" class="text-green-700 hover:underline font-semibold">グリーンピア近江八幡ゴルフ</a></li>
-                <li>最高の練習環境を求める → <a href="#elgrace_omihachiman" class="text-green-700 hover:underline font-semibold">ELGRACE 近江八幡</a></li>
+                <li class="mb-1"><strong>安さ最優先（SDカード等所持）</strong>なら → <a href="#greenpia_oh-info" class="text-green-700 hover:underline font-semibold">グリーンピア近江八幡ゴルフ</a></li>
+                <li class="mb-1"><strong>手軽さ・快適さ・アクセスの良さ</strong>を求めるなら → <a href="#azuchi_gc-info" class="text-green-700 hover:underline font-semibold">安土ゴルフクラブ</a></li>
+                <li class="mb-1"><strong>女性・ジュニア</strong>で打ち放題がしたいなら → <a href="#greenpia_oh-info" class="text-green-700 hover:underline font-semibold">グリーンピア近江八幡ゴルフ</a></li>
+                <li><strong>弾道測定器</strong>で分析・レッスンしたいなら → <a href="#elgrace_omihachiman-info" class="text-green-700 hover:underline font-semibold">ELGRACE 近江八幡（番外編）</a></li>
               </ul>
             </div>
 
-            <p>「グリーンピアと安土、結局どっちがいいの？」――近江八幡市で練習場を探すゴルファーの、永遠の疑問かもしれません。</p>
-<p>はじめまして、滋賀県在住でゴルフメディア「シガゴル」運営者の関（<a href="/about/">@seki</a>）です。私自身が<strong>「グリーンピア」と「安土ゴルフクラブ」の両方を実際に体験した</strong>上で、その疑問に終止符を打ちます。</p>
-<p>この記事では、市内の主要2施設＋インドア1施設を、料金の安さ、アプローチなどの練習設備、初心者の通いやすさまで、<strong>現地ライターの目線</strong>で徹底的に比較します。</p>
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#summary-table" class="text-green-700 hover:underline">【総合比較】近江八幡市のゴルフ練習場3施設</a></li>
-                    <li><a href="#review-details" class="text-green-700 hover:underline">近江八幡市のゴルフ練習場3施設を個別レビュー</a></li>
-                    <li><a href="#price-comparison" class="text-green-700 hover:underline">【料金徹底比較】打ちっぱなし2大練習場を比べると？</a></li>
-                    <li><a href="#conclusion" class="text-green-700 hover:underline">【結論】あなたの目的別・おすすめ練習場診断</a></li>
+                    <li><a href="#summary-table" class="text-green-700 hover:underline">【総合比較】近江八幡市の練習場3施設</a></li>
+                    <li><a href="#vs-battle" class="text-green-700 hover:underline">【徹底比較】グリーンピア vs 安土 5番勝負</a></li>
+                    <li><a href="#vs-1-price" class="text-green-700 hover:underline ml-4">① 料金対決</a></li>
+                    <li><a href="#vs-2-access" class="text-green-700 hover:underline ml-4">② アクセス（ストレス）対決</a></li>
+                    <li><a href="#vs-3-comfort" class="text-green-700 hover:underline ml-4">③ 快適さ（客層・環境）対決</a></li>
+                    <li><a href="#vs-4-facility" class="text-green-700 hover:underline ml-4">④ 設備（マット）対決</a></li>
+                    <li><a href="#vs-5-shortgame" class="text-green-700 hover:underline ml-4">⑤ ショートゲーム対決</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">【結論】私が「安土ゴルフクラブ」を選ぶ理由</a></li>
+                    <li><a href="#extra-elgrace" class="text-green-700 hover:underline">【番外編】弾道測定器ならELGRACE近江八幡</a></li>
                     <li><a href="#info-summary" class="text-green-700 hover:underline">各施設の基本情報まとめ</a></li>
                 </ul>
             </div>
 
             <section id="summary-table">
-                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【総合比較】近江八幡市のゴルフ練習場3施設を徹底比較</h2>
-                <p>まずは全体像から。3つの施設は「打ちっぱなし」と「会員制インドア」で特徴が大きく異なります。</p>
-
+                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【総合比較】近江八幡市のゴルフ練習場3施設</h2>
+                <p>まずは全体像から。3つの施設は「打ちっぱなし（2施設）」と「会員制インドア（1施設）」で特徴が大きく異なります。</p>
                  <div class="not-prose my-4 text-center">
                     <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="summary-table-container">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
@@ -194,216 +196,196 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         </thead>
                         <tbody>
                             <tr class="bg-white">
-                                <td data-label="練習場名" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap"><a href="#greenpia_oh" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td>
+                                <td data-label="練習場名" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap"><a href="#greenpia_oh-info" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a></td>
                                 <td data-label="カテゴリ" class="px-4 py-2 border text-center align-middle whitespace-nowrap">打ちっぱなし</td>
                                 <td data-label="料金体系" class="px-4 py-2 border text-center align-middle">球貸し</td>
                                 <td data-label="打席/ヤード" class="px-4 py-2 border text-center align-middle whitespace-nowrap">{rangesData.greenpia_oh?.bays || '-'}席 / {rangesData.greenpia_oh?.yardage || '-'}yd</td>
-                                <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">平日昼のコスパが高い</td>
+                                <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">SDカード等割引で激安。女性もお得。</td>
                             </tr>
                             <tr class="bg-slate-50">
-                                <td data-label="練習場名" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap"><a href="#azuchi_gc" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td>
+                                <td data-label="練習場名" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap"><a href="#azuchi_gc-info" class="text-blue-600 hover:underline">安土ゴルフクラブ</a></td>
                                 <td data-label="カテゴリ" class="px-4 py-2 border text-center align-middle whitespace-nowrap">打ちっぱなし</td>
-                                <td data-label="料金体系" class="px-4 py-2 border text-center align-middle">球貸し</td>
+                                <td data-label="料金体系" class="px-4 py-2 border text-center align-middle">球貸し (現金)</td>
                                 <td data-label="打席/ヤード" class="px-4 py-2 border text-center align-middle whitespace-nowrap">{rangesData.azuchi_gc?.bays || '-'}席 / {rangesData.azuchi_gc?.yardage || '-'}yd</td>
-                                <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">現金払いで手軽、ナイターがお得</td>
+                                <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">入場料無料・700円ポッキリで手軽。</td>
                             </tr>
                             <tr class="bg-white">
-                                <td data-label="練習場名" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap"><a href="#elgrace_omihachiman" class="text-blue-600 hover:underline">ELGRACE 近江八幡</a></td>
+                                <td data-label="練習場名" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap"><a href="#elgrace_omihachiman-info" class="text-blue-600 hover:underline">ELGRACE 近江八幡</a></td>
                                 <td data-label="カテゴリ" class="px-4 py-2 border text-center align-middle whitespace-nowrap"><strong>会員制インドア</strong></td>
                                 <td data-label="料金体系" class="px-4 py-2 border text-center align-middle">月額制</td>
                                 <td data-label="打席/ヤード" class="px-4 py-2 border text-center align-middle whitespace-nowrap">{rangesData.elgrace_omihachiman?.bays || '非公開'} / インドア</td>
-                                <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">最新シミュレーター完備のプライベート空間</td>
+                                <td data-label="特徴" class="px-4 py-2 border align-middle text-xs">弾道測定器完備のプライベート空間。</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
+            
+            <section id="vs-battle" class="scroll-mt-24">
+                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【徹底比較】グリーンピア vs 安土 5番勝負</h2>
+                <p>では、ここからが本題です。近江八幡の2大打ちっぱなし練習場を、現地ライターの本音でガチンコ比較します！</p>
+                
+                <h3 id="vs-1-price" class="text-xl font-bold mt-6 pt-4 border-t border-dotted border-slate-300">① 料金対決：「1球3円」は本当か？</h3>
+                <p>「結局、どっちが安いの？」という疑問に答えます。</p>
+                
+                <div class="grid md:grid-cols-2 gap-4 not-prose">
+                    <div class="border rounded-lg p-4">
+                        <h4 class="mt-0 font-bold text-lg text-center">グリーンピア近江八幡</h4>
+                        <ul class="list-disc list-inside text-sm">
+                            <li>平日2F：1球5円（入場料300円）</li>
+                            <li><strong>SDカード等提示で平日2円引 → 1球3円に！</strong></li>
+                            <li>女性/ジュニアは1時間550円〜打ち放題あり</li>
+                            <li>ビジター（割引なし）100球だと800円</li>
+                        </ul>
+                    </div>
+                    <div class="border rounded-lg p-4">
+                        <h4 class="mt-0 font-bold text-lg text-center">安土ゴルフクラブ</h4>
+                        <ul class="list-disc list-inside text-sm">
+                            <li><strong>入場料なし・1カゴ100球 700円</strong></li>
+                            <li>プリカ不要、現金のみでシンプル</li>
+                            <li>平日夜間は300球1,200円</li>
+                            <li><strong>3時間</strong>打ち放題 1,200円（2F）</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="not-prose bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg my-4 text-sm">
+                    <h4 class="font-bold text-blue-800 mt-0 mb-2">🤔 そもそも「SDカード」とは？</h4>
+                    <p class="m-0">
+                        SDカードとは「セーフドライバーカード」の略で、自動車安全運転センターが発行する無事故・無違反の証明書です。免許センターなどで取得できます。
+                        <a href="https://www.jsdc.or.jp/sd/tabid/115/Default.aspx" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-semibold hover:underline">» SDカードの取得方法はこちら（公式サイト）</a>
+                    </p>
+                </div>
 
-            <section id="review-details">
-                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">近江八幡市のゴルフ練習場3施設を個別レビュー</h2>
-                 <div id="greenpia_oh" class="mt-8 pt-6 scroll-mt-24">
-                     <h3 class="text-2xl font-bold text-slate-800 mt-0">グリーンピア近江八幡ゴルフ</h3>
-                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6879.png" alt="グリーンピア近江八幡ゴルフの広々とした練習スペース" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
-                     <h4 class="text-xl font-semibold text-slate-600">平日昼間のコスパは最強クラス！たくさん打つならココ</h4>
-                     <p>施設の古さはあるものの、それを補って余りある圧倒的な価格設定が最大の特徴です。特に、平日日中の2F打席はボール単価5円と驚異的な安さを誇り、SDカードなどの割引を組み合わせることでさらに安くなります。たくさん球を打ちたいコスパ重視派のゴルファーにとって、非常に強力な選択肢となるでしょう。</p>
-                     <div class="not-prose text-center my-6">
-                         <a href="/ranges/greenpia_oh/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
-                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
-                             この練習場の施設詳細ページへ
-                         </a>
-                         {additionalData.greenpia_oh.reviewUrl && (
-        <div class="mt-4 md:mt-0">
-            <p class="text-sm text-slate-600 mb-2">実際に行ってみた体験レポートはこちら：</p>
-                <a href={additionalData.greenpia_oh.reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
-                <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
-                管理人の詳細体験レポートを読む
-            </a>
-        </div>
-    )}
-                     </div>
-                 </div>
-                 <div id="azuchi_gc" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                     <h3 class="text-2xl font-bold text-slate-800 mt-0">安土ゴルフクラブ</h3>
-                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8076 2.png" alt="安土ゴルフクラブの打席からネット方向を見た全景" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
-                     <h4 class="text-xl font-semibold text-slate-600">シンプルイズベスト！現金派と初心者、夜練習派の味方</h4>
-                     <p>プリペイドカード不要で、1カゴ700円という現金での分かりやすい料金体系が最大の魅力。ゴルフ練習場デビューの初心者でも、何も迷うことなく気軽に練習を始められます。また、平日夜間の300球1,200円という破格のナイターサービスは、仕事終わりの練習の強い味方。無料のバンカー練習場も嬉しいポイントです。</p>
-                     <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
-                         <a href="/ranges/azuchi_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
-                             <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
-                             この練習場の施設詳細ページへ
-                         </a>
-                         {additionalData.azuchi_gc.reviewUrl && (
-                             <div>
-                                <p class="text-sm text-slate-600 mb-2">実際に行ってみた体験レポートはこちら：</p>
-                                 <a href={additionalData.azuchi_gc.reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
-                                     <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
-                                     管理人の詳細体験レポートを読む
-                                 </a>
-                             </div>
-                         )}
-                     </div>
-                 </div>
-                 <div id="elgrace_omihachiman" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                     <h3 class="text-2xl font-bold text-slate-800 mt-0">ELGRACE（エルグレース）近江八幡</h3>
-                     <h4 class="text-xl font-semibold text-slate-600">プレミアムな選択肢：24時間利用可能な会員制インドアゴルフ</h4>
-                     <p>ELGRACE近江八幡は、これまで紹介した2施設とは一線を画す、月額制の会員制インドアゴルフスタジオです。最新のゴルフシミュレーターを完備したプライベートな空間で、天候や時間を気にせず24時間いつでも練習に没頭できます。</p>
-                     <p>料金は月額14,300円からと高価格帯ですが、「自己流のスイングをデータで分析したい」「月額で通い詰めて集中的に上達したい」という、より高いレベルを目指すゴルファーにとっては、この上ない練習環境と言えるでしょう。</p>
-                     <div class="not-prose text-center my-6">
-                         <a href="/ranges/elgrace_omihachiman/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
-                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
-                             この施設の施設詳細ページへ
-                         </a>
-                     </div>
-                 </div>
-            </section>
+                <figure class="my-4">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8069 2.png" alt="安土ゴルフクラブの700円券売機" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={900} decoding="async" format="webp" quality={80} />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">安土ゴルフクラブの魅力が詰まった「700円」券売機。シンプルイズベストです。</figcaption>
+                </figure>
+                
+                <p class="text-sm text-center not-prose mt-4">
+                    ※各練習場のさらに詳しい料金体系は、個別の体験レポートでご確認ください。<br />
+                    <a href={additionalData.greenpia_oh.reviewUrl} class="text-green-700 font-semibold hover:underline">» グリーンピア近江八幡の料金詳細（体験談）</a><br />
+                    <a href={additionalData.azuchi_gc.reviewUrl} class="text-green-700 font-semibold hover:underline">» 安土ゴルフクラブの料金詳細（体験談）</a>
+                </p>
+                
+                <VoiceBox
+                    type="conclusion"
+                    title="【料金対決】勝者は… 目的別でドロー！"
+                    text={`<strong>SDカード等割引があるなら、グリーンピアの圧勝。</strong>1球3円は滋賀県トップクラスの安さです。<br><br>
+                    しかし、<strong>割引なしのビジターなら、入場料無料で100球700円の安土が最安。</strong>この「お小遣い制サラリーマンの味方」的な手軽さは唯一無二の魅力です。`}
+                />
 
-            <section id="price-comparison" class="scroll-mt-24">
-                 <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【料金徹底比較】打ちっぱなし2大練習場を比べると？</h2>
-                 <p>ここでは、多くの方が気になるであろう「グリーンピア」と「安土」の2大打ちっぱなし練習場の料金を、様々な角度から徹底比較します！</p>
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/RLWcVuZ.png" alt="電卓を片手に料金を比較検討しているイメージ" class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={675} decoding="async" format="webp" quality={80} />
-                 
-                 <h3 class="text-xl font-bold mt-6">【時間帯別】球貸し料金 比較表</h3>
-                 <div class="not-prose my-4 text-center">
-                    <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="price-time-table-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
-                        画面を横にして一覧表で見る
-                    </button>
-                 </div>
-                 <div id="price-time-table-container" class="table-wrapper my-4 not-prose">
-                     <table class="w-full text-sm text-left border border-slate-300 min-w-table-pc responsive-table">
-                         <thead class="bg-slate-100">
-                             <tr>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">【平日】日中 (10-17時)</th>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">【平日】夜間 (17時〜)</th>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">【土日祝】</th>
-                             </tr>
-                         </thead>
-                         <tbody>
-                             <tr class="bg-white">
-                                 <td data-label="練習場名" class="px-4 py-2 border font-semibold">グリーンピア</td>
-                                 <td data-label="平日日中" class="px-4 py-2 border text-center">入場料300円 + <strong>5円/球 (2F)</strong></td>
-                                 <td data-label="平日夜間" class="px-4 py-2 border text-center">入場料300円 + <strong>5円/球 (2F)</strong></td>
-                                 <td data-label="土日祝" class="px-4 py-2 border text-center">入場料300円 + 7円/球 (2F)</td>
-                             </tr>
-                              <tr class="bg-slate-50">
-                                 <td data-label="練習場名" class="px-4 py-2 border font-semibold">安土ゴルフクラブ</td>
-                                 <td data-label="平日日中" class="px-4 py-2 border text-center">入場料なし + 7円/球 ※</td>
-                                 <td data-label="平日夜間" class="px-4 py-2 border text-center">ナイターサービス: 1,200円/300球</td>
-                                 <td data-label="土日祝" class="px-4 py-2 border text-center">入場料なし + 7円/球 ※</td>
-                             </tr>
-                         </tbody>
-                     </table>
-                     <p class="text-xs text-slate-500 m-0 mt-2">※安土ゴルフクラブは1カゴ100球700円からの現金払いです。</p>
-                 </div>
-                 
-                 <h3 class="text-xl font-bold mt-6">【実践シミュレーション】100球打った時の総額料金</h3>
-                 <div class="not-prose my-4 text-center">
-                    <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="price-sim-table-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
-                        画面を横にして一覧表で見る
-                    </button>
-                 </div>
-                 <div id="price-sim-table-container" class="table-wrapper my-4 not-prose">
-                     <table class="w-full text-sm text-left border border-slate-300 min-w-table-pc responsive-table">
-                         <thead class="bg-slate-100">
-                             <tr>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">【平日・日中】の総額</th>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">【土日祝】の総額</th>
-                             </tr>
-                         </thead>
-                         <tbody>
-                             <tr class="bg-white">
-                                 <td data-label="練習場名" class="px-4 py-2 border font-semibold">グリーンピア (2F)</td>
-                                 <td data-label="平日日中" class="px-4 py-2 border text-center font-bold">800円</td>
-                                 <td data-label="土日祝" class="px-4 py-2 border text-center font-bold">1,000円</td>
-                             </tr>
-                             <tr class="bg-slate-50">
-                                 <td data-label="練習場名" class="px-4 py-2 border font-semibold">安土ゴルフクラブ</td>
-                                 <td data-label="平日日中" class="px-4 py-2 border text-center font-bold text-red-600">700円</td>
-                                 <td data-label="土日祝" class="px-4 py-2 border text-center font-bold text-red-600">700円</td>
-                             </tr>
-                         </tbody>
-                     </table>
-                 </div>
-                 
-                 <h3 class="text-xl font-bold mt-6">【打ち放題】プラン比較</h3>
-                 <div class="not-prose my-4 text-center">
-                    <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="buffet-table-container">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
-                        画面を横にして一覧表で見る
-                    </button>
-                 </div>
-                 <div id="buffet-table-container" class="table-wrapper my-4 not-prose">
-                     <table class="w-full text-sm text-left border border-slate-300 min-w-table-pc responsive-table">
-                         <thead class="bg-slate-100">
-                             <tr>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">練習場名</th>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">平日</th>
-                                 <th class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">土日祝</th>
-                             </tr>
-                         </thead>
-                         <tbody>
-                             <tr class="bg-white">
-                                 <td data-label="練習場名" class="px-4 py-2 border font-semibold">グリーンピア</td>
-                                 <td data-label="平日" class="px-4 py-2 border text-center">1,980円/3時間</td>
-                                 <td data-label="土日祝" class="px-4 py-2 border text-center">2,200円/3時間</td>
-                             </tr>
-                             <tr class="bg-slate-50">
-                                 <td data-label="練習場名" class="px-4 py-2 border font-semibold">安土ゴルフクラブ</td>
-                                 <td data-label="平日" class="px-4 py-2 border text-center">1,200円/3時間 (2F)</td>
-                                 <td data-label="土日祝" class="px-4 py-2 border text-center">1,200円/3時間 (2F)</td>
-                             </tr>
-                         </tbody>
-                     </table>
-                 </div>
-                 <p class="text-sm text-slate-500 text-center mt-4">※料金は2025年10月時点のものです。最新情報は各練習場の公式サイトをご確認ください。</p>
+                <h3 id="vs-2-access" class="text-xl font-bold mt-10 pt-4 border-t border-dotted border-slate-300">② アクセス（ストレス）対決</h3>
+                <p>練習場は「通いやすさ」も重要。行くまでのストレスを比較します。</p>
+                
+                <VoiceBox
+                    type="author"
+                    text={`正直に言います。私はグリーンピアに行くまでの道が苦手です。道が狭く、特に夕方は交通量もそれなりにあるため、対向車とすれ違う時に気を遣います…。<br><br>
+                    （危なくて路駐もできないため、道の写真が撮れませんでした）<br><br>
+                    その点、安土ゴルフクラブは道も広く、ストレスフリーで駐車場に入れます。`}
+                />
+                <VoiceBox
+                    type="conclusion"
+                    title="【アクセス対決】勝者は… 安土ゴルフクラブ！"
+                    text={`運転のしやすさ、アクセスのストレスの無さで、安土ゴルフクラブの勝利です。特に夕方に行くなら安土を選びます。`}
+                />
+
+                <h3 id="vs-3-comfort" class="text-xl font-bold mt-10 pt-4 border-t border-dotted border-slate-300">③ 快適さ（客層・環境）対決</h3>
+                <p>これも現地ライターだからこそ言える、大事な「本音」です。</p>
+                
+                <VoiceBox
+                    type="author"
+                    text={`あくまで私の体験ですが、グリーンピアは一部の常連客のマナーが気になりました。本来は禁煙の打席でタバコを吸っている方を見かけたこともあり、臭いが流れてきて集中できませんでした。<br><br>
+                    安土は、真剣に練習に打ち込むお客さんが多い印象です。喫煙所は1F左端にありますが、煙が流れてきたことはありません。（※念のため嫌煙家の方は中央〜右打席を選ぶと万全です）`}
+                />
+                <VoiceBox
+                    type="conclusion"
+                    title="【快適さ対決】勝者は… 安土ゴルフクラブ！"
+                    text={`落ち着いた環境で集中したい私にとっては、安土ゴルフクラブの圧勝です。`}
+                />
+                
+                <h3 id="vs-4-facility" class="text-xl font-bold mt-10 pt-4 border-t border-dotted border-slate-300">④ 設備（マット・ティー）対決</h3>
+                <p>両施設とも設備は古いですが、そこにも明確な差がありました。</p>
+                
+                <figure class="my-4">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6880.png" alt="グリーンピアの波打つマット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={900} decoding="async" format="webp" quality={80} />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">グリーンピアの打席マット。このように波打っている箇所があり、平らなライで練習しづらいことがありました。</figcaption>
+                </figure>
+                
+                <VoiceBox
+                    type="author"
+                    text={`グリーンピアはマットが波打っているだけでなく、<strong>自動ティーアップからボールを降ろしてマットで打とうとすると、マットの変な傾斜のせいで、ボールがティーアップの穴に転がり落ちる</strong>「ワナ」が頻発（笑）<br><br>
+                    安土もマットは古いですが、まだマシです。そして、昔ながらの「手動ティーアップ」が、逆に自分のタイミングで練習できて快適でした。`}
+                />
+                
+                <VoiceBox
+                    type="conclusion"
+                    title="【設備対決】勝者は… 安土ゴルフクラブ！"
+                    text={`どちらも古さが目立ちますが、練習のしやすさ・ストレスの無さで安土に軍配が上がります。`}
+                />
+                
+                <h3 id="vs-5-shortgame" class="text-xl font-bold mt-10 pt-4 border-t border-dotted border-slate-300">⑤ ショートゲーム対決</h3>
+                <p>スコアアップに欠かせないアプローチ・バンカー設備を比べます。</p>
+                
+                <div class="grid md:grid-cols-2 gap-4 not-prose">
+                    <figure>
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6865.png" alt="グリーンピアの水没したバンカー" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={900} decoding="async" format="webp" quality={80} />
+                        <figcaption class="text-center text-sm text-slate-500 mt-2">グリーンピアのバンカー。私が行くとなぜか毎回水没しています…</figcaption>
+                    </figure>
+                    <figure>
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8118 2.png" alt="安土ゴルフクラブの無料バンカー" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={900} decoding="async" format="webp" quality={80} />
+                        <figcaption class="text-center text-sm text-slate-500 mt-2">安土の無料バンカー。砂も入っており「案外使える」レベルです。</figcaption>
+                    </figure>
+                </div>
+
+                 <div class="grid md:grid-cols-2 gap-4 not-prose mt-4">
+                    <figure>
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6858.png" alt="グリーンピアのアプローチ練習場" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={900} decoding="async" format="webp" quality={80} />
+                        <figcaption class="text-center text-sm text-slate-500 mt-2">グリーンピアのアプローチ練習場（狭めです）。</figcaption>
+                    </figure>
+                    <figure>
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6874.png" alt="グリーンピアのパタースペース" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={900} decoding="async" format="webp" quality={80} />
+                        <figcaption class="text-center text-sm text-slate-500 mt-2">グリーンピアの専用パタースペース（広くはないですが有難い）。</figcaption>
+                    </figure>
+                </div>
+                
+                <VoiceBox
+                    type="conclusion"
+                    title="【ショートゲーム対決】勝者は… グリーンピア！"
+                    text={`安土は「案外使える無料バンカー」のみです。<br><br>
+                    対してグリーンピアは、バンカー（水没は別として）に加え、「アプローチ練習場」と「専用パタースペース」も完備。種類の豊富さでグリーンピアの勝利です。`}
+                />
             </section>
             
             <section id="conclusion" class="scroll-mt-24">
-                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【結論】あなたの目的別・おすすめ練習場診断</h2>
-                <p>ここまでの情報を基に、あなたにピッタリの練習場を診断します！</p>
-                <div class="space-y-4 mt-4 not-prose">
-                     <div class="bg-slate-50 border-l-4 border-green-600 p-4 rounded-r-lg">
-                        <h5 class="font-bold text-slate-800 mt-0">【手軽さ・安さ・夜練習を重視する方】</h5>
-                        <p class="m-0 text-slate-700">➡️ <strong>安土ゴルフクラブ</strong><br/><span class="text-sm"><strong>理由:</strong> 入場料無料でいつでも1カゴ700円とシンプル。特に平日夜間のナイターサービスは圧倒的にお得です。</span></p>
-                    </div>
-                    <div class="bg-slate-50 border-l-4 border-green-600 p-4 rounded-r-lg">
-                        <h5 class="font-bold text-slate-800 mt-0">【平日昼間にたくさん打ちたいコスパ重視派】</h5>
-                        <p class="m-0 text-slate-700">➡️ <strong>グリーンピア近江八幡ゴルフ</strong><br/><span class="text-sm"><strong>理由:</strong> 200球以上打つなら、ボール単価の安いグリーンピアが安土より総額で安くなります。</span></p>
-                    </div>
-                    <div class="bg-slate-50 border-l-4 border-green-600 p-4 rounded-r-lg">
-                        <h5 class="font-bold text-slate-800 mt-0">【最高の環境で集中的に上達したい方】</h5>
-                        <p class="m-0 text-slate-700">➡️ <strong>ELGRACE 近江八幡</strong><br/><span class="text-sm"><strong>理由:</strong> 価格は高いですが、24時間利用可能なプライベート空間と最新シミュレーターは唯一無二の練習環境です。</span></p>
-                    </div>
-                </div>
-                 <p class="mt-10 text-slate-600 italic text-center">
-                    「この記事が少しでも参考になったら、他の地域の比較記事もぜひチェックしてみてください。<br />
-                    まだまだ、滋賀のゴルフは面白くなります。」
-                </p>
+                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【結論】私が「安土ゴルフクラブ」を選ぶ理由</h2>
+                <p>5番勝負の結果は、3勝1敗1分で「安土ゴルフクラブ」の勝利となりました。</p>
+                
+                <VoiceBox
+                    type="author"
+                    title="運営者・関の最終結論"
+                    text={`SDカードの「1球3円」は確かに魅力的ですが、私はゴルフ練習場に「行くまでのストレスの無さ」や「練習中の快適さ」を最優先します。<br><br>
+                    総合的に見て、現金700円でサクッと行けて、静かに集中できる「安土ゴルフクラブ」を選ぶことが圧倒的に多いです。この手軽さこそ、近江八幡エリアで最強の武器だと感じています。`}
+                />
             </section>
-
+            
+            <section id="extra-elgrace" class="scroll-mt-24">
+                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【番外編】弾道測定器ならELGRACE近江八幡</h2>
+                <p>もしあなたが「打ちっぱなし」ではなく、「弾道測定器でデータを分析したい」「天候を気にせず集中したい」と考えるなら、第3の選択肢があります。</p>
+                <div id="elgrace_omihachiman" class="mt-8 pt-6 scroll-mt-24">
+                     <h3 class="text-2xl font-bold text-slate-800 mt-0">ELGRACE（エルグレース）近江八幡</h3>
+                     <h4 class="text-xl font-semibold text-slate-600">近江八幡で唯一！24時間利用可能な会員制インドアゴルフ</h4>
+                     <p>ELGRACE近江八幡は、これまで紹介した2施設とは一線を画す、月額制の会員制インドアゴルフスタジオです。最新のゴルフシミュレーターを完備したプライベートな空間で、24時間いつでも練習に没頭できます。</p>
+                     <p>料金は月額14,300円からと高価格帯ですが、「自己流のスイングをデータで分析したい」「月額で通い詰めて集中的に上達したい」という、より高いレベルを目指すゴルファーにとっては、唯一無二の練習環境と言えるでしょう。</p>
+                     <div class="not-prose text-center my-6">
+                         <a href="/ranges/elgrace_omihachiman/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                             この施設の詳細ページへ
+                         </a>
+                     </div>
+                 </div>
+            </section>
+            
             <section id="related-articles" class="mt-16 pt-6 border-t border-slate-200">
               <h2 class="text-2xl font-bold text-slate-800 mb-4">関連記事｜もっと滋賀のゴルフ練習場を知る</h2>
               <div class="not-prose my-12 space-y-12">
@@ -423,8 +405,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                          if (!range) return null;
 
                          const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                         const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
-                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
+                         const mapsSearchUrl = `http://googleusercontent.com/maps/google.com/0{searchQuery}`;
+                         const mapsEmbedUrl = `http://googleusercontent.com/maps/google.com/1{gmapsApiKey}&q=${searchQuery}`;
 
                          return (
                              <div id={`${id}-info`} class="scroll-mt-24">
@@ -440,6 +422,18 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                                  <div class="not-prose mt-4">
                                      <iframe src={mapsEmbedUrl} width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title={`${range.name}の地図`}></iframe>
                                  </div>
+                                  <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                                    <a href={`/ranges/${id}/`} class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                                        <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                                        この施設の詳細ページへ
+                                    </a>
+                                    {additionalData[id]?.reviewUrl && (
+                                        <a href={additionalData[id].reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                                            管理人の詳細体験レポートを読む
+                                        </a>
+                                    )}
+                                </div>
                              </div>
                          )
                      })}
