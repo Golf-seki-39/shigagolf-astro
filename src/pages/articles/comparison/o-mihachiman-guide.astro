@@ -411,8 +411,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 
                          // ★ 正しいGoogle Maps URL形式 ★
                          const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                         const mapsSearchUrl = `http://googleusercontent.com/maps/google.com/0{searchQuery}`;
-                         const mapsEmbedUrl = `http://googleusercontent.com/maps/google.com/1{gmapsApiKey}&q=${searchQuery}`;
+                         const mapsSearchUrl = `http://googleusercontent.com/maps/google.com/0${searchQuery}`;
+                         const mapsEmbedUrl = `http://googleusercontent.com/maps/google.com/1${gmapsApiKey}&q=${searchQuery}`;
                          // ★ 修正ここまで ★
 
                          return (
