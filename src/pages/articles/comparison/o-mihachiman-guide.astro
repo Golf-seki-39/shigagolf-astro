@@ -413,8 +413,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                          // 1. URLを "httpss://" に変更
                          // 2. Google Maps APIの "正しい" エンドポイントに変更
                          const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                         const mapsSearchUrl = `httpss://www.google.com/maps/search/?api=1&query=${searchQuery}`;
-                         const mapsEmbedUrl = `httpss://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
+                         const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
                          // ★★★ 修正点ここまで ★★★
 
                          return (
