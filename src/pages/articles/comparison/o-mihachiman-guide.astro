@@ -143,8 +143,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 
             <Image src={imageUrl} alt="近江八幡市のゴルフ練習場「グリーンピア」と「安土ゴルフクラブ」の対決" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={675} fetchpriority="high" decoding="async" format="webp" quality={80} />
             
-            <p>近江八幡市で打ちっぱなし練習場を探すとき、多くのゴルファーが「<strong>グリーンピアと安土、結局どっちがいいの？</strong>」という疑問にぶつかります。</p>
-            <p>SDカード提示で1球3円という激安の「グリーンピア近江八幡ゴルフ」か。それとも、入場料なし・現金700円ポッキリの手軽さを誇る「安土ゴルフクラブ」か。</p>
+            <p>近江八幡市で打ちっぱなし練習場を探すとき、多くのゴルファーが「<strong>グリーンピアと安土ゴルフ、結局どっちがいいの？</strong>」という疑問にぶつかります。</p>
+            <p>SDカード提示で1球3円という激安の「グリーンピア近江八幡ゴルフ」か。<br/>それとも、入場料なし・現金700円ポッキリの手軽さを誇る「安土ゴルフクラブ」か。</p>
             <p>はじめまして、「シガゴル」運営者の関（<a href="/about/">@seki</a>）です。私自身が両方の練習場を使い倒した上で、その永遠の疑問に終止符を打ちます。</p>
             <p>この記事では、料金の安さだけでなく、アクセスのストレス、客層（マナー）、打席マットの質といった「<strong>実際に行かないと分からない本音</strong>」で、あなたに最適な練習場を結論付けます。</p>
 
@@ -397,17 +397,20 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
 
-            <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+           <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                  <h2 class="text-2xl md:text-3xl font-bold text-slate-800">各施設の基本情報まとめ</h2>
                  <div class="space-y-8 mt-4">
                      {rangeIds.map(id => {
                          const range = rangesData[id];
                          if (!range) return null;
 
+                         // ★★★ ここが修正点です (URLの形式を根本的に修正) ★★★
                          const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                           const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=0${searchQuery}`;
-
-                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=1${gmapsApiKey}&q=${searchQuery}`;
+                         // 住所クリック時のGoogleマップ検索URL (APIキー不要)
+                         const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+                         // iframe埋め込み用のURL (APIキーが必要)
+                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
+                         // ★★★ 修正点ここまで ★★★
 
                          return (
                              <div id={`${id}-info`} class="scroll-mt-24">
