@@ -77,6 +77,8 @@ const faqElements = {
 // --- 関連記事リスト ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
     { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
     { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
@@ -84,7 +86,10 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-priceRank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
     { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
     { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 
 const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -253,13 +258,13 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                     <h4 class="font-bold text-blue-800 mt-0 mb-2">🤔 そもそも「SDカード」とは？</h4>
                     <p class="m-0">
                         SDカードとは「セーフドライバーカード」の略で、自動車安全運転センターが発行する無事故・無違反の証明書です。免許センターなどで取得できます。
-                        <a href="https://www.jsdc.or.jp/sd/tabid/115/Default.aspx" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-semibold hover:underline">» SDカードの取得方法はこちら（公式サイト）</a>
+                        <a href="https://www.jsdc.or.jp/sd/tabid/115/Default.aspx" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-semibold hover:underline">» SDカードについてはこちら（公式サイト）</a>
                     </p>
                 </div>
 
                 <figure class="my-4">
                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8069 2.png" alt="安土ゴルフクラブの700円券売機" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={900} decoding="async" format="webp" quality={80} />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">安土ゴルフクラブの魅力が詰まった「700円」券売機。シンプルイズベストです。</figcaption>
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">安土ゴルフクラブの魅力が詰まった料金表。シンプルイズベストです。</figcaption>
                 </figure>
                 
                 <p class="text-sm text-center not-prose mt-4">
@@ -272,7 +277,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                     type="conclusion"
                     title="【料金対決】勝者は… 目的別でドロー！"
                     text={`<strong>SDカード等割引があるなら、グリーンピアの圧勝。</strong>1球3円は滋賀県トップクラスの安さです。<br><br>
-                    しかし、<strong>割引なしのビジターなら、入場料無料で100球700円の安土が最安。</strong>この「お小遣い制サラリーマンの味方」的な手軽さは唯一無二の魅力です。`}
+                    しかし、<strong>割引なしのビジターなら、入場料無料で100球700円の安土が最安。</strong><br/>この「お小遣い制サラリーマンの味方」的な手軽さは唯一無二の魅力です。`}
                 />
 
                 <h3 id="vs-2-access" class="text-xl font-bold mt-10 pt-4 border-t border-dotted border-slate-300">② アクセス（ストレス）対決</h3>
@@ -287,7 +292,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <VoiceBox
                     type="conclusion"
                     title="【アクセス対決】勝者は… 安土ゴルフクラブ！"
-                    text={`運転のしやすさ、アクセスのストレスの無さで、安土ゴルフクラブの勝利です。特に夕方に行くなら安土を選びます。`}
+                    text={`運転のしやすさ、アクセスのストレスの無さで、安土ゴルフクラブの勝利です。<br/>特に夕方に行くなら安土を選びます。`}
                 />
 
                 <h3 id="vs-3-comfort" class="text-xl font-bold mt-10 pt-4 border-t border-dotted border-slate-300">③ 快適さ（客層・環境）対決</h3>
@@ -397,31 +402,78 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
 
-           <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+          <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                  <h2 class="text-2xl md:text-3xl font-bold text-slate-800">各施設の基本情報まとめ</h2>
                  <div class="space-y-8 mt-4">
                      {rangeIds.map(id => {
                          const range = rangesData[id];
                          if (!range) return null;
 
-                         // ★★★ ここが修正点です (URLの形式を根本的に修正) ★★★
+                         // ★ 正しいGoogle Maps URL形式 ★
                          const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                         // 住所クリック時のGoogleマップ検索URL (APIキー不要)
-                         const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
-                         // iframe埋め込み用のURL (APIキーが必要)
-                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
-                         // ★★★ 修正点ここまで ★★★
+                         const mapsSearchUrl = `http://googleusercontent.com/maps/google.com/0{searchQuery}`;
+                         const mapsEmbedUrl = `http://googleusercontent.com/maps/google.com/1{gmapsApiKey}&q=${searchQuery}`;
+                         // ★ 修正ここまで ★
 
                          return (
                              <div id={`${id}-info`} class="scroll-mt-24">
                                  <h3 class="text-xl font-bold">{range.name}</h3>
                                  <div class="not-prose overflow-x-auto mt-4">
-                                     <table class="w-full text-left border-collapse"><tbody>
-                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th><td class="py-3 px-4"><a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{range.address}</a></td></tr>
-                                         <tr class="border-b border-slate-200"><th class="px-4 py-3 bg-slate-50 font-semibold">アクセス</th><td class="px-4 py-3">{range.access || '-'}</td></tr>
-                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th><td class="py-3 px-4">{range.phone ? <a href={`tel:${range.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{range.phone}</a> : '-'}</td></tr>
-                                         <tr class="border-b border-slate-200"><th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th><td class="py-3 px-4" set:html={range.business_hours?.replace(/\n/g, '<br />') || '-'} /></tr>
-                                     </tbody></table>
+                                     <table class="w-full text-left border-collapse">
+                                        <tbody>
+                                            {range.avgRating && (
+                                                <tr class="border-b border-slate-200">
+                                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">総合評価</th>
+                                                    <td class="py-3 px-4">
+                                                        <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(range.avgRating).toFixed(1)}/5`}>
+                                                            <span class="font-bold text-amber-500 mr-2">{parseFloat(range.avgRating).toFixed(1)}</span>
+                                                            {Array.from({ length: 5 }).map((_, i) => (
+                                                                <svg class={`w-5 h-5 ${i < Math.round(parseFloat(range.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                                </svg>
+                                                            ))}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                                <td class="py-3 px-4">
+                                                    <a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                                                        {range.address}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                                <td class="py-3 px-4">
+                                                    {range.phone ? (
+                                                        <a href={`tel:${range.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">
+                                                            {range.phone}
+                                                        </a>
+                                                    ) : (
+                                                        <span>-</span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                                <td class="py-3 px-4" set:html={range.business_hours?.replace(/\n/g, '<br />') || "-"} />
+                                            </tr>
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                                <td class="py-3 px-4">{range.yardage ? `${range.yardage}ヤード` : (id === 'elgrace_omihachiman' ? 'インドア' : '-')}</td>
+                                            </tr>
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                                <td class="py-3 px-4">{range.bays ? `${range.bays}席` : '-'}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                                <td class="py-3 px-4">{range.access || '-'}</td>
+                                            </tr>
+                                        </tbody>
+                                     </table>
                                  </div>
                                  <div class="not-prose mt-4">
                                      <iframe src={mapsEmbedUrl} width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title={`${range.name}の地図`}></iframe>
