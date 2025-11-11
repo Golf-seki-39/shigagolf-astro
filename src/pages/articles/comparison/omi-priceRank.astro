@@ -17,10 +17,10 @@ const publicationDate = "2025-10-03";
 const lastModified = new Date();
 
 // --- SEOコピー ---
-const title = "【2025年版】近江八幡・東近江の安いゴルフ練習場（打ちっぱなし）5選！料金・快適さで徹底比較 | シガゴル";
-const description = "平日の昼ならグリーンピア、夜なら安土、女性ならさくら…。この記事を読めば、もう迷わず自分に一番お得なゴルフ練習場（打ちっぱなし）を選べます。全5施設の料金を時間帯・曜日・特典・快適さで徹底比較します。";
-const category = "比較記事"; 
-const headline = "【2025年版】近江八幡・東近江の安いゴルフ練習場（打ちっぱなし）5選！料金・快適さで徹底比較";
+const title = "【近江八幡・東近江】安いゴルフ練習場はどこ？料金・コスパで5施設を徹底比較 | シガゴル";
+const description = "近江八幡・東近江エリアで一番安い練習場を料金特化で分析。「平日昼ならグリーンピア」「夜なら安土」「女性ならさくら」など、利用シーン別の最安値とコスパを現地ライターが結論付けます。";
+const category = "比較記事"; 
+const headline = "【近江八幡・東近江】安いゴルフ練習場はどこ？料金・コスパで5施設を徹底比較"; // H1も修正
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg";
 
 // --- Firebaseから各練習場の情報を取得 ---
@@ -289,13 +289,20 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             
             <Image src={imageUrl} alt="滋賀県（近江八幡・東近江）のゴルフ練習場5施設のロゴと風景のコラージュ" class="w-full h-auto object-cover rounded-lg my-6" loading="eager" width={1200} height={800} fetchpriority="high" format="webp" quality={80} />
 
-            <div class="not-prose bg-blue-50 p-4 my-6 rounded-lg border border-l-4 border-blue-500">
-                <h4 class="text-lg font-bold text-slate-800 m-0">結論：最安の練習場は「あなたの利用時間帯」で変わります。</h4>
-                <p class="text-slate-700 mt-2 mb-0">平日の昼なら<a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline"><strong>グリーンピア</strong></a>、夜間にたくさん打つなら<a href="/ranges/azuchi_gc/" class="text-green-700 hover:underline"><strong>安土</strong></a>、女性なら<a href="/ranges/sakura_gc/" class="text-green-700 hover:underline"><strong>さくら</strong></a>…。この記事の比較表を見れば、もう迷わず自分にとって一番お得で快適な練習場を選べます。</p>
+            <div class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
+              <h2 class="text-xl font-bold mb-4 text-green-800">
+                この記事の結論：最安は「利用シーン」で変わる！
+              </h2>
+              <ul class="space-y-2 list-disc list-inside">
+                <li><strong>☀️ 平日・昼間に行くなら:</strong> <strong><a href="#greenpia_oh" class="text-green-700 hover:underline">グリーンピア近江八幡ゴルフ</a></strong></li>
+                <li><strong>🌙 平日・夜間に行くなら:</strong> <strong><a href="#azuchi_gc" class="text-green-700 hover:underline">安土ゴルフクラブ</a></strong>（ナイターサービス）</li>
+                <li><strong>👩‍🦰 女性・ジュニアなら:</strong> <strong><a href="#sakura_gc" class="text-green-700 hover:underline">さくらゴルフ倶楽部</a></strong>（特典が最強）</li>
+                <li><strong>🚗 とにかくアクセス重視なら:</strong> <strong><a href="#garage_park" class="text-green-700 hover:underline">がれーじぱーく東近江</a></strong>（ICから2分）</li>
+                <li><strong>💎 練習の「質」を求めるなら:</strong> <strong><a href="#riverside_jumbo" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a></strong>（パターグリーン◎）</li>
+              </ul>
             </div>
-
-            <p>滋賀県の近江八幡市・東近江市エリアでゴルフ練習場（打ちっぱなし）を探しているけれど、「結局どこが一番安いの？」と誰もが思います。しかし、答えは一つではありません。あなたが練習する「時間帯」や「曜日」、そして「どれくらい球を打つか」で最安の練習場は変わりますし、「駐車場の停めやすさ」や「練習環境の快適さ」も重要なポイントです。</p>
             
+            <p>滋賀県の近江八幡市・東近江市エリアでゴルフ練習場（打ちっぱなし）を探しているけれど、「結局どこが一番安いの？」と誰もが思います。しかし、答えは一つではありません。あなたが練習する「時間帯」や「曜日」、そして「どれくらい球を打つか」で最安の練習場は変わりますし、「駐車場の停めやすさ」や「練習環境の快適さ」も重要なポイントです。</p>
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
