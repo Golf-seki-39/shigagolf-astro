@@ -207,6 +207,12 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h5 class="text-lg font-bold">【要確認】申し込み方法と注意点</h5>
                      <p>申し込みは練習場に来店し、担当の砂川英昭プロがいる時に直接行います。コーチの定休日は月曜日です。他の平日は朝からいらっしゃることが多いようですが、夕方には不在の場合もあるため、確実に会いたい方は<strong>週末に訪れるか、事前に電話で確認する</strong>のがおすすめです。（特に金曜日はラウンドレッスンのため、練習場に来られるのが15時以降になることが多いそうです）</p>
                       <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                         {additionalData['riverside_jumbo']?.reviewUrl && (
+                             <a href={additionalData['riverside_jumbo'].reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                                 <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                                 管理人の詳細体験レポートを読む
+                                  </a>
+                         )}
                          <a href="/ranges/riverside_jumbo/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                              <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                              この練習場の施設詳細ページへ
@@ -224,6 +230,12 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h5 class="text-lg font-bold text-red-600">【超重要】初心者スクールの注意点</h5>
                      <p>こちらでも「初心者スクール」が実施されていますが、プリカ還元には注意が必要です。申し込み手続きは、受付でコーチのスケジュールを確認しながらその場で予約を取る流れになります。そのため、「今月は4回受講できない」ということはその場で判明します。万が一、足を運ぶ前に確認しておきたいという慎重な方は、事前に練習場へ電話で問い合わせておくとより安心です。</p>
                      <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                        {additionalData['greenpia_oh']?.reviewUrl && (
+                             <a href={additionalData['greenpia_oh'].reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                                 <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                                 管理人の詳細体験レポートを読む
+                                  </a>
+                         )}
                          <a href="/ranges/greenpia_oh/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
                              <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                              この練習場の施設詳細ページへ
