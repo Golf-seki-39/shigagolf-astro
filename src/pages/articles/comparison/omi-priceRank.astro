@@ -42,56 +42,63 @@ if (rangesData.greenpia_oh) {
 
 // --- 各施設の追加情報 ---
 const additionalData = {
-    azuchi_gc: {
-        parking: '約40台',
-        access: 'JR安土駅から車で5分',
-        environment: '昔ながらの落ち着いた雰囲気',
-        reviewUrl: '/articles/azuchi-review/',
-        reviewText: 'プリペイドカード不要で、現金で気軽に練習できるのが最大の魅力。<br/>アットホームな雰囲気で、ゴルフ練習場デビューに最適な場所です。バンカー練習場も無料で利用できます。',
-        altFull: '安土ゴルフクラブの打席からネット方向を見た全景',
-        altDetail: '安土ゴルフクラブの無料バンカー練習場の様子',
-        priceBase: { type: 'ball', admission: 0, price: 700, balls: 100 }
-    },
-    greenpia_oh: {
-        parking: '約80台',
-        access: '名神竜王ICから車で10分',
-        environment: '<strong>道中が狭い区間あり</strong>',
-        reviewUrl: null,
-        reviewText: '施設の古さはあるものの、それを補って余りある価格設定が特徴。<br/>特に平日日中の料金や、特定のカード割引を組み合わせることで、驚異的な安さを実現します。駐車場は広いですが、練習場へ至る道中が狭いのでご注意ください。',
-        altFull: 'グリーンピア近江八幡ゴルフの広々とした練習スペース',
-        altDetail: 'グリーンピア近江八幡ゴルフの2階打席からの眺め',
-        priceBase: { type: 'ball', admission: 300, ballPrice: 5, balls: 100 }
-    },
-    sakura_gc: {
-        parking: '約50台',
-        access: '名神竜王ICから車で15分',
-        environment: '冷房が快適。一部駐車しにくい箇所あり',
-        reviewUrl: '/articles/sakura-gc-review/',
-        reviewText: '女性やジュニアへの特典が非常に手厚く、対象者にとっては最高の練習環境です。<br/>夏場は冷房が強く快適。広々としたアプローチ練習場や初心者優先打席など、幅広い層に配慮されていますが、駐車場の一部はポールがあり停めにくい場合があります。',
-        altFull: 'さくらゴルフ倶楽部の清潔感のある打席エリア',
-        altDetail: 'さくらゴルフ倶楽部の充実したアプローチ練習グリーン',
-        priceBase: { type: 'ball', admission: 280, ballPrice: 7, balls: 100 }
-    },
-    riverside_jumbo: {
-        parking: '約40台',
-        access: '名神八日市ICから車で10分',
-        environment: '2025年6月に<strong>打席周り</strong>リニューアル',
-        reviewUrl: null,
-        reviewText: '「安さ」よりも「質」を求めるゴルファーが集う練習場。<br/>無料で使える本格的なパターグリーンや、質の高い（会員限定有料）アプローチ練習場はスコアアップへの投資価値があります。2025年6月に打席周りがリニューアルされ、夏場はミストも出るなど、快適性も向上しています。',
-        altFull: 'リバーサイドジャンボゴルフの広大なフェアウェイ',
-        altDetail: 'リバーサイドジャンボゴルフの無料で使えるパターグリーン',
-        priceBase: { type: 'ball', admission: 400, ballPrice: 8, balls: 100 }
-    },
-    garage_park: {
-        parking: '約20台',
-        access: '蒲生スマートICから車で2分',
-        environment: 'インドア。大型扇風機あり',
-        reviewUrl: '/articles/garege-park-review/',
-        reviewText: '蒲生スマートICから2分とアクセス抜群。<br/>天候を気にせず、データに基づいて効率的に練習したい方向け。月額5,000円のフリーパスは、練習頻度が高い人にとって最高の選択肢です。',
-        altFull: 'がれーじぱーく東近江のインドア練習ブース',
-        altDetail: 'がれーじぱーく東近江に設置された弾道測定器の画面',
-        priceBase: { type: 'time', price: 1000 }
-    }
+    azuchi_gc: {
+        parking: '約40台',
+        access: 'JR安土駅から車で5分',
+        // ★★★「快適さ」「駐車場」の本音を追記 ★★★
+        environment: '昔ながらの雰囲気。駐車場も停めやすい。',
+        reviewUrl: '/articles/azuchi-review/',
+        reviewText: 'プリペイドカード不要で、現金で気軽に練習できるのが最大の魅力。<br/>アットホームな雰囲気で、ゴルフ練習場デビューに最適。駐車場も広く停めやすいです。バンカー練習場も無料で利用できます。',
+        altFull: '安土ゴルフクラブの打席からネット方向を見た全景',
+        altDetail: '安土ゴルフクラブの700円券売機', // ★写真も実態に合わせて変更推奨
+        priceBase: { type: 'ball', admission: 0, price: 700, balls: 100 }
+    },
+    greenpia_oh: {
+        parking: '約80台',
+        access: '名神竜王ICから車で10分',
+        // ★★★「快適さ」「駐車場」の本音を追記 ★★★
+        environment: '<strong>道中が狭く、運転に注意</strong>',
+        // ★★★ リンク切れを修正 ★★★
+        reviewUrl: '/articles/review/greenpia-oh/',
+        reviewText: '施設の古さはあるものの、それを補って余りある価格設定が特徴。<br/>特に平日日中の料金や、SDカード割引を組み合わせることで、驚異的な安さを実現します。駐車場は広いですが、<strong>練習場へ至る道中が狭いので運転に自信がない方はご注意ください。</strong>',
+        altFull: 'グリーンピア近江八幡ゴルフの広々とした練習スペース',
+        altDetail: 'グリーンピア近江八幡ゴルフの2階打席からの眺め',
+        priceBase: { type: 'ball', admission: 300, ballPrice: 5, balls: 100 }
+    },
+    sakura_gc: {
+        parking: '約50台',
+        access: '名神竜王ICから車で15分',
+        // ★「快適さ」「駐車場」が明確で良いので維持
+        environment: '冷房が快適。一部駐車しにくい箇所有',
+        reviewUrl: '/articles/sakura-gc-review/',
+        reviewText: '女性やジュニアへの特典が非常に手厚く、対象者にとっては最高の練習環境です。<br/>夏場は冷房が強く快適。広々としたアプローチ練習場や初心者優先打席など、幅広い層に配慮されていますが、<strong>駐車場の一部はポールがあり停めにくい場合があります。</strong>',
+        altFull: 'さくらゴルフ倶楽部の清潔感のある打席エリア',
+        altDetail: 'さくらゴルフ倶楽部の充実したアプローチ練習グリーン',
+        priceBase: { type: 'ball', admission: 280, ballPrice: 7, balls: 100 }
+    },
+    riverside_jumbo: {
+        parking: '約40台',
+        access: '名神八日市ICから車で10分',
+        // ★★★「快適さ」「駐車場」の本音を追記 ★★★
+        environment: '打席リニューアルで快適。駐車場も停めやすい。',
+        // ★★★ リンク切れを修正 ★★★
+        reviewUrl: '/articles/review/riverside-jumbo/',
+        reviewText: '「安さ」よりも「質」を求めるゴルファーが集う練習場。<br/>無料で使える本格的なパターグリーンや、質の高いアプローチ練習場はスコアアップへの投資価値があります。2025年6月に打席周りがリニューアルされ、夏場はミストも出るなど、快適性も向上しています。',
+        altFull: 'リバーサイドジャンボゴルフの広大なフェアウェイ',
+        altDetail: 'リバーサイドジャンボゴルフの無料で使えるパターグリーン',
+        priceBase: { type: 'ball', admission: 400, ballPrice: 8, balls: 100 }
+    },
+    garage_park: {
+        parking: '約20台',
+        access: '蒲生スマートICから車で2分',
+        // ★★★「快適さ」「駐車場」の本音を追記 ★★★
+        environment: 'インドアで快適。IC直結でアクセス◎',
+        reviewUrl: '/articles/garege-park-review/',
+        reviewText: '蒲生スマートICから2分とアクセス抜群。<br/>天候を気にせず、データに基づいて効率的に練習したい方向け。月額5,000円のフリーパスは、練習頻度が高い人にとって最高の選択肢です。駐車場も施設前で停めやすいです。',
+        altFull: 'がれーじぱーく東近江のインドア練習ブース',
+        altDetail: 'がれーじぱーく東近江に設置された弾道測定器の画面',
+        priceBase: { type: 'time', price: 1000 }
+    }
 };
 
 // --- 写真URL ---
