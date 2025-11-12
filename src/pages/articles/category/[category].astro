@@ -62,13 +62,30 @@ const formatUrl = (url) => {
 
 // --- ★★★ ここからステップ1の追加 ★★★ ---
 // categoryArticles からユニークな「エリア」リストを抽出
+const siteAreaOrder = [
+  "大津",
+  "草津・栗東・守山・野洲",
+  "甲賀・湖南",
+  "近江八幡・東近江",
+  "湖北",
+  "湖西"
+  // ※Firebaseに入力したエリア名と「完全一致」させてください
+];
 const uniqueAreas = [...new Set(
   categoryArticles
     .map(article => article.area)
     .filter(Boolean) // nullや空文字を除外
 )];
-uniqueAreas.sort(); // あいうえお順に並び替え
-
+uniqueAreas.sort((areaA, areaB) => {
+  const indexA = siteAreaOrder.indexOf(areaA);
+  const indexB = siteAreaOrder.indexOf(areaB);
+  
+  // もし siteAreaOrder にないエリア名が来たら末尾に (安全対策)
+  if (indexA === -1) return 1;
+  if (indexB === -1) return -1;
+  
+  return indexA - indexB;
+});
 // categoryArticles からユニークな「サブカテゴリ」リストを抽出
 const uniqueSubCategories = [...new Set(
   categoryArticles
