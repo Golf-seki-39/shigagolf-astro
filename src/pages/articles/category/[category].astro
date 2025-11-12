@@ -19,8 +19,6 @@ export async function getStaticPaths() {
         const articlesByCategory = {};
 
         for (const article of allArticles) {
-            // ★★★ ここを修正 ★★★
-            // article.categoryが存在し、かつそれが空の文字列でないことを確認
             if (article.category && typeof article.category === 'string' && article.category.trim() !== '') {
                 const categoryName = article.category.trim();
                 if (!articlesByCategory[categoryName]) {
@@ -47,7 +45,6 @@ export async function getStaticPaths() {
 
     } catch (error) {
         console.error("getStaticPathsでエラーが発生しました:", error);
-        // エラーが発生した場合はページを生成しない
         return [];
     }
 }
@@ -62,6 +59,24 @@ const formatUrl = (url) => {
     if (!url) return '#';
     return url.endsWith('/') ? url : `${url}/`;
 };
+
+// --- ★★★ ここからステップ1の追加 ★★★ ---
+// categoryArticles からユニークな「エリア」リストを抽出
+const uniqueAreas = [...new Set(
+  categoryArticles
+    .map(article => article.area)
+    .filter(Boolean) // nullや空文字を除外
+)];
+uniqueAreas.sort(); // あいうえお順に並び替え
+
+// categoryArticles からユニークな「サブカテゴリ」リストを抽出
+const uniqueSubCategories = [...new Set(
+  categoryArticles
+    .map(article => article.subCategory) // ※Firebaseのフィールド名を "subCategory" とした場合
+    .filter(Boolean)
+)];
+uniqueSubCategories.sort();
+// --- ★★★ ステップ1の追加ここまで ★★★ ---
 ---
 
 <BaseLayout title={title} description={description}>
@@ -71,10 +86,41 @@ const formatUrl = (url) => {
       <h1 class="text-2xl md:text-3xl font-bold mb-2">{category}</h1>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="flex flex-col md:flex-row gap-4 mb-8 p-4 bg-slate-50 rounded-lg justify-center max-w-lg mx-auto">
+      <div class="flex-1">
+        <label for="filter-area" class="block text-sm font-medium text-slate-700 mb-1">
+          エリアで絞り込む
+        </label>
+        <select id="filter-area" class="w-full rounded-md border-slate-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+          <option value="all">すべてのエリア</option>
+          {uniqueAreas.map(area => (
+            <option value={area}>{area}</option>
+          ))}
+        </select>
+      </div>
+      
+      <div class="flex-1">
+        <label for="filter-subcategory" class="block text-sm font-medium text-slate-700 mb-1">
+          種類で絞り込む
+        </label>
+        <select id="filter-subcategory" class="w-full rounded-md border-slate-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+          <option value="all">すべての種類</option>
+          {uniqueSubCategories.map(sub => (
+            <option value={sub}>{sub}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+    <div id="article-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {categoryArticles && categoryArticles.length > 0 ? (
         categoryArticles.map(article => (
-          <a href={formatUrl(article.url)} class="flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+          <a 
+            href={formatUrl(article.url)} 
+            
+            class="article-card flex flex-col bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 group"
+            
+            data-area={article.area || 'none'}
+            data-subcategory={article.subCategory || 'none'} >
             <div class="relative">
               <div class="w-full h-40 bg-slate-100 flex items-center justify-center">
                 <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
@@ -98,10 +144,63 @@ const formatUrl = (url) => {
       )}
     </div>
 
+    
     <div class="text-center mt-12">
         <a href="/articles/" class="text-green-600 font-semibold hover:underline">
             ← お役立ち記事一覧へ戻る
         </a>
     </div>
   </main>
-</BaseLayout>
+
+  <script>
+    // 1. 必要な要素を取得
+    const filterArea = document.getElementById('filter-area');
+    const filterSubCategory = document.getElementById('filter-subcategory');
+    const articleCards = document.querySelectorAll('.article-card');
+    
+    // (おまけ機能用)
+    const articleGrid = document.getElementById('article-grid');
+    const noResultsMessage = document.getElementById('no-results-message');
+
+    // 2. フィルターを実行する関数
+    function applyFilters() {
+      const selectedArea = filterArea.value;
+      const selectedSubCategory = filterSubCategory.value;
+      
+      let visibleCount = 0; // 表示される記事の数をカウント
+
+      // 3. すべての記事カードをループ
+      articleCards.forEach(card => {
+        const cardArea = card.dataset.area;
+        const cardSubCategory = card.dataset.subcategory;
+
+        // 4. 表示/非表示の条件を判定
+        const areaMatch = (selectedArea === 'all') || (selectedArea === cardArea);
+        const subCategoryMatch = (selectedSubCategory === 'all') || (selectedSubCategory === cardSubCategory);
+
+        // 5. 両方の条件に一致すれば表示、そうでなければ非表示
+        if (areaMatch && subCategoryMatch) {
+          card.style.display = 'flex'; // 'flex' は元の class 属性に合わせる
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      
+      // 6. (おまけ機能) もし一致する記事が0件なら「記事がありません」と表示
+      if (noResultsMessage && articleGrid) {
+        if (visibleCount === 0) {
+          noResultsMessage.style.display = 'block';
+          articleGrid.style.display = 'none'; // グリッドを非表示にする
+        } else {
+          noResultsMessage.style.display = 'none';
+          articleGrid.style.display = 'grid'; // グリッドを再表示する
+        }
+      }
+    }
+
+    // 7. ドロップダウンを変更したら（changeイベント）、関数を実行
+    filterArea.addEventListener('change', applyFilters);
+    filterSubCategory.addEventListener('change', applyFilters);
+  </script>
+  </BaseLayout>
