@@ -18,7 +18,7 @@ const lastModified = new Date(); // 最終更新日を自動取得
 
 // ★★★ SEOコピーを「対決」型に全面変更 ★★★
 const title = "【近江八幡 打ちっぱなし】グリーンピア vs 安土 結局どっち？料金・質・アクセスを現地ライターが本音で徹底比較 | シガゴル";
-const description = "近江八幡の打ちっぱなし「グリーンピア」と「安土」結局どっち？SDカードの安さ、アクセスの悪さ、客層、マットの質まで、シガゴル運営者が本音で結論を出します。";
+const description = "近江八幡の打ちっぱなし「グリーンピア VS 安土ゴルフ」結局どっち？SDカードの安さ、アクセスの悪さ、客層、マットの質まで、現地ライターが本音で結論を出します。";
 const category = "比較記事";
 const headline = "【近江八幡 打ちっぱなし】グリーンピア vs 安土ゴルフクラブ 結局どっち？料金・質・アクセスを現地ライターが本音で徹底比較！";
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hachiman-guide.jpg"; // ★対決を煽るアイキャッチに変更推奨 (これは仮のURLです)
@@ -423,13 +423,9 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                          const range = rangesData[id];
                          if (!range) return null;
 
-                         // ★★★ 修正点① (Mixed Content Error) ★★★
-                         // 1. URLを "httpss://" に変更
-                         // 2. Google Maps APIの "正しい" エンドポイントに変更
                          const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
                          const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
                          const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
-                         // ★★★ 修正点ここまで ★★★
 
                          return (
                              <div id={`${id}-info`} class="scroll-mt-24">
