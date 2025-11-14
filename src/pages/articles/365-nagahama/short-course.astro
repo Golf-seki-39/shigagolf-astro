@@ -1,0 +1,611 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報 ---
+// ★ V3 (SC): OGPアイキャッチ画像（写真リスト1）
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg";
+
+const title = "【365ながはま ショートコース体験談】一人ラウンドで「一人二役」が最高すぎた。料金・攻略法レビュー | シガゴル";
+const description = "「365ゴルフクラブ ながはま」のショートコースは、僕の“完璧なホーム”の核となる場所。一人ラウンドのしやすさ、おすすめのセット料金、ナイター情報、僕が実践する「一人二役」練習法、全ホール攻略のヒントまで徹底解説。";
+const category = "体験談"; // カテゴリ
+const pubDate = "2025-11-14"; // ★記事の公開日
+const pubDateISO = "2025-11-14T17:00:00+09:00"; // ★記事の公開日(ISO)
+const rangeId = "365_nagahama"; // ★Firebaseの練習場ID 
+
+// --- [4] シェアボタン用の変数を定義 ---
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/365-nagahama/short-course/`; 
+const headline = "【365ながはま ショートコース体験談】一人ラウンドで「一人二役」が最高すぎた。料金・攻略法レビュー";
+
+// --- [5] Firebaseから練習場データを取得 ---
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
+}
+
+// --- [6] 関連記事リストの定義 ---
+const experienceReports = [
+    { url: '/articles/365-nagahama/range/', title: '【体験談①】365ながはま(練習場) 僕がホームと呼ぶ理由', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000ai.jpg' },
+    { url: '/articles/review/365hikone/', title: '365ゴルフクラブ 彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/0000img.jpg' },
+    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
+];
+// const comparisonArticles = [];
+
+// --- [7] ★ V3: ショートコース料金データ（ご指摘に基づき修正） ★ ---
+const priceData = {
+  setPlan: [
+    { type: 'メンバー（全日）', price: 1480, add: 300 },
+    { type: 'ビジター (平日)', price: 1780, add: 500 },
+    { type: 'ビジター (土日祝)', price: 1980, add: 500 }
+  ],
+  soloPlan: [
+    // ★ V3: メンバーを「全日」に修正
+    { type: 'メンバー (全日)', price: 980, add: 300 },
+    { type: 'ビジター (平日)', price: 1280, add: 500 },
+    { type: 'ビジター (土日祝)', price: 1480, add: 500 },
+    // ★ V3: ジュニア料金を「メンバー/ビジター（全日）」に修正
+    { type: 'ジュニア (メンバー・全日)', price: 780, add: 300 },
+    { type: 'ジュニア (ビジター・全日)', price: 980, add: 500 }
+  ]
+};
+---
+
+<script slot="head" type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "itemReviewed": {
+        "@type": "SportsActivityLocation",
+        "name": "365ゴルフクラブ ながはま (ショートコース)", 
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": rangeData?.address,
+            "addressLocality": rangeData?.city || "長浜市",
+            "addressRegion": "滋賀県",
+            "postalCode": rangeData?.postalCode,
+            "addressCountry": "JP"
+        },
+        "telephone": rangeData?.phone,
+        "image": rangeData?.imageUrl || imageUrl,
+        "priceRange": rangeData?.priceRange || "1000円〜2000円",
+        "url": articleUrl
+    },
+    "author": { "@type": "Person", "name": "関＠シガゴル管理人" },
+    "reviewBody": description,
+    "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "4.5", 
+        "bestRating": "5"
+    },
+    "publisher": { "@type": "Organization", "name": "シガゴル" },
+    "datePublished": pubDateISO
+})} />
+
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id] { scroll-margin-top: 80px; }
+               .table-wrapper { overflow-x: auto; }
+               .min-w-table-pc { min-width: 600px; }
+               .table-wrapper th:first-child, .table-wrapper td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
+               .table-wrapper thead th:first-child { background-color: #f1f5f9; }
+               .table-wrapper tbody tr.bg-white td:first-child { background-color: #ffffff; }
+               .table-wrapper tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+            </style>
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <p>先日公開した<a href="/articles/365-nagahama/range/" class="text-green-700 hover:underline">【体験談①】練習場編</a>で、僕は「365ゴルフクラブ ながはま」を<br class="md:hidden" />“完璧なホーム”と呼びました。</p>
+            <p><br class="md:hidden" />その最大の理由こそが、今回ご紹介する<strong>「本格9Hショートコース」</strong>の存在です。</p>
+            <p>練習場併設と侮るなかれ。<br class="md:hidden" />ここは、僕のゴルフマネジメントの勉強の場であり、<strong>「一人二役」</strong>という最高の練習ができる、秘密の特訓場所でもあります。</p>
+            
+            <figure class="my-6">
+                <Image 
+                    src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6583.jpeg"} 
+                    alt="365ゴルフクラブ ながはま ショートコースの池越えホール" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    loading="eager" 
+                    fetchpriority="high" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900} 
+                />
+            </figure>
+
+            <p>この記事では、「ショートコースだけ回りたい」という方から、「僕のように練習とセットで一日中楽しみたい」という方まで、全ての人が知りたい料金プラン、リアルな難易度、そして「一人ラウンド」のしやすさまで、徹底的にレビューします。</p>
+
+            
+            <div class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
+                 <h2 class="text-xl font-bold mb-4 text-green-800 break-keep">
+                    365ながはま ショートコースの要点
+                 </h2>
+                 <ul class="space-y-2 list-disc list-inside">
+                    <li><strong>僕のイチオシ:</strong> <strong>「打放題1時間＋9H」のセットプラン</strong>が圧倒的にお得！</li>
+                    <li><strong>特徴①:</strong> <strong>一人ラウンド（予約不要）</strong>が最高。プレッシャー皆無で「一人二役」練習も可能。</li>
+                    <li><strong>特徴②:</strong> ナイター設備完備で21:30頃までプレーOK。（※筆者ナイター未体験）</li>
+                    <li><strong>難易度:</strong> 9.5ft（公式）だが体感は少し遅め。池越え（1番, 3番）や2段グリーン（3番）など戦略的。</li>
+                    <li><strong>料金 (9H):</strong> <br class="md:hidden" />メンバー 980円, ビジター 1,280円～</li>
+                    <li><strong>料金 (セット):</strong> <br class="md:hidden" />メンバー 1,480円, ビジター 1,780円～</li>
+                 </ul>
+            </div>
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#price" class="text-green-700 hover:underline">【料金表】僕のイチオシは<br class="md:hidden" />「打放題＋9H」セットプラン！</a></li>
+                    <li><a href="#charm1" class="text-green-700 hover:underline">魅力①：「一人二役」も余裕。プレッシャーゼロの一人ラウンドが最高すぎた</a></li>
+                    <li><a href="#charm2" class="text-green-700 hover:underline">魅力②：【ホール攻略】池越え、2段グリーン…侮れないリアルな難易度</a></li>
+                    <li><a href="#charm3" class="text-green-700 hover:underline">知っ得情報：ナイター、無料設備、ナビゲーション</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">結論：ここが「上達の黄金サイクル」の核となる理由</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">施設情報：365ゴルフクラブ ながはま</a></li>
+                </ul>
+            </div>
+
+            <h2 id="price" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【料金表】僕のイチオシは<br class="md:hidden" />「打放題＋9H」セットプラン！
+            </h2>
+            
+            <p>ショートコースの料金プランは大きく分けて2つ。<br class="md:hidden" />「ショートコースだけ」と「打放題（1時間）とのセット」です。</p>
+            <p>結論から言うと、僕がいつも利用するのは<strong>「1時間打ち放題＋ショートコース9H」のセットプラン</strong>です。これが圧倒的におすすめ。</p>
+            <p>僕はいつも、このセットプランに「ハーフ追加（メンバー300円 / ビジター500円）」をして、時間の許す限り27H（3周）などを回って一日中楽しんでいます。</p>
+            
+            <figure class="my-6">
+                <Image 
+                    src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6605.jpg"} 
+                    alt="365ゴルフクラブ ながはま ショートコース 料金表" 
+                    class="w-full h-auto object-cover rounded-lg my-4" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">最強のセットプラン。※プリカなくてもOK。現金キャッシュレス対応</figcaption>
+            </figure>
+
+          <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+                おすすめ！「練習1時間＋9H」セット
+            </h3>
+
+            <div class="table-wrapper my-6 not-prose hidden md:block">
+                <table class="w-full text-left border-collapse responsive-table min-w-table-pc">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="py-3 px-4 font-semibold border-b">対象</th>
+                            <th class="py-3 px-4 font-semibold border-b text-center">セット料金 (練習1h+9H)</th>
+                            <th class="py-3 px-4 font-semibold border-b text-center">追加 9Hごと</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {priceData.setPlan.map((plan, index) => (
+                             <tr class={`border-b border-slate-200 ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+                                <th classclass="py-3 px-4 font-semibold">{plan.type}</th>
+                                <td data-label="セット料金" class="py-3 px-4 text-center"><strong>{plan.price.toLocaleString()}円</strong></td>
+                                <td data-label="追加9H" class="py-3 px-4 text-center"><strong>{plan.add.toLocaleString()}円</strong></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="my-6 space-y-4 md:hidden not-prose">
+                {priceData.setPlan.map(plan => (
+                    <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                        
+                        <h4 class="text-lg font-bold p-3 bg-slate-50">{plan.type}</h4>
+                        
+                        <div class="p-4 space-y-3">
+                            <div class="flex justify-between items-baseline">
+                                <span class="text-slate-600 text-sm">セット料金 (練習1h+9H)</span>
+                                <strong class="text-xl text-green-700">{plan.price.toLocaleString()}円</strong>
+                            </div>
+                            <div class="flex justify-between items-baseline border-t border-slate-200 pt-3">
+                                <span class="text-slate-600 text-sm">追加 9Hごと</span>
+                                <strong class="text-xl text-green-700">{plan.add.toLocaleString()}円</strong>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+           <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+                「ショートコースのみ」プラン
+            </h3>
+            <p>もちろん、「ショートコースだけ回りたい」という友人も多いので、こちらのプランも重要です。</p>
+
+            <div class="table-wrapper my-6 not-prose hidden md:block">
+                <table class="w-full text-left border-collapse responsive-table min-w-table-pc">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="py-3 px-4 font-semibold border-b">対象</th>
+                            <th class="py-3 px-4 font-semibold border-b text-center">基本料金 (9H)</th>
+                            <th class="py-3 px-4 font-semibold border-b text-center">追加 9Hごと</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {priceData.soloPlan.map((plan, index) => (
+                            <tr class={`border-b border-slate-200 ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+                                <th class="py-3 px-4 bg-slate-50 font-semibold">{plan.type}</th>
+                                <td data-label="基本料金" class="py-3 px-4 text-center"><strong>{plan.price.toLocaleString()}円</strong></td>
+                                <td data-label="追加9H" class="py-3 px-4 text-center"><strong>{plan.add.toLocaleString()}円</strong></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="my-6 space-y-4 md:hidden not-prose">
+                {priceData.soloPlan.map(plan => (
+                    <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                        
+                        <h4 class="text-lg font-bold p-3 bg-slate-50">{plan.type}</h4>
+                        
+                        <div class="p-4 space-y-3">
+                            <div class="flex justify-between items-baseline">
+                                <span class="text-slate-600 text-sm">基本料金 (9H)</span>
+                                <strong class="text-xl text-green-700">{plan.price.toLocaleString()}円</strong>
+                            </div>
+                            <div class="flex justify-between items-baseline border-t border-slate-200 pt-3">
+                                <span class="text-slate-600 text-sm">追加 9Hごと</span>
+                                <strong class="text-xl text-green-700">{plan.add.toLocaleString()}円</strong>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+
+            <h2 id="charm1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                魅力①：「一人二役」も余裕。<br class="md:hidden" />プレッシャーゼロの一人ラウンドが最高すぎた
+            </h2>
+            
+            <p>僕がこのショートコースを愛する最大の理由は、<strong>「一人ラウンドが最高に快適」</strong>なことです。</p>
+            <p>もちろん、友人（2〜3人）と回るのも楽しいですが、ここは一人で集中して練習するのに天国のような環境です。</p>
+            
+            <div class="not-prose bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg my-4">
+                <h4 class="text-lg font-bold text-green-800 mt-0 mb-2">【一人ラウンドのココが最高】</h4>
+                <ul class="list-disc list-inside m-0 p-0 pl-4 space-y-2">
+                    <li><strong>予約不要</strong>で、ふらっと行って回れる。</li>
+                    <li>ゴルフ場のように混雑していないため、<strong>後続組からのプレッシャーを一切感じたことがない。</strong></li>
+                    <li>（ここが最重要）空いているので、<strong>「一人二役」</strong>の練習が問題なくできる。</li>
+                </ul>
+            </div>
+            
+            <p>「一人二役」というのは、僕が勝手に呼んでいる練習法です。</p>
+            <ul class="list-disc list-inside space-y-2 prose">
+                <li>1球目：いつもの自分のクラブで、本気でスコアを狙うショット</li>
+                <li>2球目：あえて番手を変えたり、苦手なクラブで打ってみるショット</li>
+            </ul>
+            <br/><p>これをやると、コースマネジメントの引き出しがめちゃくちゃ増えます。
+            <br/>「この場面、AW（アプローチウェッジ）じゃなくてPW（ピッチングウェッジ）で転がしたらどうなる？」
+            <br/>「あえてパターで寄せる練習」
+            など、本番のゴルフ場では絶対にできない“実戦練習”が、ここなら心ゆくまでできるんです。</p>
+            
+
+            <h2 id="charm2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                魅力②：【ホール攻略】<br class="md:hidden" />池越え、2段グリーン…侮れないリアルな難易度
+            </h2>
+
+            <p>「どうせ併設のコースでしょ」と侮ってはいけません。9ホールですが、10番〜18番はティーイングエリアが少し変わり、ヤード数も変化します。そして、初心者を悩ませる“嫌らしい”ホールもしっかりあります。</p>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">グリーンの速さ：「5番ホールが一番速い」</h3>
+            <p>まず、グリーンの状態。手入れされた人工芝（ベント風）です。
+            <br/>公式では「9.5フィート」となっていますが、僕の体感では<strong>「良いゴルフ場の9.5フィートと比べると、少し遅く感じる」</strong>のが正直なところ。</p>
+            
+            <figure class="my-6">
+                <Image 
+                    src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6592.jpg"} 
+                    alt="ショートコースのグリーンの状態（人工芝）" 
+                    class="w-full h-auto object-cover rounded-lg my-4" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">手入れされた人工芝。体感では少し遅めですが、5番は速いので注意。</figcaption>
+            </figure>
+            
+            <p>ですが、油断は禁物。
+            特に<strong>5番ホールはよく転がり、たぶんここが一番速い</strong>です。下りのパットは要注意。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【要注意】僕が感じる「戦略的ホール」3選</h3>
+            <p>僕が特に「戦略的だ」と感じるホールを紹介します。
+            <br/>（※各ホールの距離は、下のヤード表示表も参考にしてください）</p>
+
+            <figure class="my-6">
+                <Image 
+                    src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6578.jpg"} 
+                    alt="ショートコースの各ホール距離一覧表" 
+                    class="w-full h-auto object-cover rounded-lg my-4" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">10番〜18番はティーが少し変わり、距離も変化します。</figcaption>
+            </figure>
+
+            <ul class="list-disc list-inside space-y-3 prose">
+                <li><strong>1番ホール (池越え)</strong><br/>
+                （記事トップの写真のホールです）いきなりの池越えでメンタルが試されます。距離は短いので、力まずリラックスして越えましょう。</li>
+                <li><strong>3番ホール (池越え＋2段グリーン)</strong><br/>
+                {/* ★ V3: 3番ホールの攻略法を、ご指摘に基づき全面的に修正 */}
+                ここも池越えですが、池を越えればすぐにグリーンです。問題はグリーンが「2段」になっていること。
+                もし池ポチャ（OB）の場合は、3打目（OBなら4打目）として特設ティーから打つことになります。<br/>
+                そのため、池が怖い人は、70ヤードをドンピシャで狙うより、<strong>「グリーンちょいオーバー」が安全な選択（安牌）</strong>です。
+                グリーン奥は傾斜を登ってフェンスなので、ある意味安全。<br/>ただし、オーバーしすぎると、今度は強烈な左足下がりのアプローチが残るのでご注意を。</li>
+            </ul>
+
+            <figure class="my-6">
+                <Image 
+                    src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/030000010.png"} 
+                    alt="3番ホールの写真" 
+                    class="w-full h-auto object-cover rounded-lg my-4" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">これが難関の3番ホール。池を越えて、あの奥の段まで乗せたい。</figcaption>
+            </figure>
+            
+            <ul class="list-disc list-inside space-y-3 prose">
+                <li><strong>4番ホール (奥は絶対ダメ)</strong><br/>
+                グリーンをオーバーすると、強い傾斜でボールがこぼれ落ちます。場所によっては旗すら見えなくなるので、ここは<strong>「絶対に手前から攻める」</strong>のが鉄則です。</li>
+            </ul>
+
+
+            <h2 id="charm3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                知っ得情報：ナイター、無料設備、ナビゲーション
+            </h2>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">ナイター営業について</h3>
+            <p>365ながはまのショートコースは、ナイター設備があり<strong>21:30頃まで利用可能</strong>です。仕事帰りに「打ちっぱなし＋ハーフ」なんていう、夢のようなゴルフライフも実現できます。</p>
+            
+            <div class="not-prose bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg my-4">
+                <h4 class="text-lg font-bold text-blue-800 mt-0 mb-2">【僕の正直レビュー】</h4>
+                <p class="m-0 text-slate-700">
+                    …と、偉そうに書きましたが、<strong>正直に告白すると、僕はまだナイターを体験したことがありません！</strong><br/>（いつも昼過ぎから夕方までで満足してしまうので…）<br/>
+                    照明の明るさやボールの見え方については、また近いうちに体験して、この記事に追記しますね。
+                </p>
+            </div>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">設備：無料セルフバッグ、ロッカー、休憩所</h3>
+            <p>ショートコースを回る際、重いキャディバッグを担ぐ必要はありません。
+            受付でスタッフさんが丁寧に案内してくれます。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6576.png"} 
+                    alt="ショートコース受付用のテーブル" 
+                    class="w-full h-auto object-cover rounded-lg my-4" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">受付横の休憩所。ここで申し込み用紙を書きます。</figcaption>
+            </figure>
+            
+            <p>申し込み用紙を書くテーブルのすぐ側に、<strong>無料の貴重品ロッカー</strong>と、<strong>無料のセルフバッグ（サブバッグ）</strong>が大量に置いてあります。
+            歩きラウンドですが、割と身軽に動けるのでありがたいアイテムです。</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 not-prose">
+                 <figure>
+                    <Image 
+                        src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6579.jpg"} 
+                        alt="無料の貴重品ロッカー" 
+                        class="w-full h-auto object-cover rounded-lg" 
+                        loading="lazy" 
+                        format="webp" 
+                        quality={80}
+                        width={1200}
+                        height={900}
+                        decoding="async"
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">無料ロッカー。貴重品も安心。</figcaption>
+                 </figure>
+                 <figure>
+                    <Image 
+                        src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6582.png"} 
+                        alt="無料のセルフバッグ" 
+                        class="w-full h-auto object-cover rounded-lg" 
+                        loading="lazy" 
+                        format="webp" 
+                        quality={80}
+                        width={1200}
+                        height={900}
+                        decoding="async"
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">セルフバッグも無料で使えます。</figcaption>
+                 </figure>
+            </div>
+
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">ナビ：「NEXT TEE」看板で迷わない</h3>
+            {/* ★ V3: 「note」の参照を削除 */}
+            <p>以前は4番ホールなどで少し迷うことがありましたが、ご安心ください。
+            コース内には「NEXT TEE →」という案内看板がしっかり設置されています。
+            初めて一人で回っても、迷うことなくスムーズに進行できました。</p>
+            
+            <figure class="my-6">
+                <Image 
+                    src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6590.png"} 
+                    alt="NEXT TEEの案内看板" 
+                    class="w-full h-auto object-cover rounded-lg my-4" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+            </figure>
+
+
+            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【結論】ここが「上達の黄金サイクル」の核となる理由
+            </h2>
+
+            <p>なぜ僕が、家から近い練習場を素通りしてまで「365ゴルフクラブ ながはま」に通うのか。
+            <br/>その答えが、このショートコースにあります。</p>
+            
+            <div class="not-prose my-6 p-4 border-2 border-green-300 rounded-lg bg-green-50">
+                <h4 class="text-xl font-bold text-center mt-0 mb-4 text-green-800">✅ 僕が実践する「上達の黄金サイクル」</h4>
+                <ol class="list-decimal list-inside m-0 p-0 pl-4 space-y-2">
+                    <li><a href="/articles/365-nagahama/range/" class="text-green-700 hover:underline"><strong>【練習場】</strong></a>でトップトレーサーを使い、ショットの課題を明確にする。</li>
+                    <li><a href="/articles/365-nagahama/range/#charm1" class="text-green-700 hover:underline"><strong>【バンカー/パター】</strong></a>練習場で、スコアメイクの技術を磨く。</li>
+                    <li><strong>【ショートコース】</strong>で、プレッシャーゼロの中「一人二役」をしながら、①②の課題を“実戦”で試す。</li>
+                </ol>
+            </div>
+            
+            <p>このサイクルを1箇所で、しかも高いレベルで完結できる場所は、滋賀県でも他にありません。
+            <br/><a href="/articles/365-nagahama/range/" class="text-green-700 hover:underline">「練習場（レンジ）」</a>の記事と、この「ショートコース」の記事。二つ合わせて「365ゴルフクラブ ながはま」の本当の魅力です。</p>
+            <p>あなたもぜひ、この“完璧なホーム”で、ゴルフが上達する喜びを体験してみてください。</p>
+            
+            
+            <div class="not-prose my-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h3 class="text-xl font-bold text-yellow-800 mb-3 text-center">練習の成果をコースで試そう！</h3>
+                <p class="text-yellow-900 text-center">
+                    365ゴルフで磨いたスキルを、次は本番のゴルフコースで試してみませんか？<br/>滋賀県内のゴルフ場を探すなら、お得なプランが豊富な「楽天GORA」が便利！
+                </p>
+                <div class="mt-4 flex justify-center">
+                    <a href="https://a.r10.to/hPRKtq" target="_blank" rel="sponsored noopener" class="inline-block bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-200 text-base no-underline">
+                        楽天GORAで<br class="md:hidden" />滋賀県のコースを探す
+                    </a>
+                </div>
+            </div>
+
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」の基本情報` : "「365ゴルフクラブ ながはま」の基本情報"}
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto not-prose">
+                        <table class="w-full text-left border-collapse">
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">施設名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            {rangeData.address}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4">
+                                        練習場: 平日 9:00～23:00 / 土日祝 7:00～23:00<br/>
+                                        ショートコース: 9:00～21:30（最終受付 20:30頃）
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（ショートコース）</th>
+                                    <td class="py-3 px-4">
+                                        <strong>【練習1h＋9Hセット】</strong><br/>
+                                        メンバー: 1,480円<br/>
+                                        ビジター: 1,780円～<br/>
+                                        <strong>【9Hのみ】</strong><br/>
+                                        メンバー: 980円<br/>
+                                        ビジター: 1,280円～<br/>
+                                        <small>※詳細は<a href="#price" class="text-green-700 hover:underline">料金表</a>をご確認ください。</small>
+                                    </td>
+                                </tr>
+                                 <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">公式サイト</th>
+                                    <td class="py-3 px-4">
+                                        <a href="https://365golfclub.jp/nagahama/" target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            https://365golfclub.jp/nagahama/
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        施設情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {/* ...（Googleマップのiframe）... */}
+
+             {/* ★ V3: 記事末のリンクをご指摘通り「公式レビューページ」に修正 */}
+             <p class="text-center font-bold text-lg mt-8">
+                🎯 さらに詳しい情報や口コミはこちら！
+                <br />
+                <a
+                    href={`https://shigagolf.com/ranges/${rangeId}/`} 
+                    class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    {rangeData ? `「${rangeData.name}」のシガゴル公式レビューページへ →` : "公式レビューページへ →"}
+                </a>
+            </p>
+        </article>
+    </div>
+
+    <style>
+        .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
+        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .scroll-mt-24 { scroll-margin-top: 6rem; }
+    </style>
+    
+</BaseLayout>
