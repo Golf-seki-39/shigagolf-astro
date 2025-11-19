@@ -69,75 +69,71 @@ const comparisonArticles = [
     pubDate={pubDate}
     ogImage={imageUrl}
 >
-    <script
-        slot="head"
-        type="application/ld+json"
-        set:html={JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            // [修正点4] mainEntityOfPage を追加
-            mainEntityOfPage: {
-                "@type": "WebPage",
-                "@id": articleUrl,
-            },
-            headline: headline.replace(/<[^>]*>/g, ""),
-            description: description,
-            image: [
-                imageUrl,
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8758.png",
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8778.png",
-            ],
-            author: {
-                "@type": "Person",
-                name: "関（せき）",
-                url: "https://shigolf.com/about/",
-                image: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
-                sameAs: [
-                    "https://x.com/Golf_Seki39",
-                    "https://golf-medley.com/articles/authors/seki",
-                    "https://note.com/seki_golf_39",
-                    "https://www.tiktok.com/@user2579514551181",
-                ],
-            },
-            publisher: {
-                "@type": "Organization",
-                name: "シガゴル",
-                logo: {
-                    "@type": "ImageObject",
-                    url: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png",
-                },
-            },
-            datePublished: pubDateISO,
-            dateModified: pubDateISO,
-            review: {
-                "@type": "Review",
-                itemReviewed: {
-                    "@type": "LocalBusiness",
-                    name:
-                        rangeData?.name_short_course ||
-                        `${rangeData?.name} ショートコース`,
-                    image: imageUrl,
-                    telephone: rangeData?.phone,
-                    priceRange: "500円〜3,000円",
-                    address: {
-                        "@type": "PostalAddress",
-                        streetAddress: rangeData?.address,
-                        addressLocality: rangeData?.city,
-                        addressRegion: "滋賀県",
-                        postalCode: rangeData?.postalCode,
-                        addressCountry: "JP",
-                    },
-                },
-                reviewRating: {
-                    "@type": "Rating",
-                    ratingValue: rangeData?.rating_short_course || "3.5",
-                    bestRating: "5",
-                    worstRating: "1",
-                },
-                author: { "@type": "Person", name: "関（せき）" },
-            },
-        })}
-    />
+   <script slot="head" type="application/ld+json" set:html={JSON.stringify([
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleUrl
+        },
+        "headline": headline.replace(/<[^>]*>/g, ""),
+        "description": description,
+        "image": [
+            imageUrl,
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8758.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8778.png"
+        ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigolf.com/about/",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
+            "sameAs": [
+                "https://x.com/Golf_Seki39",
+                "https://golf-medley.com/articles/authors/seki",
+                "https://note.com/seki_golf_39",
+                "https://www.tiktok.com/@user2579514551181"
+            ]
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+            }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": pubDateISO
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        "itemReviewed": {
+            "@type": "LocalBusiness",
+            "name": rangeData?.name_short_course || `${rangeData?.name} ショートコース`,
+            "image": imageUrl,
+            "telephone": rangeData?.phone,
+            "priceRange": "500円〜3,000円",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": rangeData?.address,
+                "addressLocality": rangeData?.city,
+                "addressRegion": "滋賀県",
+                "postalCode": rangeData?.postalCode,
+                "addressCountry": "JP"
+            }
+        },
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": Number(rangeData?.rating_short_course) || 3.5,
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "author": { "@type": "Person", "name": "関（せき）" }
+    }
+])} />
 
     <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
         <a
