@@ -5,85 +5,127 @@ import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 import { Image } from "astro:assets";
 
-// --- [2] 共通コンポーネントをインポート ---
+// --- [2] 共通コンポーネント ---
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
-// --- [3] Firebaseから施設データを取得（エラー対策版） ---
-let data1 = {};
-let data2 = {};
-
-try {
-    // ビルド環境で権限エラーが出ても止まらないようにする
-    const docRef1 = doc(db, "practice_ranges", "365_nagahama");
-    const docSnap1 = await getDoc(docRef1);
-    if (docSnap1.exists()) {
-        data1 = docSnap1.data();
-    }
-
-    const docRef2 = doc(db, "practice_ranges", "adogawa_sc");
-    const docSnap2 = await getDoc(docRef2);
-    if (docSnap2.exists()) {
-        data2 = docSnap2.data();
-    }
-} catch (e) {
-    console.warn("Firestoreからのデータ取得に失敗しました。手書きデータを使用します。", e.message);
-}
-
-// --- [4] この記事固有の情報 ---
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg"; 
-const title = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較 | シガゴル";
-const description = "滋賀県で練習場併設のショートコースは「安曇川」と「365長浜」の2ヶ所のみ。「遠いけど行く価値ある？」「ゴルフ場と何が違うの？」という疑問に、両方体験した筆者が徹底比較して答えます。";
-const pubDate = "2025-11-15";
-const pubDateISO = "2025-11-15T17:00:00+09:00";
+// --- [3] 記事の基本情報 ---
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/shiga-short-courses/`; 
+const title = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較 | シガゴル";
+const description = "滋賀県で練習場併設のショートコースは「安曇川」と「365長浜」の2ヶ所のみ。「遠いけど行く価値ある？」「ゴルフ場と何が違うの？」という疑問に、両方体験した筆者が徹底比較して答えます。";
 const headline = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg"; 
+const pubDate = "2025-11-15";
+const lastModified = new Date(); 
 
-// --- [5] 記事末の「詳細情報」用データ ---
-const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
-const rangeIds = ["365_nagahama", "adogawa_sc"];
+// --- [4] Firebaseから施設データを取得（成功パターン） ---
+const rangeIds = ['365_nagahama', 'adogawa_sc'];
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 
-// ★★★ 重要：ここを正しい情報に書き換えてください ★★★
-// Firebaseが見れない時は、ここの情報が表示されます
-const rangesData = {
-    "365_nagahama": {
-        ...data1, // Firebaseデータがあれば上書き
-        name: data1.name || "365ゴルフクラブ ながはま",
-        // ▼ 正しい住所・電話番号に書き換えてください
-        address: data1.address || "滋賀県長浜市名越町1018", 
-        phone: data1.phone || "0749-62-6365",
-        // --------------------------------------------
-        avgRating: data1.avgRating || "4.2",
-        business_hours: data1.business_hours || "10:00〜22:00\n年中無休",
-        price_example: data1.price_example || "ビジター：1,280円〜\nメンバー：1,000円〜",
-        yardage: data1.yardage || "250",
-        bays: data1.bays || "50",
-        access: data1.access || "長浜ICから車で10分"
+// ★ここが修正点：公開用データ(artifacts/.../public/...)を取得しにいく
+const rangePromises = rangeIds.map(id => getDoc(doc(db, `artifacts/${appId}/public/data/practice_ranges/${id}`)));
+const rangeDocs = await Promise.all(rangePromises);
+
+const rangesData = rangeDocs.reduce((acc, docSnap, index) => {
+    if (docSnap.exists()) { acc[rangeIds[index]] = docSnap.data(); }
+    else { acc[rangeIds[index]] = null; } // データがない場合の安全策
+    return acc;
+}, {});
+
+// データ補完（もしDBにない項目があればここで定義）
+if (rangesData['365_nagahama'] && !rangesData['365_nagahama'].access) {
+    rangesData['365_nagahama'].access = '長浜ICから車で10分';
+}
+
+// --- [5] この記事固有の比較データ ---
+// Firebaseの基本データ(名前や住所)と、記事固有の評価コメントをマージ
+const comparisonConfig = [
+    { 
+        id: "365_nagahama",
+        url: "/articles/365-nagahama/short-course/",
+        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6583.jpeg",
+        location: "湖北（長浜市）",
+        price_display: "ビジター 1,280円～",
+        price_detail: "9H",
+        plan: "回り放題なし (追加9H 500円)",
+        green: "◎ (人工芝 / 9.5ft)",
+        practice_facility: "◎ (バンカー/パター)",
+        hitori: "◎ (プレッシャー皆無)",
+        summary: "本気で「上達」したい人向け。グリーンも戦略的で、「一人二役」練習に最適。併設の練習場（トップトレーサー完備）とのセットが最強。"
     },
-    "adogawa_sc": {
-        ...data2,
-        name: data2.name || "安曇川スポーツセンター",
-        // ▼ 正しい住所・電話番号に書き換えてください
-        address: data2.address || "滋賀県高島市安曇川町上小川100",
-        phone: data2.phone || "0740-32-2160",
-        // --------------------------------------------
-        avgRating: data2.avgRating || "4.0",
-        business_hours: data2.business_hours || "9:00〜21:00",
-        price_example: data2.price_example || "ショートコース回り放題：3,000円\n練習場：1球8円〜",
-        yardage: data2.yardage || "300",
-        bays: data2.bays || "60",
-        access: data2.access || "湖西道路経由 安曇川駅から車で5分"
+    { 
+        id: "adogawa_sc",
+        url: "/articles/adogawa-sc-review/short-course/",
+        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_9119.JPG",
+        location: "湖西（高島市）",
+        price_display: "ビジター 3,000円",
+        price_detail: "回り放題",
+        plan: "◎ (全日回り放題)",
+        green: "△ (ほぼ公園の芝)",
+        practice_facility: "△ (バンカーのみ)",
+        hitori: "○ (回り放題で楽しめる)",
+        summary: "安さと「回り放題」が魅力。家族連れのアクティビティや、子供を遊ばせつつ練習するなど「自由な楽しみ方」ができる。併設の300Y練習場も◎。"
     }
-};
+];
 
+const comparisonData = comparisonConfig.map(item => ({
+    ...item,
+    // DBから名前などを取得（なければ手書きフォールバック）
+    name: rangesData[item.id]?.name || item.id, 
+    address: rangesData[item.id]?.address || '',
+    phone: rangesData[item.id]?.phone || '',
+    city: rangesData[item.id]?.city || '',
+    postalCode: rangesData[item.id]?.postalCode || ''
+}));
+
+// 体験レポートのURL
 const additionalData = {
     "365_nagahama": { reviewUrl: "/articles/365-nagahama/short-course/" },
     "adogawa_sc": { reviewUrl: "/articles/adogawa-sc-review/short-course/" }
 };
 
-// --- [6] 関連記事リスト ---
+// --- [6] JSON-LD構造化データ ---
+const mainEntity = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline,
+    "description": description,
+    "image": [ imageUrl, ...comparisonData.map(c => c.img) ],
+    "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+    "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }},
+    "datePublished": new Date(pubDate).toISOString(),
+    "dateModified": lastModified.toISOString(),
+    "about": comparisonData.map(facility => ({
+        "@type": "GolfCourse",
+        "name": facility.name,
+        "image": facility.img,
+        "description": facility.summary,
+        "telephone": facility.phone,
+        "address": {
+            "@type": "PostalAddress",
+            "addressRegion": "滋賀県",
+            "addressLocality": facility.city,
+            "streetAddress": facility.address.replace(facility.city, "").replace("滋賀県", ""),
+            "postalCode": facility.postalCode,
+            "addressCountry": "JP"
+        }
+    }))
+};
+
+const faqElements = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "滋賀のショートコース（安曇川・長浜）での服装は？", "acceptedAnswer": { "@type": "Answer", "text": "本コースのようなドレスコードは一切ありません。Tシャツ、スニーカーでOKです。ゴルフウェアは不要で、練習場に行く感覚で気軽に利用できます。" } },
+    { "@type": "Question", "name": "予約は必要ですか？", "acceptedAnswer": { "@type": "Answer", "text": "「365ゴルフクラブ ながはま」「安曇川スポーツセンター」ともに、基本的に予約は不要です。思い立ったその日に利用できます。" } },
+    { "@type": "Question", "name": "本コースとショートコースの決定的な違いは？", "acceptedAnswer": { "@type": "Answer", "text": "最大の違いは「プレッシャーの有無」です。これら2施設は後続組を気にする必要がほとんどないため、本コースでは不可能な「打ち直し」や「一人二役」といった反復練習が可能です。" } }
+  ]
+};
+
+// --- [7] 関連記事リスト ---
 const experienceReports = [
     { url: '/articles/365-nagahama/short-course/', title: '【体験談②】365ながはま ショートコース徹底攻略法', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg' },
     { url: '/articles/adogawa-sc-review/short-course/', title: '【体験談】安曇川ショートコース（グリーンは公園並み!?）', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/001111img.jpg' }, 
@@ -91,123 +133,15 @@ const experienceReports = [
     { url: '/articles/adogawa-sc-review/range/', title: '安曇川スポーツセンター　体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg' },
 ];
 
-// --- [7] 比較表用のデータ ---
-const comparisonData = [
-    { 
-        id: "365_nagahama",
-        name: rangesData["365_nagahama"].name,
-        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6583.jpeg",
-        url: "/articles/365-nagahama/short-course/",
-        location: "湖北（長浜市）",
-        price: "ビジター 1,280円～",
-        price_detail: "9H",
-        plan: "回り放題なし (追加9H 500円)",
-        green: "◎ (人工芝 / 9.5ft)",
-        practice_facility: "◎ (バンカー/パター)",
-        hitori: "◎ (プレッシャー皆無)",
-        summary: "本気で「上達」したい人向け。グリーンも戦略的で、「一人二役」練習に最適。併設の練習場（トップトレーサー完備）とのセットが最強。",
-        postalCode: "526-0824",
-        addressLocality: "長浜市",
-        streetAddress: "名越町1018", // ←ここも修正してください
-        telephone: rangesData["365_nagahama"].phone
-    },
-    { 
-        id: "adogawa_sc",
-        name: rangesData["adogawa_sc"].name,
-        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_9119.JPG",
-        url: "/articles/adogawa-sc-review/short-course/",
-        location: "湖西（高島市）",
-        price: "ビジター 3,000円",
-        price_detail: "回り放題",
-        plan: "◎ (全日回り放題)",
-        green: "△ (ほぼ公園の芝)",
-        practice_facility: "△ (バンカーのみ)",
-        hitori: "○ (回り放題で楽しめる)",
-        summary: "安さと「回り放題」が魅力。家族連れのアクティビティや、子供を遊ばせつつ練習するなど「自由な楽しみ方」ができる。併設の300Y練習場も◎。",
-        postalCode: "520-1221",
-        addressLocality: "高島市",
-        streetAddress: "安曇川町上小川100", // ←ここも修正してください
-        telephone: rangesData["adogawa_sc"].phone
-    }
-];
+// マップ用APIキー
+const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 ---
 
-<script slot="head" type="application/ld+json" set:html={JSON.stringify([
-    {
-        "@context": "https://schema.org",
-        "@type": "BlogPosting",
-        "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
-        "headline": headline,
-        "description": description,
-        "image": [ imageUrl ],
-        "datePublished": pubDateISO,
-        "dateModified": pubDateISO,
-        "author": { 
-            "@type": "Person", 
-            "name": "関（シガゴル運営者）",
-            "url": `${baseUrl}/about/` 
-        },
-        "publisher": { 
-            "@type": "Organization", 
-            "name": "シガゴル", 
-            "logo": { 
-                "@type": "ImageObject", 
-                "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" 
-            }
-        },
-        "about": comparisonData.map(facility => ({
-            "@type": "GolfCourse",
-            "name": facility.name,
-            "image": facility.img,
-            "description": facility.summary,
-            "telephone": facility.telephone, 
-            "priceRange": facility.price,
-            "address": {
-                "@type": "PostalAddress",
-                "streetAddress": facility.streetAddress, 
-                "addressLocality": facility.addressLocality,
-                "addressRegion": "滋賀県",
-                "postalCode": facility.postalCode,
-                "addressCountry": "JP"
-            }
-        }))
-    },
-    {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {
-                "@type": "Question",
-                "name": "滋賀のショートコース（安曇川・長浜）での服装は？",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "本コースのようなドレスコードは一切ありません。Tシャツ、スニーカーでOKです。ゴルフウェアは不要で、練習場に行く感覚で気軽に利用できます。"
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "予約は必要ですか？",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "「365ゴルフクラブ ながはま」「安曇川スポーツセンター」ともに、基本的に予約は不要です。思い立ったその日に利用できます。"
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "本コースとショートコースの決定的な違いは？",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "最大の違いは「プレッシャーの有無」です。これら2施設は後続組を気にする必要がほとんどないため、本コースでは不可能な「打ち直し」や「一人二役」といった反復練習が可能です。"
-                }
-            }
-        ]
-    }
-])} />
-
-
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
-    
-    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(mainEntity)} />
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqElements)} />
+
+    <div id="article-view" class="view bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
         <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
             ‹ お役立ち記事一覧に戻る
         </a>
@@ -217,13 +151,38 @@ const comparisonData = [
             <style is:global>
               html { scroll-behavior: smooth; }
               section[id], h2[id] { scroll-margin-top: 80px; }
-              /* --- PC用テーブルの1列目固定（横スクロール）用 --- */
+              .cta-icon { width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: text-bottom; }
+
+              /* --- 共有いただいた成功例のレスポンシブテーブルスタイル --- */
               .table-wrapper { overflow-x: auto; }
               .min-w-table-pc { min-width: 600px; }
-              .table-wrapper th:first-child, .table-wrapper td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
-              .table-wrapper thead th:first-child { background-color: #f1f5f9; }
-              .table-wrapper tbody tr.bg-white td:first-child { background-color: #ffffff; }
-              .table-wrapper tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+              .responsive-table th:first-child, .responsive-table td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
+              .responsive-table thead th:first-child { background-color: #f1f5f9; }
+              .responsive-table tbody tr.bg-white td:first-child { background-color: #ffffff; }
+              .responsive-table tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+
+              @media (max-width: 767px) and (orientation: portrait) {
+                #article-view .responsive-table { min-width: 100% !important; }
+                #article-view .responsive-table thead { display: none !important; }
+                #article-view .responsive-table tr { display: block !important; margin-bottom: 1.5rem !important; border: 1px solid #cbd5e1 !important; border-radius: 0.5rem !important; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important; overflow: hidden; }
+                #article-view .responsive-table td { display: block !important; text-align: right !important; position: relative !important; border-bottom: 1px solid #e2e8f0 !important; padding: 0.75rem 0.75rem 0.75rem 130px !important; left: auto !important; background-color: #fff !important; }
+                #article-view .responsive-table td:last-child { border-bottom: none !important; }
+                #article-view .responsive-table td::before { content: attr(data-label); position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-weight: 600; text-align: left; color: #475569; width: 110px; }
+                #article-view .responsive-table td:first-child { background-color: #f1f5f9 !important; font-weight: bold !important; text-align: center !important; padding-left: 0.75rem !important; }
+                #article-view .responsive-table td:first-child::before { content: '' !important; }
+                
+                /* カード/テーブル切り替え用 */
+                #article-view .show-table-view.table-wrapper { overflow-x: auto !important; }
+                #article-view .show-table-view .responsive-table { min-width: 600px !important; }
+                #article-view .show-table-view .responsive-table thead { display: table-header-group !important; }
+                #article-view .show-table-view .responsive-table tr { display: table-row !important; border: none !important; box-shadow: none !important; }
+                #article-view .show-table-view .responsive-table td { display: table-cell !important; border: 1px solid #cbd5e1 !important; padding: 0.5rem !important; position: static !important; text-align: center !important; }
+                #article-view .show-table-view .responsive-table td:first-child { text-align: left !important; position: sticky !important; left: 0 !important; }
+                #article-view .show-table-view .responsive-table td::before { content: none !important; }
+                #article-view .show-table-view tr.bg-slate-50 td { background-color: #f8fafc !important; }
+                #article-view .show-table-view tr.bg-white td { background-color: #fff !important; }
+                #article-view .show-table-view thead th { background-color: #f1f5f9 !important; }
+              }
             </style>
             
             <header>
@@ -248,7 +207,7 @@ const comparisonData = [
                 </div>
             </div>
             <p>その感覚、半分は正しいです。
-            事実、僕（筆者：セキ）が知る限り、滋賀県で「練習場に併設されている」ショートコースは、湖北の<a href="/articles/365-nagahama/short-course/" class="text-green-700 underline hover:no-underline font-semibold"><strong>「365ゴルフクラブ ながはま」</strong></p></a>と、湖西の<a href="/articles/adogawa-sc-review/short-course/" class="text-green-700 underline hover:no-underline font-semibold"><strong>「安曇川スポーツセンター」</strong></a>の<strong>“たった2ヶ所”</strong>だけです。</p>
+            事実、僕（筆者：セキ）が知る限り、滋賀県で「練習場に併設されている」ショートコースは、湖北の<strong>「365ゴルフクラブ ながはま」</strong>と、湖西の<strong>「安曇川スポーツセンター」</strong>の<strong>“たった2ヶ所”</strong>だけです。</p>
             <p>そして、どちらも大津市や草津市といった中心部からは、車で1時間〜2時間かかる場所にあります。</p>
             <p>では、なぜ僕がわざわざ東近江市から時間をかけてまで、これらの施設に通うのか？</p>
             <blockquote class="not-prose my-8 border-l-4 border-green-600 bg-green-50 p-4 md:p-6 rounded-r-lg">
@@ -265,7 +224,7 @@ const comparisonData = [
             <p><br/>この記事では、滋賀に“2つしかない”この貴重なショートコースを、僕が<strong>両方とも実際に体験</strong>した上で、<strong>「あなたが今、遠出してでも行くべきなのはどっちか？」</strong>に完璧な答えを出します。</p>
 
             
-           <div class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
+            <div class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
                  <h2 class="text-xl font-bold mb-4 text-green-800 break-keep">
                     先に結論：「どっちへ行くべき？」
                  </h2>
@@ -273,15 +232,14 @@ const comparisonData = [
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div class="bg-white p-4 rounded-lg border border-slate-200 shadow hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-bold text-slate-800 mt-0 mb-2">① 本気で「上達」したいなら</h3>
-                        <a href="#365-nagahama" class="text-2xl font-bold text-green-700 mb-2 block hover:underline decoration-green-700 underline-offset-4">
+                        <a href="#365_nagahama-info" class="text-2xl font-bold text-green-700 mb-2 block hover:underline decoration-green-700 underline-offset-4">
                             365 ながはま ▾
                         </a>
                         <p class="text-sm text-slate-600 m-0">本格的なグリーンとバンカーがあり、「一人二役」練習に最適。<br class="md:hidden" />練習場もトップトレーサー完備で、「上達の黄金サイクル」が回せます。</p>
                     </div>
-                    
                     <div class="bg-white p-4 rounded-lg border border-slate-200 shadow hover:shadow-md transition-shadow">
                         <h3 class="text-lg font-bold text-slate-800 mt-0 mb-2">② 「家族で楽しむ・回り放題」なら</h3>
-                        <a href="#adogawa-sc" class="text-2xl font-bold text-green-700 mb-2 block hover:underline decoration-green-700 underline-offset-4">
+                        <a href="#adogawa_sc-info" class="text-2xl font-bold text-green-700 mb-2 block hover:underline decoration-green-700 underline-offset-4">
                             安曇川スポーツセンター ▾
                         </a>
                         <p class="text-sm text-slate-600 m-0">グリーンは「公園並み」ですが、全日3,000円で回り放題。<br class="md:hidden" />家族連れのアクティビティや、コスパ重視で「ゴルフを楽しむ」ならこちら。<strong>併設の300Y練習場（別料金）</strong>も圧巻です。</p>
@@ -305,108 +263,60 @@ const comparisonData = [
             </h2>
             <p>まずは、僕が両方体験して分かった「本音」を、比較表にまとめました。</p>
             
-            <div class="table-wrapper my-6 not-prose hidden md:block">
-                <table class="w-full text-left border-collapse min-w-table-pc">
+            <div class="not-prose my-4 text-center">
+                <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="summary-table-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                    画面を横にして一覧表で見る
+                </button>
+            </div>
+
+            <div id="summary-table-container" class="table-wrapper my-6 not-prose">
+                <table class="w-full text-sm text-left border border-slate-300 min-w-table-pc responsive-table">
                     <thead class="bg-slate-100">
                         <tr>
-                            <th class="py-3 px-4 font-semibold border-b">比較項目</th>
-                            <th class="py-3 px-4 font-semibold border-b text-center">365 ながはま</th>
-                            <th class="py-3 px-4 font-semibold border-b text-center">安曇川スポーツセンター</th>
+                            <th class="px-4 py-3 border border-slate-300 align-middle text-center whitespace-nowrap">比較項目</th>
+                            <th class="px-4 py-3 border border-slate-300 align-middle text-center whitespace-nowrap">365 ながはま</th>
+                            <th class="px-4 py-3 border border-slate-300 align-middle text-center whitespace-nowrap">安曇川スポーツセンター</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-b border-slate-200 bg-white">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">場所</th>
-                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].location}</td>
-                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].location}</td>
+                        <tr class="bg-white">
+                            <td data-label="比較項目" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap bg-slate-50">場所</td>
+                            <td data-label="365 ながはま" class="px-4 py-2 border text-center align-middle">{comparisonData[0].location}</td>
+                            <td data-label="安曇川 SC" class="px-4 py-2 border text-center align-middle">{comparisonData[1].location}</td>
                         </tr>
-                        <tr class="border-b border-slate-200 bg-slate-50">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">料金</th>
-                            <td data-label="365 ながはま" class="py-3 px-4 text-center"><strong>{comparisonData[0].price}</strong> ({comparisonData[0].price_detail})</td>
-                            <td data-label="安曇川 SC" class="py-3 px-4 text-center"><strong>{comparisonData[1].price}</strong> ({comparisonData[1].price_detail})</td>
+                        <tr class="bg-slate-50">
+                            <td data-label="比較項目" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap bg-slate-50">料金</td>
+                            <td data-label="365 ながはま" class="px-4 py-2 border text-center align-middle"><strong>{comparisonData[0].price_display}</strong> ({comparisonData[0].price_detail})</td>
+                            <td data-label="安曇川 SC" class="px-4 py-2 border text-center align-middle"><strong>{comparisonData[1].price_display}</strong> ({comparisonData[1].price_detail})</td>
                         </tr>
-                        <tr class="border-b border-slate-200 bg-white">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">1日回り放題</th>
-                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].plan}</td>
-                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].plan}</td>
+                        <tr class="bg-white">
+                            <td data-label="比較項目" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap bg-slate-50">1日回り放題</td>
+                            <td data-label="365 ながはま" class="px-4 py-2 border text-center align-middle">{comparisonData[0].plan}</td>
+                            <td data-label="安曇川 SC" class="px-4 py-2 border text-center align-middle">{comparisonData[1].plan}</td>
                         </tr>
-                        <tr class="border-b border-slate-200 bg-slate-50">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">グリーンの質</th>
-                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].green}</td>
-                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].green}</td>
+                        <tr class="bg-slate-50">
+                            <td data-label="比較項目" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap bg-slate-50">グリーンの質</td>
+                            <td data-label="365 ながはま" class="px-4 py-2 border text-center align-middle">{comparisonData[0].green}</td>
+                            <td data-label="安曇川 SC" class="px-4 py-2 border text-center align-middle">{comparisonData[1].green}</td>
                         </tr>
-                        <tr class="border-b border-slate-200 bg-white">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">専用アプローチ・バンカー練習場</th>
-                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].practice_facility}</td>
-                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].practice_facility}</td>
+                        <tr class="bg-white">
+                            <td data-label="比較項目" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap bg-slate-50">練習施設</td>
+                            <td data-label="365 ながはま" class="px-4 py-2 border text-center align-middle">{comparisonData[0].practice_facility}</td>
+                            <td data-label="安曇川 SC" class="px-4 py-2 border text-center align-middle">{comparisonData[1].practice_facility}</td>
                         </tr>
-                        <tr class="border-b border-slate-200 bg-slate-50">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">一人ラウンドのしやすさ</th>
-                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].hitori}</td>
-                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].hitori}</td>
+                        <tr class="bg-slate-50">
+                            <td data-label="比較項目" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap bg-slate-50">一人ラウンド</td>
+                            <td data-label="365 ながはま" class="px-4 py-2 border text-center align-middle">{comparisonData[0].hitori}</td>
+                            <td data-label="安曇川 SC" class="px-4 py-2 border text-center align-middle">{comparisonData[1].hitori}</td>
                         </tr>
-                        <tr class="border-b border-slate-200 bg-white">
-                            <th class="py-3 px-4 bg-slate-50 font-semibold">僕の結論</th>
-                            <td data-label="365 ながはま" class="py-3 px-4 text-sm">{comparisonData[0].summary}</td>
-                            <td data-label="安曇川 SC" class="py-3 px-4 text-sm">{comparisonData[1].summary}</td>
+                        <tr class="bg-white">
+                            <td data-label="比較項目" class="px-4 py-2 border align-middle font-semibold whitespace-nowrap bg-slate-50">僕の結論</td>
+                            <td data-label="365 ながはま" class="px-4 py-2 border text-sm align-middle">{comparisonData[0].summary}</td>
+                            <td data-label="安曇川 SC" class="px-4 py-2 border text-sm align-middle">{comparisonData[1].summary}</td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
-
-            <div class="my-6 space-y-6 md:hidden not-prose">
-                {comparisonData.map(facility => (
-                    <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                        
-                        <a href={facility.url} class="block">
-                            <Image 
-                                src={facility.img} 
-                                alt={facility.name}
-                                class="w-full h-48 object-cover"
-                                loading="lazy"
-                                format="webp"
-                                quality={75}
-                                width={1200}
-                                height={facility.id === '365_nagahama' ? 900 : 675}
-                                decoding="async"
-                            />
-                        </a>
-                        <h3 class="text-xl font-bold p-3 bg-slate-50 m-0">
-                            <a href={facility.url} class="text-green-700 hover:underline">{facility.name}</a>
-                        </h3>
-                        
-                        <div class="p-4 space-y-3">
-                            <div class="flex justify-between border-b border-slate-100 pb-2">
-                                <span class="text-slate-600 text-sm font-semibold">場所</span>
-                                <span class="text-slate-800 font-medium">{facility.location}</span>
-                            </div>
-                            <div class="flex justify-between border-b border-slate-100 pb-2">
-                                <span class="text-slate-600 text-sm font-semibold">料金 </span>
-                                <strong class="text-slate-800 font-bold">{facility.price} <small>({facility.price_detail})</small></strong>
-                            </div>
-                            <div class="flex justify-between border-b border-slate-100 pb-2">
-                                <span class="text-slate-600 text-sm font-semibold">回り放題</span>
-                                <span class="text-slate-800 font-medium">{facility.plan}</span>
-                            </div>
-                            <div class="flex justify-between border-b border-slate-100 pb-2">
-                                <span class="text-slate-600 text-sm font-semibold">グリーンの質</span>
-                                <span class="text-slate-800 font-medium">{facility.green}</span>
-                            </div>
-                            <div class="flex justify-between border-b border-slate-100 pb-2">
-                                <span class="text-slate-600 text-sm font-semibold">アプローチ/バンカー</span>
-                                <span class="text-slate-800 font-medium">{facility.practice_facility}</span>
-                            </div>
-                            <div class="flex justify-between border-b border-slate-100 pb-2">
-                                <span class="text-slate-600 text-sm font-semibold">一人ラウンド</span>
-                                <span class="text-slate-800 font-medium">{facility.hitori}</span>
-                            </div>
-                            <div class="pt-2">
-                                <span class="text-slate-600 text-sm font-semibold block mb-1">僕の結論</span>
-                                <p class="text-sm m-0 text-slate-700">{facility.summary}</p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
             </div>
             
             <h2 id="qanda" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
@@ -607,12 +517,15 @@ const comparisonData = [
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
             
-         <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+            <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
                  <h2 class="text-2xl md:text-3xl font-bold text-slate-800">各施設の基本情報まとめ</h2>
                  <div class="space-y-8 mt-4">
                      {rangeIds.map(id => {
                          const range = rangesData[id];
                          if (!range) return null;
+                         
+                         const avgRating = range.avgRating ? parseFloat(range.avgRating) : 0;
+                         const reviewCount = range.reviewCount || 0;
 
                          const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
                          const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
@@ -620,27 +533,24 @@ const comparisonData = [
 
                          return (
                              <div id={`${id}-info`} class="scroll-mt-24">
-                                 <h3 class="text-xl font-bold">{range.name}</h3>
+                                 <h3 class="text-xl font-bold flex items-center flex-wrap gap-x-2 gap-y-1">
+                                    <span>{range.name}</span>
+                                    {avgRating > 0 && (
+                                    <div class="flex items-center" role="img" aria-label={`評価 ${avgRating.toFixed(1)}/5`}>
+                                        {Array.from({ length: 5 }).map((_, i) => (
+                                            <svg class={`w-5 h-5 ${i < Math.round(avgRating) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        ))}
+                                    </div>
+                                    )}
+                                    <span class="text-sm text-slate-500 font-normal">({avgRating > 0 ? avgRating.toFixed(1) : '-'} / {reviewCount}件)</span>
+                                </h3>
                                  <div class="not-prose overflow-x-auto mt-4">
                                      <table class="w-full text-left border-collapse">
                                         <tbody>
-                                            {range.avgRating && (
-                                                <tr class="border-b border-slate-200">
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">総合評価</th>
-                                                    <td class="py-3 px-4">
-                                                        <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(range.avgRating).toFixed(1)}/5`}>
-                                                            <span class="font-bold text-amber-500 mr-2">{parseFloat(range.avgRating).toFixed(1)}</span>
-                                                            {Array.from({ length: 5 }).map((_, i) => (
-                                                                <svg class={`w-5 h-5 ${i < Math.round(parseFloat(range.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
-                                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                                </svg>
-                                                            ))}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )}
                                             <tr class="border-b border-slate-200">
-                                                <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th>
                                                 <td class="py-3 px-4">
                                                     <a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
                                                         {range.address}
@@ -690,12 +600,12 @@ const comparisonData = [
                                  </div>
                                   <div class="not-prose text-center my-6 flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
                                     <a href={`/ranges/${id}/`} class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline w-auto">
-                                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                                        <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                                         この施設の詳細ページへ
                                     </a>
                                     {additionalData[id]?.reviewUrl && (
                                         <a href={additionalData[id].reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline w-auto">
-                                            <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
                                             管理人の詳細体験レポートを読む
                                         </a>
                                     )}
@@ -708,10 +618,35 @@ const comparisonData = [
         </article>
     </div>
 
-    <style>
-        .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
-        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-        .scroll-mt-24 { scroll-margin-top: 6rem; }
-    </style>
-    
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButtons = document.querySelectorAll('.view-toggle-btn');
+        
+        toggleButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const targetId = button.dataset.targetId;
+            const tableContainer = document.getElementById(targetId);
+
+            if (!tableContainer) return;
+
+            tableContainer.classList.toggle('show-table-view');
+
+            const isTableView = tableContainer.classList.contains('show-table-view');
+            if (isTableView) {
+              button.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M4 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H4zm3 2h6v4H7V5zm0 6h6v2H7v-2z" />
+                </svg>
+                カード表示に戻す`;
+            } else {
+              button.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                画面を横にして一覧表で見る`;
+            }
+          });
+        });
+      });
+    </script>
 </BaseLayout>
