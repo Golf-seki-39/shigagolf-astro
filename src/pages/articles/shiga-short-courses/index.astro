@@ -15,7 +15,7 @@ let data1 = {};
 let data2 = {};
 
 try {
-    // 権限エラーが出てもビルドを止めないように try-catch で囲む
+    // ビルド環境で権限エラーが出ても止まらないようにする
     const docRef1 = doc(db, "practice_ranges", "365_nagahama");
     const docSnap1 = await getDoc(docRef1);
     if (docSnap1.exists()) {
@@ -41,18 +41,20 @@ const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/shiga-short-courses/`; 
 const headline = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較";
 
-// --- [5] ★重要★ 記事末の「詳細情報」を表示するための変数定義（ここが抜けていました） ---
-const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY; // マップ用APIキー
-const rangeIds = ["365_nagahama", "adogawa_sc"]; // 表示したい施設のIDリスト
+// --- [5] 記事末の「詳細情報」用データ ---
+const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
+const rangeIds = ["365_nagahama", "adogawa_sc"];
 
-// 施設データの定義（DBデータ + 手書きデータのマージ）
-// これが無いと rangesData is not defined エラーになります
+// ★★★ 重要：ここを正しい情報に書き換えてください ★★★
+// Firebaseが見れない時は、ここの情報が表示されます
 const rangesData = {
     "365_nagahama": {
-        ...data1, // DBデータがあれば上書き
+        ...data1, // Firebaseデータがあれば上書き
         name: data1.name || "365ゴルフクラブ ながはま",
-        address: data1.address || "滋賀県長浜市名越町1018",
+        // ▼ 正しい住所・電話番号に書き換えてください
+        address: data1.address || "滋賀県長浜市名越町1018", 
         phone: data1.phone || "0749-62-6365",
+        // --------------------------------------------
         avgRating: data1.avgRating || "4.2",
         business_hours: data1.business_hours || "10:00〜22:00\n年中無休",
         price_example: data1.price_example || "ビジター：1,280円〜\nメンバー：1,000円〜",
@@ -63,8 +65,10 @@ const rangesData = {
     "adogawa_sc": {
         ...data2,
         name: data2.name || "安曇川スポーツセンター",
+        // ▼ 正しい住所・電話番号に書き換えてください
         address: data2.address || "滋賀県高島市安曇川町上小川100",
         phone: data2.phone || "0740-32-2160",
+        // --------------------------------------------
         avgRating: data2.avgRating || "4.0",
         business_hours: data2.business_hours || "9:00〜21:00",
         price_example: data2.price_example || "ショートコース回り放題：3,000円\n練習場：1球8円〜",
@@ -74,12 +78,10 @@ const rangesData = {
     }
 };
 
-// ボタンのリンク先など
 const additionalData = {
     "365_nagahama": { reviewUrl: "/articles/365-nagahama/short-course/" },
     "adogawa_sc": { reviewUrl: "/articles/adogawa-sc-review/short-course/" }
 };
-
 
 // --- [6] 関連記事リスト ---
 const experienceReports = [
@@ -93,7 +95,7 @@ const experienceReports = [
 const comparisonData = [
     { 
         id: "365_nagahama",
-        name: rangesData["365_nagahama"].name, // 上で作ったデータを利用
+        name: rangesData["365_nagahama"].name,
         img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6583.jpeg",
         url: "/articles/365-nagahama/short-course/",
         location: "湖北（長浜市）",
@@ -106,7 +108,7 @@ const comparisonData = [
         summary: "本気で「上達」したい人向け。グリーンも戦略的で、「一人二役」練習に最適。併設の練習場（トップトレーサー完備）とのセットが最強。",
         postalCode: "526-0824",
         addressLocality: "長浜市",
-        streetAddress: "名越町1018",
+        streetAddress: "名越町1018", // ←ここも修正してください
         telephone: rangesData["365_nagahama"].phone
     },
     { 
@@ -124,7 +126,7 @@ const comparisonData = [
         summary: "安さと「回り放題」が魅力。家族連れのアクティビティや、子供を遊ばせつつ練習するなど「自由な楽しみ方」ができる。併設の300Y練習場も◎。",
         postalCode: "520-1221",
         addressLocality: "高島市",
-        streetAddress: "安曇川町上小川100",
+        streetAddress: "安曇川町上小川100", // ←ここも修正してください
         telephone: rangesData["adogawa_sc"].phone
     }
 ];
@@ -246,7 +248,7 @@ const comparisonData = [
                 </div>
             </div>
             <p>その感覚、半分は正しいです。
-            事実、僕（筆者：セキ）が知る限り、滋賀県で「練習場に併設されている」ショートコースは、湖北の<strong>「365ゴルフクラブ ながはま」</strong>と、湖西の<strong>「安曇川スポーツセンター」</strong>の<strong>“たった2ヶ所”</strong>だけです。</p>
+            事実、僕（筆者：セキ）が知る限り、滋賀県で「練習場に併設されている」ショートコースは、湖北の<a href="/articles/365-nagahama/short-course/" class="text-green-700 underline hover:no-underline font-semibold"><strong>「365ゴルフクラブ ながはま」</strong></p></a>と、湖西の<a href="/articles/adogawa-sc-review/short-course/" class="text-green-700 underline hover:no-underline font-semibold"><strong>「安曇川スポーツセンター」</strong></a>の<strong>“たった2ヶ所”</strong>だけです。</p>
             <p>そして、どちらも大津市や草津市といった中心部からは、車で1時間〜2時間かかる場所にあります。</p>
             <p>では、なぜ僕がわざわざ東近江市から時間をかけてまで、これらの施設に通うのか？</p>
             <blockquote class="not-prose my-8 border-l-4 border-green-600 bg-green-50 p-4 md:p-6 rounded-r-lg">
@@ -686,14 +688,14 @@ const comparisonData = [
                                  <div class="not-prose mt-4">
                                      <iframe src={mapsEmbedUrl} width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title={`${range.name}の地図`}></iframe>
                                  </div>
-                                  <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
-                                    <a href={`/ranges/${id}/`} class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
-                                        <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                                  <div class="not-prose text-center my-6 flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
+                                    <a href={`/ranges/${id}/`} class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline w-auto">
+                                        <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
                                         この施設の詳細ページへ
                                     </a>
                                     {additionalData[id]?.reviewUrl && (
-                                        <a href={additionalData[id].reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
-                                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                                        <a href={additionalData[id].reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline w-auto">
+                                            <svg class="w-6 h-6 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
                                             管理人の詳細体験レポートを読む
                                         </a>
                                     )}
