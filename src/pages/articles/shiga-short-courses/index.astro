@@ -5,27 +5,35 @@ import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 import { Image } from "astro:assets";
 
-// --- [2] 共通コンポーポーネントをインポート ---
+// --- [2] 共通コンポーネントをインポート ---
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
-// --- [3] この記事固有の情報 ---
-// ★ V3: OGP画像は仮のまま
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg"; // ← ★★★ 2施設をコラージュしたOGP画像
+// --- [3] Firebaseから施設データを取得 ---
+// ※IDはFirebaseのドキュメントIDに合わせてください
+const doc1 = await getDoc(doc(db, "practice_ranges", "365_nagahama"));
+const doc2 = await getDoc(doc(db, "practice_ranges", "adogawa_sc"));
+
+// データが存在しない場合の予備（ビルドエラー防止）
+const data1 = doc1.exists() ? doc1.data() : {};
+const data2 = doc2.exists() ? doc2.data() : {};
+
+// --- [4] この記事固有の情報 ---
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg"; 
 
 const title = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較 | シガゴル";
 const description = "滋賀県で練習場併設のショートコースは「安曇川」と「365長浜」の2ヶ所のみ。「遠いけど行く価値ある？」「ゴルフ場と何が違うの？」という疑問に、両方体験した筆者が徹底比較して答えます。";
 const category = "比較記事"; 
-const pubDate = "2025-11-15"; // ★記事の公開日
-const pubDateISO = "2025-11-15T17:00:00+09:00"; // ★記事の公開日(ISO)
+const pubDate = "2025-11-15";
+const pubDateISO = "2025-11-15T17:00:00+09:00";
 
-// --- [4] シェアボタン用の変数を定義 ---
+// --- [5] シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/shiga-short-courses/`; 
 const headline = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較";
 
-// --- [5] 関連記事リストの定義 ---
+// --- [6] 関連記事リスト ---
 const experienceReports = [
     { url: '/articles/365-nagahama/short-course/', title: '【体験談②】365ながはま ショートコース徹底攻略法', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg' },
     { url: '/articles/adogawa-sc-review/short-course/', title: '【体験談】安曇川ショートコース（グリーンは公園並み!?）', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/001111img.jpg' }, 
@@ -33,12 +41,20 @@ const experienceReports = [
     { url: '/articles/adogawa-sc-review/range/', title: '安曇川スポーツセンター　体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg' },
 ];
 
-// --- [6] ★ 比較表用のデータ ★ ---
+// --- [7] ★ 比較表用のデータ（ハイブリッド構成） ★ ---
+// 基本情報(住所・電話など)はFirebase(data1/data2)から使い、
+// 記事特有の比較コメント(summaryやgreenの感想)はこの場で定義してマージします。
 const comparisonData = [
     { 
+        // --- Firebaseから自動取得するデータ ---
+        name: data1.name || "365ゴルフクラブ ながはま",
+        address: data1.address || "滋賀県長浜市名越町1018", // fallback
+        phone: data1.phone || "0749-62-6365",
+        postalCode: data1.postalCode || "526-0824",
+        city: data1.city || "長浜市",
+        // --- この記事用の手動設定データ ---
         id: "365_nagahama",
-        name: "365ゴルフクラブ ながはま",
-        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6583.jpeg", // 池越え写真
+        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6583.jpeg",
         url: "/articles/365-nagahama/short-course/",
         location: "湖北（長浜市）",
         price: "ビジター 1,280円～",
@@ -50,9 +66,15 @@ const comparisonData = [
         summary: "本気で「上達」したい人向け。グリーンも戦略的で、「一人二役」練習に最適。併設の練習場（トップトレーサー完備）とのセットが最強。"
     },
     { 
+        // --- Firebaseから自動取得するデータ ---
+        name: data2.name || "安曇川スポーツセンター",
+        address: data2.address || "滋賀県高島市安曇川町上小川100",
+        phone: data2.phone || "0740-32-2160",
+        postalCode: data2.postalCode || "520-1221",
+        city: data2.city || "高島市",
+        // --- この記事用の手動設定データ ---
         id: "adogawa_sc",
-        name: "安曇川スポーツセンター",
-        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_9119.JPG", // 安曇川の広大な写真
+        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_9119.JPG",
         url: "/articles/adogawa-sc-review/short-course/",
         location: "湖西（高島市）",
         price: "ビジター 3,000円",
@@ -89,17 +111,20 @@ const comparisonData = [
                 "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" 
             }
         },
-        // ★ここに2つの施設情報を「about」として関連付けます
         "about": comparisonData.map(facility => ({
             "@type": "GolfCourse",
             "name": facility.name,
             "image": facility.img,
             "description": facility.summary,
+            "telephone": facility.phone, 
             "priceRange": facility.price,
             "address": {
                 "@type": "PostalAddress",
+                "streetAddress": facility.address, 
+                "addressLocality": facility.city,
                 "addressRegion": "滋賀県",
-                "addressLocality": facility.location
+                "postalCode": facility.postalCode,
+                "addressCountry": "JP"
             }
         }))
     },
