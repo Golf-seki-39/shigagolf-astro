@@ -3,14 +3,12 @@ import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
 import netlify from "@astrojs/netlify"; // ★ 1. Netlifyアダプタをインポート
 
-import partytown from "@astrojs/partytown";
-
 // https://astro.build/config
 export default defineConfig({
   // --- 既存の設定 (そのまま) ---
   site: 'https://shigagolf.com',
   trailingSlash: 'always',
-  integrations: [tailwind(), sitemap(), partytown()], 
+  integrations: [tailwind(), sitemap(), ], 
   
   // --- ▼▼▼ ここからが追加分 ▼▼▼ ---
 
