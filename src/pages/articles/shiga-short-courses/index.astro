@@ -11,7 +11,6 @@ import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
 // --- [3] Firebaseから施設データを取得（エラー対策版） ---
-// 初期値は空のオブジェクトにしておく
 let data1 = {};
 let data2 = {};
 
@@ -29,23 +28,58 @@ try {
         data2 = docSnap2.data();
     }
 } catch (e) {
-    // エラー時はログに出すだけで、処理は続行させる（手書きデータが使われる）
-    console.warn("Firestoreからのデータ取得に失敗しました（権限エラー等の可能性）。手書きのフォールバックデータを使用します。", e.message);
+    console.warn("Firestoreからのデータ取得に失敗しました。手書きデータを使用します。", e.message);
 }
 
 // --- [4] この記事固有の情報 ---
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg"; 
-
 const title = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較 | シガゴル";
 const description = "滋賀県で練習場併設のショートコースは「安曇川」と「365長浜」の2ヶ所のみ。「遠いけど行く価値ある？」「ゴルフ場と何が違うの？」という疑問に、両方体験した筆者が徹底比較して答えます。";
-const category = "比較記事"; 
 const pubDate = "2025-11-15";
 const pubDateISO = "2025-11-15T17:00:00+09:00";
-
-// --- [5] シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/shiga-short-courses/`; 
 const headline = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較";
+
+// --- [5] ★重要★ 記事末の「詳細情報」を表示するための変数定義（ここが抜けていました） ---
+const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY; // マップ用APIキー
+const rangeIds = ["365_nagahama", "adogawa_sc"]; // 表示したい施設のIDリスト
+
+// 施設データの定義（DBデータ + 手書きデータのマージ）
+// これが無いと rangesData is not defined エラーになります
+const rangesData = {
+    "365_nagahama": {
+        ...data1, // DBデータがあれば上書き
+        name: data1.name || "365ゴルフクラブ ながはま",
+        address: data1.address || "滋賀県長浜市名越町1018",
+        phone: data1.phone || "0749-62-6365",
+        avgRating: data1.avgRating || "4.2",
+        business_hours: data1.business_hours || "10:00〜22:00\n年中無休",
+        price_example: data1.price_example || "ビジター：1,280円〜\nメンバー：1,000円〜",
+        yardage: data1.yardage || "250",
+        bays: data1.bays || "50",
+        access: data1.access || "長浜ICから車で10分"
+    },
+    "adogawa_sc": {
+        ...data2,
+        name: data2.name || "安曇川スポーツセンター",
+        address: data2.address || "滋賀県高島市安曇川町上小川100",
+        phone: data2.phone || "0740-32-2160",
+        avgRating: data2.avgRating || "4.0",
+        business_hours: data2.business_hours || "9:00〜21:00",
+        price_example: data2.price_example || "ショートコース回り放題：3,000円\n練習場：1球8円〜",
+        yardage: data2.yardage || "300",
+        bays: data2.bays || "60",
+        access: data2.access || "湖西道路経由 安曇川駅から車で5分"
+    }
+};
+
+// ボタンのリンク先など
+const additionalData = {
+    "365_nagahama": { reviewUrl: "/articles/365-nagahama/short-course/" },
+    "adogawa_sc": { reviewUrl: "/articles/adogawa-sc-review/short-course/" }
+};
+
 
 // --- [6] 関連記事リスト ---
 const experienceReports = [
@@ -55,17 +89,11 @@ const experienceReports = [
     { url: '/articles/adogawa-sc-review/range/', title: '安曇川スポーツセンター　体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg' },
 ];
 
-// --- [7] ★ 比較表用のデータ（ハイブリッド構成） ★ ---
+// --- [7] 比較表用のデータ ---
 const comparisonData = [
     { 
-        // --- Firebaseから自動取得するデータ ---
-        name: data1.name || "365ゴルフクラブ ながはま",
-        address: data1.address || "滋賀県長浜市名越町1018", 
-        phone: data1.phone || "0749-62-6365",
-        postalCode: data1.postalCode || "526-0824",
-        city: data1.city || "長浜市",
-        // --- この記事用の手動設定データ ---
         id: "365_nagahama",
+        name: rangesData["365_nagahama"].name, // 上で作ったデータを利用
         img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6583.jpeg",
         url: "/articles/365-nagahama/short-course/",
         location: "湖北（長浜市）",
@@ -75,17 +103,15 @@ const comparisonData = [
         green: "◎ (人工芝 / 9.5ft)",
         practice_facility: "◎ (バンカー/パター)",
         hitori: "◎ (プレッシャー皆無)",
-        summary: "本気で「上達」したい人向け。グリーンも戦略的で、「一人二役」練習に最適。併設の練習場（トップトレーサー完備）とのセットが最強。"
+        summary: "本気で「上達」したい人向け。グリーンも戦略的で、「一人二役」練習に最適。併設の練習場（トップトレーサー完備）とのセットが最強。",
+        postalCode: "526-0824",
+        addressLocality: "長浜市",
+        streetAddress: "名越町1018",
+        telephone: rangesData["365_nagahama"].phone
     },
     { 
-        // --- Firebaseから自動取得するデータ ---
-        name: data2.name || "安曇川スポーツセンター",
-        address: data2.address || "滋賀県高島市安曇川町上小川100",
-        phone: data2.phone || "0740-32-2160",
-        postalCode: data2.postalCode || "520-1221",
-        city: data2.city || "高島市",
-        // --- この記事用の手動設定データ ---
         id: "adogawa_sc",
+        name: rangesData["adogawa_sc"].name,
         img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_9119.JPG",
         url: "/articles/adogawa-sc-review/short-course/",
         location: "湖西（高島市）",
@@ -95,7 +121,11 @@ const comparisonData = [
         green: "△ (ほぼ公園の芝)",
         practice_facility: "△ (バンカーのみ)",
         hitori: "○ (回り放題で楽しめる)",
-        summary: "安さと「回り放題」が魅力。家族連れのアクティビティや、子供を遊ばせつつ練習するなど「自由な楽しみ方」ができる。併設の300Y練習場も◎。"
+        summary: "安さと「回り放題」が魅力。家族連れのアクティビティや、子供を遊ばせつつ練習するなど「自由な楽しみ方」ができる。併設の300Y練習場も◎。",
+        postalCode: "520-1221",
+        addressLocality: "高島市",
+        streetAddress: "安曇川町上小川100",
+        telephone: rangesData["adogawa_sc"].phone
     }
 ];
 ---
@@ -128,12 +158,12 @@ const comparisonData = [
             "name": facility.name,
             "image": facility.img,
             "description": facility.summary,
-            "telephone": facility.phone, 
+            "telephone": facility.telephone, 
             "priceRange": facility.price,
             "address": {
                 "@type": "PostalAddress",
-                "streetAddress": facility.address, 
-                "addressLocality": facility.city,
+                "streetAddress": facility.streetAddress, 
+                "addressLocality": facility.addressLocality,
                 "addressRegion": "滋賀県",
                 "postalCode": facility.postalCode,
                 "addressCountry": "JP"
@@ -675,8 +705,6 @@ const comparisonData = [
             </section>
         </article>
     </div>
-
-    
 
     <style>
         .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
