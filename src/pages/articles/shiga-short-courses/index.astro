@@ -575,8 +575,108 @@ const comparisonData = [
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
             
+         <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
+                 <h2 class="text-2xl md:text-3xl font-bold text-slate-800">各施設の基本情報まとめ</h2>
+                 <div class="space-y-8 mt-4">
+                     {rangeIds.map(id => {
+                         const range = rangesData[id];
+                         if (!range) return null;
+
+                         const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
+                         const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
+
+                         return (
+                             <div id={`${id}-info`} class="scroll-mt-24">
+                                 <h3 class="text-xl font-bold">{range.name}</h3>
+                                 <div class="not-prose overflow-x-auto mt-4">
+                                     <table class="w-full text-left border-collapse">
+                                        <tbody>
+                                            {range.avgRating && (
+                                                <tr class="border-b border-slate-200">
+                                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">総合評価</th>
+                                                    <td class="py-3 px-4">
+                                                        <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(range.avgRating).toFixed(1)}/5`}>
+                                                            <span class="font-bold text-amber-500 mr-2">{parseFloat(range.avgRating).toFixed(1)}</span>
+                                                            {Array.from({ length: 5 }).map((_, i) => (
+                                                                <svg class={`w-5 h-5 ${i < Math.round(parseFloat(range.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                                </svg>
+                                                            ))}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                                <td class="py-3 px-4">
+                                                    <a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                                                        {range.address}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                                <td class="py-3 px-4">
+                                                    {range.phone ? (
+                                                        <a href={`tel:${range.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">
+                                                            {range.phone}
+                                                        </a>
+                                                    ) : (
+                                                        <span>-</span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                                <td class="py-3 px-4" set:html={range.business_hours?.replace(/\n/g, '<br />') || "-"} />
+                                            </tr>
+                                            
+                                            {range.price_example && (
+                                                <tr class="border-b border-slate-200">
+                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                                    <td class="py-3 px-4" set:html={range.price_example.replace(/\n/g, '<br />')} />
+                                                </tr>
+                                            )}
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                                <td class="py-3 px-4">{range.yardage ? `${range.yardage}ヤード` : (id === 'elgrace_omihachiman' ? 'インドア' : '-')}</td>
+                                            </tr>
+                                            <tr class="border-b border-slate-200">
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                                <td class="py-3 px-4">{range.bays ? `${range.bays}席` : '-'}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                                <td class="py-3 px-4">{range.access || '-'}</td>
+                                            </tr>
+                                        </tbody>
+                                     </table>
+                                 </div>
+                                 <div class="not-prose mt-4">
+                                     <iframe src={mapsEmbedUrl} width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title={`${range.name}の地図`}></iframe>
+                                 </div>
+                                  <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
+                                    <a href={`/ranges/${id}/`} class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                                        <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
+                                        この施設の詳細ページへ
+                                    </a>
+                                    {additionalData[id]?.reviewUrl && (
+                                        <a href={additionalData[id].reviewUrl} class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
+                                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
+                                            管理人の詳細体験レポートを読む
+                                        </a>
+                                    )}
+                                </div>
+                             </div>
+                         )
+                     })}
+                 </div>
+            </section>
         </article>
     </div>
+
+    
 
     <style>
         .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
