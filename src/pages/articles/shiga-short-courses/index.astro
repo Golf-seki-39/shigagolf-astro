@@ -66,17 +66,74 @@ const comparisonData = [
 ];
 ---
 
-<script slot="head" type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
-    "headline": headline,
-    "description": description,
-    "image": [ imageUrl ],
-    "author": { "@type": "Person", "name": "関＠シガゴル管理人" },
-    "publisher": { "@type": "Organization", "name": "シガゴル" },
-    "datePublished": pubDateISO
-})} />
+<script slot="head" type="application/ld+json" set:html={JSON.stringify([
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+        "headline": headline,
+        "description": description,
+        "image": [ imageUrl ],
+        "datePublished": pubDateISO,
+        "dateModified": pubDateISO,
+        "author": { 
+            "@type": "Person", 
+            "name": "関（シガゴル運営者）",
+            "url": `${baseUrl}/about/` 
+        },
+        "publisher": { 
+            "@type": "Organization", 
+            "name": "シガゴル", 
+            "logo": { 
+                "@type": "ImageObject", 
+                "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" 
+            }
+        },
+        // ★ここに2つの施設情報を「about」として関連付けます
+        "about": comparisonData.map(facility => ({
+            "@type": "GolfCourse",
+            "name": facility.name,
+            "image": facility.img,
+            "description": facility.summary,
+            "priceRange": facility.price,
+            "address": {
+                "@type": "PostalAddress",
+                "addressRegion": "滋賀県",
+                "addressLocality": facility.location
+            }
+        }))
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "滋賀のショートコース（安曇川・長浜）での服装は？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "本コースのようなドレスコードは一切ありません。Tシャツ、スニーカーでOKです。ゴルフウェアは不要で、練習場に行く感覚で気軽に利用できます。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "予約は必要ですか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "「365ゴルフクラブ ながはま」「安曇川スポーツセンター」ともに、基本的に予約は不要です。思い立ったその日に利用できます。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "本コースとショートコースの決定的な違いは？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "最大の違いは「プレッシャーの有無」です。これら2施設は後続組を気にする必要がほとんどないため、本コースでは不可能な「打ち直し」や「一人二役」といった反復練習が可能です。"
+                }
+            }
+        ]
+    }
+])} />
 
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
