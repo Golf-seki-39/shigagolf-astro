@@ -1,0 +1,484 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報 ---
+// ★ V3: OGP画像は仮のまま
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg"; // ← ★★★ 2施設をコラージュしたOGP画像
+
+const title = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較 | シガゴル";
+const description = "滋賀県で練習場併設のショートコースは「安曇川」と「365長浜」の2ヶ所のみ。「遠いけど行く価値ある？」「ゴルフ場と何が違うの？」という疑問に、両方体験した筆者が徹底比較して答えます。";
+const category = "比較記事"; 
+const pubDate = "2025-11-15"; // ★記事の公開日
+const pubDateISO = "2025-11-15T17:00:00+09:00"; // ★記事の公開日(ISO)
+
+// --- [4] シェアボタン用の変数を定義 ---
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/shiga-short-courses/`; 
+const headline = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較";
+
+// --- [5] 関連記事リストの定義 ---
+const experienceReports = [
+    { url: '/articles/365-nagahama/short-course/', title: '【体験談②】365ながはま ショートコース徹底攻略法', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg' },
+    { url: '/articles/adogawa-sc-review/short-course/', title: '【体験談】安曇川ショートコース（グリーンは公園並み!?）', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/001111img.jpg' }, 
+    { url: '/articles/365-nagahama/range/', title: '365ゴルフクラブながはま　体験レポート　', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000ai.jpg' },
+    { url: '/articles/adogawa-sc-review/range/', title: '安曇川スポーツセンター　体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg' },
+];
+
+// --- [6] ★ 比較表用のデータ ★ ---
+const comparisonData = [
+    { 
+        id: "365_nagahama",
+        name: "365ゴルフクラブ ながはま",
+        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6583.jpeg", // 池越え写真
+        url: "/articles/365-nagahama/short-course/",
+        location: "湖北（長浜市）",
+        price: "ビジター 1,280円～",
+        price_detail: "9H",
+        plan: "回り放題なし (追加9H 500円)",
+        green: "◎ (人工芝 / 9.5ft)",
+        practice_facility: "◎ (バンカー/パター)",
+        hitori: "◎ (プレッシャー皆無)",
+        summary: "本気で「上達」したい人向け。グリーンも戦略的で、「一人二役」練習に最適。併設の練習場（トップトレーサー完備）とのセットが最強。"
+    },
+    { 
+        id: "adogawa_sc",
+        name: "安曇川スポーツセンター",
+        img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_9119.JPG", // 安曇川の広大な写真
+        url: "/articles/adogawa-sc-review/short-course/",
+        location: "湖西（高島市）",
+        price: "ビジター 3,000円",
+        price_detail: "回り放題",
+        plan: "◎ (全日回り放題)",
+        green: "△ (ほぼ公園の芝)",
+        practice_facility: "△ (バンカーのみ)",
+        hitori: "○ (回り放題で楽しめる)",
+        summary: "安さと「回り放題」が魅力。家族連れのアクティビティや、子供を遊ばせつつ練習するなど「自由な楽しみ方」ができる。併設の300Y練習場も◎。"
+    }
+];
+---
+
+<script slot="head" type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline,
+    "description": description,
+    "image": [ imageUrl ],
+    "author": { "@type": "Person", "name": "関＠シガゴル管理人" },
+    "publisher": { "@type": "Organization", "name": "シガゴル" },
+    "datePublished": pubDateISO
+})} />
+
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id] { scroll-margin-top: 80px; }
+              /* --- PC用テーブルの1列目固定（横スクロール）用 --- */
+              .table-wrapper { overflow-x: auto; }
+              .min-w-table-pc { min-width: 600px; }
+              .table-wrapper th:first-child, .table-wrapper td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
+              .table-wrapper thead th:first-child { background-color: #f1f5f9; }
+              .table-wrapper tbody tr.bg-white td:first-child { background-color: #ffffff; }
+              .table-wrapper tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+            </style>
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <p>「滋賀でショートコースを探している」<br/>
+            「いきなりゴルフ場デビューは怖いから、まずは安いショートコースで練習したい」</p>
+            <p>そう思って検索したあなたは、おそらく“2つの壁”にぶつかっていませんか？</p>
+            <div class="not-prose my-8 p-4 md:p-6 rounded-lg border-2 border-amber-300 bg-amber-50">
+                <h3 class="text-xl font-bold text-amber-800 mt-0 mb-4 text-center">
+                    こんな「壁」にぶつかっていませんか？
+                </h3>
+                <div class="space-y-3">
+                    <p class="text-lg font-semibold text-slate-700 m-0 leading-relaxed">
+                        <span class="font-bold text-amber-900">①:</span> 「あれ？ 滋賀って練習場併設のショートコース、全然なくない？」
+                    </p>
+                    <p class="text-lg font-semibold text-slate-700 m-0 leading-relaxed">
+                        <span class="font-bold text-amber-900">②:</span> 「ショートコースより普通にゴルフ場行ったほうがいいのでは？」
+                    </p>
+                </div>
+            </div>
+            <p>その感覚、半分は正しいです。
+            事実、僕（筆者：セキ）が知る限り、滋賀県で「練習場に併設されている」ショートコースは、湖北の<strong>「365ゴルフクラブ ながはま」</strong>と、湖西の<strong>「安曇川スポーツセンター」</strong>の<strong>“たった2ヶ所”</strong>だけです。</p>
+            <p>そして、どちらも大津市や草津市といった中心部からは、車で1時間〜2時間かかる場所にあります。</p>
+            <p>では、なぜ僕がわざわざ東近江市から時間をかけてまで、これらの施設に通うのか？</p>
+            <blockquote class="not-prose my-8 border-l-4 border-green-600 bg-green-50 p-4 md:p-6 rounded-r-lg">
+                <p class="text-xl md:text-2xl font-bold text-green-800 m-0 italic">
+                    「ゴルフ場の劣化版」ではなく、<br/>
+                    「ゴルフ場では絶対にできない“特訓”ができる場所」
+                </p>
+            </blockquote>
+            <p>これが、僕がわざわざ時間をかけて通う理由です。<br/><br/>具体的には…</p>
+            <br/><ul class="list-disc list-inside space-y-2 prose">
+                <li>本番のゴルフ場デビューが怖い初心者が、<strong>プレッシャーゼロで芝の感覚を養う</strong>ための場所。</li>
+                <li>70ヤードの寄せだけを練習したい中級者が、<strong>混雑を気にせず「一人二役」で反復練習</strong>をするための場所。</li>
+            </ul>
+            <p><br/>この記事では、滋賀に“2つしかない”この貴重なショートコースを、僕が<strong>両方とも実際に体験</strong>した上で、<strong>「あなたが今、遠出してでも行くべきなのはどっちか？」</strong>に完璧な答えを出します。</p>
+
+            
+            <div class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
+                 <h2 class="text-xl font-bold mb-4 text-green-800 break-keep">
+                    先に結論：「どっちへ行くべき？」
+                 </h2>
+                 <p class="text-slate-700">どちらも最高の施設ですが、目的によって選ぶべき場所が真逆です。</p>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-white p-4 rounded-lg border border-slate-200 shadow">
+                        <h3 class="text-lg font-bold text-slate-800 mt-0 mb-2">① 本気で「上達」したいなら</h3>
+                        <p class="text-2xl font-bold text-green-700 mb-2">365 ながはま</p>
+                        <p class="text-sm text-slate-600 m-0">本格的なグリーンとバンカーがあり、「一人二役」練習に最適。<br class="md:hidden" />練習場もトップトレーサー完備で、「上達の黄金サイクル」が回せます。</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-slate-200 shadow">
+                        <h3 class="text-lg font-bold text-slate-800 mt-0 mb-2">② 「家族で楽しむ・回り放題」なら</h3>
+                        <p class="text-2xl font-bold text-green-700 mb-2">安曇川スポーツセンター</p>
+                        <p class="text-sm text-slate-600 m-0">グリーンは「公園並み」ですが、全日3,000円で回り放題。<br class="md:hidden" />家族連れのアクティビティや、コスパ重視で「ゴルフを楽しむ」ならこちら。<strong>併設の300Y練習場（別料金）</strong>も圧巻です。</p>
+                    </div>
+                 </div>
+            </div>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#comparison-table" class="text-green-700 hover:underline">【ひと目でわかる】滋賀のショートコース2施設 徹底比較表</a></li>
+                    <li><a href="#qanda" class="text-green-700 hover:underline">補足：ショートコースと本コース（ゴルフ場）の決定的な違いは？</a></li>
+                    <li><a href="#365-nagahama" class="text-green-700 hover:underline">① 365ゴルフクラブ ながはま（湖北）- 本格練習の“ホーム”</a></li>
+                    <li><a href="#adogawa-sc" class="text-green-700 hover:underline">② 安曇川スポーツセンター（湖西）- 楽しさ・コスパの“楽園”</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">結論：あなたが今、行くべきなのはどっち？</a></li>
+                </ul>
+            </div>
+
+            <h2 id="comparison-table" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【ひと目でわかる】<br class="md:hidden" />滋賀のショートコース2施設 <br class="md:hidden" />徹底比較表
+            </h2>
+            <p>まずは、僕が両方体験して分かった「本音」を、比較表にまとめました。</p>
+            
+            <div class="table-wrapper my-6 not-prose hidden md:block">
+                <table class="w-full text-left border-collapse min-w-table-pc">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="py-3 px-4 font-semibold border-b">比較項目</th>
+                            <th class="py-3 px-4 font-semibold border-b text-center">365 ながはま</th>
+                            <th class="py-3 px-4 font-semibold border-b text-center">安曇川スポーツセンター</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">場所</th>
+                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].location}</td>
+                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].location}</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">料金</th>
+                            <td data-label="365 ながはま" class="py-3 px-4 text-center"><strong>{comparisonData[0].price}</strong> ({comparisonData[0].price_detail})</td>
+                            <td data-label="安曇川 SC" class="py-3 px-4 text-center"><strong>{comparisonData[1].price}</strong> ({comparisonData[1].price_detail})</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">1日回り放題</th>
+                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].plan}</td>
+                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].plan}</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">グリーンの質</th>
+                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].green}</td>
+                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].green}</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">専用アプローチ・バンカー練習場</th>
+                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].practice_facility}</td>
+                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].practice_facility}</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">一人ラウンドのしやすさ</th>
+                            <td data-label="365 ながはま" class="py-3 px-4 text-center">{comparisonData[0].hitori}</td>
+                            <td data-label="安曇川 SC" class="py-3 px-4 text-center">{comparisonData[1].hitori}</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">僕の結論</th>
+                            <td data-label="365 ながはま" class="py-3 px-4 text-sm">{comparisonData[0].summary}</td>
+                            <td data-label="安曇川 SC" class="py-3 px-4 text-sm">{comparisonData[1].summary}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="my-6 space-y-6 md:hidden not-prose">
+                {comparisonData.map(facility => (
+                    <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                        
+                        <a href={facility.url} class="block">
+                            <Image 
+                                src={facility.img} 
+                                alt={facility.name}
+                                class="w-full h-48 object-cover"
+                                loading="lazy"
+                                format="webp"
+                                quality={75}
+                                width={1200}
+                                height={facility.id === '365_nagahama' ? 900 : 675}
+                                decoding="async"
+                            />
+                        </a>
+                        <h3 class="text-xl font-bold p-3 bg-slate-50 m-0">
+                            <a href={facility.url} class="text-green-700 hover:underline">{facility.name}</a>
+                        </h3>
+                        
+                        <div class="p-4 space-y-3">
+                            <div class="flex justify-between border-b border-slate-100 pb-2">
+                                <span class="text-slate-600 text-sm font-semibold">場所</span>
+                                <span class="text-slate-800 font-medium">{facility.location}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-100 pb-2">
+                                <span class="text-slate-600 text-sm font-semibold">料金 </span>
+                                <strong class="text-slate-800 font-bold">{facility.price} <small>({facility.price_detail})</small></strong>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-100 pb-2">
+                                <span class="text-slate-600 text-sm font-semibold">回り放題</span>
+                                <span class="text-slate-800 font-medium">{facility.plan}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-100 pb-2">
+                                <span class="text-slate-600 text-sm font-semibold">グリーンの質</span>
+                                <span class="text-slate-800 font-medium">{facility.green}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-100 pb-2">
+                                <span class="text-slate-600 text-sm font-semibold">アプローチ/バンカー</span>
+                                <span class="text-slate-800 font-medium">{facility.practice_facility}</span>
+                            </div>
+                            <div class="flex justify-between border-b border-slate-100 pb-2">
+                                <span class="text-slate-600 text-sm font-semibold">一人ラウンド</span>
+                                <span class="text-slate-800 font-medium">{facility.hitori}</span>
+                            </div>
+                            <div class="pt-2">
+                                <span class="text-slate-600 text-sm font-semibold block mb-1">僕の結論</span>
+                                <p class="text-sm m-0 text-slate-700">{facility.summary}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            
+            <h2 id="qanda" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                補足：ショートコースと本コース（ゴルフ場）の決定的な違いは？
+            </h2>
+            <p>「安いゴルフ場（薄暮ハーフ）と何が違うの？」という疑問に、両方体験した僕がお答えします。</p>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">👕 Q1. 服装は？</h3>
+            <p><strong>A. まったく違います。</strong></p>
+            <p>本コースは襟付きシャツやドレスコードが必須ですが、<strong>「365ながはま」「安曇川」ともにTシャツ、スニーカーでOK</strong>です。ゴルフウェアは一切不要で、練習場に行く感覚で回れます。</p>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">💰 Q2. 料金と予約は？</h3>
+            <p><strong>A. 圧倒的に安く、予約も不要です。</strong></p>
+            <p>本コースの薄暮ハーフは安くても3,500円〜8,000円で、予約も必須です。一方、この2施設は<strong>1,000円台〜3,000円</strong>で、<strong>予約不要</strong>です。<br class="md:hidden" />「今から行こう」ができます。<br/>
+            <small>（※心配な方は、念のため施設に電話確認すると確実です）</small></p>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">🤯 Q3. 「プレッシャー」と練習環境</h3>
+            <p><strong>A. これが全てです。</strong></p>
+            <p>本コースは「スコア」を付け、後続組も来ます。ミスしても打ち直しはできません。しかし、この2施設は、<strong>後続組のプレッシャーが皆無</strong>です。</p>
+            <p>だからこそ、本コースでは絶対に不可能な「一人二役」や「同じ場所から5球アプローチ練習」といった<strong>“特訓”</strong>ができる。これが最大の価値です。</p>
+
+
+            <h2 id="365-nagahama" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                ① 365ゴルフクラブ ながはま（湖北）<br/>- 本格練習の“ホーム”
+            </h2>
+            
+            <figure class="my-6">
+                <Image 
+                    src={comparisonData[0].img} 
+                    alt="365ゴルフクラブ ながはま ショートコース" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900} 
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（365ゴルフクラブ ながはまの池越えホール）</figcaption>
+            </figure>
+            
+            <p>僕が「完璧なホーム」と呼ぶ施設です。
+            最大の特徴は、<strong>「上達の黄金サイクル」</strong>が全て揃っていること。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6601.jpg" 
+                    alt="365ゴルフクラブ ながはまのバンカー練習場" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（無料で使えるバンカー練習場）</figcaption>
+            </figure>
+
+            <p>併設の練習場には全打席トップトレーサーと、無料の<strong>バンカー・パター練習場</strong>があり、そこで見つけた課題を、すぐ隣の「本格ショートコース」で実践テストできます。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6592.jpg" 
+                    alt="365ゴルフクラブ ながはまのグリーン" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（手入れされた人工芝グリーン。体感9.0ft前後）</figcaption>
+            </figure>
+
+            <p>ショートコース自体も、手入れされた人工芝（体感9.0ft前後、5番は速い）、池越え、2段グリーンなど戦略性も十分。
+            <br class="md:hidden" />何より、<strong>予約不要で「一人二役」練習ができるほど空いている</strong>のが、本気で上達したい僕にとって最高の環境です。</p>
+            <p>「練習1時間＋9H」のセットプラン（ビジター平日1,780円）が鉄板です。</p>
+            
+            <p class="text-center font-bold text-lg mt-6">
+                <a
+                    href={comparisonData[0].url}
+                    class="inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    「365ながはま」ショートコース<br class="md:hidden" />（一人二役）の<br/>詳細レビューはこちら →
+                </a>
+            </p>
+
+            <h2 id="adogawa-sc" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                ② 安曇川スポーツセンター（湖西）<br/>- 楽しさ・コスパの“楽園”
+            </h2>
+
+            <figure class="my-6">
+                <Image 
+                    src={comparisonData[1].img} 
+                    alt="安曇川スポーツセンター 練習場の全景" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（写真は併設の300Y練習場。この開放感が最大の魅力）</figcaption>
+            </figure>
+            
+            <p>「楽しさ」と「コスパ」で選ぶなら、間違いなく安曇川スポーツセンターです。
+            <br class="md:hidden" />最大の特徴は、<strong>ビジターでも全日3,000円で<br class="md:hidden" />「1日中回り放題」</strong>なこと。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8758.png" 
+                    alt="安曇川スポーツセンターのグリーン" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（グリーンの状態。ほぼ公園の芝生に近い）</figcaption>
+            </figure>
+
+            <p>正直に言うと、グリーンの状態は「公園の芝生」に近いです。本格的なパット練習にはなりません。
+            しかし、そんなことはどうでも良くなるほどの<strong>圧倒的な開放感</strong>があります。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8706.png" 
+                    alt="安曇川スポーツセンターのショートコースの開放的な雰囲気" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    loading="lazy" 
+                    format="webp" 
+                    quality={80}
+                    width={1200}
+                    height={900}
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（広々としたコースで、プレッシャーなく楽しめる）</figcaption>
+            </figure>
+
+            <p>この「回り放題」は、<strong>家族連れのアクティビティ</strong>としても最高です。<br/>
+            例えば、僕が試したように「子供は1番ホールで遊ばせて、自分は横のホールでアプローチ練習に集中する」といった、本コースでは絶対に不可能な、自由な時間の使い方ができます。</p>
+            <p>併設の300ヤード練習場（別料金）でドライバーをかっ飛ばし、ショートコースは時間無制限で遊び倒す。
+            そんなゴルフの“楽しさ”を追求したい日に、ここは最高の楽園になります。</p>
+            
+            
+            <p class="text-center font-bold text-lg mt-6">
+                <a
+                    href={comparisonData[1].url}
+                    class="inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    「安曇川」ショートコース<br class="md:hidden" />（グリーンは公園並み!?）の<br/>詳細レビューはこちら →
+                </a>
+            </p>
+
+
+            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【結論】あなたが今、<br class="md:hidden" />行くべきなのはどっち？
+            </h2>
+            
+            <p>滋賀に2ヶ所しかない貴重なショートコース。
+            どちらも遠いですが、行く価値は十分にあります。
+            あなたの目的が、</p>
+            
+            <ul class="list-disc list-inside space-y-3 prose">
+                <li>本気でアプローチやパットを練習し、<strong><br class="md:hidden" /> 「スコアを縮めたい」</strong>なら <br class="md:hidden" />→ <strong>「365ゴルフクラブ ながはま」</strong></li>
+                <li>スコアは気にせず、家族連れや友人と、安く時間無制限で<strong><br class="md:hidden" />「ゴルフを楽しみたい」</strong>なら <br class="md:hidden" />→ <strong>「安曇川スポーツセンター」</strong></li>
+            </ul>
+            
+            <p>これが、僕が両方体験して出した「答え」です。<br/>
+            <br/>ぜひ、あなたの目的に合わせて、最高の“特訓の場”を選んでみてください。</p>
+            
+            
+            <div class="not-prose my-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h3 class="text-xl font-bold text-yellow-800 mb-3 text-center">練習の成果をコースで試そう！</h3>
+                <p class="text-yellow-900 text-center">
+                    ショートコースで磨いたスキルを、次は本番のゴルフコースで試してみませんか？<br/>滋賀県内のゴルフ場を探すなら、お得なプランが豊富な「楽天GORA」が便利！
+                </p>
+                <div class="mt-4 flex justify-center">
+                    <a href="https://a.r10.to/hPRKtq" target="_blank" rel="sponsored noopener" class="inline-block bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-200 text-base no-underline">
+                        楽天GORAで<br class="md:hidden" />滋賀県のコースを探す
+                    </a>
+                </div>
+            </div>
+
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+        </article>
+    </div>
+
+    <style>
+        .map-container { position: relative; width: 100%; overflow: hidden; height: 450px; }
+        .map-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .scroll-mt-24 { scroll-margin-top: 6rem; }
+    </style>
+    
+</BaseLayout>
