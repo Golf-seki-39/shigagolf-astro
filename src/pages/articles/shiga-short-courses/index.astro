@@ -10,14 +10,28 @@ import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
-// --- [3] Firebaseから施設データを取得 ---
-// ※IDはFirebaseのドキュメントIDに合わせてください
-const doc1 = await getDoc(doc(db, "practice_ranges", "365_nagahama"));
-const doc2 = await getDoc(doc(db, "practice_ranges", "adogawa_sc"));
+// --- [3] Firebaseから施設データを取得（エラー対策版） ---
+// 初期値は空のオブジェクトにしておく
+let data1 = {};
+let data2 = {};
 
-// データが存在しない場合の予備（ビルドエラー防止）
-const data1 = doc1.exists() ? doc1.data() : {};
-const data2 = doc2.exists() ? doc2.data() : {};
+try {
+    // 権限エラーが出てもビルドを止めないように try-catch で囲む
+    const docRef1 = doc(db, "practice_ranges", "365_nagahama");
+    const docSnap1 = await getDoc(docRef1);
+    if (docSnap1.exists()) {
+        data1 = docSnap1.data();
+    }
+
+    const docRef2 = doc(db, "practice_ranges", "adogawa_sc");
+    const docSnap2 = await getDoc(docRef2);
+    if (docSnap2.exists()) {
+        data2 = docSnap2.data();
+    }
+} catch (e) {
+    // エラー時はログに出すだけで、処理は続行させる（手書きデータが使われる）
+    console.warn("Firestoreからのデータ取得に失敗しました（権限エラー等の可能性）。手書きのフォールバックデータを使用します。", e.message);
+}
 
 // --- [4] この記事固有の情報 ---
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg"; 
@@ -42,13 +56,11 @@ const experienceReports = [
 ];
 
 // --- [7] ★ 比較表用のデータ（ハイブリッド構成） ★ ---
-// 基本情報(住所・電話など)はFirebase(data1/data2)から使い、
-// 記事特有の比較コメント(summaryやgreenの感想)はこの場で定義してマージします。
 const comparisonData = [
     { 
         // --- Firebaseから自動取得するデータ ---
         name: data1.name || "365ゴルフクラブ ながはま",
-        address: data1.address || "滋賀県長浜市名越町1018", // fallback
+        address: data1.address || "滋賀県長浜市名越町1018", 
         phone: data1.phone || "0749-62-6365",
         postalCode: data1.postalCode || "526-0824",
         city: data1.city || "長浜市",
