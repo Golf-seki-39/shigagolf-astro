@@ -38,12 +38,20 @@ const nearbyRanges = [
         "@type": "WebPage",
         "@id": articleUrl
     },
+    "url": articleUrl,  // ← ★ここを追加しました
     "headline": headline,
     "image": [ imageUrl ],
     "datePublished": "2025-11-21T12:00:00+09:00",
     "dateModified": "2025-11-21T12:00:00+09:00",
-    "author": { "@type": "Person", "name": "関＠シガゴル管理人" },
-    "publisher": { "@type": "Organization", "name": "シガゴル" },
+    "author": { 
+        "@type": "Person", 
+        "name": "関＠シガゴル管理人",
+        "url": baseUrl // ← 念のため著者URL（トップページ）も追加しておくとより安全です
+    },
+    "publisher": { 
+        "@type": "Organization", 
+        "name": "シガゴル" 
+    },
     "description": description
 })} />
 
