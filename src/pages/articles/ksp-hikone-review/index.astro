@@ -55,13 +55,13 @@ const comparisonArticles = [
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-    <script slot="head" type="application/ld+json" set:html={JSON.stringify({
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify([
+    {
         "@context": "https://schema.org",
         "@type": "Article",
-        // [修正点4] mainEntityOfPage を追加
         "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": articleUrl
+            "@type": "WebPage",
+            "@id": articleUrl
         },
         "headline": headline,
         "description": description,
@@ -97,33 +97,35 @@ const comparisonArticles = [
             "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
         },
         "datePublished": pubDateISO,
-        "dateModified": pubDateISO,
-        "review": {
-            "@type": "Review",
-            "itemReviewed": {
-                "@type": "LocalBusiness",
-                "name": rangeData?.name,
-                "image": rangeData?.imageUrl,
-                "telephone": rangeData?.phone,
-                "priceRange": rangeData?.priceRange,
-                "address": {
-                  "@type": "PostalAddress",
-                  "streetAddress": rangeData?.address,
-                  "addressLocality": rangeData?.city,
-                  "addressRegion": "滋賀県",
-                  "postalCode": rangeData?.postalCode,
-                  "addressCountry": "JP"
-                }
-            },
-            "reviewRating": {
-                "@type": "Rating",
-                "ratingValue": rangeData?.avgRating || "0",
-                "bestRating": "5",
-                "worstRating": "1"
-            },
-            "author": { "@type": "Person", "name": "関（せき）" }
-        }
-    })} />
+        "dateModified": pubDateISO
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        "itemReviewed": {
+            "@type": "LocalBusiness",
+            "name": rangeData?.name,
+            "image": rangeData?.imageUrl,
+            "telephone": rangeData?.phone,
+            "priceRange": rangeData?.priceRange,
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": rangeData?.address,
+                "addressLocality": rangeData?.city,
+                "addressRegion": "滋賀県",
+                "postalCode": rangeData?.postalCode,
+                "addressCountry": "JP"
+            }
+        },
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": Number(rangeData?.avgRating) || 3,
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "author": { "@type": "Person", "name": "関（せき）" }
+    }
+])} />
     
     <div
         id="article-ksp-hikone-review-view"
