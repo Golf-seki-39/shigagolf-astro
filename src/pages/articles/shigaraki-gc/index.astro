@@ -33,7 +33,11 @@ const nearbyRanges = [
 
 <script slot="head" type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
-    "@type": "NewsArticle", 
+    "@type": "NewsArticle",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": articleUrl
+    },
     "headline": headline,
     "image": [ imageUrl ],
     "datePublished": "2025-11-21T12:00:00+09:00",
