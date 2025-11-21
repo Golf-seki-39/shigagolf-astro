@@ -1,0 +1,334 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーポーネント ---
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] 記事情報 ---
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/shigaraki_gc/gallery/000000121212.jpg"; 
+
+const title = "【注意】信楽ゴルフセンターは閉店しています！現地調査で判明した実態と「車が傷つく」危険ルート | シガゴル";
+const description = "Googleマップでは「営業中」ですが、実際は閉店しています。現地調査で判明した廃業の証拠と、ナビ通りに行くと車が傷つく「酷道」について緊急レポート。無駄足を踏まないでください。";
+const category = "注意喚起";
+const pubDate = "2025-11-21"; // ★今日の日付
+
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/shigaraki-gc-closed/`; 
+const headline = "【注意】信楽ゴルフセンターは閉店しています！現地調査で判明した実態";
+
+// --- [4] 近隣練習場リスト ---
+// ★ internalUrlがある場合は詳細ページ、nullの場合はGoogleマップへ
+const nearbyRanges = [
+    { name: "なかのゴルフ練習場", query: "なかのゴルフ練習場 滋賀", internalUrl: null }, // 未作成
+    { name: "美松ゴルフセンター", query: "美松ゴルフセンター 滋賀", internalUrl: "/ranges/mimatsu_gc/" },
+    { name: "トードーゴルフセンター", query: "トードーゴルフセンター", internalUrl: "/ranges/todo_gc/" },
+    { name: "グリーン滋賀ゴルフセンター", query: "グリーン滋賀ゴルフセンター", internalUrl: "/ranges/greenshiga_gc/" },
+    { name: "甲賀ゴルフセンター", query: "甲賀ゴルフセンター", internalUrl: "/ranges/koka_gc/" },
+    { name: "びわ湖ゴルフガーデン", query: "びわ湖ゴルフガーデン", internalUrl: null }, // 未作成
+];
+---
+
+<script slot="head" type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "NewsArticle", 
+    "headline": headline,
+    "image": [ imageUrl ],
+    "datePublished": "2025-11-21T12:00:00+09:00",
+    "dateModified": "2025-11-21T12:00:00+09:00",
+    "author": { "@type": "Person", "name": "関＠シガゴル管理人" },
+    "publisher": { "@type": "Organization", "name": "シガゴル" },
+    "description": description
+})} />
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ 記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <style is:global>
+                html { scroll-behavior: smooth; }
+                .scroll-mt-24 { scroll-margin-top: 6rem; }
+            </style>
+
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-red-700">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            {/* ★★★ 冒頭の緊急警告ボックス ★★★ */}
+            <div class="not-prose my-8 p-6 rounded-lg border-4 border-red-600 bg-red-50 shadow-md">
+                <h2 class="text-2xl font-bold text-red-700 mt-0 mb-4 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    緊急：現地には行かないでください
+                </h2>
+                <div class="space-y-3 text-lg font-bold text-slate-800">
+                    <p class="m-0">Googleマップでは「営業中」と表示されますが、<br class="hidden md:inline"/>2025年11月現在、<span class="text-red-600 bg-white px-2 py-1 rounded">現地は閉鎖されています。</span></p>
+                    <p class="m-0 border-t border-red-200 pt-3">さらに、Googleマップのナビ通りに向かうと、<br class="hidden md:inline"/><span class="text-red-600 bg-white px-2 py-1 rounded">車が傷つく危険な山道</span>を案内されます。</p>
+                </div>
+            </div>
+
+            <p>Googleマップで「信楽ゴルフセンター」を検索すると、「営業中」と表示されます（2025年11月現在）。</p>
+            <p>しかし、結論から申し上げます。<br/>
+            <strong>信楽ゴルフセンターは、現在営業していません。現地は閉鎖されており、完全に廃業している状態です。</strong></p>
+            <p>この記事は、Googleマップの情報を信じて現地に向かい、私と同じように<strong>「無駄足」</strong>を運んでしまう方を一人でも減らすために緊急で執筆しました。</p>
+            <p>さらに、Googleマップのナビ通りに向かうと、<strong>車が傷つくほどの「酷道」</strong>を案内される危険性があります。
+            現地で確認した「閉店の証拠」と「危険なアクセスルート」について、詳しくレポートします。</p>
+
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-4">
+                【現地レポート】信楽ゴルフセンターが「閉店」と判断した理由
+            </h2>
+            <p>今回、私が現地を訪問したのは金曜日のお昼過ぎ。<br/>
+            Googleマップ上では「営業中（12:00～21:00）」となっていました。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/shigaraki_gc/gallery/IMG_0476.jpg"
+                    alt="Googleマップで「営業中」となっているスマホ画面のスクショ" 
+                    class="w-full md:max-w-sm mx-auto h-auto object-contain rounded-lg border border-slate-200"
+                    width={600}
+                    height={1300}
+                    loading="lazy"
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">▲ネット上ではこのように営業中になっていますが、実際は違います。</figcaption>
+            </figure>
+
+            <p>しかし、現地に到着して目にしたのは、あまりにも寂しい光景でした。</p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">1. 人気がなく、荒れ果てた入り口</h3>
+            <p>まず、手前にある駐車場には数台の車が停まっていましたが、練習場の正面駐車場には一台も車がありません。</p>
+            <p>「おかしいな？」と思いながら入り口へ向かうと、自動ドアの向こうには、さらに違和感のある光景が広がっていました。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/shigaraki_gc/gallery/IMG_0467.png"
+                    alt="ガラス越しに撮影した受付・入り口の写真" 
+                    class="w-full h-auto object-cover rounded-lg"
+                    width={1200}
+                    height={900}
+                    loading="lazy"
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">ガラス越しに見える受付。商品は残っていますが、人の気配はありません。</figcaption>
+            </figure>
+
+            <p>ガラス越しに中を覗くと、受付周りにはゴルフボールなどの販売商品はそのまま陳列されています。一見すると「休みかな？」と思うかもしれません。<br/>
+            しかし、足元には電力会社からのチラシなどが乱雑に散乱して放置されていました。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/shigaraki_gc/gallery/IMG_0482.png"
+                    alt="自動ドアの奥に落ちているチラシの写真" 
+                    class="w-full h-auto object-cover rounded-lg"
+                    width={1200}
+                    height={900}
+                    loading="lazy"
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">足元には郵便物やチラシが散乱し、放置されているのが分かります。</figcaption>
+            </figure>
+
+            <p>また、建物の側面にある電気のデジタルメーターを目視で確認しましたが、<strong>契約がされていない（電気が通っていない）表示</strong>になっていました。<br/>
+            商品が残っているため「休業」のようにも見えますが、ライフラインが止まっている時点で、営業再開の可能性は極めて低いでしょう。</p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">2. 誰でも入れる状態のドライビングレンジ</h3>
+            <p>さらに衝撃的だったのは、練習場エリアです。<br/>
+            施錠などはされておらず、誰でもドライビングレンジまで入れてしまう状態でした。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/shigaraki_gc/gallery/IMG_0465.png"
+                    alt="荒れ果てたフェアウェイの写真" 
+                    class="w-full h-auto object-cover rounded-lg"
+                    width={1200}
+                    height={900}
+                    loading="lazy"
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">雑草が生い茂るフェアウェイ。長期間手入れされていない様子が一目瞭然です。</figcaption>
+            </figure>
+
+            <p>フェアウェイは雑草が生い茂り、長期間手入れがされていないことが一目でわかります。</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 not-prose">
+                <figure class="m-0">
+                    <Image 
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/shigaraki_gc/gallery/IMG_0462.png"
+                        alt="打席の全体像（斜めからのショット）" 
+                        class="w-full h-48 object-cover rounded-lg"
+                        width={1200}
+                        height={900}
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">打席のマットも風雨にさらされ、劣化が進んでいます。</figcaption>
+                </figure>
+                <figure class="m-0">
+                    <Image 
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/shigaraki_gc/gallery/IMG_0464.png"
+                        alt="打席の全体像（横からのショット）" 
+                        class="w-full h-48 object-cover rounded-lg"
+                        width={1200}
+                        height={900}
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">誰でも入れてしまう状態ですが、ここで打つことはもうできません。</figcaption>
+                </figure>
+            </div>
+
+            <p>打席のマットも風雨にさらされ、朽ち果てていました。<br/>
+            レンタル用のクラブなどが残されているのが見えましたが、ここからボールが打たれることは二度とないだろう…<br/>そう確信せざるを得ない「廃墟」のような雰囲気でした。</p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">3. 電話も繋がりません</h3>
+            <p>最後に念のため、ネット上に掲載されていた電話番号に電話をかけてみました。<br/>
+            結果は、<strong>「現在使われておりません」</strong>というアナウンス。</p>
+            <p>これらの状況から、信楽ゴルフセンターは完全に廃業していると判断しました。</p>
+
+
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-4">
+                【警告】Googleマップのナビ通りに行くと車が傷つきます
+            </h2>
+            <p>この記事でもう一つ、強くお伝えしたいことがあります。<br/>
+            それは<strong>「そこへ至るまでの道」</strong>です。</p>
+            
+            <div class="not-prose my-6 p-4 border-l-4 border-red-500 bg-red-50 rounded-r-lg">
+                <h3 class="text-lg font-bold text-red-800 mt-0">⚠️ 東近江・湖南方面の方は要注意</h3>
+                <p class="text-red-900 m-0">
+                    もし、あなたが東近江方面や湖南方面から向かおうとしているなら、<strong>絶対にGoogleマップのナビ通りに進まないでください。</strong>
+                </p>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">枝が車体をこする「回避不能」の山道</h3>
+            <p>私はナビに従って進んだのですが、途中から車一台がやっと通れるような、非常に細くクネクネした山道に誘導されました。<br/>
+            木々が生い茂り、枝が道路に大きく張り出しています。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/shigaraki_gc/gallery/01021331301.jpg"
+                    alt="Googleマップの危険ルート地図" 
+                    class="w-full md:max-w-sm mx-auto h-auto object-contain rounded-lg border border-slate-200"
+                    width={600}
+                    height={1300}
+                    loading="lazy"
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">このルートは危険です。絶対に通らないでください。</figcaption>
+            </figure>
+
+            <p>道に入ってしまったが最後、あまりに道幅が狭く、Uターンはおろかバックで戻ることすら不可能です。<br/>
+            私は泣く泣く前進するしかありませんでしたが、「キキーッ」「バチバチッ」と木の枝が車体に当たる音を聞きながら進むことになりました。</p>
+            <p>反対側（信楽市街地側）からのルートは問題ありませんが、ナビが示す<strong>「東近江・湖南方面からのルート」は、普通車では車が傷だらけになります。</strong></p>
+            <p>営業していない練習場に向かうために、愛車を傷つけるような悲劇が起きないよう、本当に気をつけてください。</p>
+
+
+            {/* ★★★ ID追加: リンクのジャンプ先となるIDを設定 ★★★ */}
+            <h2 id="nearby" class="scroll-mt-24 text-2xl font-bold text-slate-800 mt-12 mb-4">
+                信楽ゴルフセンターの代わりに行ける近くの練習場
+            </h2>
+            <p>「信楽まで来たのに、練習できないのか…」<br/>
+            と、肩を落としている方もいらっしゃるかもしれません。</p>
+            <p>現在地から行ける、近隣のゴルフ練習場をいくつかピックアップしました。<br/>
+            <small>（※営業状況は変更になる可能性があるため、念のため電話確認をしてから向かうことをおすすめします）</small></p>
+            <p>順次シガゴルにて各練習場を周り調査する予定です。今しばらくお待ちください。</p>
+
+            <div class="not-prose my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                {nearbyRanges.map(range => (
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                        <h3 class="font-bold text-slate-700 text-lg mb-3">{range.name}</h3>
+                        
+                        <div class="flex gap-2 mt-auto">
+                            {range.internalUrl ? (
+                                <>
+                                    <a href={range.internalUrl} class="flex-1 bg-green-600 text-white text-sm font-bold py-2 px-4 rounded text-center hover:bg-green-700 transition no-underline flex items-center justify-center">
+                                        詳細を見る
+                                    </a>
+                                    <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(range.query)}`} target="_blank" rel="noopener noreferrer" class="flex-none bg-slate-100 text-slate-500 py-2 px-3 rounded hover:bg-slate-200 transition flex items-center justify-center" title="Googleマップで見る">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </a>
+                                </>
+                            ) : (
+                                <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(range.query)}`} target="_blank" rel="noopener noreferrer" class="flex-1 bg-slate-100 text-slate-600 text-sm font-bold py-2 px-4 rounded text-center hover:bg-slate-200 transition no-underline flex items-center justify-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    Googleマップ
+                                </a>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-4">
+                まとめ：Googleマップの情報には注意を
+            </h2>
+            <p>今回、私自身も「営業中」という情報を信じて足を運びましたが、残念ながら信楽ゴルフセンターでボールを打つことはできませんでした。</p>
+            
+            <ul class="list-disc list-inside space-y-2 prose bg-slate-50 p-4 rounded-lg border border-slate-200">
+                <li>信楽ゴルフセンターは<strong>廃業している可能性が極めて高い</strong>（電気停止・電話不通）</li>
+                <li>ナビのルートによっては<strong>車を傷つける危険な道</strong>を通らされる</li>
+            </ul>
+
+            <p>シガゴルでは、今後もこうした「現地のリアルな情報」も含めて、ゴルファーの皆さんに役立つ情報を発信していきます。<br/>
+            皆様の無駄足回避に、この記事が少しでも役立てば幸いです。</p>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+
+            {/* ★★★ 閉業記事用の施設情報ボックス ★★★ */}
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                施設基本情報（※現在は閉鎖されています）
+            </h2>
+
+            <div class="not-prose bg-slate-100 p-6 rounded-lg border-2 border-slate-300 text-slate-600">
+                <div class="flex items-center mb-4 text-red-600 font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>この施設は閉業しました</span>
+                </div>
+                <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">施設名</dt>
+                        <dd class="mt-1 text-lg font-semibold">信楽ゴルフセンター</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-slate-500">住所</dt>
+                        <dd class="mt-1">滋賀県甲賀市信楽町長野1283</dd>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <dt class="text-sm font-medium text-slate-500">状況</dt>
+                        <dd class="mt-1 font-bold text-red-600">2025年11月時点で閉鎖を確認（電気停止・電話不通）</dd>
+                    </div>
+                </dl>
+                <p class="mt-4 text-sm border-t border-slate-300 pt-4">
+                    ※上記は過去の情報、または閉業確認時の情報です。現在は利用できません。<br/>
+                    近隣の練習場をお探しの場合は、記事内の<a href="#nearby" class="text-green-700 hover:underline">「代わりに行ける近くの練習場」</a>をご覧ください。
+                </p>
+            </div>
+
+            <div class="not-prose my-8 text-xs text-slate-500 bg-slate-100 p-4 rounded-lg">
+                <p class="font-bold mb-1">【編集後記：Googleマップの情報について】</p>
+                <p>Googleマップの店舗情報（営業中・閉業など）は、反映されるまでに時間がかかるケースがあります。ユーザーからの修正申請後もGoogle側の確認作業が必要なため、実際には閉店していても、数ヶ月〜年単位で「営業中」と誤表示され続けることがあります。遠方の施設へ向かう際は、直前の電話確認を強くおすすめします。</p>
+            </div>
+
+            
+            
+        </article>
+    </div>
+</BaseLayout>
