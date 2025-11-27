@@ -8,11 +8,11 @@ import AuthorProfile from '../../../components/AuthorProfile.astro';
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/newgate_kusatsu/gallery/000000img.png"; 
 
 const title = "【閉店】ニューゲートゴルフ草津店は営業終了｜近隣の練習場リストまとめ";
-const description = "草津市のインドア練習場「ニューゲートゴルフ草津店」は閉店しました。現地確認情報と、代わりに行ける近隣のインドア・打ちっ放し練習場をリストアップしてご紹介します。";
+const description = "草津市のインドア練習場「ニューゲートゴルフ草津店」は閉店し ました。現地確認情報と、代わりに行ける近隣のインドア・打ちっ放し練習場をリストアップしてご紹介します。";
 const pubDate = "2025-11-22"; 
 
 const baseUrl = "https://shigolf.com";
-const articleUrl = `${baseUrl}/articles/newgate-kusatsu-closed/`; 
+const articleUrl = `${baseUrl}/articles/newgate-kusatsu/`; 
 const headline = "【閉店】ニューゲートゴルフ草津店は営業終了しています";
 
 // --- [2] リストデータ設定 ---
@@ -98,14 +98,31 @@ const outdoorRanges = [
 
 <script slot="head" type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
-    "@type": "NewsArticle", 
+    "@type": "Article", // NewsArticleでもいいですが、個人のブログ記事ならArticleで十分です
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": articleUrl
+    },
     "headline": headline,
-    "image": [ imageUrl ],
-    "datePublished": pubDate,
-    "dateModified": pubDate,
-    "author": { "@type": "Person", "name": "関＠シガゴル管理人" },
-    "publisher": { "@type": "Organization", "name": "シガゴル" },
-    "description": description
+    "description": description,
+    "image": [ imageUrl ], // 画像は複数あれば配列で入れてもOK
+    "datePublished": isoDate, // 先ほど設定したタイムゾーン付きの日付変数
+    "dateModified": isoDate,
+    "author": {
+        "@type": "Person",
+        "name": "関（せき）", // シガゴル管理人名
+        "url": "https://shigolf.com/about/", // プロフィールページへのリンク
+        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "シガゴル",
+        "logo": { 
+            "@type": "ImageObject", 
+            "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" 
+        }
+    }
+    // ★重要：閉店記事なので "review" や "rating" ブロックは削除しています
 })} />
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>

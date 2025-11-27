@@ -33,26 +33,30 @@ const nearbyRanges = [
 
 <script slot="head" type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
-    "@type": "NewsArticle",
+    "@type": "Article",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": articleUrl
     },
-    "url": articleUrl,  // ← ★ここを追加しました
     "headline": headline,
+    "description": description,
     "image": [ imageUrl ],
     "datePublished": "2025-11-21T12:00:00+09:00",
     "dateModified": "2025-11-21T12:00:00+09:00",
-    "author": { 
-        "@type": "Person", 
-        "name": "関＠シガゴル管理人",
-        "url": baseUrl // ← 念のため著者URL（トップページ）も追加しておくとより安全です
+    "author": {
+        "@type": "Person",
+        "name": "関（せき）",
+        "url": "https://shigolf.com/about/",
+        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
     },
-    "publisher": { 
-        "@type": "Organization", 
-        "name": "シガゴル" 
-    },
-    "description": description
+    "publisher": {
+        "@type": "Organization",
+        "name": "シガゴル",
+        "logo": { 
+            "@type": "ImageObject", 
+            "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" 
+        }
+    }
 })} />
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
