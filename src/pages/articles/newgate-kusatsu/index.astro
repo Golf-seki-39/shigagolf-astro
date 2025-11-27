@@ -1,0 +1,272 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [1] 記事情報 ---
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/newgate_kusatsu/gallery/000000img.png"; 
+
+const title = "【閉店】ニューゲートゴルフ草津店は営業終了｜近隣の練習場リストまとめ";
+const description = "草津市のインドア練習場「ニューゲートゴルフ草津店」は閉店しました。現地確認情報と、代わりに行ける近隣のインドア・打ちっ放し練習場をリストアップしてご紹介します。";
+const pubDate = "2025-11-22"; 
+
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/newgate-kusatsu-closed/`; 
+const headline = "【閉店】ニューゲートゴルフ草津店は営業終了しています";
+
+// --- [2] リストデータ設定 ---
+// ★将来的に体験談記事を書いたら、reviewUrl の null を "/reviews/xxx/" に書き換えてください。
+// そうすると自動的にオレンジ色の「体験談ボタン」が出現します。
+
+const indoorRanges = [
+    { 
+        name: "PGA SUPERSTORE イオンモール草津店", 
+        note: "イオンモール内・買い物ついでに最適", 
+        query: "PGA SUPERSTORE イオンモール草津店", 
+        internalUrl: "/ranges/pga_tour/",
+        reviewUrl: null 
+    },
+    { 
+        name: "HYPER GOLF イオンモール草津店", 
+        note: "イオンモール内・シミュレーションゴルフ", 
+        query: "HYPER GOLF イオンモール草津店", 
+        internalUrl: "/ranges/hyper_aeon_kusatsu/",
+        reviewUrl: null
+    },
+    { 
+        name: "e golf studio", 
+        note: "近隣のインドアスタジオ", 
+        query: "e golf studio 草津", 
+        internalUrl: "/ranges/e_golf/",
+        reviewUrl: null
+    },
+    { 
+        name: "B's Golf Garden 南草津", 
+        note: "24時間営業・南草津エリア", 
+        query: "B's Golf Garden 南草津", 
+        internalUrl: "/ranges/b's_golf/",
+        reviewUrl: null
+    },
+    { 
+        name: "HISA GOLF STYLE", 
+        note: "プロのレッスンが受けられる", 
+        query: "HISA GOLF STYLE 草津", 
+        internalUrl: "/ranges/hisa_golf/",
+        reviewUrl: null
+    },
+    { 
+        name: "ゴルフパフォーマンス 滋賀草津店", 
+        note: "完全個室マンツーマン", 
+        query: "ゴルフパフォーマンス 滋賀草津店", 
+        internalUrl: "/ranges/golf_performance/",
+        reviewUrl: null
+    },
+    { 
+        name: "EL GRACE 草津", 
+        note: "ラグジュアリーな会員制インドア", 
+        query: "EL GRACE 草津", 
+        internalUrl: "/ranges/elgrace_kusatsu/",
+        reviewUrl: null
+    },
+];
+
+const outdoorRanges = [
+    { 
+        name: "ビックゴルフ草津", 
+        note: "開放的な打ちっ放し", 
+        query: "ビックゴルフ草津", 
+        internalUrl: "/ranges/big_golf_kusatsu/",
+        reviewUrl: null
+    },
+    { 
+        name: "KKゴルフクラブ", 
+        note: "アットホームな雰囲気", 
+        query: "KKゴルフクラブ 草津", 
+        internalUrl: "/ranges/kk_gc/",
+        reviewUrl: null
+    },
+    { 
+        name: "ミナミ草津ゴルフガーデン", 
+        note: "南草津駅からのアクセス良", 
+        query: "ミナミ草津ゴルフガーデン", 
+        internalUrl: "/ranges/minami_kusatsu/",
+        reviewUrl: null
+    },
+];
+---
+
+<script slot="head" type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "NewsArticle", 
+    "headline": headline,
+    "image": [ imageUrl ],
+    "datePublished": pubDate,
+    "dateModified": pubDate,
+    "author": { "@type": "Person", "name": "関＠シガゴル管理人" },
+    "publisher": { "@type": "Organization", "name": "シガゴル" },
+    "description": description
+})} />
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ 記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <header class="mb-8 border-b pb-6">
+                <span class="bg-gray-600 text-white text-xs font-bold px-2 py-1 rounded mb-2 inline-block">閉店情報</span>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mt-2">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <p>滋賀県草津市のインドアゴルフ練習場「ニューゲートゴルフ草津店」についてお知らせします。</p>
+
+            <div class="bg-gray-100 p-4 rounded-lg border-l-4 border-gray-500 my-6 not-prose">
+                <p class="font-bold text-lg m-0">ニューゲートゴルフ草津店は<br/>閉店（営業終了）しています。</p>
+            </div>
+
+            <p>現地を訪れたところ、すでに営業は行われておらず、Googleマップ上でも「閉業」となっています。<br/>
+            これから利用を検討されていた方はご注意ください。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/newgate_kusatsu/gallery/000000img.png"
+                    alt="ニューゲートゴルフ草津店の外観" 
+                    class="w-full h-auto object-cover rounded-lg"
+                    width={1200}
+                    height={800}
+                    loading="lazy"
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">現地の外観の様子</figcaption>
+            </figure>
+            
+            <p>現地には閉店のお知らせも掲示されていました。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/newgate_kusatsu/gallery/IMG_9623.png"
+                    alt="閉店のお知らせ看板" 
+                    class="w-full md:max-w-md mx-auto h-auto object-contain rounded-lg border border-slate-200"
+                    width={800}
+                    height={1000}
+                    loading="lazy"
+                    decoding="async"
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">現地の掲示物</figcaption>
+            </figure>
+
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-4">
+                草津エリアで代わりに行けるゴルフ練習場（打ちっぱなし）リスト
+            </h2>
+            <p>「ニューゲートに行こうと思っていたのに…」という方のために、草津エリアにある主なゴルフ練習場をまとめました。<br/>
+            草津市は滋賀県内でも特に練習場が多い激戦区です。ご自身のスタイルに合った場所を探してみてください。</p>
+            
+            {/* ▼ インドア練習場のリスト ▼ */}
+            <h3 class="text-xl font-bold text-green-800 mt-8 mb-3 border-b border-green-200 pb-2">
+                インドアゴルフ（シミュレーション・室内）
+            </h3>
+            <p>ニューゲートと同じく、天候を気にせず練習したい方はこちらがおすすめです。</p>
+            
+            <div class="not-prose grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                {indoorRanges.map(range => (
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                        <div>
+                            <h4 class="font-bold text-slate-700 text-lg mb-1">{range.name}</h4>
+                            <p class="text-xs text-slate-500 mb-3">{range.note}</p>
+                        </div>
+                        
+                        <div class="flex flex-col gap-2 mt-auto">
+                            
+                            <div class="flex gap-2">
+                                {/* 詳細ボタン（internalUrlがある場合のみ表示） */}
+                                {range.internalUrl && (
+                                    <a href={range.internalUrl} class="flex-1 bg-green-600 text-white text-sm font-bold py-2 px-2 rounded text-center hover:bg-green-700 transition no-underline flex items-center justify-center">
+                                        施設詳細
+                                    </a>
+                                )}
+
+                                {/* 体験談ボタン（reviewUrlがある場合のみ表示） */}
+                                {range.reviewUrl && (
+                                    <a href={range.reviewUrl} class="flex-1 bg-orange-500 text-white text-sm font-bold py-2 px-2 rounded text-center hover:bg-orange-600 transition no-underline flex items-center justify-center">
+                                        体験談
+                                    </a>
+                                )}
+                            </div>
+
+                            {/* マップボタン（常に表示） */}
+                            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(range.query)}`} target="_blank" rel="noopener noreferrer" class="w-full bg-slate-100 text-slate-500 text-xs font-bold py-2 px-3 rounded hover:bg-slate-200 transition flex items-center justify-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Googleマップで位置を確認
+                            </a>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* ▼ アウトドア練習場のリスト ▼ */}
+            <h3 class="text-xl font-bold text-green-800 mt-10 mb-3 border-b border-green-200 pb-2">
+                アウトドア練習場（打ちっ放し）
+            </h3>
+            <p>球筋を確認したい、開放的な場所で打ちたい方はこちら。</p>
+
+            <div class="not-prose grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                {outdoorRanges.map(range => (
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                        <div>
+                            <h4 class="font-bold text-slate-700 text-lg mb-1">{range.name}</h4>
+                            <p class="text-xs text-slate-500 mb-3">{range.note}</p>
+                        </div>
+                        
+                        <div class="flex flex-col gap-2 mt-auto">
+                            
+                            <div class="flex gap-2">
+                                {/* 詳細ボタン */}
+                                {range.internalUrl && (
+                                    <a href={range.internalUrl} class="flex-1 bg-green-600 text-white text-sm font-bold py-2 px-2 rounded text-center hover:bg-green-700 transition no-underline flex items-center justify-center">
+                                        施設詳細
+                                    </a>
+                                )}
+
+                                {/* 体験談ボタン */}
+                                {range.reviewUrl && (
+                                    <a href={range.reviewUrl} class="flex-1 bg-orange-500 text-white text-sm font-bold py-2 px-2 rounded text-center hover:bg-orange-600 transition no-underline flex items-center justify-center">
+                                        体験談
+                                    </a>
+                                )}
+                            </div>
+
+                            {/* マップボタン */}
+                            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(range.query)}`} target="_blank" rel="noopener noreferrer" class="w-full bg-slate-100 text-slate-500 text-xs font-bold py-2 px-3 rounded hover:bg-slate-200 transition flex items-center justify-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Googleマップで位置を確認
+                            </a>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <div class="mt-12 p-6 bg-green-50 rounded-lg text-center">
+                <h3 class="text-lg font-bold text-green-800 mb-2">滋賀県内の練習場を網羅中！</h3>
+                <p class="text-slate-700 text-sm mb-0">
+                    シガゴルでは、草津市以外にも滋賀県内のゴルフ練習場情報を続々と追加しています。<br/>
+                    「施設詳細」ボタンから、各練習場の詳しいレポート（料金や打席の様子など）をご覧いただけます。
+                </p>
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+        </article>
+    </div>
+</BaseLayout>
