@@ -120,38 +120,41 @@ const comparisonArticles = [
 ];
 ---
 
-<script slot="head" type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": articleUrl
+<script slot="head" type="application/ld+json" set:html={JSON.stringify([
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleUrl
+        },
+        "headline": headline,
+        "description": description,
+        "image": [ 
+            imageUrl,
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6751.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/白　ゴールド　茶色　シンプル　ビジネス　LINE　リッチメニュー表　大 (1).png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/SDカード等割引.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6880.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6863.png"
+        ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigagolf.com/about/",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
+            "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": pubDateISO
     },
-    "headline": headline,
-    "description": description,
-    "image": [ 
-        imageUrl,
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6751.png",
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/白　ゴールド　茶色　シンプル　ビジネス　LINE　リッチメニュー表　大 (1).png",
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/SDカード等割引.png",
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6880.png",
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6863.png"
-    ],
-    "author": {
-        "@type": "Person",
-        "name": "関（せき）",
-        "url": "https://shigolf.com/about/",
-        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
-        "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
-    },
-    "publisher": {
-        "@type": "Organization",
-        "name": "シガゴル",
-        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
-    },
-    "datePublished": pubDateISO,
-    "dateModified": pubDateISO,
-    "review": {
+    {
+        "@context": "https://schema.org",
         "@type": "Review",
         "itemReviewed": {
             "@type": "LocalBusiness",
@@ -160,23 +163,24 @@ const comparisonArticles = [
             "telephone": rangeData?.phone,
             "priceRange": rangeData?.priceRange || "500円〜2,000円",
             "address": {
-              "@type": "PostalAddress",
-              "streetAddress": rangeData?.address,
-              "addressLocality": rangeData?.city || "近江八幡市",
-              "addressRegion": "滋賀県",
-              "postalCode": rangeData?.postalCode,
-              "addressCountry": "JP"
+                "@type": "PostalAddress",
+                "streetAddress": rangeData?.address,
+                "addressLocality": rangeData?.city || "近江八幡市",
+                "addressRegion": "滋賀県",
+                "postalCode": rangeData?.postalCode,
+                "addressCountry": "JP"
             }
         },
         "reviewRating": {
             "@type": "Rating",
-            "ratingValue": rangeData?.avgRating ? parseFloat(rangeData.avgRating).toFixed(1) : "0",
+            // 数値型に変換して安全策をとります
+            "ratingValue": Number(rangeData?.avgRating) || 3,
             "bestRating": "5",
             "worstRating": "1"
         },
         "author": { "@type": "Person", "name": "関（せき）" }
     }
-})} />
+])} />
 
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
