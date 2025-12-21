@@ -1,0 +1,336 @@
+---
+// --- [1] Astroと基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネント ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] 記事の基本情報 ---
+const title = "【ユニクロで十分！】ゴルフウェアに5万円は不要｜Temuで失敗した僕の「初ラウンド最適コーデ」 | シガゴル";
+const description = "「ゴルフウェアが高すぎる…」とお悩みの方へ。Temuで失敗した筆者がたどり着いた、ユニクロと楽天で揃える最強のコスパ装備を公開。初ラウンドの服装チェックリスト付き。";
+const headline = "【ユニクロで十分！】ゴルフウェアに5万円は不要｜Temuで失敗した僕の「初ラウンド最適コーデ」";
+const category = "コラム"; // 初心者ガイド/コラム
+const pubDate = "2025-12-01"; // 公開日
+const pubDateISO = "2025-12-01T12:00:00+09:00";
+
+// アイキャッチ画像
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/000198318491348r13.jpg";
+
+// シェアボタン用URL
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/uniqlo-golf-wear/`; // ※実際のファイルパスに合わせて調整してください
+
+// --- [4] 記事内で使う画像URL定義 ---
+const images = {
+    temuOverall: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/IMG_7528.png",
+    temuTag: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/IMG_7530.png",
+    rainwear: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/000010193885.png",
+    uniqlo: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/IMG_7548.png"
+};
+
+// --- [5] 関連記事リスト（初心者・コスパ系をピックアップ） ---
+const relatedArticles = [
+    { url: '/articles/shiga-short-courses/', title: '滋賀のショートコース徹底比較【安曇川 vs 365長浜】', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg' },
+    { url: '/articles/adogawa-sc-review/range/', title: '安曇川スポーツセンター 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/beginner-bag-reveal/', title: '【初心者必見】クラブ全部“もらい物”でもOK？バッグの中身公開', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/bag_reveal.jpg' }, // ※もしあれば
+];
+
+// --- [6] JSON-LD構造化データ ---
+const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline,
+    "description": description,
+    "image": [ imageUrl ],
+    "author": { 
+        "@type": "Person", 
+        "name": "関（シガゴル運営者）", 
+        "url": `${baseUrl}/about/`,
+        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
+    },
+    "publisher": { 
+        "@type": "Organization", 
+        "name": "シガゴル", 
+        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+    },
+    "datePublished": pubDateISO,
+    "dateModified": pubDateISO
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id] { scroll-margin-top: 80px; }
+              .cta-icon { width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: text-bottom; }
+              
+              /* アフィリエイトボタン等のカスタムスタイル */
+              .affiliate-box { background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1.5rem; margin: 2rem 0; text-align: center; }
+              .affiliate-btn { display: inline-block; background-color: #BF0000; color: #fff !important; padding: 0.75rem 2rem; border-radius: 0.375rem; font-weight: bold; text-decoration: none !important; transition: background-color 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+              .affiliate-btn:hover { background-color: #a00000; }
+              
+              /* チェックリスト用スタイル */
+              .checklist-box { background-color: #f0fdf4; border: 2px solid #16a34a; border-radius: 0.5rem; padding: 1.5rem; margin: 2rem 0; }
+              .checklist-item { display: flex; align-items: flex-start; margin-bottom: 0.75rem; }
+              .check-icon { color: #16a34a; font-weight: bold; margin-right: 0.5rem; flex-shrink: 0; }
+            </style>
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <figure class="my-8">
+                <Image 
+                    src={imageUrl} 
+                    alt="ゴルフウェアに悩むイメージ" 
+                    class="w-full h-auto object-cover rounded-lg shadow-md" 
+                    width={1200} height={630} format="webp" quality={80} priority={true}
+                />
+            </figure>
+
+            <p>「ゴルフウェアって、なんであんなに高いの…？」<br/>
+            「来週コースデビューだけど、正直、服にお金をかける余裕がない…」</p>
+            <p>これからゴルフを始める方、あるいは始めたばかりの方。こんな悩みをお持ちではありませんか？</p>
+            <p>こんにちは！滋賀県でゴルフを楽しむ「初心者代表」の関です。</p>
+            <p>結論から言います。<br/>
+            <strong>初心者のゴルフウェアは、全身ブランドで揃える必要はありません。「ユニクロ」と「手持ちの服」で十分カッコよく決まります。</strong></p>
+            <p>かつて、「とにかく安く済ませたい！」と焦って海外激安通販（Temu）に手を出し、<strong>サイズ感のおかしい服で冷や汗（と本当の汗）をかいた私</strong>が、最終的にたどり着いた<strong>「最強のコスパ・ウェア戦略」</strong>をご紹介します。</p>
+            <p>この記事を読めば、浮いた数万円を「練習代」や「ラウンド代」に回して、賢くゴルフを楽しめるようになりますよ！</p>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#section1" class="text-green-700 hover:underline">【悲報】5,000円以下で揃う？Temuのゴルフウェアで失敗した話</a></li>
+                    <li><a href="#section2" class="text-green-700 hover:underline">「カッパに3万円！？」絶望の中で見つけた必需品</a></li>
+                    <li><a href="#section3" class="text-green-700 hover:underline">たどり着いた最適解。「ユニクロ」が最強だった理由</a></li>
+                    <li><a href="#section4" class="text-green-700 hover:underline">これだけは守ろう！「ドレスコード」の注意点</a></li>
+                    <li><a href="#checklist" class="text-green-700 hover:underline">【保存版】初ラウンド・服装チェックリスト</a></li>
+                    <li><a href="#summary" class="text-green-700 hover:underline">まとめ：私が実際に揃えた「コスパ最強セット」</a></li>
+                </ul>
+            </div>
+
+            <h2 id="section1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                1. 【悲報】5,000円以下で揃う？<br class="md:hidden" />Temuのゴルフウェアで失敗した話
+            </h2>
+
+            <p>私のコースデビューは突然でした。<br/>
+            「関くん、来月ゴルフ行こうや！」<br/>
+            誘われたのは嬉しいものの、準備期間は1ヶ月。クラブを振ったこともなければ、何を着ていけばいいかも分からない状態でした。</p>
+            <p>「続けるか分からないし、高いウェアは買いたくない…」</p>
+            <p>そんな私が飛びついたのが、激安通販サイト「Temu」でした。<br/>
+            上下セットで数千円。「これなら練習代も確保できる！」と意気揚々とポチったのですが…。</p>
+
+            <p><strong>届いたのは、サイズ表記が明らかにバグっているウェアでした。</strong></p>
+
+            <figure class="my-6">
+                <Image 
+                    src={images.temuOverall} 
+                    alt="Temuで購入したゴルフウェア全体図" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    width={800} height={600} format="webp" quality={80}
+                />
+            </figure>
+
+            <p>タグは一応「S」サイズ。しかし、実際に着てみるとどう見ても「Lサイズ」以上のダボダボ感…。しかも生地はペラペラです。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src={images.temuTag} 
+                    alt="サイズタグのアップ画像" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    width={800} height={600} format="webp" quality={80}
+                />
+            </figure>
+
+            <p>「安物買いの銭失い」とはまさにこのこと。<br/>
+            しかし、買い直す時間も予算もなかった私は、<strong>結局この「サイズ感のおかしいウェア」を着て、初めてのラウンドに挑みました（笑）。</strong></p>
+            <p>10月のラウンドでしたが、緊張と生地の通気性の悪さで汗だくになったのは、今となっては良い思い出（黒歴史）です。</p>
+            
+            <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 not-prose my-6">
+                <h4 class="font-bold text-red-700 mt-0 mb-2">💡 教訓</h4>
+                <p class="m-0 text-slate-700">初心者がネットの激安ウェア（特に海外製）に手を出すのはギャンブルです。サイズ感や質感が分からないと、結局買い直すことになります。</p>
+            </div>
+
+            <h2 id="section2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                2. 「カッパに3万円！？」<br class="md:hidden" />絶望の中で見つけた必需品
+            </h2>
+
+            <p>ウェア選びでもう一つ、絶対に忘れてはいけないのが<strong>「レインウェア（カッパ）」</strong>です。<br/>
+            滋賀の天気は変わりやすいですし、山の天気はもっと読めません。</p>
+            <p>デビュー戦の直前、週間天気予報には無情な「雨マーク」。<br/>
+            慌ててゴルフショップに駆け込みましたが、そこで見たのは衝撃の光景でした。</p>
+            <p class="text-xl font-bold text-center my-4">「レインウェア上下セット：28,000円」</p>
+            <p>…いや、無理です（笑）。<br/>
+            これから始める初心者が、雨の日用のアウターに3万円近く出すのはハードルが高すぎます。</p>
+            <p>結局、私はアウトレットモールを走り回り、型落ちのセール品（約1万円）をなんとか手に入れました。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src={images.rainwear} 
+                    alt="アウトレットで購入したレインウェア" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    width={800} height={600} format="webp" quality={80}
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（▲必死に探して手に入れたレインウェア。使用後はしっかり乾燥させています）</figcaption>
+            </figure>
+
+            <p>今にして思えば、ネット（楽天やAmazon）で探せば、<strong>「高機能で安い、初心者向けレインウェア」</strong>がたくさんあったんですよね。</p>
+            <p>もし今、私がゼロから揃えるなら、間違いなくネットで<strong>「コスパ重視のレインウェア」</strong>を最初にポチります。これさえあれば、いつ雨が降っても安心感が違います。</p>
+
+            <div class="affiliate-box not-prose">
+                <a href="https://a.r10.to/h5955J" target="_blank" rel="sponsored noopener" class="affiliate-btn">
+                    👉 楽天で「高コスパ」なレインウェアを見る
+                </a>
+                <p class="text-xs text-slate-500 mt-2">※耐水圧・透湿性がしっかりしたモデルが5,000円〜1万円前後で見つかります</p>
+            </div>
+
+            <h2 id="section3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                3. たどり着いた最適解。<br class="md:hidden" />「ユニクロ」が最強だった理由
+            </h2>
+
+            <p>Temuでの失敗、レインウェアでの散財を経て、私がたどり着いた「正解」。<br/>
+            それは、<strong>「手持ちのポロシャツ」＋「ユニクロ等のストレッチパンツ」</strong>という組み合わせです。</p>
+            <p>滋賀県内のカジュアルなゴルフ場でプレーした際、周りを見渡して気づきました。<br/>
+            「あれ？ みんな意外と普通の格好してない？」</p>
+            <p>そこで、普段仕事でも使っているユニクロのストレッチスラックスを履いてプレーしてみたんです。<br/>
+            結果は……<strong>最高でした。</strong></p>
+
+            <figure class="my-6">
+                <Image 
+                    src={images.uniqlo} 
+                    alt="ラウンド後のユニクロパンツとポロシャツ" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    width={800} height={600} format="webp" quality={80}
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（▲実際のラウンド後の様子。普段着兼ラウンドウェアとして泥臭く活躍してくれています）</figcaption>
+            </figure>
+
+            <ul class="list-disc list-inside space-y-2 prose">
+                <li><strong>動きやすい：</strong> 驚異のストレッチ性で、スイングの邪魔をしません。</li>
+                <li><strong>シルエットが綺麗：</strong> ゴルフブランドに負けないくらい、スタイル良く見えます。</li>
+                <li><strong>安い：</strong> セールなら3,000円〜4,000円程度。汚れても精神的ダメージが少ない！</li>
+                <li><strong>普段使いできる：</strong> 仕事着としても使えるので、無駄になりません。</li>
+            </ul>
+
+            <p>「ゴルフ専用」にこだわる必要は全くありませんでした。ユニクロの機能性ウェアは、世界中のトップアスリートも愛用しているレベルです。初心者の私たちが使わない手はありません！</p>
+            
+            <p>ユニクロに行けない、買いに行くのが面倒という方は、ネットで評判の良いゴルフパンツを探すのもアリです。</p>
+
+            <div class="affiliate-box not-prose">
+                <a href="https://a.r10.to/hYJLjz" target="_blank" rel="sponsored noopener" class="affiliate-btn">
+                    👉 楽天で人気の「ストレッチパンツ」を見る
+                </a>
+            </div>
+
+            <h2 id="section4" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                4. これだけは守ろう！<br class="md:hidden" />「ドレスコード」の注意点
+            </h2>
+
+            <p>「ユニクロでOK」と言いましたが、一つだけ絶対に守ってほしいルールがあります。<br/>
+            それは<strong>「ドレスコード（服装規定）」</strong>です。</p>
+            <p>いくらカジュアルなウェアでOKでも、以下のマナーは必須です。</p>
+
+            <ol class="list-decimal list-inside space-y-3 prose">
+                <li><strong>入場・退場時はジャケット着用：</strong> 夏場（6月〜9月頃）を除き、クラブハウスに入る時はジャケットを羽織りましょう。（これもユニクロのジャケットでOK！）</li>
+                <li><strong>襟付きシャツ必須：</strong> Tシャツやジーンズ、サンダルはNGです。</li>
+                <li><strong>シャツの裾は入れる（タックイン）：</strong> だらしなく見えないよう、シャツはズボンに入れましょう。</li>
+            </ol>
+
+            <p>「安い服を着ること」と「マナーを守らないこと」は違います。<br/>
+            清潔感のある服装なら、ユニクロでも堂々とプレーできますよ！</p>
+
+            <h2 id="checklist" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                5. 【保存版】<br class="md:hidden" />初ラウンド・服装チェックリスト
+            </h2>
+            <p>「結局、何を用意していけばいいの？」という方のために、最低限必要なものをまとめました。前日の準備に使ってください！</p>
+
+            <div class="checklist-box not-prose">
+                <h3 class="text-xl font-bold text-green-800 mt-0 mb-4 text-center">🔎 初ラウンド前・服装チェック</h3>
+                <div class="space-y-3 text-lg text-slate-800">
+                    <div class="checklist-item"><span class="check-icon">✅</span> <strong>襟付きシャツ</strong>（手持ちのポロシャツでOK）</div>
+                    <div class="checklist-item"><span class="check-icon">✅</span> <strong>動きやすいパンツ</strong>（ユニクロのスラックス、チノパンなど）</div>
+                    <div class="checklist-item"><span class="check-icon">✅</span> <strong>ベルト</strong>（シャツを入れるので必須）</div>
+                    <div class="checklist-item"><span class="check-icon">✅</span> <strong>帽子</strong>（キャップやサンバイザー。熱中症・怪我防止）</div>
+                    <div class="checklist-item"><span class="check-icon">✅</span> <strong>ゴルフシューズ</strong>（スニーカー不可のコースが多いので注意）</div>
+                    <div class="checklist-item"><span class="check-icon">✅</span> <strong>レインウェア</strong>（雨予報なら必須。防寒着にもなる）</div>
+                    <div class="checklist-item"><span class="check-icon">✅</span> <strong>ジャケット</strong>（入場時用。ユニクロでOK）</div>
+                </div>
+            </div>
+
+            <h2 id="summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                まとめ：私が実際に揃えた<br class="md:hidden" />「コスパ最強セット」
+            </h2>
+            <p>私が遠回りして気づいた「初心者ウェア戦略」の結論です。<br/>
+            高いブランド品を買わなくても、これだけ揃えば十分楽しく回れます！</p>
+
+            <div class="overflow-x-auto not-prose my-6">
+                <table class="w-full text-left border-collapse border border-slate-200">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="py-3 px-4 font-semibold border-b border-slate-200 w-1/3">アイテム</th>
+                            <th class="py-3 px-4 font-semibold border-b border-slate-200">おすすめの調達方法</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b border-slate-200">
+                            <th class="py-3 px-4 bg-slate-50 font-medium">パンツ</th>
+                            <td class="py-3 px-4">
+                                ユニクロ、または楽天の高評価パンツ<br/>
+                                <a href="https://a.r10.to/hYJLjz" target="_blank" rel="sponsored noopener" class="text-blue-600 hover:underline font-bold text-sm">👉 高コスパなストレッチパンツを見る</a>
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b border-slate-200">
+                            <th class="py-3 px-4 bg-slate-50 font-medium">レインウェア</th>
+                            <td class="py-3 px-4">
+                                ネットで5,000円〜1万円のものを確保<br/>
+                                <a href="https://a.r10.to/h5955J" target="_blank" rel="sponsored noopener" class="text-blue-600 hover:underline font-bold text-sm">👉 初心者向けレインウェアを見る</a>
+                            </td>
+                        </tr>
+                        <tr class="bg-white border-b border-slate-200">
+                            <th class="py-3 px-4 bg-slate-50 font-medium">ポロシャツ</th>
+                            <td class="py-3 px-4">家にあるもの、またはアウトレット</td>
+                        </tr>
+                        <tr class="bg-white border-b border-slate-200">
+                            <th class="py-3 px-4 bg-slate-50 font-medium">ジャケット</th>
+                            <td class="py-3 px-4">ユニクロの感動ジャケット等</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>これなら、トータル1万円ちょっとで「コースデビュー装備」が整います。<br/>
+            浮いた数万円で、練習場に通ったり、ラウンドの回数を増やしたりする方が、間違いなくゴルフは上手くなりますし、楽しくなります。</p>
+            <p>ぜひ、あなたも賢くウェアを揃えて、滋賀のゴルフライフをスタートさせてくださいね！</p>
+
+            <div class="not-prose my-8 text-center">
+                <p class="font-bold text-lg mb-4">▼ウェアが揃ったら、次は練習場へGO！</p>
+                <a href="/" class="inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
+                    ⛳️ シガゴルで練習場を探す
+                </a>
+            </div>
+
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={relatedArticles} title="あわせて読みたい「初心者向け記事」"/>
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+
+        </article>
+    </div>
+</BaseLayout>

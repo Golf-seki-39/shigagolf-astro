@@ -1,0 +1,544 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネント ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] 記事の基本設定 ---
+// FirebaseのドキュメントID
+const rangeId = "lakeside_golfcourse"; 
+
+const title = "【口コミ】琵琶湖レークサイドゴルフコースで初心者がハーフデビューしたら「洗礼」を受けた話 | シガゴル";
+const description = "琵琶湖レークサイドゴルフコース（中コース）の薄暮ハーフ体験記。ロッカーなしの注意点、カートの乗り入れ事情、そして初心者が受けた「混雑の洗礼」まで、公式サイトには載らないリアルな口コミを正直にレビューします。";
+const headline = "【口コミ】琵琶湖レークサイドゴルフコースで初心者がハーフデビューしたら「洗礼」を受けた話";
+const category = "体験談";
+const pubDate = "2025-12-14"; 
+const pubDateISO = "2025-12-14T12:00:00+09:00";
+
+// アイキャッチ画像（看板）
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/lakeside_golfcourse/gallery/IMG_0648.JPG";
+
+// シェアボタン用URL
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/biwako-lakeside-review/`; 
+
+// --- [4] Firebaseから施設データを取得 ---
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`; 
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for ID: ${rangeId}`);
+}
+
+// --- [5] 関連記事リスト ---
+const relatedArticles = [
+    { url: '/articles/shiga-short-courses/', title: '【滋賀のショートコース】安曇川 vs 365長浜 徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg' },
+    { url: '/articles/adogawa-sc-review/range/', title: '安曇川スポーツセンター 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg' },
+    { url: 'https://shigagolf.com/articles/365-nagahama/short-course/', title: '365ゴルフクラブ ながはま 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg' },
+    { url: '/articles/wear-guide/', title: '【初心者向け】ユニクロで揃うゴルフウェア選び', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/wear.jpg' },
+];
+
+// --- [6] FAQ構造化データ（JSON-LD） ---
+const faqElements = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Q. 服装（ドレスコード）は本当に何でもいいの？", "acceptedAnswer": { "@type": "Answer", "text": "はい、ジャケット不要でかなりカジュアルです。Tシャツに近い格好の方も見かけますが、一応「ゴルフ場」ですので襟付きシャツなど最低限のマナーを守ると安心です。" } },
+    { "@type": "Question", "name": "Q. 予約なしでも行ける？", "acceptedAnswer": { "@type": "Answer", "text": "基本的には予約推奨です。特に土日や薄暮ハーフは人気のため、事前に楽天GORAや電話で空き状況を確認することをおすすめします。" } },
+    { "@type": "Question", "name": "Q. 初心者だけで行っても大丈夫？", "acceptedAnswer": { "@type": "Answer", "text": "コース自体は簡単ですが、非常に混雑するため「進行（プレーファスト）」への意識が必要です。後ろからのプレッシャーで焦ってしまう可能性があるため、できれば慣れた経験者が1人いると心強いです。" } }
+  ]
+};
+
+const googleMapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify([
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleUrl
+        },
+        "headline": headline,
+        "description": description,
+        "image": [ imageUrl ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigolf.com/about/",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": pubDateISO
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        "itemReviewed": {
+            "@type": "GolfCourse",
+            "name": rangeData?.name || "琵琶湖レークサイドゴルフコース",
+            "image": imageUrl,
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": rangeData?.address,
+                "addressRegion": "滋賀県",
+                "addressCountry": "JP"
+            }
+        },
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": 3.5,
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "author": { "@type": "Person", "name": "関（せき）" }
+    }
+])} />
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqElements)} />
+    
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id] { scroll-margin-top: 80px; }
+              .summary-box {
+                  background-color: #f0fdf4;
+                  border: 1px solid #bbf7d0;
+                  border-radius: 0.5rem;
+                  padding: 1.5rem;
+                  margin: 2rem 0;
+              }
+              .summary-box h3 {
+                  color: #166534;
+                  margin-top: 0;
+                  font-weight: bold;
+              }
+            </style>
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <figure class="my-6">
+                <Image 
+                    src={imageUrl} 
+                    alt="琵琶湖レークサイドゴルフコースの入り口看板" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    loading="eager" 
+                    width={1200} height={800} format="webp" quality={80} 
+                />
+            </figure>
+
+            <p>「初めてのプライベートラウンド、どこに行こう？」<br>
+            「初心者の友達をコースデビューさせてあげたいけど、難しいコースは可哀想だし…」</p>
+            <p>そんな時、真っ先に候補に挙がるのが<strong>「琵琶湖レークサイドゴルフコース」</strong>ですよね。<br>
+            滋賀ゴルファーなら誰もが知る「安くて、平らで、初心者向け」の代名詞的なゴルフ場です。</p>
+
+            {rangeData && (
+                <div class="not-prose my-6 rounded-lg overflow-hidden border">
+                    <iframe
+                        src={`https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
+                        width="100%" height="300" style="border:0;"
+                        allowfullscreen="" loading="lazy"
+                    ></iframe>
+                </div>
+            )}
+
+            <p>実は私も2025年2月、まだゴルフを始めて間もない頃に、ここで<strong>「ほろ苦いハーフデビュー」</strong>を経験しました。</p>
+            <p>今回は、公式サイトには絶対に載っていない<strong>「リアルな体験談」</strong>をお届けします。<br>
+            これから行く初心者さんが、私と同じ失敗をしないための「転ばぬ先の杖」として読んでください！</p>
+
+            <div class="summary-box not-prose">
+                <h3 class="text-xl flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    30秒でわかる！琵琶湖レークサイド（中コース）の特徴
+                </h3>
+                <ul class="list-disc list-inside mt-4 space-y-2 text-slate-800 font-medium">
+                    <li><strong>とにかく安い！</strong>（平日午後ハーフなら4,000円台～）</li>
+                    <li><strong>超フラット＆短い</strong>（初心者でもボールがなくならない安心感）</li>
+                    <li><strong>雰囲気はカジュアル</strong>（ジャケット着用率謎のほぼ0％）</li>
+                    <li><strong>【注意】一部のハーフプランはロッカー使用不可</strong></li>
+                    <li><strong>【注意】とにかく混む</strong>（前後の間隔が狭い）</li>
+                    <li><strong>【注意】支払いは現金かクレカのみ</strong>（電子マネー不可）</li>
+                </ul>
+            </div>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#section-1" class="text-green-700 hover:underline">プランと到着時の「あれ？」</a></li>
+                    <li><a href="#section-2" class="text-green-700 hover:underline">最大の罠！「ハーフはロッカーなし」問題</a></li>
+                    <li><a href="#section-3" class="text-green-700 hover:underline">コースの感想：中コース（Par34 / 2,390yd）</a></li>
+                    <li><a href="#section-4" class="text-green-700 hover:underline">【実録】「洗礼」を受けた混雑とマナー</a></li>
+                    <li><a href="#faq" class="text-green-700 hover:underline">【Q&A】よくある質問</a></li>
+                    <li><a href="#section-5" class="text-green-700 hover:underline">まとめ：琵琶湖レークサイドはどんな人におすすめ？</a></li>
+                </ul>
+            </div>
+
+            <h2 id="section-1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                1. プランと到着時の「あれ？」
+            </h2>
+            <p>
+                <strong>【今回のプラン】</strong><br>
+                時期：2025年2月（平日午後ハーフ）<br>
+                料金：4,330円（税込 / 2サム割増なし）<br>
+                コース：中コース
+            </p>
+            <p>とにかく「安く、気軽にコースを体験したい」という理由で予約しました。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/lakeside_golfcourse/gallery/IMG_0646.PNG" 
+                    alt="予約時の料金画面" 
+                    class="w-full h-auto object-contain rounded-lg border border-slate-200 shadow-sm max-w-sm mx-auto block" 
+                    width={400} height={800} format="webp" quality={80} 
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（実際の予約画面。この安さが最大の魅力です）</figcaption>
+            </figure>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">ポーターさんがいない！</h3>
+            <p>ゴルフ場に到着して最初の洗礼。<br>
+            普通のゴルフ場なら、車を寄せるとスタッフさん（ポーターさん）が飛んできてキャディバッグを下ろしてくれますよね？</p>
+            <p>ここは違います。<strong>誰も来ません。</strong><br>
+            「えっ、どこに下ろすの？勝手に下ろしていいの？」<br>
+            とキョロキョロ。どうやら「バッグ置き場」のようなスペースがあり、そこに自分で下ろすスタイルのようです（私が下ろした後、スタッフさんが来て対応してくれました）。</p>
+            
+            <p>さらにクラブハウスに入ってびっくり。<br>
+            <strong>「ジャケット着てる人が、いない…！」</strong><br>
+            名門コースのような格式張った雰囲気は皆無。みなさんそのままプレーできるようなカジュアルな服装です。「ジャケット着用必須かな？」とビシッと着ていった私は、逆に浮いていたかもしれません（笑）。</p>
+
+            <div class="not-prose bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg my-6">
+                <p class="m-0 font-bold text-yellow-900">
+                    ★教訓：ここは「セルフ精神」が基本。高級ホテルのようなサービスを期待してはいけません。
+                </p>
+            </div>
+
+            <h2 id="section-2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                2. 最大の罠！「ハーフはロッカーなし」問題
+            </h2>
+            <p>受付を済ませて着替えようとしたら、衝撃の事実が発覚しました。</p>
+            <p class="text-xl font-bold text-center my-6">「ハーフプレーのお客様は、ロッカーをご利用いただけません」</p>
+            <p>えっ！？じゃあこの着てきたジャケット、どこに置くの？<br>
+            結局、受付で確認して<strong>「車に上着を戻しに行く」</strong>という二度手間に。<br>
+            ロッカーで着替えるつもりで行くと、荷物の置き場に困ることになります。</p>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">★攻略法：スマホや車の鍵はどうする？</h3>
+            <p>ロッカーが使えないプランの場合、<strong>「ジャケットや貴重品は車で管理する」</strong> つもりで準備しておくとスムーズです。<br>
+            カートに持ち込む荷物が増えるので、こういう「カートバッグ」や「スマホポーチ」が一つあると、ロッカーがなくても慌てずに済みますよ。</p>
+
+            <div class="not-prose my-8 p-4 border border-slate-200 rounded-lg flex flex-col md:flex-row items-center gap-4 bg-slate-50">
+                <div class="flex-1">
+                    <p class="font-bold text-slate-800 mb-2">ロッカーなしゴルフの必需品！</p>
+                    <p class="text-sm text-slate-600 mb-0">スマホ、鍵、小銭をまとめて管理できる「カートバッグ」や「スマホポーチ」は、セルフプレーの強い味方です。</p>
+                </div>
+                <a href="https://a.r10.to/hkDB7V" target="_blank" rel="sponsored noopener" class="inline-block bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-orange-600 transition-colors text-sm no-underline whitespace-nowrap">
+                    楽天で便利グッズを探す
+                </a>
+            </div>
+
+            <p>ただし、お支払いは<strong>「現金かクレジットカードのみ」</strong>。クイックペイなどの電子マネーは使えないので、財布（カード）だけは忘れずに持って降りてくださいね！</p>
+            <p class="text-sm text-slate-500">※現在、公式サイトによると「お風呂のご利用は17時30分まで」とのこと。薄暮プレーの場合、時間的に間に合わない可能性が高いので要注意です。</p>
+
+            <h2 id="section-3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                3. コースの感想：中コース（Par34 / 2,390yd）
+            </h2>
+            <p>いよいよスタート。今回は「中コース」を回りました。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">景色とレイアウト</h3>
+            <p>「レークサイド」という名前ですが、すぐ横に琵琶湖が広がっているわけではなく、<strong>「湖岸道路の内側にある、広大な平地に作られたコース」</strong>という印象です。（※レストランからは琵琶湖が見えるそうです！）<br>
+            山岳コースのようなアップダウンはなく、<strong>とにかく平ら</strong>。<br>
+            そして<strong>短い</strong>です。レギュラーティーからでも9Hで2,390ヤードしかありません。</p>
+            <p>当時、ドライバーがスライスしか出なかった私でも、スプーン（3W）やクリーク（5W）でティーショットを打って全く問題なし。<br>
+            「ボールがなくならない安心感」はすごいですが、他のゴルフ場を知っている人には「ちょっと物足りないかも？」と感じるレベルでした。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">カート事情</h3>
+            
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/lakeside_golfcourse/gallery/IMG_0649.JPG" 
+                    alt="琵琶湖レークサイドのカート" 
+                    class="w-full h-auto object-cover rounded-lg" 
+                    width={800} height={600} format="webp" quality={80} 
+                />
+            </figure>
+
+            <ul class="list-disc list-inside space-y-2">
+                <li>自走式（自分で運転するタイプ）</li>
+                <li><strong>ナビ付き</strong>（これはありがたい！）</li>
+                <li><strong>リモコンなし</strong>（ここが重要）</li>
+            </ul>
+
+            <p>「リモコンなしか…いちいち戻るの面倒だな」と思った方、ご安心ください。<br>
+            ここは原則、<strong>「フェアウェイ乗り入れ可能」</strong>なんです！<br>
+            ボールの横までカートで行けるなら、リモコンがなくても全く問題ありません。</p>
+            <p>ただし…<strong>私が訪れた日は直前の雪の影響で「乗り入れ不可」</strong>でした（泣）。</p>
+
+            <figure class="my-6">
+                 <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/lakeside_golfcourse/gallery/IMG_0650.png" 
+                    alt="公式サイトの乗り入れ案内" 
+                    class="w-full h-auto object-contain rounded-lg border border-slate-200 shadow-sm max-w-sm mx-auto block" 
+                    width={400} height={800} format="webp" quality={80} 
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">（※当日のコンディションは公式サイトのお知らせ欄を要チェックです）</figcaption>
+            </figure>
+
+            <p>こうなると、「リモコンなし」の不便さが身に沁みます。天候によって楽さが天と地ほど変わるので、当日のコンディションは要チェックです。</p>
+
+            <h2 id="section-4" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                4. 【実録】「洗礼」を受けた混雑とマナー
+            </h2>
+            <p>さて、ここからが本題です。<br>
+            この日の満足度が低かった最大の理由、それは<strong>「詰め込みすぎによるトラブル」</strong>。</p>
+            <p>人気の格安コースあるあるですが、前後がぎゅうぎゅうです。<br>
+            前の組がまだセカンド地点にいるので、私たちはティーグラウンドで待機していました。<br>
+            すると…後ろの組のおじさま達から、怒号が飛んできたのです。</p>
+            
+            <blockquote class="not-prose my-6 border-l-4 border-red-500 bg-red-50 p-4 rounded-r-lg italic font-bold text-red-900">
+                「早よ打てや！！」<br>
+                「こっちは待っとんねん！！」
+            </blockquote>
+
+            <p>えぇえ、無理ですやん。前、詰まってますやん。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">二度の怒号と、初心者の困惑</h3>
+            <p>一度目はスルーしたのですが、なんと二度目も怒鳴られました。<br>
+            さすがに私も黙っていられず、後ろの組の目の前まで行き、直接説明しました。</p>
+            <p><strong>「前の組がつかえているので待っています。次怒鳴るようならクラブハウスに通報しますよ」</strong></p>
+            <p>そう伝えると、あからさまにカートを近づけてくるような煽り行為はなくなりました。<br>
+            しかし、一緒に行っていた初心者の友人は完全に萎縮してしまい、後ろの組が見えるだけで体が固まる状態に…。</p>
+            <p>今思い返せば悔しいですが、当時は私も初心者。<br>
+            <strong>「ここのゴルフ場は、前の組がいても打ち込むのが当たり前なの？そんなローカルルールがあるの？」</strong><br>
+            と、理不尽すぎて訳がわからず、混乱してしまったのです。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">これから行く初心者の方へ伝えたいこと</h3>
+            <p>私にもう少し知識と経験があれば、もっと友人をフォローできたのにと後悔しています。<br>
+            だからこそ、これからデビューする皆さんには伝えておきたいです。</p>
+            <div class="bg-slate-800 text-white p-6 rounded-lg my-8 not-prose">
+                <p class="text-lg font-bold text-center mb-4 text-yellow-400">「理不尽な怒号に、下手に出る必要はありません」</p>
+                <p class="mb-4">もし、前が詰まっているのに「早く打て」と怒られたら、こう対処してください。</p>
+                <ol class="list-decimal list-inside space-y-2">
+                    <li><strong>冷静に事実を伝える</strong><br><span class="text-slate-300 text-sm pl-6 block">「前の組がセカンドにいるので、安全のために待っています」と一言だけ伝えましょう。</span></li>
+                    <li><strong>マスター室（ゴルフ場）に連絡する</strong><br><span class="text-slate-300 text-sm pl-6 block">それでも何か言ってくる場合は、相手にする必要はありません。カートの無線か、なければスマホでフロントに電話し、<strong>「後ろの組が安全距離を無視して怒鳴ってくるので、対処してください」</strong>と伝えればOKです。</span></li>
+                </ol>
+            </div>
+            <p>見ず知らずの他人の理不尽な言葉を真に受ける必要はありません。堂々と「安全第一」でプレーしてください。</p>
+
+            <div class="not-prose my-10 p-6 bg-green-50 border border-green-200 rounded-lg text-center">
+                <p class="font-bold text-green-900 mb-3">それでも「やっぱりいきなり本コースは怖い…」と感じた方へ</p>
+                <p class="text-slate-700 text-sm mb-4">後ろの組を気にせず練習できる「ショートコース」で、まずは自信をつけませんか？</p>
+                <a href="/articles/shiga-short-courses/" class="inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow hover:bg-green-800 transition-colors duration-200 no-underline">
+                    初心者におすすめ！滋賀県のショートコースまとめ記事を読む
+                </a>
+            </div>
+
+            <h2 id="faq" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【Q&A】琵琶湖レークサイド よくある質問
+            </h2>
+            <div class="space-y-4 my-8 not-prose">
+                <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                    <h3 class="font-bold text-lg text-slate-800 mb-2 flex items-start gap-2">
+                        <span class="text-green-700">Q.</span> 服装（ドレスコード）は本当に何でもいいの？
+                    </h3>
+                    <p class="text-slate-700 text-sm pl-6">
+                        <span class="font-bold text-slate-800">A.</span> はい、かなりカジュアルです。<br>
+                        Tシャツに近い格好の方も見かけますが、一応「ゴルフ場」ですので、ジャケットに襟付きシャツなど最低限のマナーを守ることを推奨します。。
+                    </p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                    <h3 class="font-bold text-lg text-slate-800 mb-2 flex items-start gap-2">
+                        <span class="text-green-700">Q.</span> 予約なしでも行ける？
+                    </h3>
+                    <p class="text-slate-700 text-sm pl-6">
+                        <span class="font-bold text-slate-800">A.</span> はい、予約は必要です。<br>
+                        特に土日や、私が利用した「薄暮ハーフ」は人気のため、事前に楽天GORAや電話で空き状況を確認することをおすすめします。
+                    </p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+                    <h3 class="font-bold text-lg text-slate-800 mb-2 flex items-start gap-2">
+                        <span class="text-green-700">Q.</span> 初心者だけで行っても大丈夫？
+                    </h3>
+                    <p class="text-slate-700 text-sm pl-6">
+                        <span class="font-bold text-slate-800">A.</span> コース自体は簡単ですが、非常に混雑するため「進行（プレーファスト）」への意識が必要です。<br>
+                        後ろからのプレッシャーで焦ってしまう可能性があるため、慣れた経験者が1人いると心強いです。
+                    </p>
+                </div>
+            </div>
+
+            <h2 id="section-5" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                まとめ：琵琶湖レークサイドはどんな人におすすめ？
+            </h2>
+            <p>色々と書きましたが、用途を間違えなければ素晴らしい練習場所です。</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 not-prose">
+                <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
+                    <h3 class="text-lg font-bold text-blue-800 mb-3">【おすすめな人】</h3>
+                    <ul class="list-disc list-inside text-slate-700 space-y-1">
+                        <li>とにかく安く回りたい人（平日4,000円台は破格！）</li>
+                        <li>コースデビューで「とりあえず前に飛ばす」経験をしたい人</li>
+                        <li>細かいマナーや雰囲気を気にせず、割り切って練習したい人</li>
+                    </ul>
+                </div>
+                <div class="bg-red-50 p-6 rounded-lg border border-red-100">
+                    <h3 class="text-lg font-bold text-red-800 mb-3">【注意が必要な人】</h3>
+                    <ul class="list-disc list-inside text-slate-700 space-y-1">
+                        <li>優雅にゆったりゴルフを楽しみたい人</li>
+                        <li>詰め込まれるのがストレスな人</li>
+                        <li>後ろからのプレッシャーに弱い初心者さん</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p>個人的には、<strong>「メンタルを鍛える修行の場」</strong>として、またいつかリベンジしたいと思っています（笑）。<br>
+            これから行く皆さんは、<strong>「ロッカーの確認」「クレカ持参」</strong>そして<strong>「毅然とした心」</strong>を持って、楽しんできてくださいね！</p>
+
+            <div class="not-prose my-12 p-6 bg-slate-100 rounded-lg border-l-4 border-slate-500">
+                <h3 class="text-lg font-bold text-slate-800 mb-2">【編集後記】</h3>
+                <p class="text-slate-600 mb-0">
+                    ちなみにこの日は、帰りに近くの銭湯へ直行しました。<br>
+                    冷え切った体（と心）に、銭湯の温かさが染みたなぁ…。<br>
+                    ハーフプレー＋銭湯のコンボ、これはこれで「滋賀の休日」としてアリかもしれません。
+                </p>
+            </div>
+
+            <div class="not-prose my-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h3 class="text-xl font-bold text-yellow-800 mb-3 text-center">
+                    「ここは合わないかも…」と思った方へ
+                </h3>
+                <p class="text-yellow-900 text-center mb-4">
+                    「もっと落ち着いて回りたい」「お風呂もゆっくり入りたい」という方は、同じ滋賀県内でもう少し設備の整ったコースを探すのがおすすめ。<br>
+                    楽天GORAなら「初心者歓迎」「2サム保証」のプランも豊富に見つかります。
+                </p>
+                <div class="mt-4 flex justify-center">
+                    <a href="https://gora.golf.rakuten.co.jp/map_search/result/?widthday=7&area%5B%5D=25&area_flg=0&l-id=top-w-search-map-txt-25&scid=af_pc_etc&sc2id=af_101_0_0" target="_blank" rel="sponsored noopener" class="inline-block bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-200 text-base no-underline">
+                        楽天GORAで他のコースを探す
+                    </a>
+                </div>
+            </div>
+
+            <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' && (
+                    <MySlider 
+                        articles={relatedArticles} 
+                        title="あわせて読みたい「体験談」"
+                    />
+                )
+            }
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto not-prose">
+                        <table class="w-full text-left border-collapse">
+                            <tbody>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">施設名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">
+                                        <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            {rangeData.address}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">公式サイト</th>
+                                    <td class="py-3 px-4">
+                                         {rangeData.official_url ? (
+                                            <a href={rangeData.official_url} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                                公式サイトへ
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        施設の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
+                            width="100%" height="450" style="border:0;"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
+        </article>
+    </div>
+
+    <style>
+        .map-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            height: 450px;
+        }
+        .map-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .scroll-mt-24 {
+            scroll-margin-top: 6rem; /* 96px */
+        }
+    </style>
+</BaseLayout>
