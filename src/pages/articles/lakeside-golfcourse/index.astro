@@ -61,11 +61,11 @@ const faqElements = {
 };
 
 const googleMapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
----
 
-<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+// ▼▼▼ ここから下にロジックを移動させます（--- の中で処理する！） ▼▼▼
 
-    <script slot="head" type="application/ld+json" set:html={JSON.stringify([
+// ▼ 構造化データのベースを作成（Article + Review）
+const schemaData = [
     {
         "@context": "https://schema.org",
         "@type": "Article",
@@ -80,7 +80,8 @@ const googleMapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             "@type": "Person",
             "name": "関（せき）",
             "url": "https://shigolf.com/about/",
-            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
+            "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
         },
         "publisher": {
             "@type": "Organization",
@@ -94,26 +95,44 @@ const googleMapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         "@context": "https://schema.org",
         "@type": "Review",
         "itemReviewed": {
-            "@type": "GolfCourse",
-            "name": rangeData?.name || "琵琶湖レークサイドゴルフコース",
-            "image": imageUrl,
+            "@type": "LocalBusiness",
+            "name": rangeData?.name,
+            "image": rangeData?.imageUrl,
+            "telephone": rangeData?.phone,
+            "priceRange": rangeData?.priceRange || "500円〜2,000円",
             "address": {
                 "@type": "PostalAddress",
                 "streetAddress": rangeData?.address,
+                // データに city がなければ、address から自動抽出
+                "addressLocality": rangeData?.city || (rangeData?.address?.match(/滋賀県(.+?[市郡])/)?.[1] || "滋賀県"),
                 "addressRegion": "滋賀県",
+                // データに postalCode がなければ、address から自動抽出
+                "postalCode": rangeData?.postalCode || (rangeData?.address?.match(/\d{3}-\d{4}/)?.[0] || ""),
                 "addressCountry": "JP"
             }
         },
         "reviewRating": {
             "@type": "Rating",
-            "ratingValue": 3.5,
+            "ratingValue": Number(rangeData?.avgRating) || 3,
             "bestRating": "5",
             "worstRating": "1"
         },
         "author": { "@type": "Person", "name": "関（せき）" }
     }
-])} />
-    <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqElements)} />
+];
+
+// ▼ FAQデータが存在する場合のみ、配列に合体させる処理
+if (typeof faqElements !== 'undefined' && faqElements) {
+    if (Array.isArray(faqElements)) {
+        // 配列なら展開して追加
+        schemaData.push(...faqElements);
+    } else {
+        // 単体オブジェクトならそのまま追加
+        schemaData.push(faqElements);
+    }
+}
+// ▲▲▲ ここまでがJavaScriptのロジック ▲▲▲
+---
     
     <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
         <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
