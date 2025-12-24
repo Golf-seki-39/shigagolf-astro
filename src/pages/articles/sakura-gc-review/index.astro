@@ -10,11 +10,12 @@ import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
 // --- This article's specific information ---
-const title = "【東近江市】女性ゴルファー超優遇！「さくらゴルフ倶楽部」が安すぎて心配になるレベルだった件。 | シガゴル";
-const description = "滋賀県東近江市にある「さくらゴルフ倶楽部」は、特に女性とジュニアに驚きの優遇措置を提供する練習場。男性ゴルファーも通い詰めるその魅力と、充実した練習環境、心温まるエピソードを徹底レポートします。";
+const title = "【東近江】さくらゴルフ倶楽部 正直レビュー｜女性優遇の店に「一般男性」の私が通い詰める3つの理由 | シガゴル";
+const description = "【料金シミュレーター付】東近江市の穴場「さくらゴルフ倶楽部」を体験レビュー。「女性・ジュニアが激安」は本当？打席の広さや設備、男性でもお得に使える裏ワザまで、地元民が忖度なしで解説します。";
 const category = "体験談";
 const pubDate = "2025-05-23";
 const pubDateISO = "2025-05-23T10:00:00+09:00"; 
+const modifiedDateISO = new Date().toISOString();
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png";
 const rangeId = "sakura_gc";
 // --- End of specific information ---
@@ -190,7 +191,7 @@ const comparisonArticles = [
             "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
         },
         "datePublished": pubDateISO,
-        "dateModified": pubDateISO,
+        "dateModified": modifiedDateISO,
         "review": {
             "@type": "Review",
             "itemReviewed": {
@@ -267,6 +268,10 @@ const comparisonArticles = [
                 その名も「さくらゴルフ倶楽部」。
             </p>
 
+            <p>
+                正直に言います。<strong>場所は少し分かりにくいですし、設備も最新ピカピカというわけではありません。</strong>
+            </p>
+
             <figure class="my-6">
                  <Image
                     src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/シガゴル (3).png"
@@ -283,7 +288,9 @@ const comparisonArticles = [
                 </figcaption>
             </figure>
 
-            <p>何を隠そう、筆者は男性なのですが、それでも週2～3回は通ってしまうほど、この練習場には魅力がたっぷり詰まっているんです。今回は、その秘密を余すところなくレポートします！</p>
+            <p>
+                しかし！<strong>男性の私が、それでも週2～3回は通ってしまうほど</strong>、この練習場には魅力がたっぷり詰まっているんです。今回は、その秘密を余すところなくレポートします！
+            </p>
             
             <div class="not-prose bg-green-50 p-4 my-6 rounded-lg border border-l-4 border-green-500">
               <p class="text-slate-700 m-0">
@@ -296,10 +303,10 @@ const comparisonArticles = [
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#benefits" class="text-green-700 hover:underline">女性＆ジュニアにうれしい特典はこちら！</a></li>
+                    <li><a href="#benefits" class="text-green-700 hover:underline">女性＆ジュニアの料金特典（打ち放題・会員割引）</a></li>
                     <li><a href="#simulator" class="text-green-700 hover:underline">かんたん料金シミュレーション</a></li> 
                     <li><a href="#reasons" class="text-green-700 hover:underline">男性筆者がそれでも「さくらゴルフ倶楽部」に通い詰める理由</a></li>
-                    <li><a href="#environment" class="text-green-700 hover:underline">気になる練習環境を徹底チェック！</a></li>
+                    <li><a href="#environment" class="text-green-700 hover:underline">さくらゴルフ倶楽部の練習環境（打席・距離・設備）</a></li>
                     <li><a href="#insider-tip" class="text-green-700 hover:underline">“裏ワザ”ではなく、店員さんのご厚意です</a></li>
                     <li><a href="#beginner-story" class="text-green-700 hover:underline">初心者だった私が「ホッ」とした瞬間。店員さんの神対応！</a></li>
                     <li><a href="#info-summary" class="text-green-700 hover:underline">「さくらゴルフ倶楽部」基本情報</a></li>
@@ -308,7 +315,7 @@ const comparisonArticles = [
             </div>
 
             <h2 id="benefits" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                ＼女性＆ジュニアにうれしい特典はこちら！／
+                女性＆ジュニアの料金特典（打ち放題・会員割引）
             </h2>
             
             <figure class="my-6">
@@ -449,7 +456,7 @@ const comparisonArticles = [
             <p>ここの店員さん、本当に親切でゴルフ愛に溢れている方ばかり。 ゴルフの相談に乗ってくれたり、時にはお客さんと一緒にラウンド（もちろん店員さんのお休みの日に！）することもあるくらい、フレンドリーなんです。 このアットホームな雰囲気が、通うたびに心地いいんですよね。</p>
 
             <h2 id="environment" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                気になる練習環境を徹底チェック！
+                さくらゴルフ倶楽部の練習環境（打席・距離・設備）
             </h2>
             <p>もちろん、練習環境も充実していますよ！</p>
 
