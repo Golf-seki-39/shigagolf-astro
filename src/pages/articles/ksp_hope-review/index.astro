@@ -57,54 +57,55 @@ const comparisonArticles = [
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-    <script
+<script
         slot="head"
         type="application/ld+json"
-        set:html={JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            // [修正点4] mainEntityOfPage を追加
-            "mainEntityOfPage": {
-              "@type": "WebPage",
-              "@id": articleUrl
+        set:html={JSON.stringify([
+            {
+                "@context": "https://schema.org",
+                "@type": "Article",
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": articleUrl
+                },
+                "headline": headline,
+                "description": description,
+                "image": [
+                    imageUrl,
+                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/000000img.png",
+                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7086.png",
+                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7088.png",
+                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7852.jpg",
+                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7853.jpg",
+                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7109.png",
+                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7121.png",
+                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7136.png"
+                 ],
+                "author": {
+                    "@type": "Person",
+                    "name": "関（せき）",
+                    "url": "https://shigagolf.com/about/",
+                    "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
+                    "sameAs": [
+                        "https://x.com/Golf_Seki39",
+                        "https://golf-medley.com/articles/authors/seki",
+                        "https://note.com/seki_golf_39",
+                        "https://www.tiktok.com/@user2579514551181"
+                    ]
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "シガゴル",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+                    }
+                },
+                "datePublished": pubDateISO,
+                "dateModified": new Date().toISOString() // 更新日を自動で今日にする
             },
-            "headline": headline,
-            "description": description,
-            "image": [
-                imageUrl,
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/000000img.png",
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7086.png",
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7088.png",
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7852.jpg",
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7853.jpg",
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7109.png",
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7121.png",
-                "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7136.png"
-             ],
-            "author": {
-                "@type": "Person",
-                "name": "関（せき）",
-                "url": "https://shigagolf.com/about/",
-                "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
-                "sameAs": [
-                    "https://x.com/Golf_Seki39",
-                    "https://golf-medley.com/articles/authors/seki",
-                    "https://note.com/seki_golf_39",
-                    "https://www.tiktok.com/@user2579514551181"
-                ]
-            },
-            "publisher": {
-                "@type": "Organization",
-                "name": "シガゴル",
-                "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
-                }
-            },
-            "datePublished": pubDateISO,
-            "dateModified": pubDateISO,
-            // [修正点4] review 情報を追加
-            "review": {
+            {
+                "@context": "https://schema.org",
                 "@type": "Review",
                 "itemReviewed": {
                     "@type": "LocalBusiness",
@@ -123,13 +124,13 @@ const comparisonArticles = [
                 },
                 "reviewRating": {
                     "@type": "Rating",
-                    "ratingValue": rangeData?.avgRating || "0",
+                    "ratingValue": Number(rangeData?.avgRating) || 3, // 数値型に変換
                     "bestRating": "5",
                     "worstRating": "1"
                 },
                 "author": { "@type": "Person", "name": "関（せき）" }
             }
-        })}
+        ])}
     />
 
     <div
