@@ -46,46 +46,49 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 
-// ▼▼▼ 【重要】構造化データの作成ロジックは必ずここで完結させる ▼▼▼
-const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": articleUrl
+// ▼▼▼ 構造化データを「配列（[ ... ])」に戻して定義 ▼▼▼
+const schemaData = [
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleUrl
+        },
+        "headline": title.split(" | ")[0],
+        "description": description,
+        "image": [
+            imageUrl,
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png"
+        ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigagolf.com/about/",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
+            "sameAs": [
+                "https://x.com/Golf_Seki39",
+                "https://golf-medley.com/articles/authors/seki",
+                "https://note.com/seki_golf_39",
+                "https://www.tiktok.com/@user2579514551181"
+            ]
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+            }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": pubDateISO
     },
-    "headline": title.split(" | ")[0],
-    "description": description,
-    "image": [
-        imageUrl,
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png",
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png",
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png",
-        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png"
-    ],
-    "author": {
-        "@type": "Person",
-        "name": "関（せき）",
-        "url": "https://shigagolf.com/about/",
-        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
-        "sameAs": [
-            "https://x.com/Golf_Seki39",
-            "https://golf-medley.com/articles/authors/seki",
-            "https://note.com/seki_golf_39",
-            "https://www.tiktok.com/@user2579514551181"
-        ]
-    },
-    "publisher": {
-        "@type": "Organization",
-        "name": "シガゴル",
-        "logo": {
-            "@type": "ImageObject",
-            "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
-        }
-    },
-    "datePublished": pubDateISO,
-    "dateModified": pubDateISO,
-    "review": {
+    {
+        "@context": "https://schema.org",
         "@type": "Review",
         "itemReviewed": {
             "@type": "LocalBusiness",
@@ -104,19 +107,20 @@ const schemaData = {
         },
         "reviewRating": {
             "@type": "Rating",
-            "ratingValue": rangeData?.avgRating || "0",
+            // 数値がない場合は「3」をデフォルトにしてエラー回避
+            "ratingValue": Number(rangeData?.avgRating) || 3,
             "bestRating": "5",
             "worstRating": "1"
         },
         "author": { "@type": "Person", "name": "関（せき）" }
     }
-};
-// ▲▲▲ ここまでがフェンス内（JavaScriptの世界） ▲▲▲
+];
+// ▲▲▲ 定義ここまで ▲▲▲
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-    {/* ▼ HTML内には、この1行だけ置く！余計なものは一切書かないこと！ ▼ */}
+    {/* ▼ 配列データを出力（これが正解の書き方です） ▼ */}
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(schemaData)} />
 
     <div
