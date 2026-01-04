@@ -1,23 +1,30 @@
 ---
+// --- [1] AstroとFirebaseの基本設定 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 import { Image } from "astro:assets";
 
-// --- This article's specific information ---
-const title =
-    "普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由 | シガゴル";
-const description =
-    "データ派ゴルファーが期待せず訪れた大津市の石山ゴルフ練習場。そこはデータでは測れない心地よさと、衝撃的な中古クラブとの出会いがある「クラブ選びの聖地」だった。その理由を体験記として綴ります。";
+// --- [2] 3つの共通コンポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報（タイトルとディスクリプションを更新） ---
+const title = "【料金表まとめ】安曇川スポーツセンター｜打ちっぱなし・ショートコース・打ち放題まで完全網羅 | シガゴル";
+const description = "安曇川スポーツセンターの料金を徹底解説。打ちっぱなしのプリカ料金、ショートコース回り放題、お得な2円デーや打ち放題、ランチメニューまで、どこよりも詳しく紹介します。";
 const category = "体験談";
-const pubDate = "2025-09-26";
-const pubDateISO = "2025-09-26T10:00:00+09:00"; 
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png";
-const rangeId = "ishiyama_gp";
+const pubDate = "2025-10-07";
+const pubDateISO = "2025-10-07T17:00:00+09:00";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg";
+const rangeId = "adogawa_sc";
 
+// --- [4] シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
-const articleUrl = `${baseUrl}/articles/ishiyama-gp-review/`; 
+const articleUrl = `${baseUrl}/articles/adogawa-sc-review/range/`; 
+const headline = "【料金表つき】安曇川スポーツセンター正直レビュー｜300ヤードの開放感と注意点";
 
+// --- [5] Firebaseから練習場データを取得 ---
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
 const docRef = doc(db, docPath);
@@ -29,11 +36,12 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
+// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
     { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
-    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
     { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
@@ -42,12 +50,14 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
     { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
     { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
-    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
+---
 
-// ▼▼▼ 構造化データを「配列（[ ... ])」に戻して定義 ▼▼▼
-const schemaData = [
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify([
     {
         "@context": "https://schema.org",
         "@type": "Article",
@@ -55,34 +65,20 @@ const schemaData = [
             "@type": "WebPage",
             "@id": articleUrl
         },
-        "headline": title.split(" | ")[0],
+        "headline": headline,
         "description": description,
-        "image": [
-            imageUrl,
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png"
-        ],
+        "image": [ imageUrl ],
         "author": {
             "@type": "Person",
             "name": "関（せき）",
-            "url": "https://shigagolf.com/about/",
+            "url": "https://shigolf.com/about/",
             "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
-            "sameAs": [
-                "https://x.com/Golf_Seki39",
-                "https://golf-medley.com/articles/authors/seki",
-                "https://note.com/seki_golf_39",
-                "https://www.tiktok.com/@user2579514551181"
-            ]
+            "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
         },
         "publisher": {
             "@type": "Organization",
             "name": "シガゴル",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
-            }
+            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
         },
         "datePublished": pubDateISO,
         "dateModified": pubDateISO
@@ -95,7 +91,7 @@ const schemaData = [
             "name": rangeData?.name,
             "image": rangeData?.imageUrl,
             "telephone": rangeData?.phone,
-            "priceRange": rangeData?.priceRange,
+            "priceRange": rangeData?.priceRange || "500円〜2,000円",
             "address": {
                 "@type": "PostalAddress",
                 "streetAddress": rangeData?.address,
@@ -107,296 +103,324 @@ const schemaData = [
         },
         "reviewRating": {
             "@type": "Rating",
-            // 数値がない場合は「3」をデフォルトにしてエラー回避
+            // ※Googleは0を許可しない場合があるため、データがない場合は暫定的に3などを入れるか、Number型に変換します
             "ratingValue": Number(rangeData?.avgRating) || 3,
             "bestRating": "5",
             "worstRating": "1"
         },
         "author": { "@type": "Person", "name": "関（せき）" }
     }
-];
-// ▲▲▲ 定義ここまで ▲▲▲
----
-
-<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
-
-    {/* ▼ 配列データを出力（これが正解の書き方です） ▼ */}
-    <script slot="head" type="application/ld+json" set:html={JSON.stringify(schemaData)} />
-
-    <div
-        id="article-ishiyama-golf-experience-view"
-        class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
-    >
-        <a
-            href="/articles/"
-            class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
-        >
+])} />
+    
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
             ‹ お役立ち記事一覧に戻る
         </a>
-
-        <article
-            class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
-        >
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id] { scroll-margin-top: 80px; }
+              .table-wrapper { overflow-x: auto; }
+              .min-w-table-pc { min-width: 600px; }
+              .table-wrapper th:first-child, .table-wrapper td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
+              .table-wrapper thead th:first-child { background-color: #f1f5f9; }
+              .table-wrapper tbody tr.bg-white td:first-child { background-color: #ffffff; }
+              .table-wrapper tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+            
+              @media (max-width: 767px) and (orientation: portrait) {
+                #article-view .responsive-table { min-width: 100% !important; }
+                #article-view .responsive-table thead { display: none !important; }
+                #article-view .responsive-table tr { display: block !important; margin-bottom: 1.5rem !important; border: 1px solid #cbd5e1 !important; border-radius: 0.5rem !important; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important; overflow: hidden; }
+                #article-view .responsive-table td { display: block !important; text-align: right !important; position: relative !important; border-bottom: 1px solid #e2e8f0 !important; padding: 0.75rem 0.75rem 0.75rem 130px !important; left: auto !important; background-color: #fff !important; }
+                #article-view .responsive-table td:last-child { border-bottom: none !important; }
+                #article-view .responsive-table td::before { content: attr(data-label); position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-weight: 600; text-align: left; color: #475569; width: 110px; }
+                #article-view .responsive-table td:first-child { background-color: #f1f5f9 !important; font-weight: bold !important; text-align: center !important; padding-left: 0.75rem !important; }
+                #article-view .responsive-table td:first-child::before { content: '' !important; }
+              
+                #article-view .show-table-view.table-wrapper { overflow-x: auto !important; }
+                #article-view .show-table-view .responsive-table { min-width: 600px !important; }
+                #article-view .show-table-view .responsive-table thead { display: table-header-group !important; }
+                #article-view .show-table-view .responsive-table tr { display: table-row !important; border: none !important; box-shadow: none !important; }
+                #article-view .show-table-view .responsive-table td { display: table-cell !important; border: 1px solid #cbd5e1 !important; padding: 0.5rem !important; position: static !important; text-align: center !important; }
+                #article-view .show-table-view .responsive-table td:first-child { text-align: left !important; position: sticky !important; left: 0 !important; }
+                #article-view .show-table-view .responsive-table td::before { content: none !important; }
+                #article-view .show-table-view tr.bg-slate-50 td { background-color: #f8fafc !important; }
+                #article-view .show-table-view tr.bg-white td { background-color: #fff !important; }
+                #article-view .show-table-view thead th { background-color: #f1f5f9 !important; }
+              }
+            </style>
+            
             <header>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {title.split(" | ")[0]}
-                </h1>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
-            
-            <div id="price-summary" class="summary-box">
-                <h3 class="flex items-center text-lg font-bold mb-3 text-green-800 border-b border-green-200 pb-2">
-                    <span class="mr-2">💡</span>この記事の結論：石山ゴルフ練習場はここが凄い
-                </h3>
-                <ul class="space-y-2 text-sm md:text-base">
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2">おすすめ：</span>
-                        <span><strong>「中古クラブを安く買いたい人」</strong>にとっての聖地。新古品が破格で売られています。</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2">料金：</span>
-                        <span>入場料無料＆30分打ち放題あり。特に<strong>40歳以下は60分800円〜</strong>と激安！</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2">打席：</span>
-                        <span>最新設備はないが、<strong>「ズレないマット」</strong>が最高に打ちやすい。</span>
-                    </li>
-                </ul>
-            </div>
 
-            <p>
-                僕は、いわゆる「データ派」のゴルファーだ。ゴルフ歴はまだ8ヶ月と浅いが、練習するならトップトレーサーは絶対に欲しい。自分の弾道を数値で把握し、効率的に上達したいからだ。だからプライベートで通うのは、決まってKSP彦根か365彦根だ。
-            </p>
-            <p>
-                そんな僕が、仕事で訪れたのが大津市の「石山ゴルフ練習場」。もちろん、そこには弾道測定器も、最新の設備もないことを知っていた。「仕事だから仕方ない。でもまあ、料金が安いのが救いか…」正直、期待値はゼロに近かった。
-            </p>
-            <p>
-                しかし、その日の帰り道、僕はこの練習場を<strong>「クラブ選びの聖地」</strong>として、自分のゴルフマップに登録することになる。一体、何があったのか？
-                それは、データだけでは決して測れない<strong>“心地よさ”と、僕のゴルフ観を少しだけ変えることになる、ある“衝撃的な出会い”</strong>の物語だ。
-            </p>
+            <p>目の前に広がる、どこまでも続くかのような緑の絨毯。ボールを遮るネットはなく、澄み渡った青空だけが広がっています。</p>
+            <p>ここはゴルフコースのティーイングエリアか？――思わずそう錯覚してしまうほど、圧倒的な開放感。滋賀県高島市にある打ちっぱなし、「安曇川スポーツセンター」は、「ドライバーを心の底から思いっきり振り抜きたい」というゴルファーの願いを叶えてくれる練習場です。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_9119.JPG" alt="安曇川スポーツセンターの広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+            </figure>
             
+            <p>しかし、その大きな魅力の裏には、施設の歴史を感じさせる側面や、訪れる前に知っておきたい注意点も存在します。この記事では、私が実際に体験したことと詳細な料金情報を元に、その魅力とリアルな姿を正直にお伝えします。</p>
+
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#happy-betrayal" class="text-green-700 hover:underline">期待ゼロからの、嬉しい裏切り</a></li>
-                    <li><a href="#cons" class="text-green-700 hover:underline">正直に伝える、気になる点</a></li>
-                    <li><a href="#tips" class="text-green-700 hover:underline">僕が本当に伝えたかった「裏ワザ」</a></li>
-                    <li><a href="#conclusion" class="text-green-700 hover:underline">結論：僕にとっての「特別な場所」</a></li>
-                    <li><a href="#info-summary" class="text-green-700 hover:underline">「石山ゴルフ練習場」の基本情報</a></li>
+                    <li><a href="#price-summary" class="text-green-700 hover:underline">安曇川スポーツセンター 料金体系まとめ</a></li>
+                    <li><a href="#section-1" class="text-green-700 hover:underline">安曇川スポーツセンターの2つの魅力</a></li>
+                    <li><a href="#section-2" class="text-green-700 hover:underline">訪れる前に知っておきたい2つの注意点</a></li>
+                    <li><a href="#section-3" class="text-green-700 hover:underline">【関の深掘り】安曇川を120%使いこなす3つの視点</a></li>
+                    <li><a href="#section-4" class="text-green-700 hover:underline">【コラム】取材時に起きた、個人的なハプニング</a></li>
+                    <li><a href="#section-5" class="text-green-700 hover:underline">結論：どんなゴルファーにおすすめできるか？</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">「安曇川スポーツセンター」の基本情報</a></li>
                 </ul>
             </div>
 
+           <h2 id="price-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+    安曇川スポーツセンター 料金体系まとめ
+</h2>
+<p>
+    <strong>「打ちっぱなし練習場」</strong>と<strong>「ショートコース」</strong>の両方の料金を分かりやすくまとめました。お得なサービスデーの情報も必見です。
+</p>
+
+<h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+    打ちっぱなし練習場
+</h3>
+
+<div class="not-prose bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg my-4">
+    <h4 class="text-lg font-bold text-green-800 mt-0 mb-2">料金システムのポイント</h4>
+    <p class="m-0 text-slate-700">
+        安曇川スポーツセンターの料金は、入場料や打席料が無料のかわりに、その分がプリペイドカードの料金に含まれている、少しユニークなシステムです。そのため、<strong>一度に購入するプリカの金額が高いほど、実質的な1球あたりの単価が安くなり、お得に練習できます。</strong>
+    </p>
+</div>
+
+<p>
+    支払いはプリペイドカード方式です。メンバーになると、ビジターよりもお得に購入できます。メンバーシップはショートコースと共通で、<strong>年会費は11,000円</strong>です。（※入会特典については練習場にご確認ください）
+</p>
+
+<Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8806.png" alt="安曇川スポーツセンター プリペイドカード料金表" class="my-4 rounded-lg w-full h-auto" width={800} height={600} format="webp" quality={80} />
+
+<div class="not-prose my-4 text-center">
+    <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="price-prica-table-container">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+        画面を横にして一覧表で見る
+    </button>
+</div>
+<div id="price-prica-table-container" class="table-wrapper my-6 not-prose">
+    <table class="w-full text-left border-collapse responsive-table min-w-table-pc">
+        <thead class="bg-slate-100">
+            <tr>
+                <th class="py-3 px-4 font-semibold border-b">プリカ球数</th>
+                <th class="py-3 px-4 font-semibold border-b text-center">メンバー料金</th>
+                <th class="py-3 px-4 font-semibold border-b text-center">ビジター料金</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 bg-slate-50 font-semibold">625球</th>
+                <td data-label="メンバー" class="py-3 px-4 text-center"><strong>5,300円</strong></td>
+                <td data-label="ビジター" class="py-3 px-4 text-center"><strong>6,000円</strong></td>
+            </tr>
+            <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 bg-slate-50 font-semibold">250球</th>
+                <td data-label="メンバー" class="py-3 px-4 text-center"><strong>2,500円</strong></td>
+                <td data-label="ビジター" class="py-3 px-4 text-center"><strong>2,700円</strong></td>
+            </tr>
+            <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 bg-slate-50 font-semibold">125球</th>
+                <td data-label="メンバー" class="py-3 px-4 text-center"><strong>1,500円</strong></td>
+                <td data-label="ビジター" class="py-3 px-4 text-center"><strong>1,700円</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="not-prose my-8 space-y-6">
+    <div class="p-5 bg-amber-50 border border-amber-200 rounded-lg">
+        <h4 class="text-lg font-bold text-amber-800 mb-2">🉐【平日限定】超お得なサービスデー！</h4>
+        <p class="text-amber-900">平日限定で、さらにお得になるイベントが開催されています。プリペイドカードを使って参加できます。</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8837.png" alt="ボール単価2円デーの案内" class="rounded-lg w-full h-auto" width={600} height={800} format="webp" quality={80} />
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8838.png" alt="打ち放題の案内" class="rounded-lg w-full h-auto" width={600} height={800} format="webp" quality={80} />
+        </div>
+        <ul class="list-disc list-inside mt-4 space-y-2 text-slate-800">
+            <li><strong>ボール単価<span class="text-red-600 font-bold text-xl">2円</span>デー</strong>：第2・4木曜日 9時〜15時（10〜30番打席）</li>
+            <li><strong>打ち放題 <span class="text-blue-600 font-bold text-xl">2,000円</span></strong>：第1・3木曜日 9時〜15時（6〜16番打席付近）</li>
+        </ul>
+    </div>
+</div>
+
+<h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+    ショートコース
+</h3>
+<p>
+    ショートコースは<span class="font-bold">全日回り放題</span>です。ジュニア料金の設定もあり、家族で一日楽しめます。
+</p>
+<Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8727.png" alt="安曇川スポーツセンター ショートコース料金表" class="my-4 rounded-lg w-full h-auto" width={800} height={600} format="webp" quality={80} />
+<div class="not-prose my-4 text-center">
+    <button class="view-toggle-btn md:hidden inline-flex items-center justify-center bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg shadow hover:bg-slate-700 transition-colors duration-200 text-sm" data-target-id="price-short-course-table-container">
+         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+        画面を横にして一覧表で見る
+    </button>
+</div>
+<div id="price-short-course-table-container" class="table-wrapper my-6 not-prose">
+    <table class="w-full text-left border-collapse responsive-table min-w-table-pc">
+        <thead class="bg-slate-100">
+            <tr>
+                <th class="py-3 px-4 font-semibold border-b">対象</th>
+                <th class="py-3 px-4 font-semibold border-b">料金/備考</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">ビジター</th>
+                <td data-label="料金" class="py-3 px-4"><strong>3,000円</strong></td>
+            </tr>
+            <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 bg-slate-50 font-semibold">メンバー</th>
+                <td data-label="料金" class="py-3 px-4"><strong>2,000円</strong>（年会費11,000円）</td>
+            </tr>
+            <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 bg-slate-50 font-semibold">レディースデイ</th>
+                <td data-label="料金" class="py-3 px-4"><strong>2,000円</strong>（毎週水曜日）</td>
+            </tr>
+            <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 bg-slate-50 font-semibold">ジュニア (6〜18歳)</th>
+                <td data-label="料金" class="py-3 px-4"><strong class="text-red-600">500円</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+    共通サービス（レンタル・食事）
+</h3>
+<ul class="list-disc list-inside space-y-2 prose">
+    <li><strong>レンタルクラブ</strong>：<span class="font-bold">無料</span>（練習場・ショートコース共通。左用・キッズ用もあり）</li>
+    <li><strong>昼食・お弁当</strong>：クラブハウスで注文可能。カレーや定食などメニューが豊富です。</li>
+</ul>
+<Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8754.png" alt="安曇川スポーツセンター お弁当メニュー" class="my-4 rounded-lg w-full h-auto" width={800} height={600} format="webp" quality={80} />
+
+            <h2 id="section-1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">安曇川スポーツセンターの2つの魅力</h2>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">① 何物にも代えがたい、滋賀県最大級300ヤードの開放感</h3>
+            <p>この練習場の最大の魅力は、言うまでもなく滋賀県最大級を誇る300ヤードのスケール感です。</p>
+            <p>多くの練習場にある「鳥かご感」が一切なく、自分の打球の弾道を最後までしっかりと目で追える。これは、よりコースに近い実践的な感覚で、飛距離と方向性を磨ける、非常に価値のある練習環境と言えるでしょう。</p>
+            <p>ただ練習するという以上に、この景色の中でドライバーを振り抜くこと自体が、最高のストレス発散になります。難しいことを考えず、ただひたすらに気持ちよくボールを打ちたい。そんな日にこそ、訪れたい場所です。</p>
+
             <figure class="my-6">
-                <Image
-                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9344.png"
-                    alt="石山ゴルフ練習場の打席からの眺め"
-                    class="w-full h-auto object-cover rounded-lg"
-                    loading="lazy"
-                    width={1280}
-                    height={960}
-                    format="webp"
-                    quality={80}
-                />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    昔ながらの雰囲気が、逆に集中力を高めてくれる
-                </figcaption>
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8814.png" alt="ヤード表示と広大なフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
-            <h2
-                id="happy-betrayal"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
-                期待ゼロからの、嬉しい裏切り
-            </h2>
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                到着前から、心は掴まれていた
-            </h3>
-            <p>
-                期待せずに向かう道中、その考えは少しずつ揺らぎ始めた。目的地に近づくと、大きくて分かりやすい看板が、立て続けに3つも現れたのだ。「ようこそ」と言われているような、その丁寧な案内に、思わず「お、親切だな…」と心が温かくなり、自然とワクワクしていた。
-            </p>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 練習場で生まれた、一期一会の出会い</h3>
+            <p>私が訪れた日は、幸運にも他のゴルファーの方々とお話しする機会がありました。</p>
+            <p>隣の打席には、ゴルフ歴2年弱で250ヤードを軽々と飛ばす60代の紳士が。その背景には、週に5〜6回はクラブを握るという圧倒的な練習量と、自身の体の動きを深く理解しようとする探究心がありました。その姿は、ゴルフ上達のヒントに満ちており、純粋に「かっこいい」と感じさせられるものでした。</p>
+            <p>また、休憩中にお話しした常連の方々は、練習場の歴史や地域のゴルフ事情を気さくに教えてくれる、魅力的な方々でした。 もちろん、毎回このような出会いがあるわけではないでしょう。しかし、この開放的な空間が、ゴルファー同士の自然な交流を生む土壌になっているのかもしれません。</p>
+
+            <h2 id="section-2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">訪れる前に知っておきたい2つの注意点</h2>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">① 施設の歴史を感じさせるリアルな姿</h3>
+            <p>素晴らしい魅力がある一方で、事前に知っておくべき点もあります。第一に、施設の歴史は深く、最新設備が整っているわけではありません。</p>
 
             <figure class="my-6">
-                 <Image
-                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png"
-                    alt="石山ゴルフ練習場の分かりやすい案内看板"
-                    class="w-full h-auto object-cover rounded-lg"
-                    loading="lazy"
-                    width={960}
-                    height={1280}
-                    format="webp"
-                    quality={80}
-                />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    分かりやすい大きな看板が、初めてでも迷わせない
-                </figcaption>
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8811.png" alt="使い込まれて凹んだ打席マット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">長年の歴史を感じさせる打席マット。場所によっては凹みも。</figcaption>
             </figure>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                過剰じゃない、だから心地良い。「清潔感のある接客」
-            </h3>
-            <p>
-                そして建物の中へ。特別なことをされたわけじゃない。でも、受付スタッフさんの対応は、とても自然な笑顔だった。僕が勝手に感じただけかもしれないが、そのやり取りには不思議と「清潔感」があった。マニュアル通りではない、人の温もりが感じられる。この時点で、僕はもうこの練習場のファンになり始めていた。
-            </p>
+            <p>写真のように、打席マットは場所によってかなり使い込まれています。弾道測定器などもなく、昔ながらのシンプルな練習環境です。この「味」を楽しめるかどうかは、好みが分かれるポイントでしょう。</p>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                「ズレない」という、想像以上の快感
-            </h3>
-            <p>
-                打席に立ち、何球か打ち始めると、ある快適さに気づく。「あれ、このマット、すごく打ちやすい…」。他の練習場だと、少し厚めにインパクトしただけでマットがめくれたりする。その度に足元を直し、アドレスを取り直す。この数秒の繰り返しが、集中力の糸を静かに、しかし確実に断ち切っていくのだ。しかし、ここのマットは違った。僕のどんなミスショットも、どっしりと構えて全て受け止めてくれる。だから僕は、次のスイングのことだけを考えられた。この「ズレない」という価値が、どれほど大きいか。
-            </p>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 芝の上から打てるアプローチ練習場はない</h3>
+            <p>もちろん、各打席のマットの上からアプローチショットの練習は可能です。しかし、フェアウェイやラフ、様々な傾斜といった、より実践的な状況を想定したアプローチ練習がしたい場合は、隣接するショートコースを利用する必要があります。
+            そのショートコースについても、<a href="https://shigagolf.com/articles/adogawa-sc-review/short-course/" class="text-green-700 hover:underline">実際にラウンドした体験談を別の記事で詳しく紹介しています。</a></p>
 
+            <h2 id="section-3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【関の深掘り】安曇川を120%使いこなす3つの視点</h2>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">視点①：「2円デー」との向き合い方</h3>
+            <p>冒頭の料金表で紹介した、<a href="#price-summary" class="text-green-700 hover:underline">月に2回の「球単価2円デー」</a>は破格ですが、常連さん曰く「打席待ちができるほど混雑する」とのこと。集中したいなら、あえて通常料金の空いている時間帯を狙うのも賢い選択です。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">視点②：「ここはドライバーやフェアウェイウッド特化」と割り切る</h3>
+            <p>施設の特性上、ここは「ドライバー練習に特化した場所」と考えるのが最適です。飛距離アップやスイングフォームの確認など、明確な目的を持って訪れることで、満足度は大きく向上するはずです。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">視点③：湖西エリアの冬のゴルフ事情</h3>
+            <p>常連さんの話では、冬は打席周りやフェアウェイに雪が積もり、打ったボールが見えなくなるなど、練習が困難になる日も多いそうです。湖西エリアでゴルフを楽しむには、天候という抗えない要素も考慮に入れる必要があります。</p>
+
+            <h2 id="section-4" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【コラム】取材時に起きた、個人的なハプニング</h2>
+            <p>ここで少し、余談を。 実は今回、事前に支配人の許可を得て取材に伺ったのですが、受付で事情を知らないスタッフの方に「帰れ！」と一喝される出来事がありました。</p>
+            <p>もちろん、連携が取れていなかったことや、昨今の特殊詐欺などを警戒してのことなど、店の受付を任されている立場としての、彼なりの責任感から来た行動だったのかもしれません。しかし、理由も聞かずに頭ごなしに拒絶する姿勢は、社会人として正直、疑問に感じました。</p>
+            <p>これはあくまで取材という特殊な状況での出来事であり、一般の利用者が同じ経験をすることはないと思います。ただ、施設の顔である受付の対応には、改善の余地があると感じたのもまた事実です。</p>
+            
             <figure class="my-6">
-                 <Image
-                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png"
-                    alt="石山ゴルフ練習場のズレない打席マット"
-                    class="w-full h-auto object-cover rounded-lg"
-                    loading="lazy"
-                    width={1280}
-                    height={960}
-                    format="webp"
-                    quality={80}
-                />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    このどっしりとしたマットが、ミスへの恐怖を和らげる
-                </figcaption>
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8803のコピー.png" alt="安曇川スポーツセンターの受付外観" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                もはや宝探し。5,000円の新古品ウェッジとの出会い
-            </h3>
-            <p>
-                そして、この日のハイライトが訪れる。クラブハウスに所狭しと並べられた中古クラブ。何気なく眺めていた僕の目に、一本のウェッジが飛び込んできた。ミズノの「SURE
-                DD 50」。新古品で、値札には<strong>「¥5,000（税込）」</strong>の文字が。
-            </p>
+            <h2 id="section-5" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">結論：どんなゴルファーにおすすめできるか？</h2>
+            <p>安曇川スポーツセンターは、「ネットのない広大な練習場で、とにかくドライバーを打ち込みたい」というゴルファーにとって、最高の環境であることは間違いありません。</p>
+            <p>一方で、施設の古さや、<a href="https://shigagolf.com/articles/adogawa-sc-review/short-course/" class="text-green-700 hover:underline">より実践的なアプローチ練習をしたい場合はショートコースの利用が前提となる点</a>など、明確なウィークポイントも存在します。</p>
+            <p>私の個人的な話をすれば、自宅から車で2時間と遠いこと、そしてコラムで触れた出来事もあり、頻繁に通うことはないでしょう。 しかし、「今日はドライバーをとことん練習したい」と思い立った日には、あの開放感が恋しくなり、有力な選択肢の一つとして頭に浮かぶ。</p>
+            <p>安曇川スポーツセンターは、そんな不思議な魅力を持った打ちっぱなしです。</p>
+            <p class="font-bold">きっと、次にドライバーが暴れた日、私はまたこの場所を思い出すでしょう。</p>
 
-            <figure class="my-6">
-                 <Image
-                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png"
-                    alt="5000円で売られていたミズノの新古品ウェッジ"
-                    class="w-full h-auto object-cover rounded-lg"
-                    loading="lazy"
-                    width={1280}
-                    height={960}
-                    format="webp"
-                    quality={80}
-                />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    まさかの出会い。宝探し感覚でクラブを選べる
-                </figcaption>
-            </figure>
+           <div class="not-prose my-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
 
-            <p>
-                本当の驚きは、家に帰ってからだった。ふと気になってフリマアプリで相場を調べてみると、同じモデルの中古品が8,000円前後で取引されているじゃないか。「（え、マジかよ！あそこのはピカピカの新古品で5,000円だぞ…？）」一気に物欲のスイッチが入った。
-            </p>
+    <h3 class="text-xl font-bold text-yellow-800 mb-3 text-center">
 
-            <h2
-                id="cons"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
-                正直に伝える、気になる点
-            </h2>
-            <p>
-                正直に言おう。僕が愛してやまないトップトレーサーは、ここにはない。綺麗に整備された広大なアプローチ練習場も、パターグリーンもない。だから、僕が普段の練習の拠点としてここを選ぶことは、たぶんないだろう。僕の練習スタイルとは、やはり少し違うからだ。だが、不思議と物足りなさは感じなかった。むしろ、クラブヘッドから手に伝わる打感や、乾いたインパクト音。普段データで見ていたものを、五感で味わう時間は、僕にとって新鮮な“発見”ですらあったのだ。
-            </p>
+        練習の成果をコースで試そう！
 
-            <h2
-                id="tips"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
-                僕が本当に伝えたかった「裏ワザ」
-            </h2>
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                上達の最短ルートは「回数」だ！30分打ち放題の真価
-            </h3>
-            <p>
-                「上手くなる人は、たくさん球を打つ人じゃない。たくさん練習場に通う人だ」僕の持論だ。石山ゴルフ練習場は、入場料不要で「30分」という短時間から練習できる。これは、練習の「回数」を圧倒的に増やせるということだ。目的は何だっていい。ただ純粋に「もっと上手くなりたい」と願う全てのゴルファーにとって、ここは最高の環境だと断言できる。
-            </p>
+    </h3>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                【超・裏ワザ】40歳以下の男性、事件です。今すぐ石山へ！
-            </h3>
-            <p>
-                そして、最も衝撃的な情報がこれだ。なんと現在、期間限定で40歳以下（※）のゴルファーを対象にした、破格のキャンペーンをやっている。
-            </p>
+    <p class="text-yellow-900 text-center">
 
-            <figure class="my-6">
-                 <Image
-                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png"
-                    alt="40歳以下男性限定の打ち放題キャンペーン料金表"
-                    class="w-full h-auto object-cover rounded-lg"
-                    loading="lazy"
-                    width={960}
-                    height={1280}
-                    format="webp"
-                    quality={80}
-                />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    この価格は、まさに「事件」。見逃せない
-                </figcaption>
-            </figure>
+        安曇川スポーツセンターで磨いたドライバーショットを、次は本番のゴルフコースで試してみませんか？<br/>滋賀県内のゴルフ場を探すなら、お得なプランが豊富な「楽天GORA」が便利です。
 
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-6">
-                <p class="font-bold text-slate-800">
-                    【40歳以下男性限定 打ち放題キャンペーン】
-                </p>
-                <ul class="list-disc pl-5 mt-2">
-                    <li><strong>60分 打ち放題： 800円</strong></li>
-                    <li><strong>90分 打ち放題： 1,000円</strong></li>
-                    <li><strong>120分 打ち放題： 1,200円</strong></li>
-                </ul>
-                <p class="text-sm mt-3 text-slate-600">
-                    ※1984年7月生まれ以降の方が対象<br
-                    />※1階・2階関係なしの料金<br
-                    />※キャンペーン期間：2025年9月末日まで。訪れる際は、事前に練習場にご確認ください。
-                </p>
+    </p>
+
+    <div class="mt-4 flex justify-center">
+
+        <a href="https://a.r10.to/hPRKtq" target="_blank" rel="sponsored noopener" class="inline-block bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-200 text-base no-underline">
+
+            楽天GORAで滋賀県のコースを探す
+
+        </a>
+
+    </div></div>
+
+            <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' && (
+                    <MySlider 
+                        articles={comparisonArticles} 
+                        title="あわせて読みたい「比較記事」"
+                    />
+                )
+            }
             </div>
-            <p>
-                信じられるだろうか？
-                女性向けの割引はよく見かけますが、男性ゴルファーがここまで優遇される練習場は、滋賀中を探しても他にない。このキャンペーンは、もはや<strong>「事件」</strong>だ。
-            </p>
 
-            <h2
-                id="conclusion"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
-                結論：僕にとっての「特別な場所」
-            </h2>
-            <p>
-                僕の練習のホームグラウンドは、これからもKSP彦根や365彦根であり続けるだろう。データを見て、考えながら練習するスタイルは変えられないからだ。しかし、もし僕が「次のクラブが欲しい」と思ったら？その時は、迷わず車で1時間かけて、大津市の「石山ゴルフ練習場」へ向かう。フリマアプリの中古品より安い新古品を、自分の目で見て、触って、そして何より納得いくまで試打できるからだ。
-            </p>
-            <p>
-                練習の拠点にはならない。でも、クラブ購入においては、僕にとって最高の場所。ここは、僕にとってそういう<strong>「特別な目的を持った、最高の練習場」</strong>になった。データ派のあなたも、そうでないあなたも、一度この「宝探し」体験をしてみてはいかがだろうか。
-            </p>
-
-            <hr class="my-8" />
-
-            <h2
-                id="info-summary"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
-                「石山ゴルフ練習場」の基本情報
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
             </h2>
             {
                 rangeData ? (
                     <div class="overflow-x-auto not-prose">
                         <table class="w-full text-left border-collapse">
-                            <tbody class="align-baseline">
+                            <tbody>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
-                                        練習場名
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.name}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
                                 </tr>
                                 {rangeData.avgRating && (
                                     <tr class="border-b border-slate-200">
                                         <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
                                         <td class="py-3 px-4">
-                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
-                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${rangeData.avgRating.toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{rangeData.avgRating.toFixed(1)}</span>
                                                 {Array.from({ length: 5 }).map((_, i) => (
-                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg class={`w-5 h-5 ${i < Math.round(rangeData.avgRating) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                     </svg>
                                                 ))}
@@ -405,9 +429,7 @@ const schemaData = [
                                     </tr>
                                 )}
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        住所
-                                    </th>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
                                     <td class="py-3 px-4">
                                         <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
@@ -415,9 +437,7 @@ const schemaData = [
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        電話番号
-                                    </th>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
                                     <td class="py-3 px-4">
                                         {rangeData.phone ? (
                                             <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
@@ -429,49 +449,24 @@ const schemaData = [
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        営業時間
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.business_hours}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4">{rangeData.business_hours}</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        料金（代表例）
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.price_uchihodai_weekday_str ||
-                                            "お問い合わせください"}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
+                                    <td class="py-3 px-4">記事冒頭の<a href="#price-summary" class="text-green-700 hover:underline">料金体系まとめ</a>をご確認ください</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        ヤード数
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.yardage
-                                            ? `${rangeData.yardage}ヤード`
-                                            : "-"}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        打席数
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.bays
-                                            ? `${rangeData.bays}打席`
-                                            : "-"}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
                                 </tr>
                                 <tr>
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
-                                        アクセス
-                                    </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.access}
-                                    </td>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -486,13 +481,9 @@ const schemaData = [
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
                         <iframe
-                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
-                            width="100%"
-                            height="450"
-                            style="border:0;"
-                            allowfullscreen=""
-                            loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade"
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
+                            width="100%" height="450" style="border:0;"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                         ></iframe>
                     </div>
                 )
@@ -504,7 +495,7 @@ const schemaData = [
                     href={`/ranges/${rangeId}/`}
                     class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
                 >
-                    「石山ゴルフ練習場」のシガゴル公式レビューページへ
+                    {rangeData ? `「${rangeData.name}」のシガゴル公式レビューページへ` : "公式レビューページへ"}
                 </a>
             </p>
         </article>
@@ -515,7 +506,7 @@ const schemaData = [
             position: relative;
             width: 100%;
             overflow: hidden;
-            padding-top: 56.25%; /* 16:9 aspect ratio */
+            height: 450px;
         }
         .map-container iframe {
             position: absolute;
@@ -528,12 +519,31 @@ const schemaData = [
         .scroll-mt-24 {
             scroll-margin-top: 6rem; /* 96px */
         }
-        .summary-box {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
     </style>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButtons = document.querySelectorAll('.view-toggle-btn');
+        toggleButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const targetId = button.dataset.targetId;
+            const tableContainer = document.getElementById(targetId);
+            if (!tableContainer) return;
+
+            tableContainer.classList.toggle('show-table-view');
+            const isTableView = tableContainer.classList.contains('show-table-view');
+            
+            if (isTableView) {
+              button.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H4zm3 2h6v4H7V5zm0 6h6v2H7v-2z" /></svg>
+                カード表示に戻す`;
+            } else {
+              button.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
+                画面を横にして一覧表で見る`;
+            }
+          });
+        });
+      });
+    </script>
 </BaseLayout>
