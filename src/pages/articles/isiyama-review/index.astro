@@ -6,10 +6,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { Image } from "astro:assets";
 
 // --- This article's specific information ---
-const title =
-    "普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由 | シガゴル";
-const description =
-    "データ派ゴルファーが期待せず訪れた大津市の石山ゴルフ練習場。そこはデータでは測れない心地よさと、衝撃的な中古クラブとの出会いがある「クラブ選びの聖地」だった。その理由を体験記として綴ります。";
+const title = "普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由 | シガゴル";
+const description = "データ派ゴルファーが期待せず訪れた大津市の石山ゴルフ練習場。そこはデータでは測れない心地よさと、衝撃的な中古クラブとの出会いがある「クラブ選びの聖地」だった。その理由を体験記として綴ります。";
 const category = "体験談";
 const pubDate = "2025-09-26";
 const pubDateISO = "2025-09-26T10:00:00+09:00"; 
@@ -19,7 +17,6 @@ const rangeId = "ishiyama_gp";
 
 // [修正点4] 構造化データ用にURL変数を定義
 const baseUrl = "https://shigolf.com";
-// ★記事のURLパスをサイトの構成に合わせて設定してください
 const articleUrl = `${baseUrl}/articles/ishiyama-gp-review/`; 
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
@@ -47,65 +44,82 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
     { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
     { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
-    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
+
+// ▼▼▼ 構造化データロジック（エラー対策済み） ▼▼▼
+const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": articleUrl
+    },
+    "headline": title.split(" | ")[0],
+    "description": description,
+    "image": [
+        imageUrl,
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png"
+    ],
+    "author": {
+        "@type": "Person",
+        "name": "関（せき）",
+        "url": "https://shigagolf.com/about/",
+        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
+        "sameAs": [
+            "https://x.com/Golf_Seki39",
+            "https://golf-medley.com/articles/authors/seki",
+            "https://note.com/seki_golf_39",
+            "https://www.tiktok.com/@user2579514551181"
+        ]
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "シガゴル",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+        }
+    },
+    "datePublished": pubDateISO,
+    "dateModified": pubDateISO,
+    "review": {
+        "@type": "Review",
+        "itemReviewed": {
+            "@type": "LocalBusiness",
+            "name": rangeData?.name,
+            "image": rangeData?.imageUrl,
+            "telephone": rangeData?.phone,
+            "priceRange": rangeData?.priceRange,
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": rangeData?.address,
+                "addressLocality": rangeData?.city,
+                "addressRegion": "滋賀県",
+                "postalCode": rangeData?.postalCode,
+                "addressCountry": "JP"
+            }
+        },
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": rangeData?.avgRating || "0",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "author": { "@type": "Person", "name": "関（せき）" }
+    }
+};
+// ▲▲▲ 構造化データここまで ▲▲▲
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-    <script slot="head" type="application/ld+json" set:html={JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "Article",
-        // [修正点4] mainEntityOfPage を追加
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": articleUrl
-        },
-        "headline": title.split(" | ")[0],
-        "description": description,
-        "image": [ imageUrl, "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png", "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png", "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png", "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png" ],
-        "author": {
-            "@type": "Person",
-            "name": "関（せき）",
-            "url": "https://shigagolf.com/about/",
-            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
-            "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "シガゴル",
-            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
-        },
-        "datePublished": pubDateISO,
-        "dateModified": pubDateISO,
-        "review": {
-            "@type": "Review",
-            "itemReviewed": {
-                "@type": "LocalBusiness",
-                "name": rangeData?.name,
-                "image": rangeData?.imageUrl,
-                "telephone": rangeData?.phone,
-                "priceRange": rangeData?.priceRange,
-                "address": {
-                  "@type": "PostalAddress",
-                  "streetAddress": rangeData?.address,
-                  "addressLocality": rangeData?.city,
-                  "addressRegion": "滋賀県",
-                  "postalCode": rangeData?.postalCode,
-                  "addressCountry": "JP"
-                }
-            },
-            "reviewRating": {
-                "@type": "Rating",
-                // Firebaseから取得した値を参照
-                "ratingValue": rangeData?.avgRating || "0",
-                "bestRating": "5",
-                "worstRating": "1"
-            },
-            "author": { "@type": "Person", "name": "関（せき）" }
-        }
-    })} />
+    {/* ▼ HTML内はシンプルに出力するだけ */}
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(schemaData)} />
 
     <div
         id="article-ishiyama-golf-experience-view"
@@ -128,6 +142,28 @@ const comparisonArticles = [
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
             
+            {/* ▼▼▼ 追加：要約ボックス（クリック率爆上げ用） ▼▼▼ */}
+            <div id="price-summary" class="summary-box">
+                <h3 class="flex items-center text-lg font-bold mb-3 text-green-800 border-b border-green-200 pb-2">
+                    <span class="mr-2">💡</span>この記事の結論：石山ゴルフ練習場はここが凄い
+                </h3>
+                <ul class="space-y-2 text-sm md:text-base">
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2">おすすめ：</span>
+                        <span><strong>「中古クラブを安く買いたい人」</strong>にとっての聖地。新古品が破格で売られています。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2">料金：</span>
+                        <span>入場料無料＆30分打ち放題あり。特に<strong>40歳以下は60分800円〜</strong>と激安！</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2">打席：</span>
+                        <span>最新設備はないが、<strong>「ズレないマット」</strong>が最高に打ちやすい。</span>
+                    </li>
+                </ul>
+            </div>
+            {/* ▲▲▲ 要約ボックスここまで ▲▲▲ */}
+
             <p>
                 僕は、いわゆる「データ派」のゴルファーだ。ゴルフ歴はまだ8ヶ月と浅いが、練習するならトップトレーサーは絶対に欲しい。自分の弾道を数値で把握し、効率的に上達したいからだ。だからプライベートで通うのは、決まってKSP彦根か365彦根だ。
             </p>
@@ -449,7 +485,7 @@ const comparisonArticles = [
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
-                         {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
+                         {/* [修正点2] iframe URLを修正完了 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
@@ -492,6 +528,14 @@ const comparisonArticles = [
         }
         .scroll-mt-24 {
             scroll-margin-top: 6rem; /* 96px */
+        }
+        /* [修正点3] 要約ボックスのスタイルを確実に追加 */
+        .summary-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
         }
     </style>
 </BaseLayout>
