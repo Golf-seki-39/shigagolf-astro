@@ -2,7 +2,6 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
-// [修正点1] AstroのImageコンポーネントをインポート
 import { Image } from "astro:assets";
 
 // --- This article's specific information ---
@@ -15,9 +14,7 @@ const pubDate = "2025-09-26";
 const pubDateISO = "2025-09-26T10:00:00+09:00"; 
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png";
 const rangeId = "ishiyama_gp";
-// --- End of specific information ---
 
-// [修正点4] 構造化データ用にURL変数を定義
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/ishiyama-gp-review/`; 
 
@@ -32,7 +29,6 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
@@ -50,7 +46,7 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 
-// ▼▼▼ 構造化データロジックをここに移動（エラー対策完了） ▼▼▼
+// ▼▼▼ 【重要】構造化データの作成ロジックは必ずここで完結させる ▼▼▼
 const schemaData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -115,12 +111,12 @@ const schemaData = {
         "author": { "@type": "Person", "name": "関（せき）" }
     }
 };
-// ▲▲▲ 構造化データここまで ▲▲▲
+// ▲▲▲ ここまでがフェンス内（JavaScriptの世界） ▲▲▲
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-    {/* ▼ HTML内はこれだけシンプルにする（エラーが出ない書き方） */}
+    {/* ▼ HTML内には、この1行だけ置く！余計なものは一切書かないこと！ ▼ */}
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(schemaData)} />
 
     <div
@@ -144,7 +140,6 @@ const schemaData = {
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
             
-            {/* ▼▼▼ 要約ボックス（クリック率アップ用） ▼▼▼ */}
             <div id="price-summary" class="summary-box">
                 <h3 class="flex items-center text-lg font-bold mb-3 text-green-800 border-b border-green-200 pb-2">
                     <span class="mr-2">💡</span>この記事の結論：石山ゴルフ練習場はここが凄い
@@ -164,7 +159,6 @@ const schemaData = {
                     </li>
                 </ul>
             </div>
-            {/* ▲▲▲ 要約ボックスここまで ▲▲▲ */}
 
             <p>
                 僕は、いわゆる「データ派」のゴルファーだ。ゴルフ歴はまだ8ヶ月と浅いが、練習するならトップトレーサーは絶対に欲しい。自分の弾道を数値で把握し、効率的に上達したいからだ。だからプライベートで通うのは、決まってKSP彦根か365彦根だ。
@@ -487,7 +481,6 @@ const schemaData = {
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
-                         {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
@@ -531,7 +524,6 @@ const schemaData = {
         .scroll-mt-24 {
             scroll-margin-top: 6rem; /* 96px */
         }
-        /* [修正点3] 要約ボックスのスタイルを確実に追加 */
         .summary-box {
             background-color: #f0fdf4;
             border: 1px solid #bbf7d0;
