@@ -41,7 +41,7 @@ const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
     { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
-　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
     { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
@@ -50,87 +50,92 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
     { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
     { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
-    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
+
+// ▼▼▼ ここで構造化データを作成（HTMLタグの中から移動） ▼▼▼
+const schemaData = [
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleUrl
+        },
+        "headline": headline,
+        "description": description,
+        "image": [
+            imageUrl,
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/000000img.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7086.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7088.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7852.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7853.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7109.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7121.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7136.png"
+        ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigagolf.com/about/",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
+            "sameAs": [
+                "https://x.com/Golf_Seki39",
+                "https://golf-medley.com/articles/authors/seki",
+                "https://note.com/seki_golf_39",
+                "https://www.tiktok.com/@user2579514551181"
+            ]
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+            }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": new Date().toISOString()
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        "itemReviewed": {
+            "@type": "LocalBusiness",
+            "name": rangeData?.name,
+            "image": rangeData?.imageUrl,
+            "telephone": rangeData?.phone,
+            "priceRange": rangeData?.priceRange,
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": rangeData?.address,
+                "addressLocality": rangeData?.city,
+                "addressRegion": "滋賀県",
+                "postalCode": rangeData?.postalCode,
+                "addressCountry": "JP"
+            }
+        },
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": Number(rangeData?.avgRating) || 3,
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "author": { "@type": "Person", "name": "関（せき）" }
+    }
+];
+// ▲▲▲ 構造化データ作成ここまで ▲▲▲
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-<script
+    {/* ▼ 下のタグはこれだけシンプルにする！ */}
+    <script
         slot="head"
         type="application/ld+json"
-        set:html={JSON.stringify([
-            {
-                "@context": "https://schema.org",
-                "@type": "Article",
-                "mainEntityOfPage": {
-                    "@type": "WebPage",
-                    "@id": articleUrl
-                },
-                "headline": headline,
-                "description": description,
-                "image": [
-                    imageUrl,
-                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/000000img.png",
-                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7086.png",
-                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7088.png",
-                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7852.jpg",
-                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7853.jpg",
-                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7109.png",
-                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7121.png",
-                    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/IMG_7136.png"
-                 ],
-                "author": {
-                    "@type": "Person",
-                    "name": "関（せき）",
-                    "url": "https://shigagolf.com/about/",
-                    "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
-                    "sameAs": [
-                        "https://x.com/Golf_Seki39",
-                        "https://golf-medley.com/articles/authors/seki",
-                        "https://note.com/seki_golf_39",
-                        "https://www.tiktok.com/@user2579514551181"
-                    ]
-                },
-                "publisher": {
-                    "@type": "Organization",
-                    "name": "シガゴル",
-                    "logo": {
-                        "@type": "ImageObject",
-                        "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
-                    }
-                },
-                "datePublished": pubDateISO,
-                "dateModified": new Date().toISOString() // 更新日を自動で今日にする
-            },
-            {
-                "@context": "https://schema.org",
-                "@type": "Review",
-                "itemReviewed": {
-                    "@type": "LocalBusiness",
-                    "name": rangeData?.name,
-                    "image": rangeData?.imageUrl,
-                    "telephone": rangeData?.phone,
-                    "priceRange": rangeData?.priceRange,
-                    "address": {
-                      "@type": "PostalAddress",
-                      "streetAddress": rangeData?.address,
-                      "addressLocality": rangeData?.city,
-                      "addressRegion": "滋賀県",
-                      "postalCode": rangeData?.postalCode,
-                      "addressCountry": "JP"
-                    }
-                },
-                "reviewRating": {
-                    "@type": "Rating",
-                    "ratingValue": Number(rangeData?.avgRating) || 3, // 数値型に変換
-                    "bestRating": "5",
-                    "worstRating": "1"
-                },
-                "author": { "@type": "Person", "name": "関（せき）" }
-            }
-        ])}
+        set:html={JSON.stringify(schemaData)}
     />
 
     <div
