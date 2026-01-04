@@ -6,8 +6,10 @@ import { doc, getDoc } from "firebase/firestore";
 import { Image } from "astro:assets";
 
 // --- This article's specific information ---
-const title = "普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由 | シガゴル";
-const description = "データ派ゴルファーが期待せず訪れた大津市の石山ゴルフ練習場。そこはデータでは測れない心地よさと、衝撃的な中古クラブとの出会いがある「クラブ選びの聖地」だった。その理由を体験記として綴ります。";
+const title =
+    "普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由 | シガゴル";
+const description =
+    "データ派ゴルファーが期待せず訪れた大津市の石山ゴルフ練習場。そこはデータでは測れない心地よさと、衝撃的な中古クラブとの出会いがある「クラブ選びの聖地」だった。その理由を体験記として綴ります。";
 const category = "体験談";
 const pubDate = "2025-09-26";
 const pubDateISO = "2025-09-26T10:00:00+09:00"; 
@@ -35,7 +37,7 @@ const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
     { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
-　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
     { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
@@ -48,7 +50,7 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 
-// ▼▼▼ 構造化データロジック（エラー対策済み） ▼▼▼
+// ▼▼▼ 構造化データロジックをここに移動（エラー対策完了） ▼▼▼
 const schemaData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -118,7 +120,7 @@ const schemaData = {
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-    {/* ▼ HTML内はシンプルに出力するだけ */}
+    {/* ▼ HTML内はこれだけシンプルにする（エラーが出ない書き方） */}
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(schemaData)} />
 
     <div
@@ -142,7 +144,7 @@ const schemaData = {
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
             
-            {/* ▼▼▼ 追加：要約ボックス（クリック率爆上げ用） ▼▼▼ */}
+            {/* ▼▼▼ 要約ボックス（クリック率アップ用） ▼▼▼ */}
             <div id="price-summary" class="summary-box">
                 <h3 class="flex items-center text-lg font-bold mb-3 text-green-800 border-b border-green-200 pb-2">
                     <span class="mr-2">💡</span>この記事の結論：石山ゴルフ練習場はここが凄い
@@ -485,7 +487,7 @@ const schemaData = {
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
-                         {/* [修正点2] iframe URLを修正完了 */}
+                         {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
