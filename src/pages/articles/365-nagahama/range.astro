@@ -11,22 +11,20 @@ import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
 // --- [3] この記事固有の情報 ---
-// ★ V4: 画像URLを差し替え
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000ai.jpg";
 
-// ★ V4: タイトルとディスクリプションを「ホームの本当の理由」に合わせて修正
-const title = "【365ながはま体験談】僕が近い練習場を“素通りして”でも通う理由｜ショートコース・バンカー・トップトレーサーが揃う完璧なホーム | シガゴル";
-const description = "なぜ家から近い「365彦根」や「KSP」ではなく、僕は「365ながはま」に通うのか？その理由はショートコース、バンカー、トップトレーサーが全て揃う“完璧さ”にありました。料金シミュレーター付で徹底レビュー。";
-const category = "体験談"; // カテゴリ
-const pubDate = "2025-11-13"; // ★記事の公開日
-const pubDateISO = "2025-11-13T17:00:00+09:00"; // ★記事の公開日(ISO)
-const rangeId = "365_nagahama"; // ★Firebaseの練習場ID 
+// ★ タイトルとディスクリプションを「スペック重視」に修正
+const title = "【365ながはま】トップトレーサー無料！ショートコース・バンカー併設の練習場をレビュー | シガゴル";
+const description = "滋賀県長浜市「365ゴルフクラブ」の練習場体験記。全打席トップトレーサー無料、併設のショートコースや無料バンカー練習場など、上達に必要な全てが揃う充実の設備を徹底レビュー。料金シミュレーター付き。";
+const category = "体験談"; 
+const pubDate = "2025-11-13"; 
+const pubDateISO = "2025-11-13T17:00:00+09:00"; 
+const rangeId = "365_nagahama"; 
 
 // --- [4] シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/365-nagahama/range/`; 
-// ★ V4: ヘッドラインも「ホームの本当の理由」に合わせて修正
-const headline = "【365ながはま体験談】僕が近い練習場を“素通りして”でも通う理由｜完璧なホームと呼ぶわけ";
+const headline = "【365ながはま】トップトレーサー無料！ショートコース・バンカー併設の“最強”練習場";
 
 // --- [5] Firebaseから練習場データを取得 ---
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
@@ -41,14 +39,13 @@ if (docSnap.exists()) {
 }
 
 // --- [6] 関連記事リストの定義 ---
-// ★ V4: ユーザー要望に基づき、KSP彦根を追加
 const experienceReports = [
+    { url: '/articles/365-nagahama/short-course/', title: '【体験談②】365ながはま ショートコース徹底攻略法', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg' },
     { url: '/articles/review/365hikone/', title: '365ゴルフクラブ 彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/0000img.jpg' },
-    { url: '/articles/365-nagahama/range/', title: '365ゴルフクラブ ながはま 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000ai.jpg' },
     { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
 ];
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/shiga-short-courses/', title: '【滋賀のショートコース】全2カ所を徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg' },
 ]; 
 
 // --- [7] ★ 365 ながはま専用 料金シミュレーターデータ ★ ---
@@ -133,7 +130,12 @@ const priceData = {
             <style is:global>
               html { scroll-behavior: smooth; }
               section[id], h2[id] { scroll-margin-top: 80px; }
-              /* ...（レスポンシブテーブル用のCSSは安曇川・彦根から流用）... */
+              .table-wrapper { overflow-x: auto; }
+              .min-w-table-pc { min-width: 600px; }
+              .responsive-table th:first-child, .responsive-table td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
+              .responsive-table thead th:first-child { background-color: #f1f5f9; }
+              .responsive-table tbody tr.bg-white td:first-child { background-color: #ffffff; }
+              .responsive-table tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
             </style>
             
             <header>
@@ -142,7 +144,7 @@ const priceData = {
             </header>
 
             <p>正直に告白します。<br/>
-            僕（筆者：セキ）の家から一番近い練習場は、「<a href="/articles/review/365hikone/" class="text-green-700 hover:underline">365ゴルフクラブ 彦根</a>」や「<a href="/articles/ksp-hikone-review/" class="text-green-700 hover:underline">KSP彦根</a>」です。どちらもトップトレーサー完備の素晴らしい練習場です。</p>
+            僕（筆者：セキ）の家から一番近い練習場は、「<a href="/articles/review/365hikone/" class="text-green-700 hover:underline">365ゴルフクラブ 彦根</a>」や「<a href="/articles/ksp-hikone-review/" class="text-green-700 hover:underline">KSP彦根</a>」です。どちらも素晴らしい練習場です。</p>
             <p>ですが、僕が「ホーム練習場は？」と聞かれたら、迷わずこう答えます。<br/>
             <strong>「365ゴルフクラブ ながはまです」</strong>と。</p>
             <p><br/>なぜ、わざわざ家から近い練習場を“素通りして”まで、僕は「ながはま」に通うのか？</p>
@@ -164,17 +166,25 @@ const priceData = {
             <p>理由はシンプルです。<br/>
             ここには、僕が「ゴルフが上手くなりたい」と願う全ての要素が、完璧な形で揃っているから。</p>
             <p><strong>データ分析（トップトレーサー）、弱点克服（バンカー・パター）、実戦（ショートコース）、そしてクラブ試打（ゴルフパートナー）。</strong></p>
-            <p><br/>この記事では、なぜ「365ながはま」が<br class="md:hidden" />僕にとって“完璧なホーム”なのか、その理由を、料金シミュレーターや僕が体験したリアルな注意点と共にお伝えします。</p>
-
+            <p><br/>この記事では、なぜ「365ながはま」が<br class="md:hidden" />僕にとって“最強の練習場”なのか、その理由を、料金シミュレーターや僕が体験したリアルな注意点と共にお伝えします。</p>
             
+            <div class="not-prose bg-green-50 p-4 my-6 rounded-lg border border-l-4 border-green-500">
+              <p class="text-slate-700 m-0">
+                この記事は、練習場（打ちっぱなし）のレビューです。<br>
+                <a href="/articles/365-nagahama/short-course/" class="text-green-700 font-bold hover:underline">
+                  → 併設の「ショートコース」のレビュー記事はこちら
+                </a>
+              </p>
+            </div>
+
             <div class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
                  <h2 class="text-xl font-bold mb-4 text-green-800 break-keep">
                     365ゴルフクラブ ながはま の要点
                  </h2>
                  <ul class="space-y-2 list-disc list-inside">
-                    <li><strong>特徴①:</strong> 本格「ショートコース」併設で、練習の成果をすぐ試せる<br class="md:hidden" />（ナイター可）</li>
-                    <li><strong>特徴②:</strong> 無料の「本格バンカー」と「広々パター練習場」でアプローチを徹底強化</li>
-                    <li><strong>特徴③:</strong> 全50打席「トップトレーサー・レンジ」が追加料金なしで完備</li>
+                    <li><strong>特徴①:</strong> 全50打席<strong>「トップトレーサー・レンジ」</strong>が追加料金なしで完備</li>
+                    <li><strong>特徴②:</strong> 併設の<strong>「本格ショートコース」</strong>で、練習の成果をすぐ試せる</li>
+                    <li><strong>特徴③:</strong> 無料の<strong>「本格バンカー」</strong>と「広々パター練習場」あり</li>
                     <li><strong>特徴④:</strong> 「ゴルフパートナー」併設で、気になるクラブを“打席で”無料試打OK</li>
                     <li><strong>料金 (球貸し):</strong> メンバー 5pt/球～, ビジター 9pt/球～ (+入場料250pt)</li>
                     <li><strong>料金 (放題):</strong> メンバー 900pt～ (60分), ビジター 1,300pt～ (60分)</li>
@@ -196,7 +206,7 @@ const priceData = {
             </div>
 
             <h2 id="charm1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                魅力①：僕が“素通りして”でも通う最大の理由。<br class="md:hidden" />「弱点克服」と「実戦」が全て揃う環境
+                魅力①：僕が“素通りして”でも通う理由。<br class="md:hidden" />「弱点克服」と「実戦」が全て揃う環境
             </h2>
             
             <p>僕が家から近い練習場を通り過ぎて、わざわざ「ながはま」を選ぶ最大の理由。<br/>
@@ -265,8 +275,8 @@ const priceData = {
             この<strong>「上達の黄金サイクル」が1箇所で完結する</strong>ことこそ、僕が「365ながはま」をホームと呼ぶ最大の理由です。</p>
             <p class="font-bold text-center text-lg my-6">
                 ※ショートコースの魅力は、これだけで記事が1本書けてしまうため、<br/>
-                <a href="/articles/365-nagahama/short-course/" class="text-green-700 hover:underline">【365ゴルフ体験②】<br class="md:hidden" />ショートコース徹底攻略ガイド</a><br/>
-                で、近日公開します！
+                <a href="/articles/365-nagahama/short-course/" class="text-green-700 hover:underline">【365ながはま】ショートコース徹底攻略ガイド</a><br/>
+                で、詳しく解説しています！
             </p>
             
             <h2 id="charm2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
@@ -529,19 +539,19 @@ const priceData = {
             </div>
             
            <figure class="my-6">
-    <Image 
-        src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6608.jpg"} 
-        alt="2Fの打席情報" 
-        class="w-full h-auto object-cover rounded-lg my-4" 
-        loading="lazy" 
-        format="webp" 
-        quality={80}
-        width={3000}  
-        height={3000} 
-        decoding="async"
-    />
-    <figcaption class="text-center text-sm text-slate-500 mt-2">2Fの打席情報。写真の通り、2Fは比較的空いていて自分の練習に集中できます。</figcaption>
-</figure>
+            <Image 
+                src={"https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6608.jpg"} 
+                alt="2Fの打席情報" 
+                class="w-full h-auto object-cover rounded-lg my-4" 
+                loading="lazy" 
+                format="webp" 
+                quality={80}
+                width={3000}  
+                height={3000} 
+                decoding="async"
+            />
+            <figcaption class="text-center text-sm text-slate-500 mt-2">2Fの打席情報。写真の通り、2Fは比較的空いていて自分の練習に集中できます。</figcaption>
+        </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">注意点③：【トップトレーサー】<br class="md:hidden" />初回は「球打ち」推奨。打ち放題は焦るかも？</h3>
             <p>初めてトップトレーサーを使う方への、僕からの小さなアドバイスです。</p>
@@ -692,7 +702,17 @@ const priceData = {
                     </p>
                 )
             }
-            {/* ...（Googleマップのiframe）... */}
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
+                            width="100%" height="450" style="border:0;"
+                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
              <p class="text-center font-bold text-lg mt-8">
                 🎯 さらに詳しい情報や口コミはこちら！
                 <br />
@@ -714,9 +734,6 @@ const priceData = {
         #price-simulator option { color: #1f2937; }
     </style>
 
-    
-    {/* --- ★★★ V4 シミュレータースクリプト ★★★ --- */}
-    {/* ※V3からロジック変更なし。シミュレーターのIDを"price-simulator"に戻したのみ */}
     <script define:vars={{ priceData }}>
         document.addEventListener('DOMContentLoaded', () => {
             const simulator = document.getElementById('price-simulator'); 
