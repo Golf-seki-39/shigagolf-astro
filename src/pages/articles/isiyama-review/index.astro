@@ -1,23 +1,32 @@
 ---
+// --- [1] AstroとFirebaseの基本設定 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 import { Image } from "astro:assets";
 
-// --- This article's specific information ---
-const title =
-    "普段トップトレーサーが無いと満足できない僕が、大津市「石山ゴルフ練習場」を“クラブ購入の聖地”に認定した理由 | シガゴル";
-const description =
-    "データ派ゴルファーが期待せず訪れた大津市の石山ゴルフ練習場。そこはデータでは測れない心地よさと、衝撃的な中古クラブとの出会いがある「クラブ選びの聖地」だった。その理由を体験記として綴ります。";
+// --- [2] 共通コンポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報 ---
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png";
+
+// ★ タイトルとディスクリプションを「安全策（常設メリット）」版に修正
+const title = "【石山ゴルフ練習場】中古クラブの穴場！新古品5000円の発見と入場料無料の使い勝手 | シガゴル";
+const description = "大津市の「石山ゴルフ練習場」は中古クラブ購入の穴場。ネットより安い「新古品5000円」の発見談や、「ズレないマット」の打ち心地をレビュー。入場料無料で30分から利用できる気軽さや、40歳以下向けのお得な情報の有無も解説します。";
 const category = "体験談";
 const pubDate = "2025-09-26";
 const pubDateISO = "2025-09-26T10:00:00+09:00"; 
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png";
 const rangeId = "ishiyama_gp";
 
+// --- [4] シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/ishiyama-gp-review/`; 
+const headline = "【石山ゴルフ練習場】中古クラブの穴場！新古品5000円の発見と入場料無料の使い勝手";
 
+// --- [5] Firebaseから練習場データを取得 ---
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
 const docRef = doc(db, docPath);
@@ -29,6 +38,7 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
+// --- [6] 関連記事リストの定義 ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
@@ -46,8 +56,29 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
 
-// ▼▼▼ 構造化データを「配列（[ ... ])」に戻して定義 ▼▼▼
-const schemaData = [
+// --- [7] ★ 石山ゴルフ練習場 専用料金データ（画像に基づき修正） ★ ---
+const priceData = {
+  // 打ち放題料金（時間制）
+  uchihodai: {
+    weekday: {
+      f1: { '30': 800, '60': 1300, '90': 1600, '120': 1800 },
+      f2: { '30': 700, '60': 1200, '90': 1500, '120': 1700 }
+    },
+    weekend: {
+      f1: { '30': 1000, '60': 1400, '90': 1700, '120': 1900 },
+      f2: { '30': 900, '60': 1400, '90': 1700, '120': 1900 }
+    }
+  },
+  // 単価打ち（2F指定打席のみ）
+  ballUnit: {
+    price: 300,
+    count: 40,
+    unitPrice: 7.5
+  }
+};
+---
+
+<script slot="head" type="application/ld+json" set:html={JSON.stringify([
     {
         "@context": "https://schema.org",
         "@type": "Article",
@@ -55,7 +86,7 @@ const schemaData = [
             "@type": "WebPage",
             "@id": articleUrl
         },
-        "headline": title.split(" | ")[0],
+        "headline": headline,
         "description": description,
         "image": [
             imageUrl,
@@ -67,7 +98,7 @@ const schemaData = [
         "author": {
             "@type": "Person",
             "name": "関（せき）",
-            "url": "https://shigagolf.com/about/",
+            "url": "https://shigolf.com/about/",
             "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
             "sameAs": [
                 "https://x.com/Golf_Seki39",
@@ -95,7 +126,7 @@ const schemaData = [
             "name": rangeData?.name,
             "image": rangeData?.imageUrl,
             "telephone": rangeData?.phone,
-            "priceRange": rangeData?.priceRange,
+            "priceRange": "700円〜2,000円",
             "address": {
                 "@type": "PostalAddress",
                 "streetAddress": rangeData?.address,
@@ -107,55 +138,52 @@ const schemaData = [
         },
         "reviewRating": {
             "@type": "Rating",
-            // 数値がない場合は「3」をデフォルトにしてエラー回避
             "ratingValue": Number(rangeData?.avgRating) || 3,
             "bestRating": "5",
             "worstRating": "1"
         },
         "author": { "@type": "Person", "name": "関（せき）" }
     }
-];
-// ▲▲▲ 定義ここまで ▲▲▲
----
+])} />
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-    {/* ▼ 配列データを出力（これが正解の書き方です） ▼ */}
-    <script slot="head" type="application/ld+json" set:html={JSON.stringify(schemaData)} />
-
-    <div
-        id="article-ishiyama-golf-experience-view"
-        class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
-    >
-        <a
-            href="/articles/"
-            class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
-        >
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
             ‹ お役立ち記事一覧に戻る
         </a>
 
-        <article
-            class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
-        >
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id] { scroll-margin-top: 80px; }
+              /* テーブル用CSS（他記事と共通） */
+              .table-wrapper { overflow-x: auto; }
+              .min-w-table-pc { min-width: 600px; }
+              .responsive-table th:first-child, .responsive-table td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
+              .responsive-table thead th:first-child { background-color: #f1f5f9; }
+              .responsive-table tbody tr.bg-white td:first-child { background-color: #ffffff; }
+              .responsive-table tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+            </style>
+
             <header>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
-                    {title.split(" | ")[0]}
-                </h1>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
             
-            <div id="price-summary" class="summary-box">
+            <div id="price-summary" class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
                 <h3 class="flex items-center text-lg font-bold mb-3 text-green-800 border-b border-green-200 pb-2">
                     <span class="mr-2">💡</span>この記事の結論：石山ゴルフ練習場はここが凄い
                 </h3>
                 <ul class="space-y-2 text-sm md:text-base">
                     <li class="flex items-start">
                         <span class="text-green-600 font-bold mr-2">おすすめ：</span>
-                        <span><strong>「中古クラブを安く買いたい人」</strong>にとっては嬉しい。新古品が破格で売られています。</span>
+                        <span><strong>「中古クラブを安く買いたい人」</strong>にとっての穴場。新古品が破格で売られています。</span>
                     </li>
                     <li class="flex items-start">
                         <span class="text-green-600 font-bold mr-2">料金：</span>
-                        <span>【限定キャンペーン】入場料無料＆30分打ち放題あり。特に<strong>40歳以下は60分800円〜</strong>と激安！</span>
+                        <span><strong>入場料無料</strong>で30分から利用可能。2F打席なら30分700円〜とリーズナブル。</span>
                     </li>
                     <li class="flex items-start">
                         <span class="text-green-600 font-bold mr-2">打席：</span>
@@ -178,12 +206,108 @@ const schemaData = [
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#table-price" class="text-green-700 hover:underline">【一覧表】石山ゴルフ練習場の料金まとめ</a></li>
+                    <li><a href="#simulator" class="text-green-700 hover:underline">かんたん料金シミュレーター</a></li>
                     <li><a href="#happy-betrayal" class="text-green-700 hover:underline">期待ゼロからの、嬉しい裏切り</a></li>
                     <li><a href="#cons" class="text-green-700 hover:underline">正直に伝える、気になる点</a></li>
                     <li><a href="#tips" class="text-green-700 hover:underline">僕が本当に伝えたかった「裏ワザ」</a></li>
                     <li><a href="#conclusion" class="text-green-700 hover:underline">結論：僕にとっての「特別な場所」</a></li>
                     <li><a href="#info-summary" class="text-green-700 hover:underline">「石山ゴルフ練習場」の基本情報</a></li>
                 </ul>
+            </div>
+
+            <h2 id="table-price" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【一覧表】石山ゴルフ練習場の料金まとめ
+            </h2>
+            <p>まずは気になる料金体系から。石山ゴルフ練習場の最大の特徴は、<strong>「入場料・打席料が無料」</strong>であること。表記されている金額だけで練習できます。</p>
+
+            <div class="table-wrapper my-6 not-prose">
+                <table class="w-full text-left border-collapse responsive-table min-w-table-pc">
+                    <thead class="bg-slate-100">
+                        <tr>
+                            <th class="py-3 px-4 font-semibold border-b">時間</th>
+                            <th class="py-3 px-4 font-semibold border-b text-center">平日 (1F / 2F)</th>
+                            <th class="py-3 px-4 font-semibold border-b text-center">土日祝 (1F / 2F)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">30分</th>
+                            <td data-label="平日" class="py-3 px-4 text-center">800円 / <strong>700円</strong></td>
+                            <td data-label="土日祝" class="py-3 px-4 text-center">1,000円 / 900円</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">60分</th>
+                            <td data-label="平日" class="py-3 px-4 text-center">1,300円 / 1,200円</td>
+                            <td data-label="土日祝" class="py-3 px-4 text-center">1,400円</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">90分</th>
+                            <td data-label="平日" class="py-3 px-4 text-center">1,600円 / 1,500円</td>
+                            <td data-label="土日祝" class="py-3 px-4 text-center">1,700円</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <th class="py-3 px-4 bg-slate-50 font-semibold">120分</th>
+                            <td data-label="平日" class="py-3 px-4 text-center">1,800円 / 1,700円</td>
+                            <td data-label="土日祝" class="py-3 px-4 text-center">1,900円</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 my-6 text-sm md:text-base">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center">
+                    <span class="mr-2">✨</span>お得な割引・プラン情報
+                </h4>
+                <ul class="list-disc list-inside space-y-1 text-slate-700">
+                    <li><strong>ジュニア（高校生まで）：</strong> 60分 500円 / 90分 800円 / 120分 1,000円と破格！</li>
+                    <li><strong>平日朝限定（10時まで）：</strong> 180分 1,700円（2階打席限定）</li>
+                    <li><strong>延長料金：</strong> 30分ごとに500円（ジュニアは300円）</li>
+                    <li><strong>球貸し：</strong> 2F指定打席（26〜32番）のみ可能（40球 300円）</li>
+                </ul>
+            </div>
+
+            <div id="simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-12 scroll-mt-24">
+                <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    かんたん料金シミュレーター
+                </h3>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="font-semibold text-slate-700">① 利用日</label>
+                        <div class="flex gap-4 mt-2">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="sim-day" value="weekday" class="mr-2" checked> 平日</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="sim-day" value="weekend" class="mr-2"> 土日祝</label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="font-semibold text-slate-700">② 打席（階数）</label>
+                        <div class="flex gap-4 mt-2">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="sim-floor" value="f1" class="mr-2" checked> 1F (人気)</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="sim-floor" value="f2" class="mr-2"> 2F (少し安い)</label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="font-semibold text-slate-700">③ 利用時間</label>
+                        <select id="sim-duration" class="w-full mt-2 p-2 border border-slate-300 rounded-md">
+                            <option value="30">30分 (サクッと)</option>
+                            <option value="60">60分 (標準)</option>
+                            <option value="90">90分 (たっぷり)</option>
+                            <option value="120">120分 (ガッツリ)</option>
+                        </select>
+                    </div>
+
+                    <div class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300">
+                        <p class="text-slate-600 mb-1 text-sm">利用料金</p>
+                        <p class="text-3xl font-bold text-green-700">
+                            ¥ <span id="sim-total-price">----</span>
+                        </p>
+                        <p class="text-xs text-slate-500 mt-2">※入場料込みの総額です。</p>
+                    </div>
+                </div>
             </div>
 
             <figure class="my-6">
@@ -202,10 +326,7 @@ const schemaData = [
                 </figcaption>
             </figure>
 
-            <h2
-                id="happy-betrayal"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
+            <h2 id="happy-betrayal" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 期待ゼロからの、嬉しい裏切り
             </h2>
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
@@ -289,20 +410,14 @@ const schemaData = [
                 本当の驚きは、家に帰ってからだった。ふと気になってフリマアプリで相場を調べてみると、同じモデルの中古品が8,000円前後で取引されているじゃないか。「（え、マジかよ！あそこのはピカピカの新古品で5,000円だぞ…？）」一気に物欲のスイッチが入った。
             </p>
 
-            <h2
-                id="cons"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
+            <h2 id="cons" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 正直に伝える、気になる点
             </h2>
             <p>
                 正直に言おう。僕が愛してやまないトップトレーサーは、ここにはない。綺麗に整備された広大なアプローチ練習場も、パターグリーンもない。だから、僕が普段の練習の拠点としてここを選ぶことは、たぶんないだろう。僕の練習スタイルとは、やはり少し違うからだ。だが、不思議と物足りなさは感じなかった。むしろ、クラブヘッドから手に伝わる打感や、乾いたインパクト音。普段データで見ていたものを、五感で味わう時間は、僕にとって新鮮な“発見”ですらあったのだ。
             </p>
 
-            <h2
-                id="tips"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
+            <h2 id="tips" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 僕が本当に伝えたかった「裏ワザ」
             </h2>
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
@@ -313,10 +428,10 @@ const schemaData = [
             </p>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                【超・裏ワザ】40歳以下の男性、事件です。今すぐ石山へ！
+                男性ゴルファーも要チェック
             </h3>
             <p>
-                そして、最も衝撃的な情報がこれだ。なんと現在、期間限定で40歳以下（※）のゴルファーを対象にした、破格のキャンペーンをやっている。
+                期間限定かもしれませんが、40歳以下の男性ゴルファー向けの激安キャンペーンなど、独自の面白い企画を実施していることがあります。
             </p>
 
             <figure class="my-6">
@@ -331,34 +446,20 @@ const schemaData = [
                     quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    この価格は、まさに「事件」。見逃せない
+                    キャンペーン情報は要チェックです（※写真は取材時のもの）
                 </figcaption>
             </figure>
 
             <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-6">
                 <p class="font-bold text-slate-800">
-                    【40歳以下男性限定 打ち放題キャンペーン】
+                    【キャンペーン情報の確認方法】
                 </p>
-                <ul class="list-disc pl-5 mt-2">
-                    <li><strong>60分 打ち放題： 800円</strong></li>
-                    <li><strong>90分 打ち放題： 1,000円</strong></li>
-                    <li><strong>120分 打ち放題： 1,200円</strong></li>
-                </ul>
-                <p class="text-sm mt-3 text-slate-600">
-                    ※1984年7月生まれ以降の方が対象<br
-                    />※1階・2階関係なしの料金<br
-                    />※キャンペーン期間：2025年9月末日まで。訪れる際は、事前に練習場にご確認ください。
+                <p class="text-sm mt-2 text-slate-600">
+                    私が訪れた際は破格のキャンペーンを行っていましたが、こうした情報は時期によって変わります。訪れる際は、ぜひ現地の掲示板や公式サイトで最新情報をチェックしてみてください。思いがけないお得情報に出会えるかもしれません。
                 </p>
             </div>
-            <p>
-                信じられるだろうか？
-                女性向けの割引はよく見かけますが、男性ゴルファーがここまで優遇される練習場は、滋賀中を探しても他にない。このキャンペーンは、もはや<strong>「事件」</strong>だ。
-            </p>
 
-            <h2
-                id="conclusion"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
+            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 結論：僕にとっての「特別な場所」
             </h2>
             <p>
@@ -370,10 +471,18 @@ const schemaData = [
 
             <hr class="my-8" />
 
-            <h2
-                id="info-summary"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
+            <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' && (
+                    <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                )
+            }
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 「石山ゴルフ練習場」の基本情報
             </h2>
             {
@@ -536,4 +645,39 @@ const schemaData = [
             margin: 2rem 0;
         }
     </style>
+
+    <script define:vars={{ priceData }}>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dayRadios = document.querySelectorAll('input[name="sim-day"]');
+            const floorRadios = document.querySelectorAll('input[name="sim-floor"]');
+            const durationSelect = document.getElementById('sim-duration');
+            const priceDisplay = document.getElementById('sim-total-price');
+
+            function calculate() {
+                const day = document.querySelector('input[name="sim-day"]:checked').value;
+                const floor = document.querySelector('input[name="sim-floor"]:checked').value;
+                const duration = durationSelect.value;
+
+                let price = 0;
+                // 石山は入場料無料なので、純粋な打ち放題料金のみ計算
+                if (priceData.uchihodai[day] && priceData.uchihodai[day][floor]) {
+                    price = priceData.uchihodai[day][floor][duration];
+                }
+
+                if (price) {
+                    priceDisplay.textContent = price.toLocaleString();
+                } else {
+                    priceDisplay.textContent = '----';
+                }
+            }
+
+            // イベントリスナーの登録
+            dayRadios.forEach(r => r.addEventListener('change', calculate));
+            floorRadios.forEach(r => r.addEventListener('change', calculate));
+            durationSelect.addEventListener('change', calculate);
+
+            // 初回計算
+            calculate();
+        });
+    </script>
 </BaseLayout>
