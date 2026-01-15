@@ -65,10 +65,10 @@ const ldJson = {
         postalCode: postalCode,
         addressCountry: "JP",
     },
-    ...(reviewCount > 0 && {
+    ...(reviewCount > 0 && avgRating && {
         aggregateRating: {
             "@type": "AggregateRating",
-            ratingValue: avgRating ? parseFloat(avgRating).toFixed(1) : undefined,
+            ratingValue: parseFloat(avgRating).toFixed(1),
             reviewCount: reviewCount,
         },
     }),
