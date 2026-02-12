@@ -1,23 +1,22 @@
 ---
 // --- [1] AstroとFirebaseの基本設定 ---
-import BaseLayout from "../../../layouts/BaseLayout.astro"; // ※パスは環境に合わせて調整してください
+import BaseLayout from "../../../layouts/BaseLayout.astro"; 
 import { Image } from "astro:assets";
 
 // --- [2] 共通コンポーネント ---
-import ShareButtons from '../../../components/ShareButtons.astro'; // ※パスは環境に合わせて調整してください
-import AuthorProfile from '../../../components/AuthorProfile.astro'; // ※パスは環境に合わせて調整してください
-// import MySlider from '../../components/MySlider.astro'; // 関連記事があれば有効化
+import ShareButtons from '../../../components/ShareButtons.astro'; 
+import AuthorProfile from '../../../components/AuthorProfile.astro'; 
 
 // --- [3] 記事固有の情報 ---
-const title = "【失敗談あり】ゴルフデビューで焦らない！初心者のための「3つのバッグ」完全ガイド｜シガゴル";
-const description = "「ゴルフ場に靴がない！」という管理人の失敗談を元に、ゴルフデビュー初心者が知っておくべき「ボストンバッグ」「ラウンドバッグ」「キャディバッグ」の正しい仕分け術を徹底解説。滋賀の冬ゴルフの注意点も。";
-const pubDate = "2026-02-12"; // ★公開日に合わせて変更してください
+const title = "【滋賀のゴルフデビュー】服装マナーと3つのバッグ仕分け術｜失敗談から学ぶ初心者ガイド";
+const description = "滋賀でゴルフデビューする初心者必見！「ゴルフ場に靴がない」という管理人の失敗談を元に、バッグの仕分け術を解説。滋賀特有の霧や風への対策、恥をかかないジャケットコーデまでこれ一読で準備完了！";
+const pubDate = "2026-02-12"; 
 const category = "初心者ガイド";
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/biginner-guide.aikyatti.png"; // OGP画像はコーデ写真を使用
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/biginner-guide.aikyatti.png"; 
 
 // --- [4] 記事URL設定 ---
 const baseUrl = "https://shigolf.com";
-const articleUrl = `${baseUrl}/articles/beginner-guide/`; // ★実際のURLに合わせて変更
+const articleUrl = `${baseUrl}/articles/beginner-guide/`; 
 const headline = "【失敗談あり】ゴルフデビューで焦らない！初心者のための「3つのバッグ」完全ガイド";
 
 // --- [5] アフィリエイトリンクデータ ---
@@ -29,32 +28,61 @@ const items = {
   bag: "https://a.r10.to/hFyaFJ"
 };
 ---
-<script slot="head" type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": articleUrl
-    },
-    "headline": headline,
-    "description": description,
-    "image": [ imageUrl ],
-    "datePublished": new Date(pubDate).toISOString(),
-    "dateModified": new Date(pubDate).toISOString(),
-    "author": {
-        "@type": "Person",
-        "name": "関＠シガゴル管理人",
-        "url": "https://shigolf.com/about/" 
-    },
-    "publisher": {
-        "@type": "Organization",
-        "name": "シガゴル",
-        "logo": {
-            "@type": "ImageObject",
-            "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+<script slot="head" type="application/ld+json" set:html={JSON.stringify([
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+        "headline": headline,
+        "description": description,
+        "image": [ imageUrl ],
+        "datePublished": new Date(pubDate).toISOString(),
+        "dateModified": new Date(pubDate).toISOString(),
+        "author": {
+            "@type": "Person",
+            "name": "関＠シガゴル管理人",
+            "url": "https://shigolf.com/about/" 
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+            }
         }
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "ゴルフ場には何分前に到着すればいいですか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "通常はスタートの1時間前ですが、滋賀県内（特に東近江〜日野エリア）は秋冬に濃霧が発生しやすいため、1時間20分前の到着を目指すと安心です。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "ジャケットは絶対に着用しないとダメですか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "最近はカジュアルな場所も増えていますが、初心者が判断するのは難しいため、迷ったらジャケット着用を推奨します。これが最も安全で確実なマナーです。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "初心者はボールを何球持っていくべきですか？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "10球〜14球程度を推奨します。滋賀のコースは山岳地帯も多く、OBになりやすいため、予備を含めて多めに用意しましょう。"
+                }
+            }
+        ]
     }
-})} />
+])} />
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
     
@@ -72,19 +100,20 @@ const items = {
 
             {/* --- 導入：この記事のメリット --- */}
             <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 my-6 text-sm md:text-base">
-                <p class="font-bold text-slate-700 mb-2">🔰 この記事を読めば分かること</p>
+                <p class="font-bold text-slate-700 mb-2">🔰 この記事を読めば解決する不安</p>
                 <ul class="list-disc list-inside space-y-1 text-slate-600">
                     <li>当日焦らない3つのバッグの正しい仕分け術</li>
                     <li>恥をかかないための「ゴルフ場の服装マナー」</li>
-                    <li>滋賀県特有の「風・霧・雪」への対策</li>
+                    <li>滋賀県特有の「風・霧・雪」へのリアルな対策</li>
+                    <li>周りに迷惑をかけないためのスマートな準備</li>
                 </ul>
             </div>
 
             <div class="not-prose bg-green-50 p-4 my-6 rounded-lg border-l-4 border-green-500">
-                <p class="font-bold text-green-800 m-0">この記事の立ち位置</p>
+                <p class="font-bold text-green-800 m-0">練習場の次は、いよいよコース！</p>
                 <p class="text-slate-700 mt-2 text-sm">
                     普段は練習場レビューを中心に発信している「シガゴル」ですが、今回は特別編。<br>
-                    練習場で腕を磨き、いよいよコースデビューを控えているあなたへ。<br class="md:hidden" /><strong>「練習場に通ってきた人が、はじめてコースに出る時につまずきやすいポイント」</strong>を、僕の失敗談を交えてまとめました。
+                    練習場で腕を磨き、いよいよコースデビューを控えているあなたへ。<br/><strong>「練習場に通ってきた人が、はじめてコースに出る時につまずきやすいポイント」</strong>を、僕の失敗談を交えてまとめました。
                 </p>
             </div>
 
@@ -108,7 +137,7 @@ const items = {
                     <div>
                         <h3 class="font-bold text-green-700 border-b border-green-200 mb-2">⛳ ラウンドバッグ (カートへ)</h3>
                         <ul class="list-none space-y-1 text-sm md:text-base pl-2">
-                            <li>□ ボール (6〜10球)</li>
+                            <li>□ ボール (10〜14球)</li>
                             <li>□ ティー (ロング・ショート)</li>
                             <li>□ グローブ</li>
                             <li>□ マーカー・グリーンフォーク</li>
@@ -146,19 +175,18 @@ const items = {
             <p>はじめてのゴルフ場。楽しみと緊張で迎えた当日、僕はロッカールームで呆然としました。<br/>
             <strong>「あ……靴がない」</strong></p>
             <p>練習場に行くときは、いつもキャディバッグの側面ポケットにシューズを入れていました。<br/>
-            その感覚のままゴルフ場に行き、受付を済ませてロッカーへ。「さあ着替えよう」と思った瞬間、足元には革靴しかないことに気づいたのです。</p>
-            <p>「キャディバッグから出せばいいやん」と思いますよね？<br/>
-            でも、ゴルフ場では到着するとすぐにポーターさん（係の人）がキャディバッグを回収し、カートに積み込んでくれるんです。</p>
+            その感覚のままゴルフ場に行き、受付を済ませてロッカーへ。<br/>「さあ着替えよう」と思った瞬間、足元には革靴しかないことに気づいたのです。</p>
+            <p>ゴルフ場では到着するとすぐにポーターさん（係の人）がキャディバッグを回収し、カートに積み込んでくれます。</p>
             <p>慌ててカート置き場に行くと、僕のバッグはすでにカートに積まれ、転倒防止のベルトでガチガチに固定されていました……。</p>
 
             <figure class="my-6">
                 <Image 
                     src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/phonto-removebg-preview.png" 
-                    alt="キャディバッグの側面ポケット" 
+                    alt="キャディバッグの側面ポケットにシューズを入れて焦った体験談" 
                     class="w-full h-auto object-cover rounded-lg border border-slate-200" 
                     width={1200} height={800} format="webp" quality={80}
                 />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">この赤丸のポケットに入れていたんです。ベルトを外さないと取り出せませんが、初心者が勝手に触っていいのか分からず、めちゃくちゃ焦りました。</figcaption>
+                <figcaption class="text-center text-sm text-slate-500 mt-2">この赤丸のポケット。ベルトを外さないと取り出せませんが、初心者が勝手に触っていいのか分からず、めちゃくちゃ焦りました。</figcaption>
             </figure>
 
             <p class="font-bold text-lg bg-yellow-50 p-4 rounded text-center">
@@ -169,23 +197,21 @@ const items = {
             <h2 id="dress-code" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 悩み解決：そもそも、どんな服でゴルフ場に行けばいいの？
             </h2>
-            <p>「バッグの中身以前に、そもそも何を着ていけばいいか分からない…」<br/>
-            先日、ラウンドデビューする初心者の方から<br class="md:hidden" /><strong>「ネットで調べたらブルゾンはダメって書いてたけど、ブルゾンってなに？」</strong>と相談を受けました。</p>
+            <p>「ネットで調べたらブルゾンはダメって書いてたけど、ブルゾンってなに？」と相談を受けることがあります。</p>
             <p>結論から言うと、着ていく服装は、<br class="md:hidden" /><strong>「迷ったらジャケットを着ていく」</strong>。<br class="md:hidden" />これが間違いありません。</p>
 
             <figure class="my-6">
                 <Image 
-                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/photo1コーデ.png" 
-                    alt="ゴルフ場の入場コーデ例" 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/photo1コーデ.png" 
+                    alt="30代・40代男性のゴルフ場入場服装マナー。ジャケットとスラックスの組み合わせ例" 
                     class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" 
                     width={800} height={1000} format="webp" quality={80}
                 />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">僕の入場スタイルです。ジャケット＋スラックスなら、どんな名門コースでも止められることはありません。</figcaption>
+                <figcaption class="text-center text-sm text-slate-500 mt-2">僕の入場スタイルです。ジャケット＋スラックスなら、どんな名門コースでも安心です。</figcaption>
             </figure>
 
-            <p>最近はカジュアルなゴルフ場も増えましたが、初心者が「ここはOKかな？ダメかな？」と悩む時間はもったいないですよね。<br/>
-            同伴者に恥をかかせないためにも、<strong>「ジャケット着用」</strong>で行けば安全です。ちなみに足元は、サンダルやクロックスは絶対NG。革靴か、綺麗なスニーカーで行きましょう。</p>
-            <p>ちなみに私のジャケットの下はラウンドするときのポロシャツです。いつもこのスタイルで一度も問題になったことはありません。</p>
+            <p>初心者が「ここはOKかな？」と悩む時間はもったいないですよね。同伴者に恥をかかせないためにも、<strong>「ジャケット着用」</strong>で行けば安全です。足元は革靴か、綺麗なスニーカーで行きましょう。</p>
+            <p>ちなみに私のジャケットの下はそのままプレーできるポロシャツです。着替え時間を短縮できますし、忘れ物防止にもなりますよ！</p>
 
             {/* --- ボストンバッグ --- */}
             <h2 id="bag-boston" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
@@ -197,16 +223,16 @@ const items = {
                 <figure>
                     <Image 
                         src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/IMG_1414-removebg-preview.png" 
-                        alt="ボストンバッグの中身（チラ見せ）" 
+                        alt="ボストンバッグの靴収納ポケット" 
                         class="w-full h-auto object-cover rounded-lg border border-slate-200" 
                         width={600} height={600} format="webp" quality={80}
                     />
-                    <figcaption class="text-center text-sm text-slate-500 mt-2">靴は取り出しやすい横のファスナーの収納にいれています。</figcaption>
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">靴は取り出しやすい横のファスナー収納に。</figcaption>
                 </figure>
                 <figure>
                     <Image 
                         src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/IMG_1415-removebg-preview.png" 
-                        alt="ボストンバッグの中身（展開）" 
+                        alt="ボストンバッグの中身の展開" 
                         class="w-full h-auto object-cover rounded-lg border border-slate-200" 
                         width={600} height={600} format="webp" quality={80}
                     />
@@ -217,7 +243,7 @@ const items = {
             <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
                 <h4 class="font-bold text-slate-800 mb-2">✅ ボストンバッグの中身リスト</h4>
                 <ul class="list-disc list-inside space-y-1 text-slate-700">
-                    <li><strong>ゴルフシューズ</strong>（家から履いていかない場合は必須！）</li>
+                    <li><strong>ゴルフシューズ</strong>（必須！）</li>
                     <li><strong>キャップ・グローブ</strong></li>
                     <li><strong>着替え一式</strong>（下着、帰りのポロシャツ、靴下）</li>
                     <li><strong>温度調整用の服</strong>（ベストなど）</li>
@@ -251,7 +277,7 @@ const items = {
                 <figure>
                     <Image 
                         src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/IMG_1419.png" 
-                        alt="ラウンドバッグの中身" 
+                        alt="ラウンドバッグの中身詳細" 
                         class="w-full h-auto object-cover rounded-lg border border-slate-200" 
                         width={600} height={600} format="webp" quality={80}
                     />
@@ -261,13 +287,12 @@ const items = {
             <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-8">
                 <h4 class="font-bold text-slate-800 mb-2">✅ ラウンドバッグの中身リスト</h4>
                 <ul class="list-disc list-inside space-y-1 text-slate-700">
-                    <li><strong>ボール</strong>（10球前後 ※初心者は多めに！）</li>
+                    <li><strong>ボール</strong>（10球〜14球 ※初心者は多めに！）</li>
                     <li><strong>ティー</strong>（ロング・ショート）</li>
                     <li><strong>グリーンフォーク・マーカー</strong></li>
                     <li><strong>スコアカウンター</strong>（予備含む）</li>
                     <li><strong>ボールポーチ</strong>（腰に下げる用）</li>
-                    <li><strong>エチケット用品</strong>（フェイスシートなど）</li>
-                    <li><strong>飲み物</strong>（コンビニ袋ごと笑）</li>
+                    <li><strong>飲み物・タオル</strong></li>
                 </ul>
             </div>
 
@@ -279,14 +304,14 @@ const items = {
                     <div class="w-full md:w-1/2">
                          <Image 
                             src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/oSc3r9aDSWKuKofrzDwZew.jpg" 
-                            alt="飛右衛門のボール" 
+                            alt="飛右衛門のゴルフボール" 
                             class="w-full h-auto object-cover rounded-lg" 
                             width={600} height={400} format="webp" quality={80}
                         />
                     </div>
                     <div class="w-full md:w-1/2">
                         <h4 class="font-bold text-lg mb-2">① 新品ボール（飛右衛門）</h4>
-                        <p class="text-sm mb-4">初心者はロストボール（中古）を選びがちですが、僕は断然<strong>「安めの新品」</strong>推し。<br class="md:hidden" />愛用の「飛右衛門（とびえもん）」はコスパ最強です。新品を使うとテンションが上がりますよ！<br/>数は多めに14球ほど持って行きます（笑）</p>
+                        <p class="text-sm mb-4">初心者はロストボール（中古）を選びがちですが、僕は断然<strong>「安めの新品」</strong>推し。新品を使うと1球を大事にするので結果的に上達が早まります。愛用の「飛右衛門」はコスパ最強です！</p>
                        <div class="text-center mt-4">
                             <a href={items.balls} target="_blank" rel="noopener noreferrer" class="inline-block bg-green-600 text-white text-sm font-bold py-2 px-4 rounded shadow hover:bg-green-700 transition">
                                 楽天で「飛右衛門のボール」を見る
@@ -300,17 +325,14 @@ const items = {
                      <div class="w-full md:w-1/2">
                         <Image 
                             src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/oSc3r9aDSWKuKofrzDwZew.jpg" 
-                            alt="飛右衛門のポーチ" 
+                            alt="ゴルフ用ボールポーチ" 
                             class="w-full h-auto object-cover rounded-lg" 
                             width={600} height={400} format="webp" quality={80}
                         />
                     </div>
                     <div class="w-full md:w-1/2">
                         <h4 class="font-bold text-lg mb-2">② ボールポーチ（腰用）</h4>
-                        <p class="text-sm mb-4">初心者はボールを探したり走ったりするので、ポケットがパンパンだと動きにくいんです。ベルトに装着して、予備球やティーをすぐ取り出せるようにしています。</p>
-                         <p class="font-bold text-md bg-yellow-50 p-4 rounded text-center">
-                            <strong>アドバイス</strong><br class="md:hidden" />ベルトに通すタイプよりベルトのフックにカラビナでつけるタイプが取り出しやすくてオススメです。
-                        </p>
+                        <p class="text-sm mb-4">ポケットがパンパンだと動きにくいので、ベルトに装着しましょう。カラビナでつけるタイプが取り出しやすくてオススメです。</p>
                        <div class="text-center mt-4">
                             <a href={items.pouch} target="_blank" rel="noopener noreferrer" class="inline-block bg-green-600 text-white text-sm font-bold py-2 px-4 rounded shadow hover:bg-green-700 transition">
                                 楽天で「飛右衛門のポーチ」を探す
@@ -331,7 +353,7 @@ const items = {
                     </div>
                     <div class="w-full md:w-1/2">
                         <h4 class="font-bold text-lg mb-2">③ スコアカウンター（予備も！）</h4>
-                        <p class="text-sm mb-4">初心者のうちは打数を数えるだけでパニックになります。カウンターは必須！安物でいいので、紛失や故障に備えて<strong>「予備」</strong>を持っておくのが関流です。</p>
+                        <p class="text-sm mb-4">打数を数えるパニックを防ぐ必須アイテム。紛失に備えて<strong>「予備」</strong>を持っておくのが関流です。</p>
                        <div class="text-center mt-4">
                             <a href={items.counter} target="_blank" rel="noopener noreferrer" class="inline-block bg-green-600 text-white text-sm font-bold py-2 px-4 rounded shadow hover:bg-green-700 transition">
                                 楽天で「スコアカウンター」を探す
@@ -345,54 +367,52 @@ const items = {
             <h2 id="bag-caddie" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 バッグ③：ゴルフカートに固定された「キャディバッグ」
             </h2>
-            <p>ここは「クラブの倉庫」です。プレー中はベルトで固定されて開けにくいポケットもあるので、緊急用や予備を入れます。</p>
+            <p>ここは「クラブの倉庫」です。プレー中は開けにくいポケットもあるので、緊急用や予備を入れます。</p>
             <ul class="list-disc list-inside space-y-2 prose mb-6">
-                <li><strong>レインウェア</strong>（天気予報が晴れでも常備）</li>
-                <li><strong>「予備の予備」ボール</strong>（10球くらい。精神安定剤として）</li>
+                <li><strong>レインウェア</strong>（天気に関わらず常備）</li>
+                <li><strong>「予備の予備」ボール</strong>（精神安定剤として10球ほど）</li>
                 <li><strong>予備のグローブ</strong></li>
-                <li><strong>距離計</strong>（※一応入れていますが、初心者のうちは測る余裕なんてないのでほぼ使いません…笑）</li>
             </ul>
 
-            {/* --- 滋賀あるある（気候・交通） --- */}
+            {/* --- 滋賀あるある --- */}
             <h2 id="shiga-aruaru" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                【滋賀ゴルファーあるある】<br class="md:hidden" />天気と交通の注意点
+                【滋賀ゴルファーあるある】天気と交通の注意点
             </h2>
-            <p>最後に、滋賀県内のゴルフ場に行くなら知っておきたい「ローカル情報」をシェアします。<br/>
-            滋賀は「琵琶湖からの風」や「山間部の気候」で、街中とは状況が全く違います！</p>
+            <p>滋賀のゴルフ場は「琵琶湖からの風」や「山間部の気候」で、街中とは別世界です！</p>
 
             <div class="space-y-6 my-6">
                 <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
                     <h3 class="font-bold text-blue-800 text-lg mb-1">🍃 「琵琶湖の風」をナメたらあかん</h3>
                     <p class="text-slate-700 text-sm">
-                        湖西や湖東エリアは、琵琶湖からの風（比叡おろし等）が強く吹き抜けます。<br/>
-                        街中はポカポカ陽気でも、ゴルフ場は強風で体感温度が極寒…なんてことも日常茶飯事。<br/>
-                        <strong>「春・秋でもウィンドブレーカー（風を通さない上着）を1枚カートバッグに入れておく」</strong>のが滋賀ゴルファーの鉄則です。
+                        湖西や湖東エリアは強風が吹き抜けます。街中はポカポカでもゴルフ場は極寒…なんてことも。<strong>ウィンドブレーカーを1枚カートバッグに入れておく</strong>のが鉄則です。
                     </p>
                 </div>
 
                 <div class="bg-gray-50 p-4 rounded-lg border-l-4 border-gray-500">
                     <h3 class="font-bold text-gray-800 text-lg mb-1">🌫️ 「朝霧」で到着が遅れる！？</h3>
                     <p class="text-slate-700 text-sm">
-                        滋賀の盆地（特に東近江～日野エリアなど）は、秋から冬にかけて濃い霧が発生しやすいです。<br/>
-                        視界が悪く、運転スピードが出せないことも。<br/>
-                        ギリギリに出発すると、到着してからバタバタして「バッグの積み下ろし」で焦ることになります。<strong>「霧が出るかも」と想定して、20分早めに出発</strong>しましょう。
+                        東近江〜日野エリアは濃い霧が発生しやすいです。<strong>「滋賀の冬は霧がスパイス」</strong>と思って、20分早めに出発しましょう。
                     </p>
                 </div>
 
                 <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-600">
                     <h3 class="font-bold text-red-800 text-lg mb-1">❄️ 冬は「スタッドレス」が義務</h3>
                     <p class="text-slate-700 text-sm">
-                        これは絶対に守ってください。<br/>
-                        滋賀のゴルフ場は山の上にあります。自宅周辺に雪がなくても、ゴルフ場のゲート前は凍結していることがあります。<br/>
-                        冬（12月〜3月）に滋賀でゴルフをするなら、<strong>ノーマルタイヤは命取り</strong>です。
+                        ゴルフ場は山の上。自宅に雪がなくてもコース付近は凍結しています。12月〜3月にノーマルタイヤでゴルフに行くのは命取りです。
                     </p>
                 </div>
             </div>
 
+            {/* --- 迷惑をかけないか不安な方へ --- */}
+            <div class="bg-slate-800 text-white p-6 rounded-lg my-12">
+                <h3 class="text-xl font-bold mb-3 text-white">「周りに迷惑をかけないか不安…」というあなたへ</h3>
+                <p class="text-sm leading-relaxed">
+                    「プレーが遅くて怒られないかな？」と不安ですよね。でも大丈夫。今回紹介した「バッグの仕分け」ができているだけで、準備は完璧。走ってボールを探し、サッとカウンターで打数を数える。その姿勢だけで、同伴者からは「マナーのいい初心者さんだ」と歓迎されますよ！
+                </p>
+            </div>
+
             <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">流行：充電式カイロ</h3>
-            <p>最近のコンペに行くと、みんな持っています。めちゃくちゃ便利です。<br/>
-            ただ……僕自身はあまり使いません。なぜなら、<strong>下手くそで人の分までボールを探して走り回っているから、常に暑いんです！（笑）</strong><br/>
-            カートで待ち時間が発生した時だけ、同伴者のカイロを羨ましそうに見ています。</p>
+            <p>最近のコンペで人気ですが、僕はあまり使いません。なぜなら、<strong>人のボールを探して走り回っているから常に暑いんです！（笑）</strong></p>
             <div class="mt-4">
                 <a href={items.warmer} target="_blank" rel="noopener noreferrer" class="text-green-700 font-bold hover:underline">
                     → 楽天で「充電式カイロ」を見てみる
@@ -402,34 +422,20 @@ const items = {
             <hr class="my-12 border-slate-200" />
 
             <h2 class="text-2xl font-bold text-slate-800 mb-4">まとめ：準備ができたら、いざコースへ！</h2>
-            <p>ゴルフは「準備8割」と言われるスポーツ。特に持ち物の準備がしっかりできていれば、プレー当日の不安は半分以下になります。</p>
-            <p>最後に、僕から一つだけ伝えたいことがあります。</p>
-            
             <p class="font-bold text-xl text-center my-8 text-slate-800">
                 「練習場で100球打つより、<br/>コースに出る方が10倍上達します」
             </p>
-            
-            <p>僕の失敗談を参考にしっかり準備をして、最高のデビュー戦を楽しんできてくださいね！</p>
+            <p>僕の失敗談を参考に、最高の日を楽しんできてくださいね！</p>
             
             {/* --- 楽天GORA --- */}
             <div class="not-prose my-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <h3 class="text-xl font-bold text-yellow-800 mb-3 text-center">練習の成果をコースで試そう！</h3>
-                <p class="text-yellow-900 text-center">
-                    準備が整ったら、次は本番のゴルフコースを予約してみませんか？<br/>滋賀県内のゴルフ場を探すなら、お得なプランが豊富な「楽天GORA」が便利！
-                </p>
+                <p class="text-yellow-900 text-center">お得なプランが豊富な「楽天GORA」で滋賀のコースを探してみませんか？</p>
                 <div class="mt-4 flex justify-center">
-                    <a href="https://a.r10.to/hPRKtq" target="_blank" rel="sponsored noopener" class="inline-block bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-200 text-base no-underline">
+                    <a href="https://a.r10.to/hPRKtq" target="_blank" rel="sponsored noopener" class="inline-block bg-red-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-200 text-base no-underline text-center">
                         楽天GORAで<br class="md:hidden" />滋賀県のコースを探す
                     </a>
                 </div>
-            </div>
-
-            {/* --- 関連記事一覧 --- */}
-            <div class="not-prose my-12 text-center space-y-4">
-                <p class="font-bold text-slate-700">👇 他のシガゴル記事も読んでみる</p>
-                <a href="/articles/" class="inline-block border-2 border-green-700 text-green-700 font-bold py-3 px-12 rounded-lg hover:bg-green-50 transition-colors duration-200 text-base no-underline">
-                    お役立ち記事一覧へ戻る
-                </a>
             </div>
 
             <ShareButtons articleUrl={articleUrl} headline={headline} />
