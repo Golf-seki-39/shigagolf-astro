@@ -450,6 +450,13 @@ const items = {
                     </a>
                 </div>
             </div>
+            {/* --- 関連記事への回遊リンク（ここが重要！） --- */}
+            <div class="not-prose my-12 text-center space-y-4">
+                <p class="font-bold text-slate-700">👇 他のシガゴル記事も読んでみる</p>
+                <a href="/articles/" class="inline-block border-2 border-green-700 text-green-700 font-bold py-3 px-12 rounded-lg hover:bg-green-50 transition-colors duration-200 text-base no-underline">
+                    お役立ち記事一覧へ戻る
+                </a>
+            </div>
 
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
