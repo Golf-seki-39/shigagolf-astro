@@ -119,7 +119,14 @@ const faqElements = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "滋賀のショートコース（安曇川・長浜）での服装は？", "acceptedAnswer": { "@type": "Answer", "text": "本コースのようなドレスコードは一切ありません。Tシャツ、スニーカーでOKです。ゴルフウェアは不要で、練習場に行く感覚で気軽に利用できます。" } },
+    { 
+  "@type": "Question", 
+  "name": "滋賀のショートコース（安曇川・長浜）での服装は？", 
+  "acceptedAnswer": { 
+    "@type": "Answer", 
+    "text": "本コースのようなドレスコードは一切ありません。Tシャツ、スニーカーでOKです。ゴルフウェアは不要で、練習場に行く感覚で気軽に利用できます。なお、いよいよ本番のゴルフ場デビューが決まった際の『失敗しない服装とバッグの仕分け術』は、<a href='/articles/beginner-guide/'>こちらの記事</a>で詳しく解説しています。" 
+  } 
+},
     { "@type": "Question", "name": "予約は必要ですか？", "acceptedAnswer": { "@type": "Answer", "text": "「365ゴルフクラブ ながはま」「安曇川スポーツセンター」ともに、基本的に予約は不要です。思い立ったその日に利用できます。" } },
     { "@type": "Question", "name": "本コースとショートコースの決定的な違いは？", "acceptedAnswer": { "@type": "Answer", "text": "最大の違いは「プレッシャーの有無」です。これら2施設は後続組を気にする必要がほとんどないため、本コースでは不可能な「打ち直し」や「一人二役」といった反復練習が可能です。" } }
   ]
@@ -324,10 +331,16 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             </h2>
             <p>「安いゴルフ場（薄暮ハーフ）と何が違うの？」という疑問に、両方体験した僕がお答えします。</p>
             
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">👕 Q1. 服装は？</h3>
-            <p><strong>A. まったく違います。</strong></p>
-            <p>本コースは襟付きシャツやドレスコードが必須ですが、<strong>「365ながはま」「安曇川」ともにTシャツ、スニーカーでOK</strong>です。ゴルフウェアは一切不要で、練習場に行く感覚で回れます。</p>
-            
+           <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">👕 Q1. 服装は？</h3>
+<p><strong>A. まったく違います。</strong></p>
+<p>本コースは襟付きシャツやドレスコードが必須ですが、<strong>「365ながはま」「安曇川」ともにTシャツ、スニーカーでOK</strong>です。ゴルフウェアは一切不要で、練習場に行く感覚で回れます。</p>
+
+<div class="not-prose bg-green-50 p-4 rounded border-l-4 border-green-500 mt-4 text-sm md:text-base">
+    <p class="font-bold text-green-800 mb-1">💡 滋賀のゴルフ場デビューを控えている方へ</p>
+    <p class="m-0 text-slate-700">
+        ショートコースはラフでOKですが、いよいよ本番のゴルフ場へ！という時の「失敗しない服装と3つのバッグ仕分け術」は、<a href="/articles/beginner-guide/" class="text-green-700 font-bold underline hover:no-underline">こちらの初心者ガイド</a>で僕の失敗談を交えて解説しています。
+    </p>
+</div>
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">💰 Q2. 料金と予約は？</h3>
             <p><strong>A. 圧倒的に安く、予約も不要です。</strong></p>
             <p>本コースの薄暮ハーフは安くても3,500円〜8,000円で、予約も必須です。一方、この2施設は<strong>1,000円台〜3,000円</strong>で、<strong>予約不要</strong>です。<br class="md:hidden" />「今から行こう」ができます。<br/>
