@@ -147,21 +147,30 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     font-weight: bold; 
     color: #064e3b; 
 }
+
 .term-tip:hover::after { 
     content: attr(data-tip); 
     position: absolute; 
     bottom: 125%; 
-    left: 50%; 
-    transform: translateX(-50%); 
+    
+    /* --- ここから修正 --- */
+    left: 0; /* 中央寄せをやめ、左端を基準にする */
+    transform: none; /* 中央寄せの計算を解除 */
+    
+    /* 画面からはみ出さないための設定 */
+    width: 80vw; /* スマホ画面幅の80%を最大値にする */
+    max-width: 280px; /* PCで見ても広がりすぎないように制限 */
+    /* --- ここまで修正 --- */
+
     background: #1e293b; 
     color: #fff; 
-    padding: 8px 12px; 
+    padding: 10px 14px; /* 少し余裕を持たせる */
     border-radius: 6px; 
-    font-size: 0.75rem; 
-    width: 200px; 
-    line-height: 1.4; 
-    z-index: 10; 
+    font-size: 0.8rem; 
+    line-height: 1.5; 
+    z-index: 50; 
     white-space: normal; 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
 }
             </style>
                         
@@ -267,7 +276,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/riverside_jumbo/" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600 italic">挫折した僕が教えたい、最高の”入口”</h4>
                      <p>東近江エリアで「何から手をつけていいか全く分からない」方に、私が心の底からお勧めするのが、この<strong>「初心者スクール」</strong>です。担当の砂川プロの人柄がとにかく温厚。最大の魅力は<strong>実質200円</strong>という安さで、手ぶらで基礎を学べます。</p>
-                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/C7A324E8-9569-4216-8955-2B3F2D9B59112025-04-02_18-42-15_481.jpg" alt="リバーサイドジャンボゴルフの初心者スクール" class="w-full h-auto object-cover rounded-lg my-4" />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/C7A324E8-9569-4216-8955-2B3F2D9B59112025-04-02_18-42-15_481.jpg" alt="滋賀県東近江市のリバーサイドジャンボゴルフで行われている初心者向けレッスンの看板" class="w-full h-auto object-cover rounded-lg my-4" />
                      <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 my-4 text-sm">
                         <p class="font-bold text-red-700 mb-1">⚠️ デメリット・注意点</p>
                         <p class="m-0 text-slate-600 leading-relaxed"><span class="term-tip" data-tip="複数の生徒を同時に教える形式。料金が安いのがメリットです。">グループレッスン</span>形式のため、一人のプロが複数の生徒を見ます。「1時間つきっきりで細かい癖を修正してほしい」というガチな要望には向きません。</p>
@@ -283,7 +292,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/azuchi_gc/" class="text-green-700 hover:underline">安土ゴルフクラブ</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600 italic">遠方からも人が集う、本格派マンツーマン専門塾</h4>
                      <p>「本気でスコアアップしたい」なら、入江賢プロによる<span class="term-tip" data-tip="プロと1対1で教わる形式。自分の課題だけに100％集中できます。">マンツーマンレッスン</span>一択です。<span class="term-tip" data-tip="日本プロゴルフ協会の認定プロ。厳しい試験を通った指導の専門家です。">PGA所属</span>でツアー経験もあるプロの指導は、独学では気づけない癖を瞬時に見抜きます。上達スピードは圧倒的です。</p>
-                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8072 2.png" alt="安土ゴルフクラブのマンツーマン指導" class="w-full h-auto object-cover rounded-lg my-4" />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8072 2.png" alt="滋賀県近江八幡市の安土ゴルフクラブのマンツーマン指導の詳細看板" class="w-full h-auto object-cover rounded-lg my-4" />
                      <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 my-4 text-sm">
                         <p class="font-bold text-red-700 mb-1">⚠️ デメリット・注意点</p>
                         <p class="m-0 text-slate-600 leading-relaxed">非常に質の高いレッスンですが、遊び感覚で行くと、プロの熱量に圧倒されるかもしれません。本気で上手くなりたい！というスイッチが入ってから行くのがおすすめです。</p>
@@ -299,7 +308,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/sakura_gc/" class="text-green-700 hover:underline">さくらゴルフ倶楽部</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600 italic">女性プロ2名在籍。初心者が「お試し」しやすい環境</h4>
                      <p>瀬古プロ、鎮西プロという2名の<span class="term-tip" data-tip="日本女子プロゴルフ協会の認定プロ。女性ならではの悩みにも詳しいです。">LPGA所属プロ</span>が在籍。初回体験が1,000円〜1,500円と安く、女性が一人で始めるならここが最有力です。女性ならではの悩みにも親身に答えてくれます。</p>
-                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6245.jpeg" alt="さくらゴルフ倶楽部の女性プロレッスン" class="w-full h-auto object-cover rounded-lg my-4" />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6245.jpeg" alt="滋賀県東近江市のさくらゴルフ倶楽部の女性プロレッスン" class="w-full h-auto object-cover rounded-lg my-4" />
                      <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 my-4 text-sm">
                         <p class="font-bold text-red-700 mb-1">⚠️ デメリット・注意点</p>
                         <p class="m-0 text-slate-600 leading-relaxed">アットホームさが魅力ですが、人気プロの予約枠はすぐに埋まってしまうことがあります。早めのスケジュール確認が必須です。</p>
@@ -315,7 +324,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                      <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href="/ranges/greenpia_oh/" class="text-green-700 hover:underline">グリーンピア近江八幡ゴルフ</a></h3>
                      <h4 class="text-xl font-semibold text-slate-600 italic">プロ6名以上！レッスンのデパート</h4>
                      <p><span class="term-tip" data-tip="日本女子プロゴルフ協会のこと。">LPGA所属</span>プロから<span class="term-tip" data-tip="日本プロゴルフ協会のこと。指導のライセンスを持つプロです。">PGAプロ</span>まで、実に6名以上のプロが在籍。10分1,200円のワンポイントから、最新の<span class="term-tip" data-tip="レーザー測定でスイングや球筋を精密に分析する、世界基準の最新測定器です。">トラックマン</span>解析までプランが豊富です。自分に合うコーチを選べるのが最大の強みです。</p>
-                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/WcDqIqT.jpeg" alt="グリーンピア近江八幡ゴルフの多彩なレッスン" class="w-full h-auto object-cover rounded-lg my-4" />
+                     <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/WcDqIqT.jpeg" alt="滋賀県近江八幡市のグリーンピア近江八幡ゴルフの多彩なレッスン" class="w-full h-auto object-cover rounded-lg my-4" />
                      <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 my-4 text-sm">
                         <p class="font-bold text-red-700 mb-1">⚠️ デメリット・注意点</p>
                         <p class="m-0 text-slate-600 leading-relaxed">選択肢が多すぎて、初心者の方は「誰に何を申し込めばいいか」迷ってしまう可能性があります。目的を明確にしてから行くのがベストです。</p>
