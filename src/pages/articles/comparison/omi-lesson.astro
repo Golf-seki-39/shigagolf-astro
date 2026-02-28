@@ -146,31 +146,60 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
     display: inline-block; 
     font-weight: bold; 
     color: #064e3b; 
+    /* iPhoneでの誤動作防止 */
+    -webkit-tap-highlight-color: transparent;
 }
 
-.term-tip:hover::after { 
+/* ツールチップ本体 */
+.term-tip::after { 
     content: attr(data-tip); 
     position: absolute; 
-    bottom: 125%; 
+    bottom: 140%; /* 少し上に離して視認性アップ */
+    left: 50%;
+    transform: translateX(-50%); /* 一旦中央に戻す */
     
-    /* --- ここから修正 --- */
-    left: 0; /* 中央寄せをやめ、左端を基準にするんだ */
-    transform: none; /* 中央寄せの計算を解除 */
-    
-    /* 画面からはみ出さないための設定 */
-    width: 80vw; /* スマホ画面幅の80%を最大値にする */
-    max-width: 280px; /* PCで見ても広がりすぎないように制限 */
-    /* --- ここまで修正 --- */
+    /* スマホでの見切れ防止の鍵 */
+    width: 70vw; 
+    max-width: 250px; 
+    /* 画面端に寄った時に自動で位置をずらす魔法の1行 */
+    margin-left: auto;
+    margin-right: auto;
 
     background: #1e293b; 
     color: #fff; 
-    padding: 10px 14px; /* 少し余裕を持たせる */
-    border-radius: 6px; 
+    padding: 10px 14px; 
+    border-radius: 8px; 
     font-size: 0.8rem; 
     line-height: 1.5; 
-    z-index: 50; 
+    z-index: 100; 
     white-space: normal; 
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+
+    /* 最初は隠しておく */
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none; /* ツールチップ自体が邪魔しないように */
+}
+
+/* 表示条件：ホバー時、およびスマホのタップ（active）時 */
+.term-tip:hover::after,
+.term-tip:active::after { 
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 【重要】右端・左端での見切れを「自動」で防ぐ調整（スマホ用） */
+@media (max-width: 640px) {
+    .term-tip::after {
+        /* 中央寄せを解除し、画面幅を基準に計算 */
+        position: fixed; 
+        left: 10vw; /* 画面の左端から10%の位置に強制固定 */
+        right: 10vw; /* 画面の右端から10%の位置に強制固定 */
+        width: 80vw;
+        transform: none;
+        bottom: 20%; /* 画面の下の方に出す（指で隠れないように） */
+    }
 }
             </style>
                         
