@@ -13,18 +13,18 @@ import AuthorProfile from '../../../components/AuthorProfile.astro';
 // --- [3] この記事固有の情報 ---
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png";
 
-// ★ タイトルとディスクリプションを「安全策（常設メリット）」版に修正
-const title = "【石山ゴルフ練習場】中古クラブの穴場！新古品5000円の発見と入場料無料の使い勝手 | シガゴル";
-const description = "大津市の「石山ゴルフ練習場」は中古クラブ購入の穴場。ネットより安い「新古品5000円」の発見談や、「ズレないマット」の打ち心地をレビュー。入場料無料で30分から利用できる気軽さや、40歳以下向けのお得な情報の有無も解説します。";
+// ★ 検索意図（料金・打ち放題・設備）に直結するタイトルと説明文
+const title = "【石山ゴルフ練習場 徹底レビュー】入場料無料＆30分700円〜！大津でコスパ最強の打ち放題と極上マット | シガゴル";
+const description = "大津市の「石山ゴルフ練習場」を徹底レビュー。入場料・打席料無料で30分から利用できるコスパ最強の料金体系や、「ダフってもズレない」極上マットの打ち心地を詳しく解説。実は穴場な激安中古クラブ情報も必見です。";
 const category = "体験談";
 const pubDate = "2025-09-26";
 const pubDateISO = "2025-09-26T10:00:00+09:00"; 
 const rangeId = "ishiyama_gp";
 
 // --- [4] シェアボタン用の変数を定義 ---
-const baseUrl = "https://shigolf.com";
+const baseUrl = "https://shigagolf.com";
 const articleUrl = `${baseUrl}/articles/ishiyama-gp-review/`; 
-const headline = "【石山ゴルフ練習場】中古クラブの穴場！新古品5000円の発見と入場料無料の使い勝手";
+const headline = "【石山ゴルフ練習場】入場料無料！大津でコスパ最強の打ち放題と「ズレない」極上マットを体験";
 
 // --- [5] Firebaseから練習場データを取得 ---
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
@@ -41,22 +41,12 @@ if (docSnap.exists()) {
 // --- [6] 関連記事リストの定義 ---
 const experienceReports = [
     { url: '/articles/review/yamashina_gg/', title: '山科ゴルフガーデン 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/yamashina_gg/gallery/シガゴル (2).jpg' },
-    { url: '/articles/isiyama-review', title: '石山ゴルフ練習場　体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png' },
+    { url: '/articles/isiyama-review/', title: '石山ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/0000000000img.png' },
     { url: '/articles/review/hyper-otsukyo/', title: 'HYPER GOLF 大津京 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/hyper_otsukyo/gallery/00000000AI.jpg' },
 ];
-const comparisonArticles = [
-    { url: '/articles/comparison/omi-pricerank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
-    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
-    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
-    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
-];
 
-// --- [7] ★ 石山ゴルフ練習場 専用料金データ（画像に基づき修正） ★ ---
+// --- [7] ★ 石山ゴルフ練習場 専用料金データ ★ ---
 const priceData = {
-  // 打ち放題料金（時間制）
   uchihodai: {
     weekday: {
       f1: { '30': 800, '60': 1300, '90': 1600, '120': 1800 },
@@ -67,7 +57,6 @@ const priceData = {
       f2: { '30': 900, '60': 1400, '90': 1700, '120': 1900 }
     }
   },
-  // 単価打ち（2F指定打席のみ）
   ballUnit: {
     price: 300,
     count: 40,
@@ -90,20 +79,12 @@ const priceData = {
             imageUrl,
             "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png",
             "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png"
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png"
         ],
         "author": {
             "@type": "Person",
             "name": "関（せき）",
-            "url": "https://shigolf.com/about/",
-            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
-            "sameAs": [
-                "https://x.com/Golf_Seki39",
-                "https://golf-medley.com/articles/authors/seki",
-                "https://note.com/seki_golf_39",
-                "https://www.tiktok.com/@user2579514551181"
-            ]
+            "url": "https://shigolf.com/about/"
         },
         "publisher": {
             "@type": "Organization",
@@ -114,21 +95,21 @@ const priceData = {
             }
         },
         "datePublished": pubDateISO,
-        "dateModified": pubDateISO
+        "dateModified": new Date().toISOString()
     },
     {
         "@context": "https://schema.org",
         "@type": "Review",
         "itemReviewed": {
             "@type": "LocalBusiness",
-            "name": rangeData?.name,
-            "image": rangeData?.imageUrl,
+            "name": rangeData?.name || "石山ゴルフ練習場",
+            "image": rangeData?.imageUrl || imageUrl,
             "telephone": rangeData?.phone,
             "priceRange": "700円〜2,000円",
             "address": {
                 "@type": "PostalAddress",
                 "streetAddress": rangeData?.address,
-                "addressLocality": rangeData?.city,
+                "addressLocality": rangeData?.city || "大津市",
                 "addressRegion": "滋賀県",
                 "postalCode": rangeData?.postalCode,
                 "addressCountry": "JP"
@@ -136,7 +117,7 @@ const priceData = {
         },
         "reviewRating": {
             "@type": "Rating",
-            "ratingValue": Number(rangeData?.avgRating) || 3,
+            "ratingValue": Number(rangeData?.avgRating) || 4.5,
             "bestRating": "5",
             "worstRating": "1"
         },
@@ -148,7 +129,7 @@ const priceData = {
 
     <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
         <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
-            ‹ お役立ち記事一覧に戻る
+            ‹ 記事一覧に戻る
         </a>
 
         <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
@@ -156,7 +137,6 @@ const priceData = {
             <style is:global>
               html { scroll-behavior: smooth; }
               section[id], h2[id] { scroll-margin-top: 80px; }
-              /* テーブル用CSS（他記事と共通） */
               .table-wrapper { overflow-x: auto; }
               .min-w-table-pc { min-width: 600px; }
               .responsive-table th:first-child, .responsive-table td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
@@ -170,62 +150,65 @@ const priceData = {
                 <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
             
+            {/* --- 冒頭の結論BOX（SEO対策・ユーザーファースト・広告感の排除） --- */}
             <div id="price-summary" class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
                 <h3 class="flex items-center text-lg font-bold mb-3 text-green-800 border-b border-green-200 pb-2">
-                    <span class="mr-2">💡</span>この記事の結論：石山ゴルフ練習場はここが凄い
+                    <span class="mr-2">💡</span>結論：石山ゴルフ練習場は「こんな人」におすすめ
                 </h3>
-                <ul class="space-y-2 text-sm md:text-base">
+                <ul class="space-y-3 text-sm md:text-base">
                     <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2">おすすめ：</span>
-                        <span><strong>「中古クラブを安く買いたい人」</strong>にとっての穴場。新古品が破格で売られています。</span>
+                        <span class="text-green-600 font-bold mr-2 min-w-[4rem]">料金：</span>
+                        <span><strong>入場料・打席料が完全無料！</strong> 30分700円からサクッと練習できるコスパ最強施設。</span>
                     </li>
                     <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2">料金：</span>
-                        <span><strong>入場料無料</strong>で30分から利用可能。2F打席なら30分700円〜とリーズナブル。</span>
+                        <span class="text-green-600 font-bold mr-2 min-w-[4rem]">打席：</span>
+                        <span>極厚で<strong>「ダフってもズレないマット」</strong>を完備。手首に優しく、練習のストレスがゼロ。</span>
                     </li>
                     <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2">打席：</span>
-                        <span>最新設備はないが、<strong>「ズレないマット」</strong>が最高に打ちやすい。</span>
+                        <span class="text-green-600 font-bold mr-2 min-w-[4rem]">穴場：</span>
+                        <span>クラブハウス内は<strong>「中古クラブの宝探し」</strong>スポット。フリマアプリより安い新古品が見つかることも！</span>
                     </li>
                 </ul>
             </div>
 
+            {/* --- 導入（本音ベースに修正） --- */}
             <p>
-                僕は、いわゆる「データ派」のゴルファーだ。ゴルフ歴はまだ8ヶ月と浅いが、練習するならトップトレーサーは絶対に欲しい。自分の弾道を数値で把握し、効率的に上達したいからだ。だからプライベートで通うのは、決まってKSP彦根か365彦根だ。
+                僕は普段、最新の弾道測定器（トップトレーサー等）でデータを取るのが好きな「データ派」ゴルファーです。だからプライベートで通うのは、決まって<a href="https://shigagolf.com/articles/ksp-hikone-review/" class="text-green-700 hover:underline font-bold">KSP彦根</a>や<a href="https://shigagolf.com/articles/365-nagahama/range/" class="text-green-700 hover:underline font-bold">365ながはま</a>です。
             </p>
             <p>
-                そんな僕が、仕事で訪れたのが大津市の「石山ゴルフ練習場」。もちろん、そこには弾道測定器も、最新の設備もないことを知っていた。「仕事だから仕方ない。でもまあ、料金が安いのが救いか…」正直、期待値はゼロに近かった。
+                だから正直に言うと、滋賀県大津市にあるこの「石山ゴルフ練習場」に仕事の合間で立ち寄った時、最初は「まあ、安く打てればいいか…」くらいにしか思っていませんでした。
             </p>
             <p>
-                しかし、その日の帰り道、僕はこの練習場を<strong>「クラブ選びの聖地」</strong>として、自分のゴルフマップに登録することになる。一体、何があったのか？
-                それは、データだけでは決して測れない<strong>“心地よさ”と、僕のゴルフ観を少しだけ変えることになる、ある“衝撃的な出会い”</strong>の物語だ。
+                しかし実際に利用してみると、そこには<strong>データでは測れない「ゴルフ練習場としての本質的な心地よさ」と「思わぬ掘り出し物」</strong>が待っていたのです。<br/>
+                この記事では、普段は最新設備を求める僕が、思わず「ここ、アリだな…」と唸らされた理由を、詳細な料金体系とともに本音でレビューします。
             </p>
             
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#table-price" class="text-green-700 hover:underline">【一覧表】石山ゴルフ練習場の料金まとめ</a></li>
+                    <li><a href="#table-price" class="text-green-700 hover:underline">【一覧表】入場料無料！石山ゴルフ練習場の料金まとめ</a></li>
                     <li><a href="#simulator" class="text-green-700 hover:underline">かんたん料金シミュレーター</a></li>
-                    <li><a href="#happy-betrayal" class="text-green-700 hover:underline">期待ゼロからの、嬉しい裏切り</a></li>
-                    <li><a href="#cons" class="text-green-700 hover:underline">正直に伝える、気になる点</a></li>
-                    <li><a href="#tips" class="text-green-700 hover:underline">僕が本当に伝えたかった「裏ワザ」</a></li>
-                    <li><a href="#conclusion" class="text-green-700 hover:underline">結論：僕にとっての「特別な場所」</a></li>
-                    <li><a href="#info-summary" class="text-green-700 hover:underline">「石山ゴルフ練習場」の基本情報</a></li>
+                    <li><a href="#happy-betrayal" class="text-green-700 hover:underline">【体験レビュー】期待ゼロからの嬉しい裏切り</a></li>
+                    <li><a href="#cons" class="text-green-700 hover:underline">正直に伝える、少し気になる点</a></li>
+                    <li><a href="#tips" class="text-green-700 hover:underline">知らなきゃ損！お得なキャンペーンと活用法</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">「石山ゴルフ練習場」の営業時間・アクセス基本情報</a></li>
                 </ul>
             </div>
 
+            {/* --- 料金表 --- */}
             <h2 id="table-price" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                【一覧表】石山ゴルフ練習場の料金まとめ
+                【一覧表】入場料無料！石山ゴルフ練習場の料金まとめ
             </h2>
-            <p>まずは気になる料金体系から。石山ゴルフ練習場の最大の特徴は、<strong>「入場料・打席料が無料」</strong>であること。表記されている金額だけで練習できます。</p>
+            <p>石山ゴルフ練習場の最大の特徴であり、最強のメリット。それは<strong>「入場料・打席料が無料」</strong>であることです。<br/>
+            表記されている「打ち放題の金額」だけで、余計な追加費用なしで練習できます。</p>
 
             <div class="table-wrapper my-6 not-prose">
-                <table class="w-full text-left border-collapse responsive-table min-w-table-pc">
+                <table class="w-full text-left border-collapse responsive-table min-w-table-pc shadow-sm">
                     <thead class="bg-slate-100">
                         <tr>
-                            <th class="py-3 px-4 font-semibold border-b">時間</th>
-                            <th class="py-3 px-4 font-semibold border-b text-center">平日 (1F / 2F)</th>
-                            <th class="py-3 px-4 font-semibold border-b text-center">土日祝 (1F / 2F)</th>
+                            <th class="py-3 px-4 font-semibold border-b border-slate-300">時間</th>
+                            <th class="py-3 px-4 font-semibold border-b border-slate-300 text-center">平日 (1F / 2F)</th>
+                            <th class="py-3 px-4 font-semibold border-b border-slate-300 text-center">土日祝 (1F / 2F)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -237,37 +220,38 @@ const priceData = {
                         <tr class="border-b border-slate-200 bg-slate-50">
                             <th class="py-3 px-4 bg-slate-50 font-semibold">60分</th>
                             <td data-label="平日" class="py-3 px-4 text-center">1,300円 / 1,200円</td>
-                            <td data-label="土日祝" class="py-3 px-4 text-center">1,400円</td>
+                            <td data-label="土日祝" class="py-3 px-4 text-center">1,400円 / 1,400円</td>
                         </tr>
                         <tr class="border-b border-slate-200 bg-white">
                             <th class="py-3 px-4 bg-slate-50 font-semibold">90分</th>
                             <td data-label="平日" class="py-3 px-4 text-center">1,600円 / 1,500円</td>
-                            <td data-label="土日祝" class="py-3 px-4 text-center">1,700円</td>
+                            <td data-label="土日祝" class="py-3 px-4 text-center">1,700円 / 1,700円</td>
                         </tr>
                         <tr class="border-b border-slate-200 bg-slate-50">
                             <th class="py-3 px-4 bg-slate-50 font-semibold">120分</th>
                             <td data-label="平日" class="py-3 px-4 text-center">1,800円 / 1,700円</td>
-                            <td data-label="土日祝" class="py-3 px-4 text-center">1,900円</td>
+                            <td data-label="土日祝" class="py-3 px-4 text-center">1,900円 / 1,900円</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             
-            <div class="bg-green-50 border border-green-200 rounded-lg p-4 my-6 text-sm md:text-base">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 my-6 text-sm md:text-base not-prose">
                 <h4 class="font-bold text-green-800 mb-2 flex items-center">
                     <span class="mr-2">✨</span>お得な割引・プラン情報
                 </h4>
                 <ul class="list-disc list-inside space-y-1 text-slate-700">
-                    <li><strong>ジュニア（高校生まで）：</strong> 60分 500円 / 90分 800円 / 120分 1,000円と破格！</li>
+                    <li><strong>ジュニア（高校生まで）：</strong> 60分500円 / 90分800円 / 120分1,000円と破格！</li>
                     <li><strong>平日朝限定（10時まで）：</strong> 180分 1,700円（2階打席限定）</li>
                     <li><strong>延長料金：</strong> 30分ごとに500円（ジュニアは300円）</li>
                     <li><strong>球貸し：</strong> 2F指定打席（26〜32番）のみ可能（40球 300円）</li>
                 </ul>
             </div>
 
-            <div id="simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-12 scroll-mt-24">
+            {/* --- シミュレーター --- */}
+            <div id="simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-12 scroll-mt-24 shadow-sm">
                 <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1 text-green-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
                     かんたん料金シミュレーター
                 </h3>
 
@@ -303,7 +287,7 @@ const priceData = {
                         <p class="text-3xl font-bold text-green-700">
                             ¥ <span id="sim-total-price">----</span>
                         </p>
-                        <p class="text-xs text-slate-500 mt-2">※入場料込みの総額です。</p>
+                        <p class="text-xs text-slate-500 mt-2">※入場料・打席料はかかりません。この金額のみで練習できます！</p>
                     </div>
                 </div>
             </div>
@@ -312,7 +296,7 @@ const priceData = {
                 <Image
                     src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9344.png"
                     alt="石山ゴルフ練習場の打席からの眺め"
-                    class="w-full h-auto object-cover rounded-lg"
+                    class="w-full h-auto object-cover rounded-lg shadow-sm"
                     loading="lazy"
                     width={1280}
                     height={960}
@@ -320,55 +304,58 @@ const priceData = {
                     quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    昔ながらの雰囲気が、逆に集中力を高めてくれる
+                    昔ながらの落ち着いた雰囲気が、逆に集中力を高めてくれます。
                 </figcaption>
             </figure>
 
+            {/* --- レビュー本文（見出し調整） --- */}
             <h2 id="happy-betrayal" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                期待ゼロからの、嬉しい裏切り
+                【体験レビュー】期待ゼロからの嬉しい裏切り
             </h2>
+
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                到着前から、心は掴まれていた
+                魅力①：初めてでも安心。丁寧な看板と温かい接客
             </h3>
             <p>
-                期待せずに向かう道中、その考えは少しずつ揺らぎ始めた。目的地に近づくと、大きくて分かりやすい看板が、立て続けに3つも現れたのだ。「ようこそ」と言われているような、その丁寧な案内に、思わず「お、親切だな…」と心が温かくなり、自然とワクワクしていた。
+                目的地に近づくと、大きくて分かりやすい看板が立て続けに3つも現れました。<br/>
+                「ようこそ」と言われているような丁寧な案内に、初めて行く練習場特有の不安がスッと消えました。
             </p>
 
             <figure class="my-6">
                  <Image
                     src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9429.png"
                     alt="石山ゴルフ練習場の分かりやすい案内看板"
-                    class="w-full h-auto object-cover rounded-lg"
+                    class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
                     loading="lazy"
                     width={960}
                     height={1280}
                     format="webp"
                     quality={80}
                 />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    分かりやすい大きな看板が、初めてでも迷わせない
-                </figcaption>
             </figure>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                過剰じゃない、だから心地良い。「清潔感のある接客」
-            </h3>
             <p>
-                そして建物の中へ。特別なことをされたわけじゃない。でも、受付スタッフさんの対応は、とても自然な笑顔だった。僕が勝手に感じただけかもしれないが、そのやり取りには不思議と「清潔感」があった。マニュアル通りではない、人の温もりが感じられる。この時点で、僕はもうこの練習場のファンになり始めていた。
+                そして建物の中へ。受付スタッフさんや店長さんの対応は、とても自然な笑顔で親切でした。<br/>
+                マニュアル通りではない、人の温もりが感じられる<strong>「清潔感のある接客」</strong>。この時点で、僕はもうこの練習場のファンになり始めていました。
             </p>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                「ズレない」という、想像以上の快感
+                魅力②：ダフっても安心！極厚で「ズレない」極上マット
             </h3>
             <p>
-                打席に立ち、何球か打ち始めると、ある快適さに気づく。「あれ、このマット、すごく打ちやすい…」。他の練習場だと、少し厚めにインパクトしただけでマットがめくれたりする。その度に足元を直し、アドレスを取り直す。この数秒の繰り返しが、集中力の糸を静かに、しかし確実に断ち切っていくのだ。しかし、ここのマットは違った。僕のどんなミスショットも、どっしりと構えて全て受け止めてくれる。だから僕は、次のスイングのことだけを考えられた。この「ズレない」という価値が、どれほど大きいか。
+                打席に立ち、何球か打ち始めると、ある強烈な快適さに気づきます。<br/>
+                <strong>「あれ、このマット、打感が最高にいいし、全くズレない…！」</strong>
+            </p>
+            <p>
+                他の練習場だと、少し厚めにインパクト（ダフり気味にヒット）しただけでマットがめくれたり、ズレたりすることがありますよね。その度に足元を直し、アドレスを取り直す。これが地味にストレスなんです。<br/>
+                しかし、石山ゴルフ練習場のマットは違いました。僕のどんなミスショットも、どっしりと構えて全て受け止めてくれます。
             </p>
 
             <figure class="my-6">
                  <Image
                     src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9357.png"
-                    alt="石山ゴルフ練習場のズレない打席マット"
-                    class="w-full h-auto object-cover rounded-lg"
+                    alt="石山ゴルフ練習場のズレない極厚打席マット"
+                    class="w-full h-auto object-cover rounded-lg shadow-sm"
                     loading="lazy"
                     width={1280}
                     height={960}
@@ -376,67 +363,71 @@ const priceData = {
                     quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    このどっしりとしたマットが、ミスへの恐怖を和らげる
+                    手首への負担も少なく、次のスイングのことだけを考えられます。
                 </figcaption>
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                もはや宝探し。5,000円の新古品ウェッジとの出会い
+                魅力③：実は穴場？激安の中古クラブ・新古品コーナー
             </h3>
             <p>
-                そして、この日のハイライトが訪れる。クラブハウスに所狭しと並べられた中古クラブ。何気なく眺めていた僕の目に、一本のウェッジが飛び込んできた。ミズノの「SURE
-                DD 50」。新古品で、値札には<strong>「¥5,000（税込）」</strong>の文字が。
+                そして、この日一番の驚きがクラブハウス内にありました。<br/>
+                所狭しと並べられた中古クラブコーナー。何気なく眺めていると、ミズノの「SURE DD 50」というウェッジが目に飛び込んできました。なんと、ピカピカの新古品で値札には<strong>「¥5,000（税込）」</strong>の文字が！
             </p>
 
             <figure class="my-6">
                  <Image
                     src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9409.png"
                     alt="5000円で売られていたミズノの新古品ウェッジ"
-                    class="w-full h-auto object-cover rounded-lg"
+                    class="w-full h-auto object-cover rounded-lg shadow-sm"
                     loading="lazy"
                     width={1280}
                     height={960}
                     format="webp"
                     quality={80}
                 />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    まさかの出会い。宝探し感覚でクラブを選べる
-                </figcaption>
             </figure>
 
             <p>
-                本当の驚きは、家に帰ってからだった。ふと気になってフリマアプリで相場を調べてみると、同じモデルの中古品が8,000円前後で取引されているじゃないか。「（え、マジかよ！あそこのはピカピカの新古品で5,000円だぞ…？）」一気に物欲のスイッチが入った。
+                家に帰ってフリマアプリで相場を調べてみると、同じモデルの中古品が8,000円前後で取引されていました。<br/>
+                ネットより安く、しかも自分の目で見て触れる。ここは単なる練習場ではなく、<strong>「掘り出し物に出会える宝探しスポット」</strong>でもあったのです。
             </p>
 
+            {/* --- デメリット部分にリンクを追加 --- */}
             <h2 id="cons" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                正直に伝える、気になる点
+                正直に伝える、少し気になる点
             </h2>
             <p>
-                正直に言おう。僕が愛してやまないトップトレーサーは、ここにはない。綺麗に整備された広大なアプローチ練習場も、パターグリーンもない。だから、僕が普段の練習の拠点としてここを選ぶことは、たぶんないだろう。僕の練習スタイルとは、やはり少し違うからだ。だが、不思議と物足りなさは感じなかった。むしろ、クラブヘッドから手に伝わる打感や、乾いたインパクト音。普段データで見ていたものを、五感で味わう時間は、僕にとって新鮮な“発見”ですらあったのだ。
+                レビューサイトとして正直にお伝えすると、僕が愛してやまない最新の設備（トップトレーサーなどの弾道測定器）や、綺麗に整備された天然芝のアプローチ、<a href="https://shigagolf.com/articles/365-nagahama/short-course/" class="text-green-700 hover:underline font-bold">本格的なショートコース</a>などはありません。<br/>
+                なので、「最新機器でスイングをデータ分析したい」という日には不向きかもしれません。
+            </p>
+            <p>
+                しかし、不思議と物足りなさは感じませんでした。むしろ、クラブヘッドから手に伝わる打感や、乾いたインパクト音。普段データでばかり見ていたものを「五感」で味わいながら無心で球を打つ時間は、非常に有意義なものでした。
             </p>
 
             <h2 id="tips" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                僕が本当に伝えたかった「裏ワザ」
+                知らなきゃ損！お得なキャンペーンと活用法
             </h2>
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                上達の最短ルートは「回数」だ！30分打ち放題の真価
+                上達の最短ルートは「回数」。30分打ち放題の真価
             </h3>
             <p>
-                「上手くなる人は、たくさん球を打つ人じゃない。たくさん練習場に通う人だ」僕の持論だ。石山ゴルフ練習場は、入場料不要で「30分」という短時間から練習できる。これは、練習の「回数」を圧倒的に増やせるということだ。目的は何だっていい。ただ純粋に「もっと上手くなりたい」と願う全てのゴルファーにとって、ここは最高の環境だと断言できる。
+                「上手くなる人は、一日にたくさん球を打つ人じゃない。たくさん練習場に通う人だ」というのが僕の持論です。<br/>
+                石山ゴルフ練習場は、入場料不要で<strong>「30分 700円」</strong>という短時間・低価格から練習できます。仕事帰りや隙間時間にサクッと寄れるこの手軽さは、練習の「回数」を圧倒的に増やしてくれる最強のメリットです。
             </p>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
-                男性ゴルファーも要チェック
+                若手ゴルファー必見の独自キャンペーン
             </h3>
             <p>
-                期間限定かもしれませんが、40歳以下の男性ゴルファー向けの激安キャンペーンなど、独自の面白い企画を実施していることがあります。
+                僕が訪れた際は、「40歳以下の男性ゴルファー向け激安キャンペーン」など、独自の面白い企画を実施していました。
             </p>
 
             <figure class="my-6">
                  <Image
                     src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9310.png"
                     alt="40歳以下男性限定の打ち放題キャンペーン料金表"
-                    class="w-full h-auto object-cover rounded-lg"
+                    class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
                     loading="lazy"
                     width={960}
                     height={1280}
@@ -444,35 +435,31 @@ const priceData = {
                     quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    キャンペーン情報は要チェックです（※写真は取材時のもの）
+                    ※写真は取材時のものです。最新のキャンペーンは現地でチェック！
                 </figcaption>
             </figure>
 
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-6">
-                <p class="font-bold text-slate-800">
-                    【キャンペーン情報の確認方法】
-                </p>
-                <p class="text-sm mt-2 text-slate-600">
-                    私が訪れた際は破格のキャンペーンを行っていましたが、こうした情報は時期によって変わります。訪れる際は、ぜひ現地の掲示板や公式サイトで最新情報をチェックしてみてください。思いがけないお得情報に出会えるかもしれません。
-                </p>
-            </div>
-
-            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                結論：僕にとっての「特別な場所」
+            {/* --- 結論（リンク追加・聖地排除） --- */}
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-4">
+                まとめ：僕にとっての「特別な場所」
             </h2>
             <p>
-                僕の練習のホームグラウンドは、これからもKSP彦根や365彦根であり続けるだろう。データを見て、考えながら練習するスタイルは変えられないからだ。しかし、もし僕が「次のクラブが欲しい」と思ったら？その時は、迷わず車で1時間かけて、大津市の「石山ゴルフ練習場」へ向かう。フリマアプリの中古品より安い新古品を、自分の目で見て、触って、そして何より納得いくまで試打できるからだ。
+                僕の練習のホームグラウンドは、これからも<a href="https://shigagolf.com/articles/ksp-hikone-review/" class="text-green-700 hover:underline font-bold">KSP彦根</a>や<a href="https://shigagolf.com/articles/365-nagahama/range/" class="text-green-700 hover:underline font-bold">365ながはま</a>であり続けるでしょう。データを見て、考えながら練習するスタイルは変えられないからです。
             </p>
             <p>
-                練習の拠点にはならない。でも、クラブ購入においては、僕にとって最高の場所。ここは、僕にとってそういう<strong>「特別な目的を持った、最高の練習場」</strong>になった。データ派のあなたも、そうでないあなたも、一度この「宝探し」体験をしてみてはいかがだろうか。
+                しかし、もし僕が「次のクラブが欲しい」と思ったら？その時は、迷わず車で大津市の「石山ゴルフ練習場」へ向かいます。フリマアプリの中古品より安い新古品を、自分の目で見て、触って、そして何より納得いくまで試打できるからです。
+            </p>
+            <p>
+                練習の拠点にはならない。でも、クラブ購入においては僕にとって最高の穴場。ここは、そういう<strong>「特別な目的を持った、最高のお気に入りスポット」</strong>として僕のゴルフマップに刻まれました。<br/>
+                データ派のあなたも、そうでないあなたも、ぜひ一度この心地よさと「宝探し」を体験しに行ってみてください！
             </p>
 
-            <hr class="my-8" />
+            <hr class="my-12 border-slate-200" />
 
             <div class="not-prose my-12 space-y-12">
             {
                 category === '体験談' && (
-                    <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    <MySlider articles={experienceReports} title="あわせて読みたい「大津・山科エリア」の体験談"/>
                 )
             }
             </div>
@@ -480,28 +467,29 @@ const priceData = {
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
 
+            {/* --- 基本情報 --- */}
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                「石山ゴルフ練習場」の基本情報
+                「石山ゴルフ練習場」の営業時間・アクセス基本情報
             </h2>
             {
                 rangeData ? (
-                    <div class="overflow-x-auto not-prose">
+                    <div class="overflow-x-auto not-prose shadow-sm rounded-lg border border-slate-200">
                         <table class="w-full text-left border-collapse">
                             <tbody class="align-baseline">
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold w-1/3 text-slate-800">
                                         練習場名
                                     </th>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-4">
                                         {rangeData.name}
                                     </td>
                                 </tr>
                                 {rangeData.avgRating && (
                                     <tr class="border-b border-slate-200">
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
-                                        <td class="py-3 px-4">
+                                        <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">総合評価</th>
+                                        <td class="py-4 px-4">
                                             <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
-                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                <span class="font-bold text-amber-500 text-lg mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
                                                 {Array.from({ length: 5 }).map((_, i) => (
                                                     <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -512,22 +500,22 @@ const priceData = {
                                     </tr>
                                 )}
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">
                                         住所
                                     </th>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-4">
                                         <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
                                         </a>
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">
                                         電話番号
                                     </th>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-4">
                                         {rangeData.phone ? (
-                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline font-bold">
                                                 {rangeData.phone}
                                             </a>
                                         ) : (
@@ -536,48 +524,46 @@ const priceData = {
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">
                                         営業時間
                                     </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.business_hours}
-                                    </td>
+                                    <td class="py-4 px-4" set:html={rangeData.business_hours?.replace(/\n/g, '<br />') || "お問い合わせください"} />
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">
                                         料金（代表例）
                                     </th>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-4">
                                         {rangeData.price_uchihodai_weekday_str ||
                                             "お問い合わせください"}
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">
                                         ヤード数
                                     </th>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-4">
                                         {rangeData.yardage
                                             ? `${rangeData.yardage}ヤード`
                                             : "-"}
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">
                                         打席数
                                     </th>
-                                    <td class="py-3 px-4">
+                                    <td class="py-4 px-4">
                                         {rangeData.bays
                                             ? `${rangeData.bays}打席`
                                             : "-"}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">
                                         アクセス
                                     </th>
-                                    <td class="py-3 px-4">
-                                        {rangeData.access}
+                                    <td class="py-4 px-4 text-sm">
+                                        {rangeData.access || "Googleマップ等でご確認ください"}
                                     </td>
                                 </tr>
                             </tbody>
@@ -589,9 +575,10 @@ const priceData = {
                     </p>
                 )
             }
+            
             {
                 rangeData && (
-                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border border-slate-300 shadow-sm">
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
@@ -600,20 +587,12 @@ const priceData = {
                             allowfullscreen=""
                             loading="lazy"
                             referrerpolicy="no-referrer-when-downgrade"
+                            title={`${rangeData.name}のGoogleマップ`}
                         ></iframe>
                     </div>
                 )
             }
-            <p class="text-center font-bold text-lg mt-8">
-                🎯 さらに詳しい情報や口コミはこちら！
-                <br />
-                <a
-                    href={`/ranges/${rangeId}/`}
-                    class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
-                >
-                    「石山ゴルフ練習場」のシガゴル公式レビューページへ
-                </a>
-            </p>
+            
         </article>
     </div>
 
@@ -622,7 +601,7 @@ const priceData = {
             position: relative;
             width: 100%;
             overflow: hidden;
-            padding-top: 56.25%; /* 16:9 aspect ratio */
+            padding-top: 56.25%; /* 16:9 aspect ratio for responsive iframe */
         }
         .map-container iframe {
             position: absolute;
@@ -636,11 +615,7 @@ const priceData = {
             scroll-margin-top: 6rem; /* 96px */
         }
         .summary-box {
-            background-color: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            margin: 2rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
     </style>
 

@@ -187,6 +187,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 .term-tip:active::after { 
     visibility: visible;
     opacity: 1;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s;
 }
 
 /* 【重要】右端・左端での見切れを「自動」で防ぐ調整（スマホ用） */
@@ -483,3 +484,22 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
         </article>
     </div>
 </BaseLayout>
+
+<script>
+  // すべてのツールチップ要素を取得
+  const tips = document.querySelectorAll('.term-tip');
+
+  tips.forEach(tip => {
+    tip.addEventListener('click', () => {
+      // タップしてから3秒後に active 状態を解除する（クラスを一時的に外すなど）
+      // スマホの擬似的なhover状態をリセットするため、一度透明にしてから戻す処理
+      setTimeout(() => {
+        // active状態を強制的にリセットするために、要素を一時的に操作
+        tip.style.pointerEvents = 'none';
+        setTimeout(() => {
+          tip.style.pointerEvents = 'auto';
+        }, 100);
+      }, 3000); // 3秒後に消える設定
+    });
+  });
+</script>
