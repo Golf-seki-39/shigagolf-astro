@@ -9,8 +9,8 @@ import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
 // --- この記事固有の情報 ---
-const title = "データ派の僕が、東近江の“秘密基地”「がれーじぱーく」でゴルフ観をひっくり返された日 | シガゴル";
-const description = "滋賀のインドアゴルフはコスパが悪い？そんな偏見を覆す、東近江市の「がれーじぱーく」。データ派ゴルファーが、その圧倒的な魅力とオーナーの人柄に惚れ込んだリアルな体験記です。";
+const title = "【がれーじぱーく東近江 レビュー】1時間1000円の激安インドアゴルフ！スカイトラック完備の秘密基地 | シガゴル";
+const description = "滋賀県東近江市のインドアゴルフ「がれーじぱーく」を徹底レビュー。1時間1,000円という破格の料金で弾道測定器「スカイトラック」が使い放題！データ派ゴルファーも大満足のコスパ最強の秘密基地の全貌と、行く前に知っておきたい注意点（空調など）を正直に解説します。";
 const category = "体験談";
 const pubDate = "2025-09-28";
 const pubDateISO = "2025-09-28T10:00:00+09:00";
@@ -18,9 +18,9 @@ const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage
 const rangeId = "garage_park";
 
 // --- シェアボタン用の変数を定義 ---
-const baseUrl = "https://shigolf.com";
+const baseUrl = "https://shigagolf.com"; // ※ドメイン修正済み
 const articleUrl = `${baseUrl}/articles/garege-park-review/`;
-const headline = title.split(" | ")[0];
+const headline = "【がれーじぱーく東近江】1時間1000円の激安インドア！スカイトラック完備の“秘密基地”を体験";
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
@@ -33,12 +33,12 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+// --- 関連記事リスト ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
     { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
-　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
     { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
 const comparisonArticles = [
@@ -47,70 +47,75 @@ const comparisonArticles = [
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
     { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
     { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
-    { url: '/articles/comparison/o-mihachiman-guide/', title: '【近江八幡 打ちっぱなし】グリーンピア vs 安土 結局どっち？料金・質・アクセスを現地ライターが本音で徹底比較 ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hachiman-guide.jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【近江八幡 打ちっぱなし】グリーンピア vs 安土 結局どっち？料金・質・アクセスを本音で比較 ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hachiman-guide.jpg' },
     { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
+
+// --- 構造化データ(JSON-LD)の安全な構築 ---
+const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": articleUrl
+    },
+    "headline": headline,
+    "description": description,
+    "image": [ 
+        imageUrl,
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/0000range.png",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/シガゴル.jpg",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/賽銭箱.jpg"
+    ],
+    "author": {
+        "@type": "Person",
+        "name": "関（せき）",
+        "url": `${baseUrl}/about/`
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "シガゴル",
+        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+    },
+    "datePublished": pubDateISO,
+    "dateModified": new Date().toISOString()
+};
+
+// avgRatingが存在する場合のみReviewスキーマを生成する（ペナルティ回避）
+const reviewSchema = rangeData?.avgRating ? {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "itemReviewed": {
+        "@type": "SportsActivityLocation",
+        "name": rangeData.name || "がれーじぱーく東近江",
+        "image": rangeData.imageUrl || imageUrl,
+        "telephone": rangeData.phone,
+        "priceRange": "¥1000-¥2000",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": rangeData.address,
+            "addressLocality": rangeData.city || "東近江市",
+            "addressRegion": "滋賀県",
+            "postalCode": rangeData.postalCode,
+            "addressCountry": "JP"
+        }
+    },
+    "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": Number(rangeData.avgRating), 
+        "bestRating": "5",
+        "worstRating": "1"
+    },
+    "author": { "@type": "Person", "name": "関（せき）" }
+} : null;
+
+// JSON-LD配列からnullを除外
+const jsonLdArray = [articleSchema, reviewSchema].filter(Boolean);
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-    <script slot="head" type="application/ld+json" set:html={JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "mainEntityOfPage": {
-          "@type": "WebPage",
-          "@id": articleUrl
-        },
-        "headline": headline,
-        "description": description,
-        "image": [ 
-            imageUrl,
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/0000range.png",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/シガゴル.jpg",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/賽銭箱.jpg",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9766.png",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9537.png"
-        ],
-        "author": {
-            "@type": "Person",
-            "name": "関（せき）",
-            "url": "https://shigolf.com/about/",
-            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "シガゴル",
-            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
-        },
-        "datePublished": pubDateISO,
-        "dateModified": pubDateISO,
-        "review": {
-            "@type": "Review",
-            "itemReviewed": {
-                "@type": "SportsActivityLocation",
-                "name": rangeData?.name,
-                "image": rangeData?.imageUrl,
-                "telephone": rangeData?.phone,
-                "priceRange": "¥1000-¥2000",
-                "address": {
-                  "@type": "PostalAddress",
-                  "streetAddress": rangeData?.address,
-                  "addressLocality": rangeData?.city,
-                  "addressRegion": "滋賀県",
-                  "postalCode": rangeData?.postalCode,
-                  "addressCountry": "JP"
-                }
-            },
-            "reviewRating": {
-                "@type": "Rating",
-                // ▼ [最重要修正点] ハードコードされた "4.8" を削除し、Firebaseの値を常に使用するように変更
-                "ratingValue": rangeData?.avgRating, 
-                "bestRating": "5",
-                "worstRating": "1"
-            },
-            "author": { "@type": "Person", "name": "関（せき）" }
-        }
-    })} />
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLdArray)} />
     
     <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
         <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
@@ -129,6 +134,27 @@ const comparisonArticles = [
 
             <Image src={imageUrl} alt="がれーじぱーく東近江のインドア打席" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width={1200} height={800} fetchpriority="high" format="webp" quality={80} />
             
+            {/* --- 冒頭の結論BOX --- */}
+            <div class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose shadow-sm">
+                <h3 class="flex items-center text-lg font-bold mb-3 text-green-800 border-b border-green-200 pb-2">
+                    <span class="mr-2">💡</span>3秒でわかる！がれーじぱーくの凄いところ
+                </h3>
+                <ul class="space-y-3 text-sm md:text-base">
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 min-w-[4rem]">料金：</span>
+                        <span><strong>1時間1,000円</strong>（※初回のみ要年会費）というインドアとは思えない破格の設定。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 min-w-[4rem]">設備：</span>
+                        <span>全打席に弾道測定器<strong>「スカイトラック」</strong>を完備。自分のスイング映像とデータが同時に確認可能。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 min-w-[4rem]">裏ワザ：</span>
+                        <span>複数人でシェアできる<strong>「3時間2,500円」</strong>の裏メニューあり！合宿のような特訓ができます。</span>
+                    </li>
+                </ul>
+            </div>
+
             <p class="text-xl font-bold text-green-700">「インドアゴルフって、結局コスパ悪くない？」</p>
             <p>広々とした屋外練習場が豊富な滋賀でなら、なおさらそう思いませんか？ 実は僕も、つい最近までそう信じて疑いませんでした。</p>
             <p>X（旧Twitter）で<strong>「がれーじぱーく東近江」</strong>の存在を知った時も、正直なところ半信半疑。<strong><br/>「インドアなのに、驚くほど安い」「完全会員制」</strong>という言葉に、「一見さんお断りだったら、どうしよう…」と、少しだけ身構えていました。</p>
@@ -137,7 +163,7 @@ const comparisonArticles = [
             <p>ダーツ、卓球、ラジコンサーキット…。ゴルフとは少し違うカルチャーの気配が漂う、少し薄暗い入り口。</p>
             
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/0000range.png" alt="少し薄暗く秘密基地感のある施設の入り口" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/0000range.png" alt="少し薄暗く秘密基地感のある施設の入り口" class="w-full h-auto object-cover rounded-lg shadow-sm" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">本当にここでいいのか？期待と不安が入り混じる瞬間。</figcaption>
             </figure>
             
@@ -157,28 +183,28 @@ const comparisonArticles = [
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#light-chapter" class="text-green-700 hover:underline">がれーじぱーく東近江、３つの衝撃的な体験</a></li>
-                    <li><a href="#shadow-chapter" class="text-green-700 hover:underline">正直に伝えたい、2つの注意点</a></li>
-                    <li><a href="#how-to-use" class="text-green-700 hover:underline">がれーじぱーく東近江は、こう使え！</a></li>
+                    <li><a href="#light-chapter" class="text-green-700 hover:underline">【体験レビュー】がれーじぱーく東近江の3つのスゴい魅力</a></li>
+                    <li><a href="#shadow-chapter" class="text-green-700 hover:underline">【要注意】行く前に知っておきたい2つのデメリット</a></li>
+                    <li><a href="#how-to-use" class="text-green-700 hover:underline">【コスパ最強】がれーじぱーくを120%楽しむ活用術</a></li>
                     <li><a href="#final-conclusion" class="text-green-700 hover:underline">【結論】滋賀のインドアゴルフ観を変えた“秘密基地”の正体</a></li>
                     <li><a href="#info-summary" class="text-green-700 hover:underline">「がれーじぱーく東近江」の基本情報</a></li>
                 </ul>
             </div>
 
-            <h2 id="light-chapter" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">がれーじぱーく東近江、３つの衝撃的な体験</h2>
+            <h2 id="light-chapter" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【体験レビュー】がれーじぱーく東近江の3つのスゴい魅力</h2>
             <p>この“秘密基地”で、僕が特に感動した部分を3つ紹介します。</p>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">体験①：スイングが“見える化”する「スカイトラック」</h3>
             <p>ここの心臓部は、弾道測定器<strong>「スカイトラック」</strong>。僕にとっての最高の価値は、ショット直後に<strong>正面と後方の2視点から自分のスイング映像を即座に確認できる</strong>ことでした。</p>
             
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/シガゴル.jpg" alt="スカイトラックの弾道データと2方向のスイング映像が映る画面" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/シガゴル.jpg" alt="スカイトラックの弾道データと2方向のスイング映像が映る画面" class="w-full h-auto object-cover rounded-lg shadow-sm" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">感覚と現実のズレを、データと映像が埋めてくれる。</figcaption>
             </figure>
 
             <div class="not-prose bg-green-50 p-6 my-8 rounded-lg border border-green-200">
-                <p class="font-bold text-slate-800">僕が体験した「仮説→実行→検証」サイクル</p>
-                <ul class="list-none space-y-2 mt-2 pl-2">
+                <p class="font-bold text-slate-800 mb-2">💡 僕が体験した「仮説→実行→検証」サイクル</p>
+                <ul class="list-none space-y-2 pl-2 text-slate-700 text-sm md:text-base">
                     <li><strong>「仮説」</strong>：最近、アイアンが右に抜ける。もしかして、インパクトで少し手元が浮いているのでは？</li>
                     <li><strong>「実行」</strong>：手元を低く保つ意識で、一球打つ。</li>
                     <li><strong>「検証」</strong>：再生される正面映像で、確かにインパクトゾーンが安定していることを確認。弾道データを見ると、打ち出し角が理想値に近づき、サイドスピンも平均400回転減少。「これか！」と。</li>
@@ -190,12 +216,12 @@ const comparisonArticles = [
             <p>練習の合間に休憩室を覗くと、また衝撃が。ジュースやアイス、缶ビールまで並ぶ冷蔵庫の横に、ポツンと置かれた箱。そう、ここは欲しいものを自分で取り、お金を貯金箱のような缶にいれる、完全な信頼で成り立つ“無人販売所”なのです。</p>
 
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/賽銭箱.jpg" alt="賽銭箱のような料金箱が置かれたユニークな休憩室" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/賽銭箱.jpg" alt="賽銭箱のような料金箱が置かれたユニークな休憩室" class="w-full h-auto object-cover rounded-lg shadow-sm" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">このアナログ感が、心を和ませる。</figcaption>
             </figure>
 
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9768.png" alt="ドリンクや軽食の料金表" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9768.png" alt="ドリンクや軽食の料金表" class="w-full h-auto object-cover rounded-lg shadow-sm" loading="lazy" width={1200} height={800} format="webp" quality={80} />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">良心的な価格設定に、オーナーの人柄が滲み出る。</figcaption>
             </figure>
             
@@ -203,23 +229,26 @@ const comparisonArticles = [
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">体験③：すべてを包み込む、オーナーの人柄</h3>
             <p>何よりも心を掴まれたのは、オーナーの人柄でした。</p>
-            <blockquote class="text-xl font-semibold border-l-4 border-green-600 pl-4 my-6">「5分10分くらい、時間オーバーしてもええよ！」</blockquote>
+            <blockquote class="text-xl font-semibold border-l-4 border-green-600 pl-4 my-6 bg-slate-50 py-3 rounded-r-lg">
+                「5分10分くらい、時間オーバーしてもええよ！」
+            </blockquote>
             <p>そんな言葉に代表される、温かい距離感。この場所の居心地の良さは、すべてここから生まれています。</p>
 
-            <h2 id="shadow-chapter" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">正直に伝えたい、2つの注意点</h2>
+            <h2 id="shadow-chapter" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【要注意】行く前に知っておきたい2つのデメリット</h2>
             <p>もちろん、すべてが完璧なわけではありません。正直に伝えるべき部分もあります。</p>
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">注意点①：完璧な空調はない</h3>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">注意点①：完璧な空調（エアコン）はない</h3>
             <p>「インドア＝快適」というイメージで行くと、夏場は少し驚くかもしれません。空調は大型扇風機がメイン。僕は平気ですが、暑さが苦手な方は、タオルと着替えの準備をおすすめします。</p>
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">注意点②：練習データの蓄積はできない</h3>
-            <p>データ派にとって、唯一のもどかしさがこれ。<strong>「スカイトラック」</strong>の練習データはアプリ連携などで蓄積されないため、その日の記録はその日限りです。</p>
+            <p>データ派にとって、唯一のもどかしさがこれ。<strong>「スカイトラック」</strong>の練習データはアプリ連携などで自分のスマホに蓄積されないため、その日の記録はその日限りです。</p>
 
-            <h2 id="how-to-use" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">がれーじぱーく東近江は、こう使え！</h2>
-            <p>そんな「影」を補って余りあるのが、この場所を120%使いこなすための、僕なりの活用術です。</p>
+            <h2 id="how-to-use" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【コスパ最強】がれーじぱーくを120%楽しむ活用術</h2>
+            <p>そんな「影（デメリット）」を補って余りあるのが、この場所を120%使いこなすための、僕なりの活用術です。</p>
+            
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">活用術①：「スマホ」が最強のレッスンプロになる</h3>
             <p>データの蓄積ができないなら、スマホで画面を録画すればOK。僕は気になる番手の平均データをスマホで検索し、自分のデータと見比べながら練習します。まるで、ネットという名のコーチと二人三脚でスイングを改造していく感覚です。</p>
             
             <figure class="my-6">
-                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9537.png" alt="データを調べながら練習する様子" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1200} height={800} format="webp" quality={80} />
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9537.png" alt="データを調べながら練習する様子" class="w-full h-auto object-cover rounded-lg shadow-sm" loading="lazy" width={1200} height={800} format="webp" quality={80} />
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">活用術②：仲間と「ゴルフ合宿」でコスパ最強</h3>
@@ -227,12 +256,19 @@ const comparisonArticles = [
 
             <h2 id="final-conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【結論】滋賀のインドアゴルフ観を変えた“秘密基地”の正体</h2>
             <p>結局、「がれーじぱーく東近江」はどんな場所なのか？ 僕の結論は、ただの滋賀のインドアゴルフ施設じゃない、ということ。</p>
-            <div class="not-prose bg-yellow-50 border-l-4 border-yellow-400 p-6 my-8 text-center">
-                <p class="text-xl font-bold text-slate-800 m-0">「人目を気にせず、こっそり自分のゴルフと向き合いたい」<br>「でも、お金はかけずに、質の高い練習がしたい」</p>
+            
+            <div class="not-prose bg-yellow-50 border border-yellow-300 p-6 my-8 text-center rounded-lg shadow-sm">
+                <p class="text-lg md:text-xl font-bold text-slate-800 m-0 leading-relaxed">
+                    「人目を気にせず、こっそり自分のゴルフと向き合いたい」<br>
+                    「でも、お金はかけずに、質の高い練習がしたい」
+                </p>
             </div>
+            
             <p>そんな、少しわがままなゴルファーの願いを、完璧に叶えてくれる場所です。</p>
             <p>僕が、少しくらい暑くてもここに通い続けてしまう理由。それは、練習の質の高さだけではありません。「店番よろしく！」と屈託なく笑い、僕を仲間として信頼してくれるオーナーの存在。ここは、僕にとって<strong>「ゴルフが上手くなるための、最高の秘密基地」</strong>なのです。</p>
             <p class="font-bold mt-6">もしあなたが、今の練習方法に少しでも伸び悩みを感じているなら。あるいは、ただ純粋にゴルフを楽しめる隠れ家を探しているなら。一度、この“秘密基地”の扉を叩いてみてください。きっと、僕のようにゴルフ観がひっくり返されるはずですから。</p>
+
+            <hr class="my-12 border-slate-200" />
 
             <div class="not-prose my-12 space-y-12">
             {
@@ -242,13 +278,12 @@ const comparisonArticles = [
                         <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
                     </>
                 ) 
-                : category === '比較記事' ? (
+                : (
                     <>
                         <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
                         <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
                     </>
                 ) 
-                : null
             }
             </div>
             <ShareButtons articleUrl={articleUrl} headline={headline} />
@@ -259,19 +294,19 @@ const comparisonArticles = [
             </h2>
             {
                 rangeData ? (
-                    <div class="overflow-x-auto not-prose">
+                    <div class="overflow-x-auto not-prose shadow-sm rounded-lg border border-slate-200">
                         <table class="w-full text-left border-collapse">
                             <tbody>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">施設名</th>
-                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold w-1/3 text-slate-800">施設名</th>
+                                    <td class="py-4 px-4">{rangeData.name}</td>
                                 </tr>
                                 {rangeData.avgRating && (
                                     <tr class="border-b border-slate-200">
-                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
-                                        <td class="py-3 px-4">
+                                        <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">総合評価</th>
+                                        <td class="py-4 px-4">
                                             <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
-                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                <span class="font-bold text-amber-500 text-lg mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
                                                 {Array.from({ length: 5 }).map((_, i) => (
                                                     <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -282,18 +317,18 @@ const comparisonArticles = [
                                     </tr>
                                 )}
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
-                                    <td class="py-3 px-4">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">住所</th>
+                                    <td class="py-4 px-4">
                                         <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
                                             {rangeData.address}
                                         </a>
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
-                                    <td class="py-3 px-4">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">電話番号</th>
+                                    <td class="py-4 px-4">
                                         {rangeData.phone ? (
-                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline font-bold">
                                                 {rangeData.phone}
                                             </a>
                                         ) : (
@@ -302,27 +337,27 @@ const comparisonArticles = [
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
-                                    <td class="py-3 px-4">{rangeData.business_hours}</td>
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">営業時間</th>
+                                    <td class="py-4 px-4">{rangeData.business_hours}</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">料金（代表例）</th>
-                                    <td class="py-3 px-4">
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">料金（代表例）</th>
+                                    <td class="py-4 px-4">
                                         会員: 1時間 1,000円<br />
                                         （年会費 2,000円 ※初年度無料）
                                     </td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">弾道測定器</th>
-                                    <td class="py-3 px-4">スカイトラック</td>
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">弾道測定器</th>
+                                    <td class="py-4 px-4 font-bold text-slate-800">スカイトラック</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
-                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席（半個室）` : "-"}</td>
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">打席数</th>
+                                    <td class="py-4 px-4">{rangeData.bays ? `${rangeData.bays}打席（半個室）` : "-"}</td>
                                 </tr>
                                  <tr>
-                                    <th class="py-3 px-4 bg-slate-50 font-semibold">支払い方法</th>
-                                    <td class="py-3 px-4">現金のみ</td>
+                                    <th class="py-4 px-4 bg-slate-50 font-semibold text-slate-800">支払い方法</th>
+                                    <td class="py-4 px-4">現金のみ</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -335,11 +370,12 @@ const comparisonArticles = [
             }
             {
                 rangeData && (
-                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border border-slate-300 shadow-sm">
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + ", " + rangeData.address)}`}
                             width="100%" height="450" style="border:0;"
                             allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                            title={`${rangeData.name}の地図`}
                         ></iframe>
                     </div>
                 )
@@ -374,6 +410,9 @@ const comparisonArticles = [
         }
         .scroll-mt-24 {
             scroll-margin-top: 6rem; /* 96px */
+        }
+        .summary-box {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         }
     </style>
 </BaseLayout>
