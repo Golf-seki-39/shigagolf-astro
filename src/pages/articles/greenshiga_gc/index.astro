@@ -1,0 +1,774 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+
+// --- [3] この記事固有の情報 ---
+const title = "【滋賀】木曜はペアで1,000円打ち放題！グリーンシガゴルフセンター正直レビュー【料金計算機付】 | シガゴル";
+const description = "滋賀県甲賀市水口の「グリーンシガゴルフセンター」を徹底取材！女性同伴なら男性も安くなる驚異のペア割引や、水曜のプロ無料レッスン、初心者に嬉しい「飛ぶロストボール」の秘密を公開。料金シミュレーターで、あなたに最適な打ち放題プランがすぐわかります。";
+const category = "体験談";
+const pubDate = "2026-03-22"; 
+const pubDateISO = "2026-03-22T17:00:00+09:00"; 
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/main.png";
+const rangeId = "greenshiga_gc";
+
+// --- [4] シェアボタン用の変数を定義 ---
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/review/green-shiga/`; 
+const headline = "【滋賀】木曜はペアで1,000円打ち放題！グリーンシガゴルフセンター正直レビュー【料金計算機付】";
+
+// --- [5] Firebaseから練習場データを取得 ---
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    // データがない場合のフォールバック
+    rangeData = {
+        name: "グリーンシガゴルフセンター",
+        address: "滋賀県甲賀市水口町山3186",
+        phone: "0748-63-3000",
+        business_hours: "早朝: 6:00〜9:00\nフロント: 10:00〜20:00\n深夜: 20:00〜23:00",
+        yardage: "250",
+        bays: "不明", 
+        access: "新名神高速道路 甲南ICから約27分",
+        avgRating: 3.5,
+        reviewCount: 0
+    };
+}
+
+// --- [6] 関連記事リスト ---
+const experienceReports = [
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+];
+
+// --- [7] JSON-LD構造化データ ---
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline,
+    "description": description,
+    "image": [
+        imageUrl,
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0920.png"
+    ],
+    "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+    "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" } },
+    "datePublished": pubDateISO,
+    "dateModified": pubDateISO
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "itemReviewed": {
+      "@type": "SportsActivityLocation",
+      "name": "グリーンシガゴルフセンター",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "水口町山3186",
+        "addressLocality": "甲賀市",
+        "addressRegion": "滋賀県",
+        "addressCountry": "JP"
+      },
+      "telephone": "0748-63-3000",
+      "image": imageUrl,
+      "url": articleUrl
+    },
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": Number(rangeData.avgRating) || 3.5,
+      "bestRating": "5",
+      "worstRating": "1"
+    },
+    "author": { "@type": "Person", "name": "関（シガゴル運営者）" },
+    "publisher": { "@type": "Organization", "name": "シガゴル" }
+  }
+];
+
+// Googleマップ用の検索・埋め込みURL
+const searchQuery = encodeURIComponent(`${rangeData.name} ${rangeData.address}`);
+const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${searchQuery}`;
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id] { scroll-margin-top: 80px; }
+              .table-wrapper { overflow-x: auto; }
+              .min-w-table-pc { min-width: 600px; }
+              .responsive-table th:first-child, .responsive-table td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
+              .responsive-table thead th:first-child { background-color: #f1f5f9; }
+              .responsive-table tbody tr.bg-white td:first-child { background-color: #ffffff; }
+              .responsive-table tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+            
+              @media (max-width: 767px) and (orientation: portrait) {
+                #article-view .responsive-table { min-width: 100% !important; }
+                #article-view .responsive-table thead { display: none !important; }
+                #article-view .responsive-table tr { display: block !important; margin-bottom: 1.5rem !important; border: 1px solid #cbd5e1 !important; border-radius: 0.5rem !important; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important; overflow: hidden; }
+                #article-view .responsive-table td { display: block !important; text-align: right !important; position: relative !important; border-bottom: 1px solid #e2e8f0 !important; padding: 0.75rem 0.75rem 0.75rem 130px !important; left: auto !important; background-color: #fff !important; }
+                #article-view .responsive-table td:last-child { border-bottom: none !important; }
+                #article-view .responsive-table td::before { content: attr(data-label); position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-weight: 600; text-align: left; color: #475569; width: 110px; }
+                #article-view .responsive-table td:first-child { background-color: #f1f5f9 !important; font-weight: bold !important; text-align: center !important; padding-left: 0.75rem !important; }
+                #article-view .responsive-table td:first-child::before { content: '' !important; }
+              }
+            </style>
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
+            </header>
+
+            <figure class="my-6">
+                <Image 
+                    src={imageUrl} 
+                    alt="滋賀県甲賀市水口のグリーンシガゴルフセンターの外観" 
+                    class="w-full h-auto object-contain rounded-lg bg-slate-100" 
+                    width={1200} 
+                    format="webp" 
+                    quality={80} 
+                    loading="eager" 
+                    fetchpriority="high"
+                />
+            </figure>
+
+            <p>「たくさん打ちたいけど料金が気になる…」<br/>
+            「たまにはパートナーと練習に行きたいけど、レディースデーって女性だけ安いから、自分（男性）は普通に料金かかるんだよな…」</p>
+            <p>そんな悩みを抱えている皆さんに朗報です。<br/>滋賀県甲賀市水口エリアにある<strong>「グリーンシガゴルフセンター」</strong>には、なんと<strong>「女性同伴なら男性も割引対象になるお得な打ち放題プラン」</strong>という、神のような独自のシステムが存在します。</p>
+
+            <p>しかし、一見のどかな風景に溶け込むこの練習場。安さや広さといった魅力の裏には、初心者〜アベレージゴルファーだからこそ知っておくべき、いくつかの「注意点」もありました。</p>
+            <p>この記事では、私（セキ）が実際に現地へ足を運び、自分の目で見て、スタッフさんと会話して分かった「リアルな良い点と注意点」を忖度なしでレビューします！</p>
+
+            <div class="not-prose my-8 p-6 border-2 border-slate-300 rounded-lg bg-slate-50">
+                <h2 class="text-2xl font-bold text-center mt-0 mb-6 text-slate-800">先に結論！グリーンシガはどんな人におすすめ？</h2>
+                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                    <div class="border-t-4 border-green-500 bg-white p-4 rounded shadow hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-green-700 text-lg mt-0 mb-3 flex items-center">
+                            <span class="text-2xl mr-2">🎯</span>おすすめできる人
+                        </h3>
+                        <ul class="list-none m-0 p-0 space-y-2 text-slate-700">
+                            <li class="flex items-start"><span class="text-green-500 mr-2">✔︎</span><strong>平日に「打ち放題」でガッツリ練習したい人</strong></li>
+                            <li class="flex items-start"><span class="text-green-500 mr-2">✔︎</span><strong>夫婦・カップルでお得に利用したい人（木曜）</strong></li>
+                            <li class="flex items-start"><span class="text-green-500 mr-2">✔︎</span>250Yの広い空間でドライバーをマン振りしたい人</li>
+                            <li class="flex items-start"><span class="text-green-500 mr-2">✔︎</span>レンジボールより「飛ぶボール」で気持ちよく打ちたい初心者</li>
+                            <li class="flex items-start"><span class="text-green-500 mr-2">✔︎</span>プロの無料レッスン（水曜）を受けてみたい人</li>
+                        </ul>
+                    </div>
+                    <div class="border-t-4 border-red-500 bg-white p-4 rounded shadow hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-red-700 text-lg mt-0 mb-3 flex items-center">
+                            <span class="text-2xl mr-2">❌</span>正直、おすすめしない人
+                        </h3>
+                        <ul class="list-none m-0 p-0 space-y-2 text-slate-700">
+                            <li class="flex items-start"><span class="text-red-400 mr-2">✖︎</span>最新設備で正確なスピン量や飛距離を計測したい上級者</li>
+                            <li class="flex items-start"><span class="text-red-400 mr-2">✖︎</span>アプローチやバンカーの本格的な特訓をしたい人</li>
+                            <li class="flex items-start"><span class="text-red-400 mr-2">✖︎</span>ふかふかの最新打席マットを求めている人</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#simulator" class="text-green-700 hover:underline">【すぐわかる】かんたん料金シミュレーター</a></li>
+                    <li><a href="#price" class="text-green-700 hover:underline">グリーンシガの料金体系・打ち放題プランまとめ</a></li>
+                    <li><a href="#merit" class="text-green-700 hover:underline">実際に行ってわかった！グリーンシガの3つの「良い点」</a></li>
+                    <li><a href="#demerit" class="text-green-700 hover:underline">忖度なし！訪れる前に知っておくべき3つの「注意点」</a></li>
+                    <li><a href="#facilities" class="text-green-700 hover:underline">初心者必見！レンタル品やトイレなどの設備事情</a></li>
+                    <li><a href="#staff" class="text-green-700 hover:underline">【体験談】火曜「ノーフロントデー」のリアルとスタッフさん</a></li>
+                    <li><a href="#info" class="text-green-700 hover:underline">基本情報まとめ・営業時間・アクセス</a></li>
+                </ul>
+            </div>
+
+            <h2 id="simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">かんたん料金シミュレーター</h2>
+            <p>グリーンシガゴルフセンターは時間帯や曜日によって細かく料金が変わるため、「結局いくら持っていけばいいの？」がすぐわかる専用シミュレーターを作りました。条件を選択してみてください！</p>
+
+            <div id="price-simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8 overflow-hidden relative"> 
+                <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    かんたん料金シミュレーション
+                </h3>
+            
+                <div class="md:space-y-4">
+                    <div class="step-container"> 
+                        <label for="plan-select" class="font-semibold text-slate-700">① プランを選択 <span class="text-xs text-red-500 ml-1">※必須</span></label>
+                        <select id="plan-select" class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white text-base">
+                            <option value="" disabled selected>選択してください</option>
+                            <option value="visitor">ビジター</option>
+                            <option value="member">メンバー</option>
+                            <option value="ladies_day">【木曜限定】ペア利用・レディースデー</option>
+                        </select>
+                        <div id="pair-notice" class="hidden mt-3 p-2 bg-red-100 text-red-700 font-bold rounded text-center border border-red-200 animate-pulse">
+                            ✨ 男性もこの料金でOK！ペアで思い切り楽しめます ✨
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mt-4 md:mt-0">
+                        <div class="step-container"> 
+                            <label class="font-semibold text-slate-700">② 利用日 <span class="text-xs text-red-500 ml-1">※必須</span></label>
+                            <div class="flex gap-4 mt-2" id="day-options">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekday" class="mr-2"> 平日</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekend" class="mr-2"> 土日祝</label>
+                            </div>
+                        </div>
+
+                        <div class="step-container"> 
+                            <label class="font-semibold text-slate-700">③ 打席 <span class="text-xs text-red-500 ml-1">※必須</span></label>
+                            <div class="flex gap-4 mt-2" id="floor-options">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="floor1" class="mr-2"> 1階</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="floor2" class="mr-2"> 2階(-1円)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-container mt-4 md:mt-0"> 
+                        <label class="font-semibold text-slate-700">④ 時間帯 <span class="text-xs text-red-500 ml-1">※必須</span></label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2" id="time-options">
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400 transition-colors">
+                                <input type="radio" name="time" value="early" class="mr-2"> 早朝<br>(6-9時)
+                            </label>
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400 transition-colors">
+                                <input type="radio" name="time" value="daytime" class="mr-2"> 昼間<br>(10-18時)
+                            </label>
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400 transition-colors">
+                                <input type="radio" name="time" value="evening" class="mr-2"> 夜間①<br>(18-20時)
+                            </label>
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400 transition-colors">
+                                <input type="radio" name="time" value="night" class="mr-2"> 深夜<br>(20-23時)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="step-container pt-2 mt-4 md:mt-0"> 
+                        <div class="mb-2">
+                            <label for="ball-count" class="font-semibold text-slate-700">⑤ 何球打ちますか？</label>
+                            <input type="range" id="ball-count" min="10" max="500" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="text-center font-bold text-green-700 text-lg mt-2" id="ball-count-display">150球</div>
+                        </div>
+                        <div class="flex flex-wrap justify-center gap-2 mt-2">
+                            <button type="button" class="quick-ball-btn px-3 py-1 text-sm border border-green-500 text-green-700 bg-white rounded-full hover:bg-green-50 transition-colors" data-value="50">50球</button>
+                            <button type="button" class="quick-ball-btn px-3 py-1 text-sm border border-green-500 text-green-700 bg-white rounded-full hover:bg-green-50 transition-colors" data-value="100">100球</button>
+                            <button type="button" class="quick-ball-btn px-3 py-1 text-sm border border-green-500 text-green-700 bg-white rounded-full hover:bg-green-50 transition-colors" data-value="150">150球</button>
+                            <button type="button" class="quick-ball-btn px-3 py-1 text-sm border border-green-500 text-green-700 bg-white rounded-full hover:bg-green-50 transition-colors" data-value="250">250球</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300 mt-6">
+                    <p class="text-slate-600 mb-1 text-sm">合計金額（目安）</p>
+                    <p class="text-3xl font-bold text-green-700" id="total-price-display">
+                        ¥<span id="total-price">----</span>
+                    </p>
+                    <p class="text-sm font-bold text-blue-600 mt-2 hidden" id="unlimited-display"></p>
+                </div>
+                
+                <p class="text-xs text-center text-slate-500 mt-4">
+                    ※入場料込みの計算です。<br>
+                    ※火曜日の10:00〜18:00は球単価が異なりますので、現地でご確認ください。<br>
+                    ※あくまで目安です。実際の支払いは券売機またはフロントにてご確認ください。
+                </p>
+            </div>
+            
+            <p class="text-sm font-bold text-slate-700 mt-4 text-center bg-amber-50 p-4 rounded-lg border border-amber-200 shadow-sm">
+                「150球打つなら、2階席の方が缶コーヒー1本分くらい浮きますね（笑）。<br class="hidden md:inline">浮いたお金で帰りに水口のコンビニでアイスでもいかがでしょうか？」
+            </p>
+
+            <h2 id="price" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">グリーンシガの料金体系・打ち放題プランまとめ</h2>
+            
+            <p>支払いはプリペイドカード式です。券売機で購入し、「単価払い（1球打ち）」か「打ち放題プラン」を選びます。<br/>
+            現金が基本ですが、<strong>クレジットカードやPayPayなどのキャッシュレス決済</strong>も対応しています（券売機ではなく有人での対応になります）。</p>
+
+            <div class="not-prose my-8">
+                <h3 class="text-lg font-bold text-slate-800 mb-3 border-l-4 border-green-600 pl-3">【ビジター】基本料金・球単価（1階席目安）</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse border border-slate-300 responsive-table">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="p-2 border border-slate-300">時間帯</th>
+                                <th class="p-2 border border-slate-300">平日（月・水〜金）</th>
+                                <th class="p-2 border border-slate-300">土日祝</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="p-2 border border-slate-300 font-bold bg-slate-50" data-label="時間帯">早朝 (6:00-9:00)</td>
+                                <td class="p-2 border border-slate-300" data-label="平日">8円 / 球</td>
+                                <td class="p-2 border border-slate-300" data-label="土日祝">9円 / 球</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-slate-300 font-bold bg-slate-50" data-label="時間帯">昼間 (10:00-18:00)</td>
+                                <td class="p-2 border border-slate-300" data-label="平日">8円 / 球</td>
+                                <td class="p-2 border border-slate-300" data-label="土日祝">11円 / 球</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-slate-300 font-bold bg-slate-50" data-label="時間帯">夜間① (18:00-20:00)</td>
+                                <td class="p-2 border border-slate-300" data-label="平日">10円 / 球</td>
+                                <td class="p-2 border border-slate-300" data-label="土日祝">11円 / 球</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border border-slate-300 font-bold bg-slate-50" data-label="時間帯">深夜 (20:00-23:00)</td>
+                                <td class="p-2 border border-slate-300" data-label="平日">10円 / 球</td>
+                                <td class="p-2 border border-slate-300" data-label="土日祝">11円 / 球</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-slate-500 mt-2">※別途入場料200円が必要です。2階席は上記より1球あたり1円安くなります。</p>
+            </div>
+
+            <div class="not-prose bg-green-50 p-4 rounded border-l-4 border-green-500 my-6">
+                <p class="font-bold text-green-800 m-0">💡 料金システムのポイント</p>
+                <p class="text-sm text-slate-700 m-0 mt-2">
+                    ・入場料はビジター200円、メンバー100円。<br/>
+                    ・ボール代は1球8円〜11円ですが、<strong>2階打席を利用すると1球あたり「-1円」安く</strong>なります。<br/>
+                    ・打ち放題は平日（1〜3時間）と土日祝（2〜3時間のみ）で設定あり。
+                </p>
+            </div>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【衝撃】木曜レディースデーの「ペア割」破壊力！</h3>
+            <p>この練習場の最大のキラーコンテンツが、毎週木曜日の「レディースデー」です。</p>
+            <p>なんとここは、女性本人のみならず<strong>「女性同伴の男性も割引対象」</strong>になります。店員さんにもしっかり直接確認をとりましたので、間違いありません。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0957.png" 
+                    alt="グリーンシガゴルフセンター、木曜日限定のレディースデー（ペア割引）案内板" 
+                    class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" 
+                    loading="lazy" 
+                    width={800} 
+                    height={600} 
+                    format="webp" 
+                    quality={80} 
+                />
+            </figure>
+
+            <div class="bg-amber-50 p-6 rounded-lg border border-amber-200 my-4 not-prose text-center">
+                <h4 class="text-lg font-bold text-amber-800 mb-2">🚺🚹 ペア利用時の打ち放題料金（木曜限定）</h4>
+                <p class="text-2xl font-black text-slate-800 my-2">1時間： <span class="text-red-600">1,000円</span></p>
+                <p class="text-2xl font-black text-slate-800 my-2">2時間： <span class="text-red-600">1,600円</span></p>
+                <p class="text-sm text-slate-600 mt-2">※ペアで利用すれば二人ともこの料金です。</p>
+            </div>
+            <p>二人並んで、同じ条件でお得に練習に没頭できる。県内を見渡してもこれほどペアに優しい練習場はなかなかありません。</p>
+
+            <h2 id="merit" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">実際に行ってわかった！グリーンシガの3つの「良い点（メリット）」</h2>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">① 250ヤードの開放感と、初心者に嬉しい「飛ぶロストボール」</h3>
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0950.png" 
+                    alt="グリーンシガゴルフセンターで貸し出される実戦用のロストボール" 
+                    class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg" 
+                    width={800} 
+                    height={600} 
+                    format="webp" 
+                    quality={80} 
+                />
+            </figure>
+            <p>奥のネットまでは250ヤード。視界は非常に広く、ボールの弾道を最後まで見届けられる爽快感は格別です。そして何より、使用されているボールがコースで使用済みの<strong>「ロストボール」が混在している</strong>点が最高です。</p>
+
+            <div class="not-prose my-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                <p class="font-bold text-blue-900 m-0">💡 関のリアルな感想：ぶっちゃけ「飛ぶ」から楽しい！</p>
+                <p class="text-sm text-slate-700 m-0 mt-2">
+                    私のようなアベレージゴルファーや初心者にとっては、飛ばないレンジボールよりも<strong>「実戦と同じボールだから飛距離が出る！」という純粋な喜び</strong>があります。飛ぶからこそ楽しくて、ドライバーの練習量が増え、ポジティブな気持ちで練習を終えられました。
+                </p>
+            </div>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 水曜夜は「プロの無料ワンポイントレッスン」が受けられる！</h3>
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0956.png" 
+                    alt="グリーンシガゴルフセンター、水曜日の奥村プロ無料レッスンの案内板" 
+                    class="w-full md:w-2/3 mx-auto max-h-[600px] object-contain rounded-lg" 
+                    loading="lazy" 
+                    width={800} 
+                    height={600} 
+                    format="webp" 
+                    quality={80} 
+                />
+            </figure>
+            <p>毎週水曜日の18時からは、奥村プロによる「無料ワンポイントレッスン」が開催されています。フロントで申し込むだけで、打席で気になる部分をピンポイントで指導してもらえます。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">③ レトロな空間と全自動オートティーアップ完備で冬でも快適</h3>
+            
+            <p>昔ながらの職人工房に迷い込んだような工房（WILD DUCK's）があり、歴史を感じる「渋い」空間が広がっています。</p>
+            
+            <figure class="my-6">
+                 <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0971.png" 
+                    alt="グリーンシガゴルフセンター併設のレトロな工房（WILD DUCK's）" 
+                    class="w-full h-auto object-cover rounded-lg border border-slate-200" 
+                    loading="lazy" 
+                    width={600} 
+                    height={450} 
+                    format="webp" 
+                    quality={80} 
+                />
+            </figure>
+
+            <p>また、「いちいちボールをセットするために屈むのが面倒くさい…」という方でも安心の<strong>全打席オートティーアップ機が完備</strong>されています。冬場は各打席に電気ストーブが設置されている気遣いも嬉しいポイントです。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0938.png" 
+                    alt="グリーンシガゴルフセンターの各打席に設置された電気ストーブ" 
+                    class="w-full h-auto object-cover rounded-lg border border-slate-200" 
+                    loading="lazy" 
+                    width={600} 
+                    height={450} 
+                    format="webp" 
+                    quality={80} 
+                />
+            </figure>
+
+            <h2 id="demerit" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">忖度なし！訪れる前に知っておくべき3つの「注意点（デメリット）」</h2>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">① 「シカに荒らされた」幻のアプローチ練習場</h3>
+            <p>場外看板には「バンカー・アプローチ練習場」と書かれているのですが、気になってスタッフさんに聞いてみたところ……<br/>
+            <strong>「実は今はやっていないんです。鹿に荒らされてしまって、復旧できなくて…」</strong><br/>
+            この自然豊かすぎるリアルな理由に、思わず笑って納得してしまいました。ショートゲームの特訓を目的に行く方はご注意ください。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 入り口の少し長めの「S字カーブ」</h3>
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0909.png" 
+                    alt="グリーンシガゴルフセンターの入り口へと続くS字カーブの進入路" 
+                    class="w-full h-auto object-cover rounded-lg border border-slate-200" 
+                    loading="lazy" 
+                    width={1200} 
+                    height={900} 
+                    format="webp" 
+                    quality={80} 
+                />
+            </figure>
+            <p>道路から建物へ向かう進入路が、少し長めのS字カーブになっています。道幅自体は十分にありますので、慌てずゆっくり進めば問題ありません。</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">③ 打席マットは年季あり。ふかふかの最新設備を求める方は注意</h3>
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0939.png" 
+                    alt="グリーンシガゴルフセンターの年季の入った打席マット" 
+                    class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" 
+                    loading="lazy" 
+                    width={800} 
+                    height={600} 
+                    format="webp" 
+                    quality={80} 
+                />
+            </figure>
+            <p>打席のマットは全体的に使用感があり、年季が入っています。「ふかふかの新品マットで打ちたい！」という方には不向きです。</p>
+
+            <h2 id="facilities" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">初心者必見！レンタル品やトイレなどの設備事情</h2>
+            
+            <p>打ちっぱなしデビューの初心者や、手ぶらで行きたい方が気になる設備やレンタル事情についてまとめました。</p>
+
+            <figure class="my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0920.png" 
+                    alt="滋賀県甲賀市水口のグリーンシガゴルフセンター、料金表と営業時間の案内板" 
+                    class="w-full h-auto object-cover rounded-lg border border-slate-200" 
+                    loading="lazy" 
+                    width={1200} 
+                    height={900} 
+                    format="webp" 
+                    quality={80} 
+                />
+            </figure>
+
+            <ul class="space-y-4">
+                <li><strong>クラブのレンタル：</strong> 1本200円、セットで1,200円でレンタル可能です。手ぶらでも練習できます。</li>
+                <li>
+                    <strong>シューズ・グローブのレンタル：</strong> 残念ながらレンタルはありません。ただし、フロント周辺でグローブや小物が販売されているので、忘れてしまった場合はその場で購入可能です。
+                    <figure class="my-6">
+                        <Image 
+                            src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenshiga_gc/gallery/IMG_0924.png" 
+                            alt="グリーンシガゴルフセンターのフロントで販売されているグローブなどのグッズ" 
+                            class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" 
+                            width={800} 
+                            height={600} 
+                            format="webp" 
+                            quality={80} 
+                        />
+                    </figure>
+                </li>
+                <li><strong>トイレ事情：</strong> 正直に言うと「可もなく不可もなく」です。昔ながらのゴルフ練習場の一般的なトイレといった感じで、特別綺麗というわけではありません。気になる方は事前にコンビニなどで済ませておくのもアリかもしれません。</li>
+            </ul>
+
+            <h2 id="staff" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【体験談】火曜「ノーフロントデー」のリアルとスタッフさん</h2>
+            <p>私が取材に訪れた火曜日は、受付にスタッフがいない「ノーフロントデー」でした。自販機でプリペイドカードを買い、そのまま打席に入る完全セルフスタイルです。</p>
+            <p>しかし、併設の工房エリア付近にはスタッフさんがいらっしゃいました。お洒落だったので私から話しかけてみたのですが、無理に距離を詰めてくるわけでもなく、適切な距離感を保ちながら、こちらが聞いたことに対しては「110点」の丁寧な回答を返してくれる。そんな誠実な人柄が伝わってきて、無人営業日でも安心して利用できる温かい雰囲気を感じました。</p>
+
+            <p>グリーンシガゴルフセンターは、「最新設備でガッツリ分析！」というよりは、<strong>「広々とした空間で、飛ぶボールを思い切りかっ飛ばして、パートナーと楽しく練習する」</strong>という使い方が圧倒的にハマる練習場です。</p>
+            <p>甲賀エリアにお住まいの方や、たまには夫婦で練習デートをしたい方は、ぜひ一度、足を運んでみてくださいね！</p>
+
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+            </div>
+
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+
+            <h2 id="info" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">基本情報まとめ・営業時間・アクセス</h2>
+            
+            <div class="overflow-x-auto not-prose my-6 border border-slate-200 rounded-lg">
+                <table class="w-full text-left border-collapse table-auto responsive-table">
+                    <thead>
+                        <tr class="bg-slate-100 border-b border-slate-200">
+                            <th class="py-3 px-4 font-semibold text-slate-800">項目</th>
+                            <th class="py-3 px-4 font-semibold text-slate-800">情報</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <td class="py-3 px-4 font-medium text-slate-700 bg-slate-50" data-label="項目">練習場名</td>
+                            <td class="py-3 px-4 text-slate-900" data-label="情報">{rangeData.name}</td>
+                        </tr>
+                        {rangeData.avgRating && (
+                            <tr class="border-b border-slate-200 bg-white">
+                                <td class="py-3 px-4 font-medium text-slate-700 bg-slate-50" data-label="項目">総合評価</td>
+                                <td class="py-3 px-4" data-label="情報">
+                                    <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                        <span class="font-bold text-amber-500 mr-2 text-lg">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                        {Array.from({ length: 5 }).map((_, i) => (
+                                            <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        ))}
+                                    </div>
+                                </td>
+                            </tr>
+                        )}
+                        <tr class="border-b border-slate-200 bg-white">
+                            <td class="py-3 px-4 font-medium text-slate-700 bg-slate-50" data-label="項目">住所</td>
+                            <td class="py-3 px-4" data-label="情報">
+                                <a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                    {rangeData.address}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <td class="py-3 px-4 font-medium text-slate-700 bg-slate-50" data-label="項目">電話番号</td>
+                            <td class="py-3 px-4" data-label="情報">
+                                {rangeData.phone ? (
+                                    <a href={`tel:${rangeData.phone.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                        {rangeData.phone}
+                                    </a>
+                                ) : (
+                                    <span>-</span>
+                                )}
+                            </td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <td class="py-3 px-4 font-medium text-slate-700 bg-slate-50" data-label="項目">営業時間</td>
+                            <td class="py-3 px-4 text-slate-900" data-label="情報" set:html={rangeData.business_hours.replace(/\n/g, '<br />')} />
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <td class="py-3 px-4 font-medium text-slate-700 bg-slate-50" data-label="項目">料金（代表例）</td>
+                            <td class="py-3 px-4 text-slate-900" data-label="情報">記事冒頭の<a href="#simulator" class="text-green-700 hover:underline">料金シミュレーター</a>をご確認ください</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <td class="py-3 px-4 font-medium text-slate-700 bg-slate-50" data-label="項目">ヤード数</td>
+                            <td class="py-3 px-4 text-slate-900" data-label="情報">{rangeData.yardage}ヤード</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-white">
+                            <td class="py-3 px-4 font-medium text-slate-700 bg-slate-50" data-label="項目">打席数</td>
+                            <td class="py-3 px-4 text-slate-900" data-label="情報">{rangeData.bays !== "不明" ? `${rangeData.bays}打席` : "-"}</td>
+                        </tr>
+                        <tr class="border-slate-200 bg-white">
+                            <td class="py-3 px-4 font-medium text-slate-700 bg-slate-50" data-label="項目">アクセス</td>
+                            <td class="py-3 px-4 text-slate-900" data-label="情報">{rangeData.access}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                <iframe
+                    src={mapsEmbedUrl}
+                    width="100%" height="450" style="border:0;"
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
+            </div>
+            
+        </article>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const simulator = document.getElementById('price-simulator');
+        if (!simulator) return;
+
+        // --- 料金データ定義 ---
+        const priceData = {
+            entry: { visitor: 200, member: 100, ladies_day: 0 },
+            balls: {
+                weekday: {
+                    early: { floor1: { visitor: 8, member: 8 }, floor2: { visitor: 7, member: 7 } },
+                    daytime: { floor1: { visitor: 8, member: 7 }, floor2: { visitor: 7, member: 6 } },
+                    evening: { floor1: { visitor: 10, member: 9 }, floor2: { visitor: 9, member: 8 } },
+                    night: { floor1: { visitor: 10, member: 10 }, floor2: { visitor: 9, member: 9 } }
+                },
+                weekend: {
+                    early: { floor1: { visitor: 9, member: 9 }, floor2: { visitor: 8, member: 8 } },
+                    daytime: { floor1: { visitor: 11, member: 9 }, floor2: { visitor: 10, member: 8 } },
+                    evening: { floor1: { visitor: 11, member: 9 }, floor2: { visitor: 10, member: 8 } },
+                    night: { floor1: { visitor: 11, member: 11 }, floor2: { visitor: 10, member: 10 } }
+                }
+            },
+            unlimited: {
+                weekday: [
+                    { name: "1時間打ち放題", price: 1400 },
+                    { name: "2時間打ち放題", price: 1900 },
+                    { name: "3時間打ち放題", price: 2200 }
+                ],
+                weekend: [
+                    { name: "2時間打ち放題", price: 2000 },
+                    { name: "3時間打ち放題", price: 2520 }
+                ],
+                ladies_day: [
+                    { name: "【ペア1人分】1時間打ち放題", price: 1000 },
+                    { name: "【ペア1人分】2時間打ち放題", price: 1600 }
+                ]
+            }
+        };
+
+        // --- 要素取得 ---
+        const planSelect = simulator.querySelector('#plan-select');
+        const dayRadios = simulator.querySelectorAll('input[name="day"]');
+        const floorRadios = simulator.querySelectorAll('input[name="floor"]');
+        const timeRadios = simulator.querySelectorAll('input[name="time"]');
+        const ballCountSlider = simulator.querySelector('#ball-count');
+        const ballCountDisplay = simulator.querySelector('#ball-count-display');
+        const totalPriceDisplay = simulator.querySelector('#total-price');
+        const unlimitedDisplay = simulator.querySelector('#unlimited-display');
+        const pairNotice = simulator.querySelector('#pair-notice');
+        const quickBtns = simulator.querySelectorAll('.quick-ball-btn'); 
+
+        // --- 計算関数 ---
+        function calculatePrice() {
+            const plan = planSelect.value;
+            
+            // 全ての必須項目が選ばれるまでは金額を表示しない（----のまま）
+            if (!plan) return;
+
+            // レディースデー強制設定と強調表示
+            if (plan === 'ladies_day') {
+                simulator.querySelector('input[name="day"][value="weekday"]').checked = true;
+                pairNotice.classList.remove('hidden'); 
+            } else {
+                pairNotice.classList.add('hidden');
+            }
+
+            const dayEl = simulator.querySelector('input[name="day"]:checked');
+            const floorEl = simulator.querySelector('input[name="floor"]:checked');
+            const timeEl = simulator.querySelector('input[name="time"]:checked');
+
+            // 必須項目チェック
+            if (!dayEl || !floorEl || !timeEl) {
+                totalPriceDisplay.textContent = "----";
+                unlimitedDisplay.classList.add('hidden');
+                return;
+            }
+
+            const day = dayEl.value;
+            const floor = floorEl.value;
+            const time = timeEl.value;
+            const balls = parseInt(ballCountSlider.value);
+
+            ballCountDisplay.textContent = `${balls}球`;
+
+            // 単価計算
+            const basePlan = plan === 'ladies_day' ? 'visitor' : plan;
+            const entryFee = plan === 'ladies_day' ? 0 : priceData.entry[basePlan]; 
+            const ballPrice = priceData.balls[day][time][floor][basePlan];
+            
+            const ballTotal = entryFee + (ballPrice * balls);
+
+            // 打ち放題との比較
+            unlimitedDisplay.classList.add('hidden');
+            unlimitedDisplay.innerHTML = ""; 
+
+            let bestOption = { name: '単価打ち', price: ballTotal };
+            let unlimitedMessage = "";
+            let availablePlans = [];
+
+            if (plan === 'ladies_day') {
+                availablePlans = priceData.unlimited.ladies_day;
+            } else if (day === 'weekday') {
+                availablePlans = priceData.unlimited.weekday;
+            } else {
+                availablePlans = priceData.unlimited.weekend;
+            }
+
+            // 打ち放題プランの提示
+            if (availablePlans.length > 0) {
+                const cheapestUnlimited = availablePlans.reduce((min, p) => p.price < min.price ? p : min, availablePlans[0]);
+                
+                if (cheapestUnlimited.price <= ballTotal || plan === 'ladies_day') {
+                    bestOption = cheapestUnlimited;
+                    unlimitedMessage = "💡 おすすめ打ち放題プラン:<br>" + availablePlans.map(p => {
+                        return `${p.name} (¥${p.price.toLocaleString()})`;
+                    }).join('<br>');
+                }
+            }
+            
+            // 結果表示
+            let finalPriceString = bestOption.price.toLocaleString();
+            
+            if (bestOption.name !== '単価打ち') {
+                finalPriceString = `${finalPriceString}〜`; 
+            }
+
+            totalPriceDisplay.textContent = finalPriceString;
+            
+            if (unlimitedMessage) {
+                unlimitedDisplay.innerHTML = unlimitedMessage;
+                unlimitedDisplay.classList.remove('hidden');
+            }
+        }
+
+        // --- イベントリスナー ---
+        planSelect.addEventListener('change', calculatePrice);
+        dayRadios.forEach(radio => radio.addEventListener('change', calculatePrice));
+        floorRadios.forEach(radio => radio.addEventListener('change', calculatePrice));
+        timeRadios.forEach(radio => radio.addEventListener('change', calculatePrice));
+        ballCountSlider.addEventListener('input', calculatePrice);
+        
+        // クイックボタンのイベントリスナー
+        quickBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const target = e.target;
+                ballCountSlider.value = target.dataset.value;
+                calculatePrice();
+            });
+        });
+
+        // 初期計算（初期状態は空なので計算は走るが金額は更新されない）
+        calculatePrice();
+    });
+    </script>
+</BaseLayout>
