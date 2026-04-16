@@ -4,328 +4,951 @@ import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
 import { Image } from "astro:assets";
 
-// --- 共通コンポーネント ---
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
-// --- この記事固有の情報 ---
-const baseUrl = "https://shigagolf.com";
-const articleUrl = `${baseUrl}/articles/comparison/omi-priceRank/`;
-const publicationDate = "2025-10-03";
-const lastModified = new Date();
+// --- [3] この記事固有の情報（SEO特化に大幅リライト） ---
+const title = "【料金】さくらゴルフ倶楽部（滋賀・東近江の打ちっぱなし）正直レビュー！激安＆初心者に優しい練習場 | シガゴル";
+const description = "【料金シミュレーター付】滋賀県東近江市（近江八幡からも好アクセス）の打ちっぱなし練習場「さくらゴルフ倶楽部」の口コミ・体験レビュー。入場料無料や女性・ジュニアの激安打ち放題、初心者が安心して通えるアットホームな魅力を地元ゴルファーが徹底解説！";
+const category = "体験談";
+const pubDate = "2025-05-23";
+const pubDateISO = "2025-05-23T10:00:00+09:00"; 
+const modifiedDateISO = new Date().toISOString();
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png";
+const rangeId = "sakura_gc";
+// --- End of specific information ---
 
-// --- SEO対策：GSCで強い「打ちっぱなし 滋賀 安い」を最前面に ---
-const title = "【滋賀の打ちっぱなし】安い練習場はどこ？料金・コスパで5施設を徹底比較（近江八幡・東近江）";
-const description = "滋賀県（近江八幡・東近江）で一番安い打ちっぱなしはどこ？「平日ならグリーンピア」「短時間なら安土」「女性ならさくら」など、総額料金で徹底比較。滋賀の寒い冬でも損しない選び方を管理人が本音でレビュー。";
-const headline = "滋賀で一番安い打ちっぱなしはどこ？近江八幡・東近江のゴルフ練習場5施設を料金比較";
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg";
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/sakura-gc-review/`;
+const headline = "【正直レビュー】滋賀・東近江の打ちっぱなし「さくらゴルフ倶楽部」！激安料金と初心者に優しい魅力";
 
-// --- Firebaseデータ取得 ---
-const rangeIds = ['azuchi_gc', 'greenpia_oh', 'sakura_gc', 'riverside_jumbo', 'garage_park'];
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
-const rangePromises = rangeIds.map(id => getDoc(doc(db, `artifacts/${appId}/public/data/practice_ranges/${id}`)));
-const rangeDocs = await Promise.all(rangePromises);
-
-const rangesData = rangeDocs.reduce((acc, docSnap, index) => {
-    if (docSnap.exists()) { acc[rangeIds[index]] = docSnap.data(); }
-    else { acc[rangeIds[index]] = null; }
-    return acc;
-}, {});
-
-if (rangesData.greenpia_oh) {
-    rangesData.greenpia_oh.name = "グリーンピア近江八幡ゴルフ";
+const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
+const docRef = doc(db, docPath);
+const docSnap = await getDoc(docRef);
+let rangeData = null;
+if (docSnap.exists()) {
+    rangeData = docSnap.data();
+} else {
+    console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// --- 各施設の追加情報（レビュー本文・環境・リンク） ---
-const additionalData = {
-    azuchi_gc: {
-        parking: '約40台', access: 'JR安土駅から車で5分', environment: '昔ながらの雰囲気。駐車場も停めやすい。',
-        reviewUrl: '/articles/azuchi-review/', rangeUrl: '/ranges/azuchi_gc/',
-        reviewText: 'プリペイドカード不要で、現金で気軽に練習できるのが最大の魅力。アットホームな雰囲気で、ゴルフ練習場デビューに最適。駐車場も広く停めやすいです。バンカー練習場も無料で利用できます。',
-        altFull: '安土ゴルフクラブの打席全景', altDetail: '安土ゴルフクラブの700円券売機',
+// ★★★ 料金シミュレーター用のデータ定義（変更なし） ★★★
+const priceData = {
+  plans: {
+    visitor: { name: 'ビジター', type: 'visitor' },
+    member: { name: 'メンバー会員', type: 'member', entryFee: 0 },
+    premium: {
+      name: 'プレミアム会員', type: 'premium', entryFee: 0, discount: 1, 
+      unlimited: [ { name: "2時間打ち放題", price: 1030 }, { name: "3時間打ち放題", price: 1545 } ]
     },
-    greenpia_oh: {
-        parking: '約80台', access: '名神竜王ICから車で10分', environment: '<strong>道中が狭く、運転に注意</strong>',
-        reviewUrl: '/articles/review/greenpia-oh/', rangeUrl: '/ranges/greenpia_oh/',
-        reviewText: '施設の古さはあるものの、それを補って余りある価格設定が特徴。特に平日日中の料金や、SDカード割引を組み合わせることで、驚異的な安さを実現します。',
-        altFull: 'グリーンピア近江八幡の練習スペース', altDetail: '2階打席からの眺め',
-    },
-    sakura_gc: {
-        parking: '約50台', access: '名神竜王ICから車で15分', environment: '冷房が快適。一部駐車しにくい箇所あり',
-        reviewUrl: '/articles/sakura-gc-review/', rangeUrl: '/ranges/sakura_gc/',
-        reviewText: '女性やジュニアへの特典が非常に手厚く、対象者にとっては最高の練習環境です。夏場は冷房が強く快適。広々としたアプローチ練習場も魅力です。',
-        altFull: 'さくらゴルフ倶楽部の打席エリア', altDetail: 'アプローチ練習グリーン',
-    },
-    riverside_jumbo: {
-        parking: '約40台', access: '名神八日市ICから車で10分', environment: 'リニューアルで快適。駐車場も良好。',
-        reviewUrl: '/articles/review/riverside-jumbo/', rangeUrl: '/ranges/riverside_jumbo/',
-        reviewText: '「安さ」よりも「質」を求めるゴルファーが集う場所。無料で使える本格パターグリーンや質の高いアプローチ場は投資価値あり。2025年6月にリニューアル済。',
-        altFull: 'リバーサイドジャンボのフェアウェイ', altDetail: '無料のパターグリーン',
-    },
-    garage_park: {
-        parking: '約20台', access: '蒲生スマートICから車で2分', environment: 'インドアで快適。IC直結でアクセス◎',
-        reviewUrl: '/articles/garege-park-review/', rangeUrl: '/ranges/garage_park/',
-        reviewText: '蒲生スマートICから2分。天候や寒さを気にせず練習したい方向け。月額5,000円のフリーパスは、練習頻度が高い人にとって最高のコスパです。',
-        altFull: 'がれーじぱーくの練習ブース', altDetail: '弾道測定器の画面',
+    ladies_junior: {
+      name: 'レディース・ジュニア', type: 'ladies_junior', entryFee: 0, 
+      unlimited: [ { name: "1時間打ち放題", price: 515 }, { name: "2時間打ち放題", price: 1030 }, { name: "3時間打ち放題", price: 1545 } ]
     }
+  },
+  timeZones: {
+    early: { name: "早朝 (6:00-9:00)", entryFee: { weekday: 0, weekend: 0 }, unlimited: null },
+    daytime: { 
+      name: "日中 (9:00-17:00)", entryFee: { weekday: 280, weekend: 320 }, 
+      unlimited: { weekday: { price: 1854, name: "3時間打ち放題" }, weekend: { price: 2060, name: "3時間打ち放題" } }
+    },
+    night1: { 
+      name: "夜間 (17:00-22:00)", entryFee: { weekday: 280, weekend: 320 }, 
+      unlimited: { weekday: { price: 1854, name: "3時間打ち放題" }, weekend: { price: 2060, name: "3時間打ち放題" } }
+    },
+    night2: { name: "深夜 (22:00-24:00)", entryFee: { weekday: 0, weekend: 0 }, unlimited: null }
+  },
+  ballPrice: {
+    special_day: {
+      early:   { floor1: 3, floor2: 3 }, daytime: { floor1: 3, floor2: 3 },
+      night1:  { floor1: 3, floor2: 3 }, night2:  { floor1: 3, floor2: 3 },
+    },
+    weekday: {
+      early:   { floor1: 7, floor2: 7 }, daytime: { floor1: 8, floor2: 7 }, 
+      night1:  { floor1: 9, floor2: 8 }, night2:  { floor1: 8, floor2: 8 }, 
+    },
+    weekend: {
+      early:   { floor1: 7, floor2: 7 }, daytime: { floor1: 10, floor2: 9 },
+      night1:  { floor1: 10, floor2: 9 }, night2:  { floor1: 9, floor2: 9 },
+    }
+  }
 };
+// ★★★ 料金シミュレーター用のデータ定義ここまで ★★★
 
-// --- 写真URLデータ ---
-const images = {
-    azuchi_gc: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8076 2.png", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8069 2.png" },
-    greenpia_oh: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6879.png", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/名称未設定.png" },
-    sakura_gc: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9787.png", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6020.jpg" },
-    riverside_jumbo: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6450 2.jpg", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_9009.png" },
-    garage_park: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9502.png", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/シガゴル.jpg" }
-};
 
-// --- JSON-LD構造化データ ---
-const mainEntity = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": headline,
-    "description": description,
-    "image": [imageUrl, images.azuchi_gc.full, images.greenpia_oh.full, images.sakura_gc.full],
-    "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
-    "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }},
-    "datePublished": new Date(publicationDate).toISOString(), 
-    "dateModified": lastModified.toISOString()
-};
-
-const faqElements = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    { "@type": "Question", "name": "滋賀で一番安い打ちっぱなしは？", "acceptedAnswer": { "@type": "Answer", "text": "100球以内の短時間練習なら入場料無料の安土ゴルフクラブ、平日昼間に200球以上打つなら球単価が安いグリーンピア近江八幡ゴルフが最安クラスです。" } },
-    { "@type": "Question", "name": "がれーじぱーく東近江はレッスンやってる？", "acceptedAnswer": { "@type": "Answer", "text": "現在、がれーじぱーく東近江では定期的なゴルフレッスンは開講されていません。当施設はインドアのシミュレーションゴルフ施設です。" } }
-  ]
-};
-
-// --- 関連記事リスト（ここがエラーの原因でした。しっかり定義します） ---
+// --- [6] 関連記事リスト ---
 const experienceReports = [
-    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: images.azuchi_gc.full },
-    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: images.sakura_gc.full },
-    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: images.garage_park.full },
-    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: images.greenpia_oh.full },
-    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: images.riverside_jumbo.full },
+    { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
+　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
-
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
+    { url: '/articles/comparison/omi-pricerank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
+    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
+    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
+    { url: '/articles/comparison/o-mihachiman-guide/', title: '【近江八幡 打ちっぱなし】グリーンピア vs 安土 結局どっち？料金・質・アクセスを現地ライターが本音で徹底比較 ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hachiman-guide.jpg' },
+    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
-
-const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 ---
 
-<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl}>
-    <script slot="head" type="application/ld+json" set:html={JSON.stringify(mainEntity)} />
-    <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqElements)} />
-    
-    <div id="article-view" class="view bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto text-slate-700">
-        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">‹ 記事一覧に戻る</a>
-        
-        <article class="prose lg:prose-xl max-w-none leading-relaxed">
-            <style is:global>
-              html { scroll-behavior: smooth; }
-              section[id] { scroll-margin-top: 80px; }
-              .faq-details summary::-webkit-details-marker { display: none; }
-              .faq-details summary { list-style: none; outline: none; }
-              .btn-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-              .term-tip { border-bottom: 2px dotted #059669; cursor: help; position: relative; display: inline-block; font-weight: bold; color: #064e3b; }
-              .term-tip:hover::after { content: attr(data-tip); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; width: 220px; line-height: 1.4; z-index: 50; }
-              .table-wrapper { overflow-x: auto; }
-              .min-w-table-pc { min-width: 650px; }
-            </style>
-                        
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify([
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": articleUrl
+        },
+        "headline": headline,
+        "description": description,
+        "image": [ 
+            imageUrl,
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/シガゴル (3).png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6014.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/MxbDzQ0.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/TOM6sID.jpeg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/2.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6033.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/3.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/hfDU3SE.jpeg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/7.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/5.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/8.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9789.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/9.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/10.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6025.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6030.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/13.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/12.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/6.png",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6639.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6081.jpg"
+        ],
+        "author": {
+            "@type": "Person",
+            "name": "関（せき）",
+            "url": "https://shigagolf.com/about/",
+            "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
+            "sameAs": [ "https://x.com/Golf_Seki39", "https://golf-medley.com/articles/authors/seki", "https://note.com/seki_golf_39", "https://www.tiktok.com/@user2579514551181" ]
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "シガゴル",
+            "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+        },
+        "datePublished": pubDateISO,
+        "dateModified": modifiedDateISO
+    },
+    {
+        "@context": "https://schema.org",
+        "@type": "Review",
+        "itemReviewed": {
+            "@type": "LocalBusiness",
+            "name": rangeData?.name,
+            "image": rangeData?.imageUrl,
+            "telephone": rangeData?.phone,
+            "priceRange": rangeData?.priceRange,
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": rangeData?.address,
+              "addressLocality": rangeData?.city,
+              "addressRegion": "滋賀県",
+              "postalCode": rangeData?.postalCode,
+              "addressCountry": "JP"
+            }
+        },
+        "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": Number(rangeData?.avgRating) || 3,
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "author": { "@type": "Person", "name": "関（せき）" }
+    }
+])} />
+
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
+            ‹ お役立ち記事一覧に戻る
+        </a>
+
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
             <header>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
-                <p class="text-sm text-slate-500 mt-2 text-right">最終更新日：{lastModified.toLocaleDateString('ja-JP')}</p>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
+                    {headline}
+                </h1>
+                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
             </header>
 
-            <Image src={imageUrl} alt="滋賀の安い打ちっぱなし比較" class="w-full h-auto object-cover rounded-lg my-6" width={1200} height={675} fetchpriority="high" />
+            <p>
+                「もっと気軽にたくさん練習したい！」<br />
+                「どのゴルフ練習場がコスパいいの？」
+            </p>
+            <p>
+                そんな悩みを抱えるゴルファーさんへ。滋賀県東近江市（近江八幡市からも好アクセス）にある、とっておきの<strong>打ちっぱなし（ゴルフ練習場）</strong>を紹介します！
+            </p>
 
-            {/* --- 結論ナビ --- */}
-            <div class="not-prose bg-green-50 p-6 rounded-lg border-2 border-green-600 shadow-sm my-8">
-                <h3 class="text-xl font-bold text-slate-800 mb-4 text-center">💰 【結論】利用シーン別・最安の練習場 💰</h3>
-                <ul class="space-y-3">
-                    <li class="flex items-start"><span class="text-2xl mr-2">🏃</span><div><span class="font-bold text-slate-800 block text-base">100球以内のサクッと練習なら</span><a href="#azuchi_gc" class="text-blue-600 font-bold underline text-lg">安土ゴルフクラブ</a> <span class="text-xs text-slate-600">(入場料無料)</span></div></li>
-                    <li class="flex items-start"><span class="text-2xl mr-2">☀️</span><div><span class="font-bold text-slate-800 block text-base">平日昼間に200球以上打つなら</span><a href="#greenpia_oh" class="text-blue-600 font-bold underline text-lg">グリーンピア近江八幡</a> <span class="text-xs text-slate-600">(SDカード割引あり)</span></div></li>
-                    <li class="flex items-start"><span class="text-2xl mr-2">👩</span><div><span class="font-bold text-slate-800 block text-base">女性・ジュニア・快適性重視なら</span><a href="#sakura_gc" class="text-blue-600 font-bold underline text-lg">さくらゴルフ倶楽部</a> <span class="text-xs text-slate-600">(特典が非常に手厚い)</span></div></li>
+            <figure class="my-6">
+                <Image
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/0000000img.jpg"
+                    alt="夕暮れ後の静けさに包まれた滋賀県東近江市の打ちっぱなし「さくらゴルフ倶楽部」入口の様子"
+                    class="w-full h-auto object-cover rounded-lg"
+                    loading="lazy"
+                    width={1280}
+                    height={960}
+                    format="webp"
+                    quality={80}
+                />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">
+                    夕暮れ後の「さくらゴルフ倶楽部」入口の様子（筆者撮影）
+                </figcaption>
+            </figure>
+
+            <p>
+                その名も<strong>「さくらゴルフ倶楽部」</strong>。<br/>
+                名前から「本コースのゴルフ場？」と勘違いされがちですが、実は女性とジュニア（17歳以下）にとって信じられないほどお得なシステムを持つ、超優良な打ちっぱなし練習場なんです。
+            </p>
+
+            <p>
+                正直に言います。<strong>場所は少し分かりにくいですし、設備も最新ピカピカというわけではありません。</strong>
+            </p>
+
+            <figure class="my-6">
+                 <Image
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/シガゴル (3).png"
+                    alt="広々とした『さくらゴルフ倶楽部』の打席エリア。ナイター照明も完備"
+                    class="w-full h-auto object-cover rounded-lg"
+                    loading="lazy"
+                    width={1280}
+                    height={960}
+                    format="webp"
+                    quality={80}
+                />
+            </figure>
+
+            <p>
+                しかし！<strong>一般男性である私が、それでも週2～3回は通ってしまうほど</strong>、この練習場には魅力がたっぷり詰まっています。今回は、その秘密を地元ゴルファーの目線で余すところなくレポートします！
+            </p>
+            
+            <div class="not-prose bg-green-50 p-4 my-6 rounded-lg border border-l-4 border-green-500">
+              <p class="text-slate-700 m-0">
+                この記事は、東近江市のゴルフ練習場の一つです。<br>
+                <a href="/articles/comparison/higashiomi-guide/" class="text-green-700 font-bold hover:underline">
+                  → 東近江市にある全3施設の「まとめ記事」はこちら
+                </a>
+              </p>
+            </div>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside">
+                    <li><a href="#benefits" class="text-green-700 hover:underline">さくらゴルフ倶楽部（滋賀・東近江）の料金体系！女性・ジュニアが激安</a></li>
+                    <li><a href="#simulator" class="text-green-700 hover:underline">【すぐわかる】さくらゴルフ倶楽部の料金シミュレーター</a></li> 
+                    <li><a href="#reasons" class="text-green-700 hover:underline">【口コミ】男性ゴルファーにも大人気！さくらゴルフ倶楽部に通い詰める3つの理由</a></li>
+                    <li><a href="#environment" class="text-green-700 hover:underline">打ちっぱなしの練習環境を徹底レビュー（打席・距離・アプローチ）</a></li>
+                    <li><a href="#beginner-story" class="text-green-700 hover:underline">ゴルフ初心者が安心できる「神対応」！アットホームな接客が最大の魅力</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">「さくらゴルフ倶楽部」の基本情報・アクセス</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">【結論】さくらゴルフ倶楽部はこんな人におすすめの練習場！</a></li>
                 </ul>
             </div>
 
-            <p><strong>【告白】私は一度、ゴルフレッスンで心を折られました。</strong></p>
-            <p>ゴルフを始めてすぐの頃、「そんなことも知らないのか」と言いたげなプロの態度に、私の心はポッキリと折れました。あの日以来、私はレッスンから距離を置き、遠回りを承知で独学の道を選んできたのです。</p>
+            <h2 id="benefits" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                さくらゴルフ倶楽部（滋賀・東近江）の料金体系！女性・ジュニアが激安
+            </h2>
+            
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6014.jpg" alt="さくらゴルフ倶楽部のメンバー特典チラシ" class="w-full h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+            </figure>
 
-            {/* 滋賀の冬サボり防止メッセージ */}
-            <div class="not-prose bg-blue-50 p-6 rounded-lg my-8 border-l-4 border-blue-500 text-blue-900">
-                <p class="font-bold mt-0 flex items-center">❄️ 滋賀の冬、独学は「サボり」の始まり？</p>
-                <p class="mb-0 text-sm md:text-base leading-relaxed">
-                    滋賀の冬は寒さが厳しく、一人だとつい練習をサボりがちですよね。だからこそ、<strong>予約制のレッスンを入れて「サボれない環境」を強制的に作る</strong>のも、上達への賢い戦略です。冬の間にプロと土台を作っておけば、春のシーズンには見違えるスイングになっていますよ。
+            <p>さくらゴルフ倶楽部の最大の強みは、女性とジュニアへの圧倒的な優遇料金です。なんと、女性・ジュニアはデフォルトで「プレミアム会員相当」の扱いになります。</p>
+
+            <ul class="list-none p-0 m-0 space-y-3 my-6">
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>入場料：</strong>いつでも無料！</span></li>
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>打ち放題：</strong>1時間515円（税込）※最大3時間まで</span></li>
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>アプローチ練習場：</strong>無料！（60分/回）</span></li>
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>レンタルクラブ：</strong>無料！</span></li>
+                <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>年会費：</strong>もちろん無料！</span></li>
+            </ul>
+
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/MxbDzQ0.png" alt="レディースパック打ち放題の詳細看板" class="w-full h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+            </figure>
+
+            <p>…正直、これ本当？って思いますよね。私も最初は目を疑いました（笑）。 この破格の料金設定ならお財布を気にせず、思いっきり打ち込み練習に没頭できます。 実際に、私のゴルフ仲間（女性）もこの特典をフル活用して、めきめき上達しています！</p>
+
+            <h2 id="simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【すぐわかる】さくらゴルフ倶楽部の料金シミュレーター</h2>
+            <p>さくらゴルフ倶楽部は、会員種別や「3円デー（第3火曜）」などで細かく料金が変わります。「結局いくら持っていけばいいの？」がすぐわかる専用シミュレーターを作りました！</p>
+
+            <div id="price-simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8 overflow-hidden"> 
+                <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    かんたん料金シミュレーション
+                </h3>
+            
+                <div class="md:space-y-4">
+                    
+                    <div id="step-1" class="step-container"> 
+                        <label for="plan-select" class="font-semibold text-slate-700">① プランを選択</label>
+                        <select id="plan-select" class="w-full mt-2 p-2 border border-slate-300 rounded-md bg-white">
+                            <option value="" disabled selected>プランを選択してください</option>
+                            <option value="visitor">ビジター</option>
+                            <option value="member">メンバー会員</option>
+                            <option value="premium">プレミアム会員</option>
+                            <option value="ladies_junior">レディース・ジュニア</option>
+                        </select>
+                    </div>
+
+                    <div class="hidden md:grid grid-cols-2 gap-4">
+                        <div id="step-2-pc" class="step-container"> 
+                            <label class="font-semibold text-slate-700">② 利用日</label>
+                            <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2" id="day-options-pc">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day-pc" value="weekday" class="mr-2"> 平日</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day-pc" value="weekend" class="mr-2"> 土日祝</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="day-pc" value="special_day" class="mr-2"> 3円デー(第3火曜)</label>
+                            </div>
+                        </div>
+
+                        <div id="step-3-pc" class="step-container"> 
+                            <label class="font-semibold text-slate-700">③ 打席</label>
+                            <div class="flex gap-4 mt-2" id="floor-options-pc">
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor-pc" value="floor1" class="mr-2"> 1階</label>
+                                <label class="flex items-center cursor-pointer"><input type="radio" name="floor-pc" value="floor2" class="mr-2"> 2階</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="step-2" class="step-container md:hidden"> 
+                        <label class="font-semibold text-slate-700">② 利用日</label>
+                        <div class="flex flex-wrap gap-x-4 gap-y-2 mt-2" id="day-options">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekday" class="mr-2"> 平日</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="weekend" class="mr-2"> 土日祝</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="day" value="special_day" class="mr-2"> 3円デー</label>
+                        </div>
+                    </div>
+
+                    <div id="step-3" class="step-container md:hidden"> 
+                        <label class="font-semibold text-slate-700">③ 打席</label>
+                        <div class="flex gap-4 mt-2" id="floor-options">
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="floor1" class="mr-2"> 1階</label>
+                            <label class="flex items-center cursor-pointer"><input type="radio" name="floor" value="floor2" class="mr-2"> 2階</label>
+                        </div>
+                    </div>
+
+                    <div id="step-4" class="step-container"> 
+                        <label class="font-semibold text-slate-700">④ 時間帯</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2" id="time-options">
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="early" class="mr-2"> 早朝<br class="hidden md:inline">(6-9時)
+                            </label>
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="daytime" class="mr-2"> 日中<br class="hidden md:inline">(9-17時)
+                            </label>
+                            <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="night1" class="mr-2"> 夜間<br class="hidden md:inline">(17-22時)
+                            </label>
+                             <label class="flex items-center cursor-pointer p-2 border border-slate-300 rounded-md bg-white has-[:checked]:bg-green-50 has-[:checked]:border-green-400">
+                                <input type="radio" name="time" value="night2" class="mr-2"> 深夜<br class="hidden md:inline">(22-24時)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="step-5" class="step-container pt-2"> 
+                        <div class="mb-4">
+                            <label for="ball-count" class="font-semibold text-slate-700">⑤ 何球打ちますか？</label>
+                            <input type="range" id="ball-count" min="10" max="800" step="10" value="150" class="w-full mt-3 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="text-center font-bold text-green-700 text-lg mt-2" id="ball-count-display">150球</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center bg-white p-4 rounded-lg border-2 border-dashed border-slate-300 mt-6">
+                    <p class="text-slate-600 mb-1 text-sm">合計金額（目安）</p>
+                    <p class="text-3xl font-bold text-green-700" id="total-price-display">
+                        ¥<span id="total-price">----</span>
+                    </p>
+                    <p class="text-sm font-bold text-blue-600 mt-2 hidden" id="unlimited-display"></p>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button id="reset-button" class="hidden bg-slate-200 text-slate-600 text-sm py-1 px-3 rounded-full">
+                        やり直す
+                    </button>
+                </div>
+
+                <p class="text-xs text-center text-slate-500 mt-4">
+                    ※あくまでシミュレーションです。実際の金額は練習場でご確認ください。<br>
+                    ※3円デーは打ち放題プランの割引対象外となる前提で計算しています。
                 </p>
             </div>
 
-            <p>この記事は、あなたが<strong>お金と時間を無駄にせず、最高のゴルフライフの第一歩を踏み出すための「防衛マニュアル」</strong>です。初心者には分かりにくい用語解説と、デメリットも本音で書きました。</p>
-
-            <section id="review-details">
-                 <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【実体験】滋賀県内5つのゴルフ練習場 本音レビュー</h2>
-                 
-                 {rangeIds.map(id => {
-                     const range = rangesData[id];
-                     const extra = additionalData[id];
-                     if (!range) return null;
-                     return (
-                         <div id={id} class="mt-12 pt-6 border-t border-slate-100 scroll-mt-24">
-                             <h3 class="text-2xl font-bold text-slate-800 mt-0"><a href={extra.rangeUrl} class="text-green-700 hover:underline">{range.name}</a></h3>
-                             
-                             <Image src={images[id].full} alt={extra.altFull} class="w-full h-auto object-cover rounded-lg my-4" />
-                             
-                             <p set:html={extra.reviewText} />
-                             
-                             <Image src={images[id].detail} alt={extra.altDetail} class="w-full h-auto object-cover rounded-lg my-4" />
-                             
-                             <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 my-4 text-sm">
-                                <p class="font-bold text-red-700 mb-1">⚠️ デメリット・注意点</p>
-                                <p class="m-0 text-slate-600 leading-relaxed">
-                                    {id === 'azuchi_gc' && "施設は昔ながら。オートティーアップ機はありませんが、その分安く集中できます。"}
-                                    {id === 'greenpia_oh' && "練習場へ向かう道中がかなり狭いです。運転に不慣れな方はご注意を。"}
-                                    {id === 'sakura_gc' && "人気施設のため、駐車場や打席が混雑しやすい時間帯があります。"}
-                                    {id === 'riverside_jumbo' && "入場料・単価ともにエリア標準〜高め。無料のパター練習等をフル活用しましょう。"}
-                                    {id === 'garage_park' && "屋外へのアプローチ練習場などはありません。インドアでのデータ分析がメインです。"}
-                                </p>
-                             </div>
-                             
-                             <div class="not-prose flex flex-col md:flex-row items-center justify-center gap-4 my-8">
-                                <a href={extra.reviewUrl} class="w-full md:w-auto inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-8 rounded-lg no-underline btn-shadow hover:bg-orange-600 transition-all">管理人の詳細体験談を読む</a>
-                                <a href={extra.rangeUrl} class="w-full md:w-auto inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-8 rounded-lg no-underline btn-shadow hover:bg-green-800 transition-all">練習場の詳細情報を見る</a>
-                             </div>
-                         </div>
-                     )
-                 })}
-            </section>
-
-            {/* --- ここから詳細比較表 --- */}
-            <section id="price-comparison-ball">
-                <h2 class="text-2xl font-bold mt-12 pt-4 border-t-2 border-green-600 text-slate-800">【料金】球貸し料金 徹底比較（時間帯別）</h2>
-                
-                <h3 class="text-xl font-bold mt-6">☀️ 日中（9:00〜17:00）の部</h3>
-                <p class="text-sm mb-4">総額がイメージしやすいように<span class="term-tip" data-tip="打席に入るだけでかかる席料のこと。">入場料</span>も併記します。</p>
-                <div class="table-wrapper not-prose my-4">
-                    <table class="w-full text-sm border border-slate-300 min-w-table-pc text-center">
-                        <thead class="bg-slate-100 text-slate-700 font-bold">
-                            <tr><th class="px-4 py-3 border text-left">練習場名</th><th class="px-4 py-3 border">平日 (入場料+単価)</th><th class="px-4 py-3 border">土日祝 (入場料+単価)</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td class="px-4 py-2 border font-bold text-left text-blue-600">安土ゴルフクラブ</td><td class="px-4 py-2 border">0円 + 7円 ※</td><td class="px-4 py-2 border">0円 + 7円 ※</td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-2 border font-bold text-left text-blue-600">グリーンピア近江八幡</td><td class="px-4 py-2 border">300円 + 5円</td><td class="px-4 py-2 border">300円 + 7円</td></tr>
-                            <tr><td class="px-4 py-2 border font-bold text-left text-blue-600">さくらゴルフ倶楽部</td><td class="px-4 py-2 border">280円 + 7円</td><td class="px-4 py-2 border">320円 + 9円</td></tr>
-                        </tbody>
-                    </table>
-                    <p class="text-xs text-slate-500 mt-2">※安土は1カゴ(100球)700円固定。 ※グリーンピアはSDカード提示でさらに割引あり。</p>
-                </div>
-
-                <h3 class="text-xl font-bold mt-8">🌙 夜間（17:00〜）の部</h3>
-                <div class="table-wrapper not-prose my-4">
-                    <table class="w-full text-sm border border-slate-300 min-w-table-pc text-center">
-                        <thead class="bg-slate-100 font-bold">
-                            <tr><th class="px-4 py-3 border text-left">練習場名</th><th class="px-4 py-3 border">平日</th><th class="px-4 py-3 border">土日祝</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr class="bg-yellow-50"><td class="px-4 py-2 border font-bold text-left">安土ゴルフクラブ</td><td class="px-4 py-2 border font-bold text-red-600" colspan="2">ナイターサービス：1,200円 / 300球</td></tr>
-                            <tr><td class="px-4 py-2 border font-bold text-left">グリーンピア近江八幡</td><td class="px-4 py-2 border">300円 + 5円</td><td class="px-4 py-2 border">300円 + 7円</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="total-cost-simulation">
-                <h2 class="text-2xl font-bold mt-12 pt-4 border-t border-slate-200">【検証】100球打った時の総額ランキング</h2>
-                <div class="table-wrapper not-prose my-4">
-                    <table class="w-full text-sm border border-slate-300 min-w-table-pc text-center">
-                        <thead class="bg-green-600 text-white font-bold">
-                            <tr><th class="px-4 py-3 border">順位</th><th class="px-4 py-3 border">練習場名</th><th class="px-4 py-3 border">計算内訳</th><th class="px-4 py-3 border">総額</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td class="px-4 py-2 border font-bold text-xl text-orange-500 italic">1位</td><td class="px-4 py-2 border font-bold text-left text-blue-600">安土ゴルフクラブ</td><td class="px-4 py-2 border">100球券 (入場無料)</td><td class="px-4 py-2 border font-bold text-lg text-red-600">700円</td></tr>
-                            <tr class="bg-slate-50"><td>2位</td><td class="px-4 py-2 border font-bold text-left text-blue-600">グリーンピア近江八幡</td><td>入場300円 + (5円×100)</td><td class="px-4 py-2 border font-bold">800円</td></tr>
-                            <tr><td>3位</td><td class="px-4 py-2 border font-bold text-left text-blue-600">さくらゴルフ倶楽部</td><td>入場280円 + (7円×100)</td><td class="px-4 py-2 border font-bold">980円</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="price-comparison-buffet">
-                <h2 class="text-2xl font-bold mt-12 pt-4 border-t border-slate-200">【打ち放題】たくさん打つならどこ？</h2>
-                <div class="table-wrapper not-prose my-4 text-sm">
-                    <table class="w-full border border-slate-300 min-w-table-pc">
-                        <thead class="bg-slate-100 font-bold">
-                            <tr><th class="px-4 py-3 border text-left">練習場名</th><th class="px-4 py-3 border text-center">主なプラン</th><th class="px-4 py-3 border text-left">ポイント</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td class="px-4 py-3 border font-bold">安土ゴルフクラブ</td><td class="px-4 py-3 border text-center">1,200円 / 3時間(2F)</td><td class="px-4 py-3 border">時間制限が長くコスパ最強</td></tr>
-                            <tr class="bg-slate-50"><td class="px-4 py-3 border font-bold">がれーじぱーく東近江</td><td class="px-4 py-3 border text-center">月額5,000円 / 無制限</td><td class="px-4 py-3 border text-red-600 font-bold">通う頻度が高いならこれ一択</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            {/* --- FAQ --- */}
-            <section id="faq" class="mt-12 pt-6 border-t scroll-mt-24">
-                 <h2 class="text-2xl font-bold text-slate-800 mb-6">滋賀の打ちっぱなし選び よくある質問</h2>
-                 <div class="space-y-4 not-prose">
-                    <details class="faq-details group border rounded-lg bg-slate-50 p-4 overflow-hidden transition-all duration-300">
-                        <summary class="font-bold cursor-pointer flex justify-between items-center">Q. がれーじぱーく東近江はレッスンやってる？<span class="text-green-600 transition group-open:rotate-180">▼</span></summary>
-                        <p class="mt-4 text-sm text-slate-600 border-t pt-4 leading-relaxed">現在、定期的なレッスンは開講されていません。当施設はインドアのシミュレーションゴルフ施設です。</p>
-                    </details>
-                    <details class="faq-details group border rounded-lg bg-slate-50 p-4 overflow-hidden transition-all duration-300">
-                        <summary class="font-bold cursor-pointer flex justify-between items-center">Q. 初心者がいきなりプロに習っても大丈夫？<span class="text-green-600 transition group-open:rotate-180">▼</span></summary>
-                        <p class="mt-4 text-sm text-slate-600 border-t pt-4 leading-relaxed">むしろ初心者のうちに習うのが最短ルートです。変な癖がつく前に学ぶことで、将来の練習代を節約できます。</p>
-                    </details>
-                 </div>
-            </section>
+            <h2 id="reasons" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【口コミ】男性ゴルファーにも大人気！さくらゴルフ倶楽部に通い詰める3つの理由
+            </h2>
+            <p>「女性がお得なのは分かったけど、じゃあ男性のあなたは何でそんなに通ってるの？」 そう思われたかもしれません。実はお得さだけじゃない、私がこの練習場を愛してやまない理由があるんです。</p>
             
-            {/* --- 基本情報まとめ（最も丁寧な表形式） --- */}
-            <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                 <h2 class="text-2xl md:text-3xl font-bold text-slate-800">各施設の基本情報・アクセスまとめ</h2>
-                 <div class="space-y-12 mt-4">
-                     {rangeIds.map(id => {
-                         const range = rangesData[id];
-                         if (!range) return null;
-                         const avgRating = range.avgRating || 0;
-                         const reviewCount = range.reviewCount || 0;
-                         const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">① ゴルフ仲間との最高の集合場所</h3>
+            <p>一緒に行くゴルフ仲間の多くが、この「さくらゴルフ倶楽部」がお気に入りなんです。 女性会員の友人は破格の安さで練習できますし、男性の友人は1回の練習で500球以上打つ猛者もいて、プレミアム会員を利用して割安に練習しています。 性別やレベルを問わず、みんながハッピーになれる貴重な場所なんです。</p>
 
-                         return (
-                             <div id={`info-${id}`} class="scroll-mt-24 bg-slate-50 p-6 rounded-xl border border-slate-200 shadow-sm">
-                                 <h3 class="text-xl font-bold flex items-center flex-wrap gap-x-2 gap-y-1">
-                                    <a href={additionalData[id].rangeUrl} class="text-green-800 hover:underline">{range.name}</a>
-                                    <span class="text-amber-400 text-base font-bold">★ {avgRating > 0 ? avgRating.toFixed(1) : '-'} <small class="text-slate-500 font-normal">({reviewCount}件)</small></span>
-                                 </h3>
-                                 <div class="not-prose overflow-x-auto mt-4 text-sm">
-                                     <table class="w-full text-left border-collapse bg-white"><tbody>
-                                         <tr class="border-b"><th class="py-3 px-4 bg-slate-50 font-semibold w-1/3 text-left">住所</th><td class="py-3 px-4">{range.address}</td></tr>
-                                         <tr class="border-b"><th class="py-3 px-4 bg-slate-50 font-semibold text-left">アクセス</th><td class="py-3 px-4">{additionalData[id].access}</td></tr>
-                                         <tr class="border-b"><th class="py-3 px-4 bg-slate-50 font-semibold text-left">電話番号</th><td class="py-3 px-4">{range.phone || '-'}</td></tr>
-                                         <tr class="border-b"><th class="py-3 px-4 bg-slate-50 font-semibold text-left">規模</th><td class="py-3 px-4">{range.yardage ? `${range.yardage}yd` : 'インドア'} / {range.bays}席</td></tr>
-                                     </tbody></table>
-                                 </div>
-                                 <iframe src={mapsEmbedUrl} width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" class="rounded-lg mt-4 border border-slate-200"></iframe>
-                             </div>
-                         )
-                     })}
-                 </div>
-            </section>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② リアルな情報交換の場になる</h3>
+            <p>練習場でたまたま顔見知りになった方々と、今ではゴルフ情報を交換する仲に。 これが本当に有益で、「あのコースどうだった？」とか「新しいクラブ試した？」なんて会話が日常茶飯事。 打ちっぱなしに通うことでゴルフの輪が自然と広がっていくんです。</p>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">③ アットホームな店員さんと空気感</h3>
+            <p>ここの店員さん、本当に親切でゴルフ愛に溢れている方ばかり。 ゴルフの相談に乗ってくれたり、時にはお客さんと一緒にラウンド（もちろん店員さんのお休みの日に！）することもあるくらい、フレンドリーなんです。 このアットホームな雰囲気が、通うたびに心地いいんですよね。</p>
 
-            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <h2 id="environment" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                打ちっぱなしの練習環境を徹底レビュー（打席・距離・アプローチ）
+            </h2>
+            <p>もちろん、ゴルフのスコアアップに必要な練習環境もしっかり整っています！</p>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【打席設備とフェアウェイ】</h3>
+            <p><strong>マット：</strong> 打席によって多少の使用感はありますが、練習に支障が出るレベルではありません。</p>
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/TOM6sID.jpeg" alt="昼間のさくらゴルフ倶楽部の打席マットの状態" class="w-full h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+            </figure>
+
+            <p><strong>ティーアップ：</strong> 便利な自動式。高さも5段階に調整可能で操作も簡単！</p>
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/2.png" alt="ティーの高さ調整をする機械。プリカの挿入もこの一台で" class="w-full h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+            </figure>
+
+            <p><strong>ボール：</strong> 様々なメーカーのロストボールがミックスされています。状態は色々ですが、練習用としては十分です。</p>
+            
+            <p><strong>ターゲットと距離感：</strong> 10ヤード毎のラインや多数の旗、グリーンを模した的も設置されていて、距離感が掴みやすい！奥のネット(200ヤード～)にドライバーショットが届けば気分爽快です！</p>
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/3.png" alt="さくらゴルフ倶楽部の打席から見たフェアウェイ。ターゲットのヤード表示あり" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+            </figure>
+
+            <p><strong>無料貸し出し品：</strong> ヘッドスピード測定器、アドレス確認用ミラー、スマホホルダーも受付で無料レンタル可能。スイングチェックに役立ちます。</p>
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/hfDU3SE.jpeg" alt="無料貸し出し品一覧の写真（店内貼り出し用ポスター）" class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+            </figure>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【初心者ゴルファーさん注目！2階の「初心者優先スペース」】</h3>
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/7.png" alt="2階打席に設置されている身長より高いパーテーション" class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+            </figure>
+            
+            <p>2階打席の一番奥には、6打席の「初心者優先スペース」があります。 ここが本当に素晴らしい！ 高さ約2mのしっかりしたパーテーションで区切られているので、隣の打席や周りの視線を気にせず、自分のペースで練習に集中できます。「空振りしたら恥ずかしいな…」なんて心配、もう必要ありません！</p>
+            
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/5.png" alt="横から見た初心者優先スペース。光差し込む昼間の打席" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+            </figure>
+
+            <p>一番奥は左利き用の打席になっています。2階なので打ち下ろしで気持ちよく練習できるのも◎。 受付で空き状況を確認してみてくださいね。</p>
+
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/8.png" alt="フロントに設置されている打席の空き状況確認掲示板" class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
+            </figure>
+
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【スコアメイクの鍵！実戦力が身につく「アプローチ練習場」】</h3>
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9789.png" alt="さくらゴルフ倶楽部のアプローチ練習場全体" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+            </figure>
+
+            <p>ゴルフのスコアを左右するショートゲーム。「さくらゴルフ倶楽部」には、約60ヤードのアプローチ練習場があり、これがまた素晴らしいんです！</p>
+            
+            <p>正直にお伝えすると、芝やバンカーの状態が常に完璧！というわけではありません。 でも、それが逆にイイ！ コースで遭遇するような、ちょっと難しいライやアゴの高いバンカーからのショットなど、より実践的な練習ができるんです。 旗も2本立っているので、目標設定もしやすいですよ。</p>
+            
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/10.png" alt="アプローチ練習場のバンカー" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+            </figure>
+
+            <p>私自身、ここのアプローチ練習場で様々な打ち方を試し、練習を重ねた結果、苦手だったアプローチでのトップが激減！スコアアップを実感しています。</p>
+
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6025.jpg" alt="目土小屋。袋の中にスコップが入っているのでそのまま使えます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+            </figure>
+            
+            <p>ゴルフシューズはもちろん、スニーカーでの利用もOK。 練習後にはコンプレッサーで汚れを落とせるのも嬉しいポイント。休憩用のベンチも設置されています。</p>
+            
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【気分転換にも最適「パター練習コーナー」】</h3>
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/13.png" alt="2Fオープンスペースにあるパター練習用のミニグリーン" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+            </figure>
+
+            <p>2階ホールには、パターマット2種類とフラットなミニグリーン（約2m×1m）も。 本格的なパター練習には少し物足りないかもしれませんが、打席練習の合間の気分転換や、初心者の方がパットの感覚を掴むには最適です。</p>
+            
+
+            <h2 id="beginner-story" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                ゴルフ初心者が安心できる「神対応」！アットホームな接客が最大の魅力
+            </h2>
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6639.jpg" alt="さくらゴルフ倶楽部のメンバーズカード" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+            </figure>
+            <p>私がまだゴルフを始めたばかりの頃。 ある日、夜9時頃から練習を始めたのですが、夜10時になった瞬間、突然プリペイドカードが打席から排出されたんです！</p>
+            <p>「え？何？故障！？」とパニックになっていると、たまたま近くを通りかかった店員さんが優しく声をかけてくれました。 「22時からは料金が安くなるので、一度カードが出てくるんですよ。早朝も同じシステムで、朝9時までは入場料不要で単価も安いので、9時になると一度排出されて受付が必要になるんです」と。</p>
+            <p>もう、本当にホッとしました…。 初めて打ちっぱなしに行く時って、専門用語やルールが分からなくて色々不安ですよね。 でも、「さくらゴルフ倶楽部」の店員さんは、こちらから「初めて来ました」と伝えれば、本当に丁寧に（ある意味、お節介なくらい(笑)）教えてくれるので、安心して練習を始められますよ。</p>
+            
             <div class="not-prose my-12 space-y-12">
-                <MySlider articles={experienceReports} title="あわせて読みたい「体験レポート」"/>
-                <MySlider articles={comparisonArticles} title="滋賀のゴルフ練習場 比較記事一覧"/>
+            {
+                category === '体験談' ? (
+                    <>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    </>
+                ) 
+                : category === '比較記事' ? (
+                    <>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                    </>
+                ) 
+                : null
+            }
             </div>
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
+
+            <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                {rangeData ? `「${rangeData.name}」の基本情報・アクセス` : "基本情報"}
+            </h2>
+            {
+                rangeData ? (
+                    <div class="overflow-x-auto not-prose">
+                        <table class="w-full text-left border-collapse">
+                            <tbody class="align-baseline">
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">練習場名</th>
+                                    <td class="py-3 px-4">{rangeData.name}</td>
+                                </tr>
+                                 {rangeData.avgRating && (
+                                    <tr class="border-b border-slate-200">
+                                        <th class="py-3 px-4 bg-slate-50 font-semibold">総合評価</th>
+                                        <td class="py-3 px-4">
+                                            <div class="flex items-center" role="img" aria-label={`評価 ${parseFloat(rangeData.avgRating).toFixed(1)}/5`}>
+                                                <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )}
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">住所</th>
+                                    <td class="py-3 px-4">
+                                        <a href={`http://googleusercontent.com/maps/google.com/0{encodeURIComponent(rangeData.name + " " + rangeData.address)}`} target="_blank" rel="noopener noreferrer" class="text-green-700 hover:underline">
+                                            {rangeData.address}
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
+                                    <td class="py-3 px-4">
+                                        {rangeData.phone ? (
+                                            <a href={`tel:${rangeData.phone?.replace(/-/g, "")}`} class="text-green-700 hover:underline">
+                                                {rangeData.phone}
+                                            </a>
+                                        ) : (
+                                            <span>-</span>
+                                        )}
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
+                                    <td class="py-3 px-4">{rangeData.business_hours}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
+                                    <td class="py-3 px-4">{rangeData.yardage ? `${rangeData.yardage}ヤード` : "-"}</td>
+                                </tr>
+                                <tr class="border-b border-slate-200">
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
+                                    <td class="py-3 px-4">{rangeData.bays ? `${rangeData.bays}打席` : "-"}</td>
+                                </tr>
+                                <tr>
+                                    <th class="py-3 px-4 bg-slate-50 font-semibold">アクセス</th>
+                                    <td class="py-3 px-4">{rangeData.access}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p class="text-center text-slate-500 py-4">
+                        練習場の基本情報を読み込んでいます...
+                    </p>
+                )
+            }
+            {
+                rangeData && (
+                    <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        <iframe
+                            src={`http://googleusercontent.com/maps/google.com/1{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
+                            width="100%"
+                            height="450"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                )
+            }
+            <p class="text-center font-bold text-lg mt-8">
+                🎯 さらに詳しい情報や口コミはこちら！
+                <br />
+                <a
+                    href={`/ranges/${rangeId}/`}
+                    class="mt-4 inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline"
+                >
+                    「さくらゴルフ倶楽部」のシガゴル公式レビューページへ
+                </a>
+            </p>
+
+            <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                【結論】さくらゴルフ倶楽部（東近江）はこんなゴルファーにおすすめ！
+            </h2>
+            <p>東近江市の「さくらゴルフ倶楽部」。 特筆すべきは、やはり女性とジュニアへの圧倒的なホスピタリティ！ そして、実践的なアプローチ練習環境と、何より温かい人の繋がりが感じられる場所だということ。</p>
+            <p>設備は最新鋭ピカピカ！というわけではないかもしれませんが、それを補って余りあるほどの練習のしやすさと居心地の良さがここにはあります。</p>
+
+            <figure class="my-6">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6081.jpg" alt="1Fエントランス横休憩スペースに設置されているマッサージチェア" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
+                <figcaption class="text-center text-sm text-slate-500 mt-2">マッサージチェアも置いてます笑 自由に使用可能（筆者撮影）</figcaption>
+            </figure>
+
+            <p>特にこんな方には、自信を持っておすすめします！</p>
+            <ul class="list-disc list-inside space-y-2 my-4">
+                <li>とにかくお得にたくさん練習したい女性ゴルファーの方！</li>
+                <li>ゴルフを始めたい、または始めたばかりの初心者の方！</li>
+                <li>アプローチショットを徹底的に磨きたい方！</li>
+                <li>財布の中身を気にせず、心ゆくまで打ち込みたい方！</li>
+                <li>フレンドリーな雰囲気で、ゴルフ仲間を見つけたい方！</li>
+            </ul>
+            <p>店員さんとお客さんが和気あいあいとゴルフ談義に花を咲かせている、そんな光景が日常の練習場です。ゴルフ初心者の方も、がっつり練習したい経験者も、そして「ちょっと気になる…」くらいの人にも。 さくらゴルフ倶楽部は、すべてのゴルファーにやさしい練習場です！</p>
+            <p>気になったあなたは、ぜひ一度、その魅力を体験しに足を運んでみてくださいね！</p>
+            
         </article>
     </div>
 </BaseLayout>
+
+<style>
+    /* ★ シミュレーター用のCSSを追加 */
+    .map-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        height: 450px; 
+    }
+    .map-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+    .scroll-mt-24 {
+        scroll-margin-top: 6rem; /* 96px */
+    }
+
+    #plan-select {
+         font-size: 1rem !important; /* 16px */
+    }
+
+    @media (max-width: 767px) {
+        .step-container {
+            transition: opacity 0.3s ease-out, max-height 0.3s ease-out, margin 0.3s ease-out, padding 0.3s ease-out;
+            overflow: hidden;
+        }
+        .step-container.hidden {
+            opacity: 0;
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            pointer-events: none;
+        }
+    }
+</style>
+
+<script define:vars={{ priceData }}>
+    document.addEventListener('DOMContentLoaded', () => {
+        const simulator = document.getElementById('price-simulator');
+        if (!simulator) return;
+
+        // --- 要素の取得 ---
+        const planSelect = simulator.querySelector('#plan-select');
+        
+        // スマホ用
+        const dayRadios = simulator.querySelectorAll('input[name="day"]');
+        const floorRadios = simulator.querySelectorAll('input[name="floor"]');
+        // PC用 
+        const dayRadiosPc = simulator.querySelectorAll('input[name="day-pc"]');
+        const floorRadiosPc = simulator.querySelectorAll('input[name="floor-pc"]');
+
+        // 共通
+        const timeRadios = simulator.querySelectorAll('input[name="time"]');
+        const ballCountSlider = simulator.querySelector('#ball-count');
+        const ballCountDisplay = simulator.querySelector('#ball-count-display');
+        const totalPriceDisplay = simulator.querySelector('#total-price');
+        const unlimitedDisplay = simulator.querySelector('#unlimited-display');
+        const resetButton = simulator.querySelector('#reset-button');
+
+        // ステップコンテナ
+        const steps = [
+            simulator.querySelector('#step-1'),
+            simulator.querySelector('#step-2'), // スマホ用 利用日
+            simulator.querySelector('#step-3'), // スマホ用 打席
+            simulator.querySelector('#step-4'), // 共通 時間帯
+            simulator.querySelector('#step-5')  // 共通 球数
+        ];
+        
+        // PC用コンテナ
+        const pcStep2 = simulator.querySelector('#step-2-pc');
+        const pcStep3 = simulator.querySelector('#step-3-pc');
+
+        // --- 状態管理 ---
+        const isMobile = () => window.innerWidth < 768;
+
+        // --- 関数定義 ---
+
+        /**
+         * 料金を計算して表示する
+         */
+        function calculatePrice() {
+            // 1. 各選択肢の値を取得
+            const planKey = planSelect.value;
+            let dayKey = (isMobile() ? 
+                            simulator.querySelector('input[name="day"]:checked') : 
+                            simulator.querySelector('input[name="day-pc"]:checked'))?.value;
+            const floorKey = (isMobile() ? 
+                              simulator.querySelector('input[name="floor"]:checked') : 
+                              simulator.querySelector('input[name="floor-pc"]:checked'))?.value;
+            const timeKey = simulator.querySelector('input[name="time"]:checked')?.value;
+            const balls = parseInt(ballCountSlider.value);
+
+            ballCountDisplay.textContent = `${balls}球`;
+
+            if (!planKey || !dayKey || !timeKey || !floorKey) {
+                totalPriceDisplay.textContent = '----';
+                unlimitedDisplay.classList.add('hidden');
+                return;
+            }
+
+            // 2. 必要な料金データを取得
+            const plan = priceData.plans[planKey];
+            if (!plan) {
+                 console.error("Selected plan not found in priceData:", planKey);
+                 totalPriceDisplay.textContent = 'エラー';
+                 return;
+            }
+
+            const timeZone = priceData.timeZones[timeKey];
+            // 3円デー 'special_day' が選択された場合、ボール単価は 'special_day' を参照
+            const ballPriceDayKey = dayKey; 
+            const baseBallPrice = priceData.ballPrice[ballPriceDayKey][timeKey][floorKey];
+
+            let entryFee = 0;
+            let ballPriceDiscount = 0;
+            let ballTotal = 0;
+            let finalPrice = 0;
+
+            // 3. プラン別に基本料金を計算
+            
+            // 3-1. 入場料
+            if (plan.type === 'visitor') {
+                // 3円デー(第3火曜)は平日扱いとする
+                const entryDayKey = (dayKey === 'special_day') ? 'weekday' : dayKey;
+                entryFee = timeZone.entryFee[entryDayKey];
+            } else {
+                // member, premium, ladies_junior は入場料無料
+                entryFee = plan.entryFee;
+            }
+            
+            // 3-2. 単価割引
+            // プレミアム会員、かつ、9-22時、かつ、3円デー以外
+            if (plan.type === 'premium' && (timeKey === 'daytime' || timeKey === 'night1') && dayKey !== 'special_day') {
+                ballPriceDiscount = plan.discount; // 1円
+            }
+
+            const actualBallPrice = Math.max(0, baseBallPrice - ballPriceDiscount);
+            ballTotal = (actualBallPrice * balls) + entryFee;
+
+            // 4. 打ち放題プランとの比較
+            unlimitedDisplay.classList.add('hidden');
+            unlimitedDisplay.innerHTML = ""; 
+
+            let bestOption = { name: '単価打ち', price: ballTotal };
+            let unlimitedMessage = "";
+            let availablePlans = [];
+            
+            // 打ち放題が利用可能な時間帯 (9:00-22:00) かつ 3円デーでない場合
+            const unlimitedDayKey = (dayKey === 'special_day') ? 'weekday' : dayKey; // 3円デーは平日料金で判定
+
+            if ((timeKey === 'daytime' || timeKey === 'night1') && dayKey !== 'special_day') {
+                if (plan.type === 'ladies_junior') {
+                    availablePlans = plan.unlimited; 
+                } else if (plan.type === 'premium') {
+                    availablePlans = plan.unlimited; 
+                } else if (plan.type === 'visitor' || plan.type === 'member') {
+                    // 一般の打ち放題
+                    if (timeZone.unlimited && timeZone.unlimited[unlimitedDayKey]) {
+                         availablePlans = [timeZone.unlimited[unlimitedDayKey]]; 
+                    }
+                }
+            }
+
+            if (availablePlans.length > 0) {
+                
+                // L/J と Premium の場合 (複数の打ち放題プランがある場合)
+                if (plan.type === 'ladies_junior' || plan.type === 'premium') {
+                    
+                    const suitablePlans = availablePlans.filter(p => p.price <= ballTotal);
+                    
+                    if (suitablePlans.length > 0) {
+                        const bestUnlimitedPlan = suitablePlans.reduce((best, current) => {
+                            return current.price > best.price ? current : best;
+                        });
+                        bestOption = bestUnlimitedPlan;
+                    }
+
+                    unlimitedMessage = "💡 打ち放題プラン:<br>" + availablePlans.map(p => {
+                        return `${p.name} (¥${p.price.toLocaleString()})`;
+                    }).join('<br>');
+
+                } 
+                // Visitor / Member の場合 (一般打ち放題が1つの場合)
+                else { 
+                    const cheapestUnlimitedPlan = availablePlans[0]; 
+                    if (cheapestUnlimitedPlan.price <= ballTotal) {
+                        bestOption = cheapestUnlimitedPlan;
+                        unlimitedMessage = `💡 ${bestOption.name} (¥${bestOption.price.toLocaleString()}) がお得です`;
+                    }
+                }
+            }
+            
+            // 5. 最終金額とメッセージを表示
+            finalPrice = bestOption.price;
+            let finalPriceString = finalPrice.toLocaleString(); 
+
+            // レディース・プレミアム会員で、かつ「打ち放題」が最安オプションになった場合
+            if ((plan.type === 'ladies_junior' || plan.type === 'premium') && bestOption.name !== '単価打ち') {
+                
+                if (availablePlans.length > 0) {
+                    const minUnlimitedPrice = availablePlans.reduce((min, p) => p.price < min ? p.price : min, availablePlans[0].price);
+                    
+                    // 表示を「¥(最低価格)〜」に変更
+                    finalPriceString = `${minUnlimitedPrice.toLocaleString()}〜`; 
+                }
+            }
+
+            totalPriceDisplay.textContent = finalPriceString; 
+            
+            if (unlimitedMessage) {
+                unlimitedDisplay.innerHTML = unlimitedMessage; 
+                unlimitedDisplay.classList.remove('hidden');
+            }
+        }
+
+        /**
+         * スマホ表示でステップを進める
+         */
+        function goToStep(stepToShow) {
+            if (!isMobile()) return;
+            steps.forEach(step => step.classList.add('hidden'));
+            stepToShow.classList.remove('hidden');
+            resetButton.classList.remove('hidden');
+        }
+
+        /**
+         * スマホ/PC表示とフォームをリセット
+         */
+        function resetSimulator() {
+            [...dayRadios, ...floorRadios, ...timeRadios, ...dayRadiosPc, ...floorRadiosPc].forEach(radio => radio.checked = false);
+            
+            ballCountSlider.value = 150;
+            
+            if (isMobile()) {
+                // ★ スマホ: プランを「未選択」に戻す
+                planSelect.value = ""; 
+                steps.forEach((step, index) => {
+                    if (index === 0) step.classList.remove('hidden'); // ステップ1
+                    else step.classList.add('hidden');
+                });
+                resetButton.classList.add('hidden');
+            } else {
+                // ★ PC: デフォルトを設定
+                planSelect.value = 'visitor'; // PCはビジターデフォルト
+                simulator.querySelector('input[name="day-pc"][value="weekday"]').checked = true;
+                simulator.querySelector('input[name="floor-pc"][value="floor2"]').checked = true;
+                simulator.querySelector('input[name="time"][value="daytime"]').checked = true;
+
+                // PCはスマホ用ステップを隠す
+                steps.forEach(step => step.classList.remove('hidden'));
+                steps[1].classList.add('hidden'); // (スマホ用)
+                steps[2].classList.add('hidden'); // (スマホ用)
+                pcStep2.classList.remove('hidden');
+                pcStep3.classList.remove('hidden');
+                resetButton.classList.add('hidden'); 
+            }
+            
+            calculatePrice(); 
+        }
+        
+        /**
+         * イベントリスナーを設定
+         */
+        function setupListeners() {
+            planSelect.addEventListener('change', () => {
+                calculatePrice(); // Recalculate
+                if (isMobile()) {
+                    goToStep(steps[1]); // プラン選んだらステップ2へ
+                }
+            });
+            
+            // スマホ用ラジオ
+            dayRadios.forEach(radio => radio.addEventListener('change', () => {
+                simulator.querySelector(`input[name="day-pc"][value="${radio.value}"]`).checked = true; // PCと同期
+                goToStep(steps[2]); // ステップ3へ
+                calculatePrice();
+            }));
+            floorRadios.forEach(radio => radio.addEventListener('change', () => {
+                 simulator.querySelector(`input[name="floor-pc"][value="${radio.value}"]`).checked = true; // PCと同期
+                goToStep(steps[3]); // ステップ4へ
+                calculatePrice();
+            }));
+            
+            // PC用ラジオ
+             dayRadiosPc.forEach(radio => radio.addEventListener('change', () => {
+                simulator.querySelector(`input[name="day"][value="${radio.value}"]`).checked = true; // スマホと同期
+                calculatePrice();
+            }));
+            floorRadiosPc.forEach(radio => radio.addEventListener('change', () => {
+                simulator.querySelector(`input[name="floor"][value="${radio.value}"]`).checked = true; // スマホと同期
+                calculatePrice();
+            }));
+
+            // 共通
+            timeRadios.forEach(radio => radio.addEventListener('change', () => {
+                if(isMobile()) goToStep(steps[4]); // ステップ5へ
+                calculatePrice();
+            }));
+            ballCountSlider.addEventListener('input', calculatePrice);
+            resetButton.addEventListener('click', resetSimulator);
+        }
+
+        // --- 初期化実行 ---
+        setupListeners(); 
+        resetSimulator(); 
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                resetSimulator(); 
+            }, 250);
+        });
+    });
+</script>

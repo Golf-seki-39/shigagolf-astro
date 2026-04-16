@@ -2,16 +2,15 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
-// [修正点1] AstroのImageコンポーネントをインポート
 import { Image } from "astro:assets";
 
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
-// --- This article's specific information ---
-const title = "【東近江】さくらゴルフ倶楽部 正直レビュー｜女性優遇の店に「一般男性」の私が通い詰める3つの理由 | シガゴル";
-const description = "【料金シミュレーター付】東近江市の穴場「さくらゴルフ倶楽部」を体験レビュー。「女性・ジュニアが激安」は本当？打席の広さや設備、男性でもお得に使える裏ワザまで、地元民が忖度なしで解説します。";
+// --- [3] この記事固有の情報（SEO特化に大幅リライト） ---
+const title = "【料金】さくらゴルフ倶楽部（滋賀・東近江の打ちっぱなし）正直レビュー！激安＆初心者に優しい練習場 | シガゴル";
+const description = "【料金シミュレーター付】滋賀県東近江市（近江八幡からも好アクセス）の打ちっぱなし練習場「さくらゴルフ倶楽部」の口コミ・体験レビュー。入場料無料や女性・ジュニアの激安打ち放題、初心者が安心して通えるアットホームな魅力を地元ゴルファーが徹底解説！";
 const category = "体験談";
 const pubDate = "2025-05-23";
 const pubDateISO = "2025-05-23T10:00:00+09:00"; 
@@ -22,7 +21,7 @@ const rangeId = "sakura_gc";
 
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/sakura-gc-review/`;
-const headline = title.split(" | ")[0];
+const headline = "【正直レビュー】滋賀・東近江の打ちっぱなし「さくらゴルフ倶楽部」！激安料金と初心者に優しい魅力";
 
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const docPath = `artifacts/${appId}/public/data/practice_ranges/${rangeId}`;
@@ -35,95 +34,51 @@ if (docSnap.exists()) {
     console.error(`Error: No document found for rangeId: ${rangeId}`);
 }
 
-// ★★★ ここから料金シミュレーター用のデータ定義 ★★★
+// ★★★ 料金シミュレーター用のデータ定義（変更なし） ★★★
 const priceData = {
   plans: {
-    visitor: { 
-      name: 'ビジター', 
-      type: 'visitor' 
-    },
-    member: { 
-      name: 'メンバー会員', 
-      type: 'member',
-      entryFee: 0 // 入場料無料
-    },
+    visitor: { name: 'ビジター', type: 'visitor' },
+    member: { name: 'メンバー会員', type: 'member', entryFee: 0 },
     premium: {
-      name: 'プレミアム会員',
-      type: 'premium',
-      entryFee: 0, // 入場料無料
-      discount: 1, // 1円引き (9:00-22:00)
-      unlimited: [ // 9:00-22:00
-        { name: "2時間打ち放題", price: 1030 },
-        { name: "3時間打ち放題", price: 1545 }
-      ]
+      name: 'プレミアム会員', type: 'premium', entryFee: 0, discount: 1, 
+      unlimited: [ { name: "2時間打ち放題", price: 1030 }, { name: "3時間打ち放題", price: 1545 } ]
     },
     ladies_junior: {
-      name: 'レディース・ジュニア',
-      type: 'ladies_junior',
-      entryFee: 0, // 入場料無料
-      unlimited: [ // 9:00-22:00
-        { name: "1時間打ち放題", price: 515 },
-        { name: "2時間打ち放題", price: 1030 },
-        { name: "3時間打ち放題", price: 1545 }
-      ]
+      name: 'レディース・ジュニア', type: 'ladies_junior', entryFee: 0, 
+      unlimited: [ { name: "1時間打ち放題", price: 515 }, { name: "2時間打ち放題", price: 1030 }, { name: "3時間打ち放題", price: 1545 } ]
     }
   },
   timeZones: {
-    early: { 
-      name: "早朝 (6:00-9:00)", 
-      entryFee: { weekday: 0, weekend: 0 }, // 共通で無料
-      unlimited: null // 打ち放題なし
-    },
+    early: { name: "早朝 (6:00-9:00)", entryFee: { weekday: 0, weekend: 0 }, unlimited: null },
     daytime: { 
-      name: "日中 (9:00-17:00)", 
-      entryFee: { weekday: 280, weekend: 320 }, 
-      unlimited: { // 一般
-        weekday: { price: 1854, name: "3時間打ち放題" },
-        weekend: { price: 2060, name: "3時間打ち放題" }
-      }
+      name: "日中 (9:00-17:00)", entryFee: { weekday: 280, weekend: 320 }, 
+      unlimited: { weekday: { price: 1854, name: "3時間打ち放題" }, weekend: { price: 2060, name: "3時間打ち放題" } }
     },
     night1: { 
-      name: "夜間 (17:00-22:00)", 
-      entryFee: { weekday: 280, weekend: 320 }, // 日中と同じと仮定
-      unlimited: { // 一般 (日中と同じと仮定)
-        weekday: { price: 1854, name: "3時間打ち放題" },
-        weekend: { price: 2060, name: "3時間打ち放題" }
-      }
+      name: "夜間 (17:00-22:00)", entryFee: { weekday: 280, weekend: 320 }, 
+      unlimited: { weekday: { price: 1854, name: "3時間打ち放題" }, weekend: { price: 2060, name: "3時間打ち放題" } }
     },
-    night2: { 
-      name: "深夜 (22:00-24:00)", 
-      entryFee: { weekday: 0, weekend: 0 }, // 共通で無料
-      unlimited: null // 打ち放題なし
-    }
+    night2: { name: "深夜 (22:00-24:00)", entryFee: { weekday: 0, weekend: 0 }, unlimited: null }
   },
   ballPrice: {
-    // 3円デー (平日扱いと仮定)
     special_day: {
-      early:   { floor1: 3, floor2: 3 },
-      daytime: { floor1: 3, floor2: 3 },
-      night1:  { floor1: 3, floor2: 3 },
-      night2:  { floor1: 3, floor2: 3 },
+      early:   { floor1: 3, floor2: 3 }, daytime: { floor1: 3, floor2: 3 },
+      night1:  { floor1: 3, floor2: 3 }, night2:  { floor1: 3, floor2: 3 },
     },
-    // 平日
     weekday: {
-      early:   { floor1: 7, floor2: 7 },
-      daytime: { floor1: 8, floor2: 7 }, // 2Fを 7円 に修正済み
-      night1:  { floor1: 9, floor2: 8 },
-      night2:  { floor1: 8, floor2: 8 }, 
+      early:   { floor1: 7, floor2: 7 }, daytime: { floor1: 8, floor2: 7 }, 
+      night1:  { floor1: 9, floor2: 8 }, night2:  { floor1: 8, floor2: 8 }, 
     },
-    // 土日祝
     weekend: {
-      early:   { floor1: 7, floor2: 7 }, 
-      daytime: { floor1: 10, floor2: 9 },
-      night1:  { floor1: 10, floor2: 9 }, 
-      night2:  { floor1: 9, floor2: 9 },
+      early:   { floor1: 7, floor2: 7 }, daytime: { floor1: 10, floor2: 9 },
+      night1:  { floor1: 10, floor2: 9 }, night2:  { floor1: 9, floor2: 9 },
     }
   }
 };
 // ★★★ 料金シミュレーター用のデータ定義ここまで ★★★
 
 
-// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+// --- [6] 関連記事リスト ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
@@ -191,7 +146,7 @@ const comparisonArticles = [
             "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
         },
         "datePublished": pubDateISO,
-        "dateModified": new Date().toISOString() // 更新日を自動で今日の日付にする設定に変更済み
+        "dateModified": modifiedDateISO
     },
     {
         "@context": "https://schema.org",
@@ -213,7 +168,7 @@ const comparisonArticles = [
         },
         "reviewRating": {
             "@type": "Rating",
-            "ratingValue": Number(rangeData?.avgRating) || 3, // ここも数値型にして安全策をとっておきます
+            "ratingValue": Number(rangeData?.avgRating) || 3,
             "bestRating": "5",
             "worstRating": "1"
         },
@@ -221,19 +176,12 @@ const comparisonArticles = [
     }
 ])} />
 
-    <div
-        class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto"
-    >
-        <a
-            href="/articles/"
-            class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline"
-        >
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
             ‹ お役立ち記事一覧に戻る
         </a>
 
-        <article
-            class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
-        >
+        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">
                     {headline}
@@ -246,13 +194,13 @@ const comparisonArticles = [
                 「どのゴルフ練習場がコスパいいの？」
             </p>
             <p>
-                そんな悩みを抱えるゴルファーさんへ、特に女性のあなたに、とっておきのゴルフ練習場を紹介します！
+                そんな悩みを抱えるゴルファーさんへ。滋賀県東近江市（近江八幡市からも好アクセス）にある、とっておきの<strong>打ちっぱなし（ゴルフ練習場）</strong>を紹介します！
             </p>
 
             <figure class="my-6">
                 <Image
                     src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/0000000img.jpg"
-                    alt="夕暮れ後の静けさに包まれた「さくらゴルフ倶楽部」入口の様子"
+                    alt="夕暮れ後の静けさに包まれた滋賀県東近江市の打ちっぱなし「さくらゴルフ倶楽部」入口の様子"
                     class="w-full h-auto object-cover rounded-lg"
                     loading="lazy"
                     width={1280}
@@ -261,13 +209,13 @@ const comparisonArticles = [
                     quality={80}
                 />
                 <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    夕暮れ後の静けさに包まれた「さくらゴルフ倶楽部」入口の様子（2025年4月／筆者撮影）
+                    夕暮れ後の「さくらゴルフ倶楽部」入口の様子（筆者撮影）
                 </figcaption>
             </figure>
 
             <p>
-                滋賀県東近江市に、まるで女性とジュニア（17歳以下）のために作られたかのような、驚きのゴルフ練習場があるのをご存知ですか？
-                その名も「さくらゴルフ倶楽部」。
+                その名も<strong>「さくらゴルフ倶楽部」</strong>。<br/>
+                名前から「本コースのゴルフ場？」と勘違いされがちですが、実は女性とジュニア（17歳以下）にとって信じられないほどお得なシステムを持つ、超優良な打ちっぱなし練習場なんです。
             </p>
 
             <p>
@@ -285,13 +233,10 @@ const comparisonArticles = [
                     format="webp"
                     quality={80}
                 />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">
-                    広々とした『さくらゴルフ倶楽部』の打席エリア。ナイター照明も完備（2025年4月／筆者撮影）
-                </figcaption>
             </figure>
 
             <p>
-                しかし！<strong>男性の私が、それでも週2～3回は通ってしまうほど</strong>、この練習場には魅力がたっぷり詰まっているんです。今回は、その秘密を余すところなくレポートします！
+                しかし！<strong>一般男性である私が、それでも週2～3回は通ってしまうほど</strong>、この練習場には魅力がたっぷり詰まっています。今回は、その秘密を地元ゴルファーの目線で余すところなくレポートします！
             </p>
             
             <div class="not-prose bg-green-50 p-4 my-6 rounded-lg border border-l-4 border-green-500">
@@ -302,28 +247,29 @@ const comparisonArticles = [
                 </a>
               </p>
             </div>
+
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#benefits" class="text-green-700 hover:underline">女性＆ジュニアの料金特典（打ち放題・会員割引）</a></li>
-                    <li><a href="#simulator" class="text-green-700 hover:underline">かんたん料金シミュレーション</a></li> 
-                    <li><a href="#reasons" class="text-green-700 hover:underline">男性筆者がそれでも「さくらゴルフ倶楽部」に通い詰める理由</a></li>
-                    <li><a href="#environment" class="text-green-700 hover:underline">さくらゴルフ倶楽部の練習環境（打席・距離・設備）</a></li>
-                    <li><a href="#insider-tip" class="text-green-700 hover:underline">“裏ワザ”ではなく、店員さんのご厚意です</a></li>
-                    <li><a href="#beginner-story" class="text-green-700 hover:underline">初心者だった私が「ホッ」とした瞬間。店員さんの神対応！</a></li>
-                    <li><a href="#info-summary" class="text-green-700 hover:underline">「さくらゴルフ倶楽部」基本情報</a></li>
-                    <li><a href="#conclusion" class="text-green-700 hover:underline">【まとめ】こんなあなたに「さくらゴルフ倶楽部」は絶対おすすめ！</a></li>
+                    <li><a href="#benefits" class="text-green-700 hover:underline">さくらゴルフ倶楽部（滋賀・東近江）の料金体系！女性・ジュニアが激安</a></li>
+                    <li><a href="#simulator" class="text-green-700 hover:underline">【すぐわかる】さくらゴルフ倶楽部の料金シミュレーター</a></li> 
+                    <li><a href="#reasons" class="text-green-700 hover:underline">【口コミ】男性ゴルファーにも大人気！さくらゴルフ倶楽部に通い詰める3つの理由</a></li>
+                    <li><a href="#environment" class="text-green-700 hover:underline">打ちっぱなしの練習環境を徹底レビュー（打席・距離・アプローチ）</a></li>
+                    <li><a href="#beginner-story" class="text-green-700 hover:underline">ゴルフ初心者が安心できる「神対応」！アットホームな接客が最大の魅力</a></li>
+                    <li><a href="#info-summary" class="text-green-700 hover:underline">「さくらゴルフ倶楽部」の基本情報・アクセス</a></li>
+                    <li><a href="#conclusion" class="text-green-700 hover:underline">【結論】さくらゴルフ倶楽部はこんな人におすすめの練習場！</a></li>
                 </ul>
             </div>
 
             <h2 id="benefits" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                女性＆ジュニアの料金特典（打ち放題・会員割引）
+                さくらゴルフ倶楽部（滋賀・東近江）の料金体系！女性・ジュニアが激安
             </h2>
             
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6014.jpg" alt="メンバー特典のチラシ。女性会員はプレミアム会員相当" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">メンバー特典のチラシ。女性会員はプレミアム会員相当（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6014.jpg" alt="さくらゴルフ倶楽部のメンバー特典チラシ" class="w-full h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
             </figure>
+
+            <p>さくらゴルフ倶楽部の最大の強みは、女性とジュニアへの圧倒的な優遇料金です。なんと、女性・ジュニアはデフォルトで「プレミアム会員相当」の扱いになります。</p>
 
             <ul class="list-none p-0 m-0 space-y-3 my-6">
                 <li class="flex items-start"><span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span><span class="flex-1"><strong>入場料：</strong>いつでも無料！</span></li>
@@ -334,14 +280,14 @@ const comparisonArticles = [
             </ul>
 
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/MxbDzQ0.png" alt="レディースパック打ち放題の詳細看板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">レディースパック打ち放題の詳細看板（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/MxbDzQ0.png" alt="レディースパック打ち放題の詳細看板" class="w-full h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
             </figure>
 
-            <p>…正直、これ本当？って思いますよね。私も最初は目を疑いました（笑）。 これならお財布を気にせず、思いっきり練習に打ち込めます！ 実際に、私のゴルフ仲間（女性）もこの特典をフル活用して、めきめき上達していますよ！</p>
+            <p>…正直、これ本当？って思いますよね。私も最初は目を疑いました（笑）。 この破格の料金設定ならお財布を気にせず、思いっきり打ち込み練習に没頭できます。 実際に、私のゴルフ仲間（女性）もこの特典をフル活用して、めきめき上達しています！</p>
 
+            <h2 id="simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">【すぐわかる】さくらゴルフ倶楽部の料金シミュレーター</h2>
+            <p>さくらゴルフ倶楽部は、会員種別や「3円デー（第3火曜）」などで細かく料金が変わります。「結局いくら持っていけばいいの？」がすぐわかる専用シミュレーターを作りました！</p>
 
-            <h2 id="simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">かんたん料金シミュレーション</h2>
             <div id="price-simulator" class="not-prose bg-slate-50 p-6 rounded-lg border-2 border-slate-200 my-8 overflow-hidden"> 
                 <h3 class="text-xl font-bold mb-6 text-slate-800 mt-0 flex justify-center items-center whitespace-nowrap">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2 -mt-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
@@ -443,146 +389,104 @@ const comparisonArticles = [
                     ※3円デーは打ち放題プランの割引対象外となる前提で計算しています。
                 </p>
             </div>
+
             <h2 id="reasons" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                男性筆者がそれでも「さくらゴルフ倶楽部」に通い詰める理由
+                【口コミ】男性ゴルファーにも大人気！さくらゴルフ倶楽部に通い詰める3つの理由
             </h2>
             <p>「女性がお得なのは分かったけど、じゃあ男性のあなたは何でそんなに通ってるの？」 そう思われたかもしれません。実はお得さだけじゃない、私がこの練習場を愛してやまない理由があるんです。</p>
             
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">ゴルフ仲間との最高の集合場所</h3>
-            <p>一緒に行くゴルフ仲間の多くが、この「さくらゴルフ倶楽部」がお気に入りなんです。 女性会員の友人は破格の安さで練習できますし、男性の友人は1回の練習で500球以上打つ猛者もいるのです。その友人はプレミアム会員なので割安に練習できる。 みんながハッピーになれる場所なんです。</p>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">① ゴルフ仲間との最高の集合場所</h3>
+            <p>一緒に行くゴルフ仲間の多くが、この「さくらゴルフ倶楽部」がお気に入りなんです。 女性会員の友人は破格の安さで練習できますし、男性の友人は1回の練習で500球以上打つ猛者もいて、プレミアム会員を利用して割安に練習しています。 性別やレベルを問わず、みんながハッピーになれる貴重な場所なんです。</p>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">リアルな情報交換の場になる</h3>
-            <p>練習場でたまたま顔見知りになった方々と、今ではゴルフ情報を交換する仲に。 これが本当に有益で、「あのコースどうだった？」とか「新しいクラブ試した？」なんて会話が日常茶飯事。 ゴルフの輪が自然と広がっていくんです。</p>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② リアルな情報交換の場になる</h3>
+            <p>練習場でたまたま顔見知りになった方々と、今ではゴルフ情報を交換する仲に。 これが本当に有益で、「あのコースどうだった？」とか「新しいクラブ試した？」なんて会話が日常茶飯事。 打ちっぱなしに通うことでゴルフの輪が自然と広がっていくんです。</p>
             
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">アットホームな店員さんと空気感</h3>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">③ アットホームな店員さんと空気感</h3>
             <p>ここの店員さん、本当に親切でゴルフ愛に溢れている方ばかり。 ゴルフの相談に乗ってくれたり、時にはお客さんと一緒にラウンド（もちろん店員さんのお休みの日に！）することもあるくらい、フレンドリーなんです。 このアットホームな雰囲気が、通うたびに心地いいんですよね。</p>
 
             <h2 id="environment" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                さくらゴルフ倶楽部の練習環境（打席・距離・設備）
+                打ちっぱなしの練習環境を徹底レビュー（打席・距離・アプローチ）
             </h2>
-            <p>もちろん、練習環境も充実していますよ！</p>
+            <p>もちろん、ゴルフのスコアアップに必要な練習環境もしっかり整っています！</p>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【打席設備】</h3>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【打席設備とフェアウェイ】</h3>
             <p><strong>マット：</strong> 打席によって多少の使用感はありますが、練習に支障が出るレベルではありません。</p>
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/TOM6sID.jpeg" alt="昼間の打席マットの状態。ティーアップされている球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">昼間の打席マットの状態。ティーアップされている球（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/TOM6sID.jpeg" alt="昼間のさくらゴルフ倶楽部の打席マットの状態" class="w-full h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={1280} height={960} format="webp" quality={80} />
             </figure>
 
             <p><strong>ティーアップ：</strong> 便利な自動式。高さも5段階に調整可能で操作も簡単！</p>
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/2.png" alt="ティーの高さ調整をする機械。プリカの挿入もこの一台で！" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">ティーの高さ調整をする機械。プリカの挿入もこの一台で！（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/2.png" alt="ティーの高さ調整をする機械。プリカの挿入もこの一台で" class="w-full h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={1280} height={960} format="webp" quality={80} />
             </figure>
 
             <p><strong>ボール：</strong> 様々なメーカーのロストボールがミックスされています。状態は色々ですが、練習用としては十分です。</p>
+            
+            <p><strong>ターゲットと距離感：</strong> 10ヤード毎のラインや多数の旗、グリーンを模した的も設置されていて、距離感が掴みやすい！奥のネット(200ヤード～)にドライバーショットが届けば気分爽快です！</p>
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6033.jpg" alt="アプローチ練習場で実際にレンタルする球" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場で実際にレンタルする球（2025年4月／筆者撮影）</figcaption>
-            </figure>
-
-            <p><strong>ターゲット：</strong> 10ヤード毎のラインや多数の旗、グリーンを模した的も設置されていて、距離感が掴みやすい！奥のネット(200ヤード～)にドライバーショットが届けば気分爽快です！</p>
-            <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/3.png" alt="打席から見たフェアウェイ（ターゲットのyd表示あり）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">打席から見たフェアウェイ（星印をつけているところにターゲット（yd表示）があります）（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/3.png" alt="さくらゴルフ倶楽部の打席から見たフェアウェイ。ターゲットのヤード表示あり" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
             </figure>
 
             <p><strong>無料貸し出し品：</strong> ヘッドスピード測定器、アドレス確認用ミラー、スマホホルダーも受付で無料レンタル可能。スイングチェックに役立ちます。</p>
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/hfDU3SE.jpeg" alt="無料貸し出し品一覧の写真（店内貼り出し用ポスター）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">無料貸し出し品一覧の写真（店内貼り出し用ポスター）（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/hfDU3SE.jpeg" alt="無料貸し出し品一覧の写真（店内貼り出し用ポスター）" class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
             </figure>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【初心者ゴルファーさん注目！集中できる「初心者優先スペース」】</h3>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【初心者ゴルファーさん注目！2階の「初心者優先スペース」】</h3>
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/7.png" alt="身長より高い打席横にあるパーテーション" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">身長より高い打席横にあるパーテーション。（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/7.png" alt="2階打席に設置されている身長より高いパーテーション" class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
             </figure>
             
-            <p>2階打席の一番奥には、6打席の「初心者優先スペース」があります。 ここが本当に素晴らしい！ 高さ約2mのしっかりしたパーテーションで区切られているので、隣の打席や周りの視線を気にせず、自分のペースで練習に集中できます。「空振りしたら恥ずかしいな…」なんて心配、もう必要ありません！ 安心して、納得いくまでクラブを振れますよ。</p>
+            <p>2階打席の一番奥には、6打席の「初心者優先スペース」があります。 ここが本当に素晴らしい！ 高さ約2mのしっかりしたパーテーションで区切られているので、隣の打席や周りの視線を気にせず、自分のペースで練習に集中できます。「空振りしたら恥ずかしいな…」なんて心配、もう必要ありません！</p>
             
             <figure class="my-6">
                  <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/5.png" alt="横から見た初心者優先スペース。光差し込む昼間の打席" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">横から見た初心者優先スペース。光差し込む昼間の打席（2025年4月／筆者撮影）</figcaption>
             </figure>
 
             <p>一番奥は左利き用の打席になっています。2階なので打ち下ろしで気持ちよく練習できるのも◎。 受付で空き状況を確認してみてくださいね。</p>
 
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/8.png" alt="フロントに設置されている打席の空き状況確認掲示板" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">フロントに設置されている打席の空き状況確認掲示板（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/8.png" alt="フロントに設置されている打席の空き状況確認掲示板" class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg border border-slate-200" loading="lazy" width={960} height={1280} format="webp" quality={80} />
             </figure>
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【スコアメイクの鍵！実戦力が身につく「アプローチ練習場」】</h3>
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9789.png" alt="アプローチ練習場の全体。芝の状態などがはっきりわかる昼間" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場の全体。芝の状態などがはっきりわかる昼間（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9789.png" alt="さくらゴルフ倶楽部のアプローチ練習場全体" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
             </figure>
 
             <p>ゴルフのスコアを左右するショートゲーム。「さくらゴルフ倶楽部」には、約60ヤードのアプローチ練習場があり、これがまた素晴らしいんです！</p>
             
-            <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/9.png" alt="アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={960} height={1280} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場に設置されているお願い看板。目土及びバンカーの整地（2025年4月／筆者撮影）</figcaption>
-            </figure>
-
             <p>正直にお伝えすると、芝やバンカーの状態が常に完璧！というわけではありません。 でも、それが逆にイイ！ コースで遭遇するような、ちょっと難しいライやアゴの高いバンカーからのショットなど、より実践的な練習ができるんです。 旗も2本立っているので、目標設定もしやすいですよ。</p>
             
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/10.png" alt="アプローチ練習場のバンカー。砂の状態やライの状態を確認できます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場のバンカー。砂の状態やライの状態を確認できます（2025年4月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/10.png" alt="アプローチ練習場のバンカー" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
             </figure>
 
             <p>私自身、ここのアプローチ練習場で様々な打ち方を試し、練習を重ねた結果、苦手だったアプローチでのトップが激減！スコアアップを実感しています。</p>
 
             <figure class="my-6">
                  <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6025.jpg" alt="目土小屋。袋の中にスコップが入っているのでそのまま使えます" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">目土小屋。袋の中にはスコップが入っているのでそのまま使えます（2025年4月／筆者撮影）</figcaption>
             </figure>
             
             <p>ゴルフシューズはもちろん、スニーカーでの利用もOK。 練習後にはコンプレッサーで汚れを落とせるのも嬉しいポイント。休憩用のベンチも設置されています。</p>
             
-            <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6030.jpg" alt="アプローチ練習場に設置されている休憩用ベンチ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">アプローチ練習場に設置されている休憩用ベンチ（2025年4月／筆者撮影）</figcaption>
-            </figure>
-
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">【気分転換にも最適「パター練習コーナー」】</h3>
             <figure class="my-6">
                  <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/13.png" alt="2Fオープンスペースにあるパター練習用のミニグリーン" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">2Fオープンスペースにあるパター練習用のミニグリーン（2025年4月／筆者撮影）</figcaption>
             </figure>
 
-            <p>2階ホールには、パターマット2種類とフラットなミニグリーン（約2m×1m）も。 本格的なパター練習には少し物足りないかもしれませんが、打席練習の合間の気分転換や、初心者の方がパットの感覚を掴むには最適です。 気軽に利用してみてください。</p>
+            <p>2階ホールには、パターマット2種類とフラットなミニグリーン（約2m×1m）も。 本格的なパター練習には少し物足りないかもしれませんが、打席練習の合間の気分転換や、初心者の方がパットの感覚を掴むには最適です。</p>
             
-            <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/12.png" alt="2Fオープンスペースにあるパターマット" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">2Fオープンスペースにあるパターマット（2025年4月／筆者撮影）</figcaption>
-            </figure>
-            
-            <h2 id="insider-tip" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                ⚠ ※注意：以下は“裏ワザ”ではなく、店員さんのご厚意です。常にOKではないので、必ず相談を！
-            </h2>
-            <p>これはオフィシャルな情報ではないのですが… 店員さんのご厚意で、こんな経験をしたことがあります。</p>
-            <p>ゴルフ未経験の友人を連れて行った時のこと。 友人は今後ゴルフを続けるか分からないのに、プリペイドカード（2,000円～）を購入するのは少し気が引ける…という状況でした。 ダメ元で店員さんに相談してみたところ、なんと私のプリペイドカードを友人と共有する形で、友人はカード購入なしで入場・練習させてもらえたのです！ （※本来は一打席一人、プリカも打席ごとに必要です）</p>
-            <p>また、別の日にはアプローチ練習場に「メインは見学で、数球だけちょっと触ってみる程度なら…」と相談したところ、無料で入場させてもらえたことも。</p>
-            <p>重ねてお伝えしますが、これらはあくまで店員さんのご厚意によるものであり、常に同様の対応を期待できるものではありません。 もし同様の状況になった場合は、必ず事前に店員さんに謙虚な姿勢で相談してみてくださいね。</p>
-
-            <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/6.png" alt="打席から見た、晴れた昼間のフェアウェイ" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">打席から見た、晴れた昼間のフェアウェイ（2025年4月／筆者撮影）</figcaption>
-            </figure>
 
             <h2 id="beginner-story" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                初心者だった私が「ホッ」とした瞬間。店員さんの神対応！
+                ゴルフ初心者が安心できる「神対応」！アットホームな接客が最大の魅力
             </h2>
             <figure class="my-6">
-                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6639.jpg" alt="さくらゴルフ倶楽部のメンバーズカード（メンバー会員）" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">さくらゴルフ倶楽部のメンバーズカード（メンバー会員）（2025年5月／筆者撮影）</figcaption>
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6639.jpg" alt="さくらゴルフ倶楽部のメンバーズカード" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
             </figure>
             <p>私がまだゴルフを始めたばかりの頃。 ある日、夜9時頃から練習を始めたのですが、夜10時になった瞬間、突然プリペイドカードが打席から排出されたんです！</p>
             <p>「え？何？故障！？」とパニックになっていると、たまたま近くを通りかかった店員さんが優しく声をかけてくれました。 「22時からは料金が安くなるので、一度カードが出てくるんですよ。早朝も同じシステムで、朝9時までは入場料不要で単価も安いので、9時になると一度排出されて受付が必要になるんです」と。</p>
-            <p>もう、本当にホッとしました…。 初めて練習場に行く時って、色々不安ですよね。 でも、「さくらゴルフ倶楽部」の店員さんは、こちらから「初めて来ました」と伝えれば、本当に丁寧に（ある意味、お節介なくらい(笑)）教えてくれるので、安心して練習を始められますよ。</p>
+            <p>もう、本当にホッとしました…。 初めて打ちっぱなしに行く時って、専門用語やルールが分からなくて色々不安ですよね。 でも、「さくらゴルフ倶楽部」の店員さんは、こちらから「初めて来ました」と伝えれば、本当に丁寧に（ある意味、お節介なくらい(笑)）教えてくれるので、安心して練習を始められますよ。</p>
             
             <div class="not-prose my-12 space-y-12">
             {
@@ -605,7 +509,7 @@ const comparisonArticles = [
             <AuthorProfile />
 
             <h2 id="info-summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                {rangeData ? `「${rangeData.name}」の基本情報` : "基本情報"}
+                {rangeData ? `「${rangeData.name}」の基本情報・アクセス` : "基本情報"}
             </h2>
             {
                 rangeData ? (
@@ -624,7 +528,7 @@ const comparisonArticles = [
                                                 <span class="font-bold text-amber-500 mr-2">{parseFloat(rangeData.avgRating).toFixed(1)}</span>
                                                 {Array.from({ length: 5 }).map((_, i) => (
                                                     <svg class={`w-5 h-5 ${i < Math.round(parseFloat(rangeData.avgRating)) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588 1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8-2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                                     </svg>
                                                 ))}
                                             </div>
@@ -679,7 +583,6 @@ const comparisonArticles = [
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
-                        {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`http://googleusercontent.com/maps/google.com/1{import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
@@ -704,14 +607,14 @@ const comparisonArticles = [
             </p>
 
             <h2 id="conclusion" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                【まとめ】こんなあなたに「さくらゴルフ倶楽部」は絶対おすすめ！
+                【結論】さくらゴルフ倶楽部（東近江）はこんなゴルファーにおすすめ！
             </h2>
             <p>東近江市の「さくらゴルフ倶楽部」。 特筆すべきは、やはり女性とジュニアへの圧倒的なホスピタリティ！ そして、実践的なアプローチ練習環境と、何より温かい人の繋がりが感じられる場所だということ。</p>
             <p>設備は最新鋭ピカピカ！というわけではないかもしれませんが、それを補って余りあるほどの練習のしやすさと居心地の良さがここにはあります。</p>
 
             <figure class="my-6">
                  <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6081.jpg" alt="1Fエントランス横休憩スペースに設置されているマッサージチェア" class="w-full h-auto object-cover rounded-lg" loading="lazy" width={1280} height={960} format="webp" quality={80} />
-                <figcaption class="text-center text-sm text-slate-500 mt-2">マッサージチェアも置いてます笑 1Fエントランス横休憩スペースに設置されているマッサージチェア。自由に使用可能（2025年4月／筆者撮影）</figcaption>
+                <figcaption class="text-center text-sm text-slate-500 mt-2">マッサージチェアも置いてます笑 自由に使用可能（筆者撮影）</figcaption>
             </figure>
 
             <p>特にこんな方には、自信を持っておすすめします！</p>
@@ -735,7 +638,6 @@ const comparisonArticles = [
         position: relative;
         width: 100%;
         overflow: hidden;
-        /* 変更: 16:9 ではなく、高さを 450px に固定 (元コードに合わせる) */
         height: 450px; 
     }
     .map-container iframe {
@@ -883,7 +785,6 @@ const comparisonArticles = [
             let availablePlans = [];
             
             // 打ち放題が利用可能な時間帯 (9:00-22:00) かつ 3円デーでない場合
-            // ★ 3円デー判定用の `dayKey` と、打ち放題料金参照用の `unlimitedDayKey` を分ける
             const unlimitedDayKey = (dayKey === 'special_day') ? 'weekday' : dayKey; // 3円デーは平日料金で判定
 
             if ((timeKey === 'daytime' || timeKey === 'night1') && dayKey !== 'special_day') {
@@ -898,7 +799,6 @@ const comparisonArticles = [
                     }
                 }
             }
-            // (早朝・深夜・3円デーは availablePlans = [] のまま)
 
             if (availablePlans.length > 0) {
                 
@@ -966,10 +866,7 @@ const comparisonArticles = [
          * スマホ/PC表示とフォームをリセット
          */
         function resetSimulator() {
-            // ★★★ 修正 (2025-10-22) ★★★
-            // '...dayRdi...' のタイプミスを修正
             [...dayRadios, ...floorRadios, ...timeRadios, ...dayRadiosPc, ...floorRadiosPc].forEach(radio => radio.checked = false);
-            // ★★★ 修正ここまで ★★★
             
             ballCountSlider.value = 150;
             
@@ -997,7 +894,7 @@ const comparisonArticles = [
                 resetButton.classList.add('hidden'); 
             }
             
-            calculatePrice(); // 最後に初期計算 (PCは計算され、スマホは '----' のまま)
+            calculatePrice(); 
         }
         
         /**
@@ -1043,14 +940,14 @@ const comparisonArticles = [
         }
 
         // --- 初期化実行 ---
-        setupListeners(); // イベントリスナーを先に設定
-        resetSimulator(); // Viewとフォームを初期化
+        setupListeners(); 
+        resetSimulator(); 
 
         let resizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
-                resetSimulator(); // リサイズ時もリセットして再描画
+                resetSimulator(); 
             }, 250);
         });
     });
