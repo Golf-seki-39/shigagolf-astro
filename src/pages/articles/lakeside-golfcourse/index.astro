@@ -14,9 +14,10 @@ import AuthorProfile from '../../../components/AuthorProfile.astro';
 // FirebaseのドキュメントID
 const rangeId = "lakeside_golfcourse"; 
 
-const title = "【琵琶湖レークサイド】薄暮ハーフ4000円台！初心者のデビュー口コミと混雑・注意点 | シガゴル";
-const description = "琵琶湖レークサイド（中コース）の薄暮ハーフ体験記。平日4,000円台の安さは魅力ですが、「激混みの待ち時間」や「完全セルフの荷下ろし」、プランで異なるロッカー事情など、初心者が行く前に知っておくべきリアルな注意点をレビューします。";
-const headline = "【琵琶湖レークサイド】薄暮ハーフ4000円台！初心者のデビュー口コミと混雑・注意点";
+// ▼ SEO最優先のタイトルに変更（口コミ、評判、ドレスコード、ハーフを網羅）
+const title = "【琵琶湖レークサイドの口コミ・評判】ドレスコードは？ハーフ4000円台の初心者代表デビュー体験記 | シガゴル";
+const description = "滋賀県で人気の「琵琶湖レークサイドゴルフコース（中コース）」の薄暮ハーフ体験記。一番気になる服装（ドレスコード）や、「激混みの待ち時間」「完全セルフの荷下ろし」など、初心者代表が行く前に絶対に知っておきたいリアルな評判・注意点を徹底レビューします。";
+const headline = "琵琶湖レークサイドの口コミ・評判！ドレスコードや混雑状況を初心者代表が徹底解説";
 const category = "体験談";
 const pubDate = "2025-12-14"; 
 const pubDateISO = "2025-12-14T12:00:00+09:00";
@@ -54,15 +55,13 @@ const faqElements = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    { "@type": "Question", "name": "Q. 服装（ドレスコード）は本当に何でもいいの？", "acceptedAnswer": { "@type": "Answer", "text": "はい、ジャケット不要でかなりカジュアルです。Tシャツに近い格好の方も見かけますが、一応「ゴルフ場」ですので襟付きシャツなど最低限のマナーを守ると安心です。" } },
+    { "@type": "Question", "name": "Q. 琵琶湖レークサイドのドレスコード（服装）は？", "acceptedAnswer": { "@type": "Answer", "text": "非常にカジュアルです。入退場時のジャケットは不要で、プレー中も一般的なゴルフウェア（ポロシャツ等）であれば問題ありません。" } },
     { "@type": "Question", "name": "Q. 予約なしでも行ける？", "acceptedAnswer": { "@type": "Answer", "text": "基本的には予約推奨です。特に土日や薄暮ハーフは人気のため、事前に楽天GORAや電話で空き状況を確認することをおすすめします。" } },
     { "@type": "Question", "name": "Q. 初心者だけで行っても大丈夫？", "acceptedAnswer": { "@type": "Answer", "text": "コース自体は簡単ですが、非常に混雑するため「進行（プレーファスト）」への意識が必要です。後ろからのプレッシャーで焦ってしまう可能性があるため、できれば慣れた経験者が1人いると心強いです。" } }
   ]
 };
 
 const googleMapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
-
-// ▼▼▼ ここから下にロジックを移動させます（--- の中で処理する！） ▼▼▼
 
 // ▼ 構造化データのベースを作成（Article + Review）
 const schemaData = [
@@ -103,10 +102,8 @@ const schemaData = [
             "address": {
                 "@type": "PostalAddress",
                 "streetAddress": rangeData?.address,
-                // データに city がなければ、address から自動抽出
                 "addressLocality": rangeData?.city || (rangeData?.address?.match(/滋賀県(.+?[市郡])/)?.[1] || "滋賀県"),
                 "addressRegion": "滋賀県",
-                // データに postalCode がなければ、address から自動抽出
                 "postalCode": rangeData?.postalCode || (rangeData?.address?.match(/\d{3}-\d{4}/)?.[0] || ""),
                 "addressCountry": "JP"
             }
@@ -121,21 +118,16 @@ const schemaData = [
     }
 ];
 
-// ▼ FAQデータが存在する場合のみ、配列に合体させる処理
 if (typeof faqElements !== 'undefined' && faqElements) {
     if (Array.isArray(faqElements)) {
-        // 配列なら展開して追加
         schemaData.push(...faqElements);
     } else {
-        // 単体オブジェクトならそのまま追加
         schemaData.push(faqElements);
     }
 }
-// ▲▲▲ ここまでがJavaScriptのロジック ▲▲▲
 ---
     <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
-    {/* ▼ ここで変数 schemaData を出力するだけ！ */}
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(schemaData)} />
     <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
         <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
@@ -192,8 +184,8 @@ if (typeof faqElements !== 'undefined' && faqElements) {
             )}
 
             <p>実は私も2025年2月、まだゴルフを始めて間もない頃に、ここで<strong>「ほろ苦いハーフデビュー」</strong>を経験しました。</p>
-            <p>今回は、公式サイトには絶対に載っていない<strong>「リアルな体験談」</strong>をお届けします。<br>
-            これから行く初心者さんが、私と同じ失敗をしないための「転ばぬ先の杖」として読んでください！</p>
+            <p>今回は、公式サイトには絶対に載っていない<strong>「リアルな体験談」や「気になるドレスコード事情」</strong>をお届けします。<br>
+            これから行く初心者代表の皆さんが、私と同じ失敗をしないための「転ばぬ先の杖」として読んでください！</p>
 
             <div class="summary-box not-prose">
                 <h3 class="text-xl flex items-center gap-2">
@@ -202,8 +194,8 @@ if (typeof faqElements !== 'undefined' && faqElements) {
                 </h3>
                 <ul class="list-disc list-inside mt-4 space-y-2 text-slate-800 font-medium">
                     <li><strong>とにかく安い！</strong>（平日午後ハーフなら4,000円台～）</li>
+                    <li><strong>服装（ドレスコード）はカジュアル</strong>（ジャケット不要で安心）</li>
                     <li><strong>超フラット＆短い</strong>（初心者でもボールがなくならない安心感）</li>
-                    <li><strong>雰囲気はカジュアル</strong>（ジャケット着用率謎のほぼ0％）</li>
                     <li><strong>【注意】一部のハーフプランはロッカー使用不可</strong></li>
                     <li><strong>【注意】とにかく混む</strong>（前後の間隔が狭い）</li>
                     <li><strong>【注意】支払いは現金かクレカのみ</strong>（電子マネー不可）</li>
@@ -213,17 +205,18 @@ if (typeof faqElements !== 'undefined' && faqElements) {
             <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
                 <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#section-1" class="text-green-700 hover:underline">プランと到着時の「あれ？」</a></li>
+                    <li><a href="#section-1" class="text-green-700 hover:underline">プランと到着時の「あれ？」完全セルフ事情</a></li>
+                    <li><a href="#dress-code" class="text-green-700 hover:underline font-bold">気になる服装（ドレスコード）は？ジャケットは必要？</a></li>
                     <li><a href="#section-2" class="text-green-700 hover:underline">最大の罠！「ハーフはロッカーなし」問題</a></li>
-                    <li><a href="#section-3" class="text-green-700 hover:underline">コースの感想：中コース（Par34 / 2,390yd）</a></li>
-                    <li><a href="#section-4" class="text-green-700 hover:underline">【実録】「洗礼」を受けた混雑とマナー</a></li>
+                    <li><a href="#section-3" class="text-green-700 hover:underline">コースレイアウトの感想：中コース（Par34 / 2,390yd）</a></li>
+                    <li><a href="#section-4" class="text-green-700 hover:underline">【実録の口コミ】「洗礼」を受けた混雑とマナー</a></li>
                     <li><a href="#faq" class="text-green-700 hover:underline">【Q&A】よくある質問</a></li>
                     <li><a href="#section-5" class="text-green-700 hover:underline">まとめ：琵琶湖レークサイドはどんな人におすすめ？</a></li>
                 </ul>
             </div>
 
             <h2 id="section-1" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                1. プランと到着時の「あれ？」
+                1. プランと到着時の「あれ？」完全セルフ事情
             </h2>
             <p>
                 <strong>【今回のプラン】</strong><br>
@@ -248,11 +241,7 @@ if (typeof faqElements !== 'undefined' && faqElements) {
             普通のゴルフ場なら、車を寄せるとスタッフさん（ポーターさん）が飛んできてキャディバッグを下ろしてくれますよね？</p>
             <p>ここは違います。<strong>誰も来ません。</strong><br>
             「えっ、どこに下ろすの？勝手に下ろしていいの？」<br>
-            とキョロキョロ。どうやら「バッグ置き場」のようなスペースがあり、そこに自分で下ろすスタイルのようです（私が下ろした後、スタッフさんが来て対応してくれました）。</p>
-            
-            <p>さらにクラブハウスに入ってびっくり。<br>
-            <strong>「ジャケット着てる人が、いない…！」</strong><br>
-            名門コースのような格式張った雰囲気は皆無。みなさんそのままプレーできるようなカジュアルな服装です。「ジャケット着用必須かな？」とビシッと着ていった私は、逆に浮いていたかもしれません（笑）。</p>
+            とキョロキョロ。どうやら「バッグ置き場」のようなスペースがあり、そこに自分で下ろすスタイルのようです。</p>
 
             <div class="not-prose bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg my-6">
                 <p class="m-0 font-bold text-yellow-900">
@@ -260,12 +249,29 @@ if (typeof faqElements !== 'undefined' && faqElements) {
                 </p>
             </div>
 
-            <h2 id="section-2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                2. 最大の罠！「ハーフはロッカーなし」問題
+            {/* ▼ 新設：ドレスコードのセクション（検索意図を直接キャッチ） */}
+            <h2 id="dress-code" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                2. 気になる服装（ドレスコード）は？ジャケットは必要？
             </h2>
-            <p>受付を済ませて着替えようとしたら、衝撃の事実が発覚しました。</p>
-            <p class="text-xl font-bold text-center my-6">「ハーフプレーのお客様は、ロッカーをご利用いただけません」</p>
-            <p>えっ！？じゃあこの着てきたジャケット、どこに置くの？<br>
+            <p>初心者として私が一番不安だったのが、<strong>「どんな服装で行けばいいの？浮かない？」</strong>ということでした。<br>
+            クラブハウスに入って周りを見渡し、衝撃を受けました。</p>
+            
+            <p class="text-xl font-bold text-center my-6">「ジャケット着てる人が、いない…！」</p>
+            
+            <p>結論から言うと、<strong>琵琶湖レークサイドのドレスコードはかなりカジュアル</strong>です。</p>
+            
+            <ul class="list-disc list-inside space-y-2 mt-4 mb-6">
+                <li><strong>入退場時のジャケット：</strong> ほぼ誰も着ていません（笑）。「ゴルフ場だから」とビシッと着ていった私は、逆に浮いていたくらいです。</li>
+                <li><strong>プレー中の服装：</strong> 基本的なゴルフウェアであれば全く問題ありません。Tシャツに近いラフな格好の方も見かけましたが、一応「ゴルフ場」ですので、襟付きシャツ（ポロシャツ等）を着ていくのが無難で安心です。</li>
+            </ul>
+            <p>名門コースのような格式張った雰囲気は皆無なので、「ゴルフウェアっぽい服装」であれば怒られることはまずありません。リラックスして行きましょう！</p>
+
+            <h2 id="section-2" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                3. 最大の罠！「ハーフはロッカーなし」問題
+            </h2>
+            <p>受付を済ませて着替えようとしたら、さらなる衝撃の事実が発覚しました。</p>
+            <p class="text-xl font-bold text-center my-6 text-red-600">「ハーフプレーのお客様は、ロッカーをご利用いただけません」</p>
+            <p>えっ！？じゃあこの着てきたジャケット（浮いてるやつ）、どこに置くの？<br>
             結局、受付で確認して<strong>「車に上着を戻しに行く」</strong>という二度手間に。<br>
             ロッカーで着替えるつもりで行くと、荷物の置き場に困ることになります。</p>
             
@@ -287,7 +293,7 @@ if (typeof faqElements !== 'undefined' && faqElements) {
             <p class="text-sm text-slate-500">※現在、公式サイトによると「お風呂のご利用は17時30分まで」とのこと。薄暮プレーの場合、時間的に間に合わない可能性が高いので要注意です。</p>
 
             <h2 id="section-3" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                3. コースの感想：中コース（Par34 / 2,390yd）
+                4. コースレイアウトの感想：中コース（Par34 / 2,390yd）
             </h2>
             <p>いよいよスタート。今回は「中コース」を回りました。</p>
 
@@ -330,10 +336,8 @@ if (typeof faqElements !== 'undefined' && faqElements) {
                 <figcaption class="text-center text-sm text-slate-500 mt-2">（※当日のコンディションは公式サイトのお知らせ欄を要チェックです）</figcaption>
             </figure>
 
-            <p>こうなると、「リモコンなし」の不便さが身に沁みます。天候によって楽さが天と地ほど変わるので、当日のコンディションは要チェックです。</p>
-
             <h2 id="section-4" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
-                4. 【実録】「洗礼」を受けた混雑とマナー
+                5. 【実録の口コミ】「洗礼」を受けた混雑とマナー
             </h2>
             <p>さて、ここからが本題です。<br>
             この日の満足度が低かった最大の理由、それは<strong>「詰め込みすぎによるトラブル」</strong>。</p>
@@ -354,11 +358,8 @@ if (typeof faqElements !== 'undefined' && faqElements) {
             <p><strong>「前の組がつかえているので待っています。次怒鳴るようならクラブハウスに通報しますよ」</strong></p>
             <p>そう伝えると、あからさまにカートを近づけてくるような煽り行為はなくなりました。<br>
             しかし、一緒に行っていた初心者の友人は完全に萎縮してしまい、後ろの組が見えるだけで体が固まる状態に…。</p>
-            <p>今思い返せば悔しいですが、当時は私も初心者。<br>
-            <strong>「ここのゴルフ場は、前の組がいても打ち込むのが当たり前なの？そんなローカルルールがあるの？」</strong><br>
-            と、理不尽すぎて訳がわからず、混乱してしまったのです。</p>
 
-            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">これから行く初心者の方へ伝えたいこと</h3>
+            <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">これから行く初心者代表の皆さんへ伝えたいこと</h3>
             <p>私にもう少し知識と経験があれば、もっと友人をフォローできたのにと後悔しています。<br>
             だからこそ、これからデビューする皆さんには伝えておきたいです。</p>
             <div class="bg-slate-800 text-white p-6 rounded-lg my-8 not-prose">
@@ -369,7 +370,6 @@ if (typeof faqElements !== 'undefined' && faqElements) {
                     <li><strong>マスター室（ゴルフ場）に連絡する</strong><br><span class="text-slate-300 text-sm pl-6 block">それでも何か言ってくる場合は、相手にする必要はありません。カートの無線か、なければスマホでフロントに電話し、<strong>「後ろの組が安全距離を無視して怒鳴ってくるので、対処してください」</strong>と伝えればOKです。</span></li>
                 </ol>
             </div>
-            <p>見ず知らずの他人の理不尽な言葉を真に受ける必要はありません。堂々と「安全第一」でプレーしてください。</p>
 
             <div class="not-prose my-10 p-6 bg-green-50 border border-green-200 rounded-lg text-center">
                 <p class="font-bold text-green-900 mb-3">それでも「やっぱりいきなり本コースは怖い…」と感じた方へ</p>
@@ -383,15 +383,6 @@ if (typeof faqElements !== 'undefined' && faqElements) {
                 【Q&A】琵琶湖レークサイド よくある質問
             </h2>
             <div class="space-y-4 my-8 not-prose">
-                <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
-                    <h3 class="font-bold text-lg text-slate-800 mb-2 flex items-start gap-2">
-                        <span class="text-green-700">Q.</span> 服装（ドレスコード）は本当に何でもいいの？
-                    </h3>
-                    <p class="text-slate-700 text-sm pl-6">
-                        <span class="font-bold text-slate-800">A.</span> はい、かなりカジュアルです。<br>
-                        Tシャツに近い格好の方も見かけますが、一応「ゴルフ場」ですので、ジャケットに襟付きシャツなど最低限のマナーを守ることを推奨します。。
-                    </p>
-                </div>
                 <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
                     <h3 class="font-bold text-lg text-slate-800 mb-2 flex items-start gap-2">
                         <span class="text-green-700">Q.</span> 予約なしでも行ける？
@@ -421,7 +412,7 @@ if (typeof faqElements !== 'undefined' && faqElements) {
                 <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
                     <h3 class="text-lg font-bold text-blue-800 mb-3">【おすすめな人】</h3>
                     <ul class="list-disc list-inside text-slate-700 space-y-1">
-                        <li>とにかく安く回りたい人（平日4,000円台は破格！）</li>
+                        <li>とにかく安く回りたい人（平日ハーフ4,000円台は破格！）</li>
                         <li>コースデビューで「とりあえず前に飛ばす」経験をしたい人</li>
                         <li>細かいマナーや雰囲気を気にせず、割り切って練習したい人</li>
                     </ul>
@@ -437,7 +428,7 @@ if (typeof faqElements !== 'undefined' && faqElements) {
             </div>
 
             <p>個人的には、<strong>「メンタルを鍛える修行の場」</strong>として、またいつかリベンジしたいと思っています（笑）。<br>
-            これから行く皆さんは、<strong>「ロッカーの確認」「クレカ持参」</strong>そして<strong>「毅然とした心」</strong>を持って、楽しんできてくださいね！</p>
+            これから行く皆さんは、<strong>「ドレスコードは気楽に」「ロッカーの確認」「クレカ持参」</strong>そして<strong>「毅然とした心」</strong>を持って、楽しんできてくださいね！</p>
 
             <div class="not-prose my-12 p-6 bg-slate-100 rounded-lg border-l-4 border-slate-500">
                 <h3 class="text-lg font-bold text-slate-800 mb-2">【編集後記】</h3>
