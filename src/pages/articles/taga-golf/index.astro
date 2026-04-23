@@ -45,7 +45,8 @@ if (docSnap.exists()) {
         bays: "58", 
         access: "名神高速道路 多賀スマートICからすぐ",
         avgRating: 4.0,
-        reviewCount: 0
+        reviewCount: 0,
+        priceRange:"¥1,000-2,000"
     };
 }
 
@@ -90,7 +91,8 @@ const jsonLd = [
       },
       "telephone": "0749-48-2321",
       "image": imageUrl,
-      "url": articleUrl
+      "url": articleUrl,
+      "priceRange": rangeData?.priceRange,
     },
     "reviewRating": {
       "@type": "Rating",
