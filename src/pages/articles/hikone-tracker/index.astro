@@ -1,0 +1,360 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネントをインポート ---
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+
+// --- [3] この記事固有の情報 ---
+// 🚀 検索エンジン（Google検索結果）用の最適化タイトル（35文字前後＋サイト名）
+const title = "【彦根】弾道測定器が無料のゴルフ練習場まとめ｜トラックマン等 | シガゴル";
+// 💯 完璧なディスクリプション（111文字）
+const description = "滋賀県彦根市・多賀町エリアの練習場（打ちっぱなし）は、実は全施設で弾道測定器が追加料金なしで使い放題！多賀のトラックマン、365やKSPのトップトレーサー、インドアの最新設備まで、機種の違いや特徴を徹底比較。「目的別おすすめ」も紹介中！";
+const category = "まとめ";
+const pubDate = "2026-04-24"; 
+const pubDateISO = "2026-04-24T10:00:00+09:00"; 
+const updatedDate = null;
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg"; 
+
+const baseUrl = "https://shigagolf.com";
+const articleUrl = `${baseUrl}/articles/hikone-tracker/`; 
+// 🔥 実際のページを開いたときに表示される大見出し（インパクト・熱量重視）
+const headline = "彦根周辺の練習場は全施設「弾道測定器」が無料！？トラックマン・トップトレーサー使い放題まとめ";
+
+// --- [4] JSON-LD構造化データ ---
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+  "headline": headline, // 構造化データにはページ上の見出しをセット
+  "description": description,
+  "image": [imageUrl],
+  "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+  "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" } },
+  "datePublished": pubDateISO,
+  "dateModified": updatedDate ? `${updatedDate}T10:00:00+09:00` : pubDateISO
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto text-slate-700 leading-relaxed">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline block">
+            ‹ 記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none">
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2 mb-6">
+                    公開日：{pubDate}
+                    {updatedDate && <span class="ml-2">（更新日：{updatedDate}）</span>}
+                </p>
+                
+                <figure class="m-0 mb-8">
+                    <Image 
+                        src={imageUrl} 
+                        alt="彦根周辺の弾道測定器が使えるゴルフ練習場まとめ" 
+                        class="rounded-lg shadow-md w-full h-auto" 
+                        width={1200} 
+                        height={630} 
+                        format="webp" 
+                        loading="eager" 
+                        fetchpriority="high" 
+                    />
+                </figure>
+            </header>
+
+            <p>
+                「自分の飛距離を正確に知りたい」<br>
+                「弾道測定器を使ってみたいけど、別料金がかかるのはちょっと……」
+            </p>
+            <p>
+                そんな滋賀のゴルファーの皆さんに朗報です。実は<strong>彦根周辺エリア（彦根市・多賀町）のゴルフ練習場（打ちっぱなし）は、全施設で「弾道測定器」が追加料金なし（無料）で使い放題</strong>なんです！
+            </p>
+
+            <div class="not-prose my-10 p-4 md:p-6 border-2 border-slate-300 rounded-lg bg-slate-50 shadow-sm">
+                <h2 class="text-xl md:text-2xl font-bold text-center mt-0 mb-6 text-slate-800">【結論】彦根で測定器を使うならどこ？</h2>
+                <div class="grid md:grid-cols-2 gap-6 text-sm">
+                    <div class="border-t-4 border-green-500 bg-white p-4 rounded shadow hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-green-700 text-lg mt-0 mb-4 flex items-center">
+                            🎯 目的別のおすすめ
+                        </h3>
+                        <ul class="list-none m-0 p-0 space-y-3 text-slate-700">
+                            <li class="bg-slate-50 p-3 rounded border border-slate-100">
+                                <div class="flex items-start font-bold text-slate-800">
+                                    <span class="text-green-500 mr-2 mt-0.5">✔︎</span>
+                                    <span>正確な飛距離・スピン量なら</span>
+                                </div>
+                                <div class="text-green-700 font-bold mt-2 pl-6">
+                                    ▶︎ 多賀（トラックマン）
+                                </div>
+                            </li>
+                            <li class="bg-slate-50 p-3 rounded border border-slate-100">
+                                <div class="flex items-start font-bold text-slate-800">
+                                    <span class="text-green-500 mr-2 mt-0.5">✔︎</span>
+                                    <span>ゲーム感覚で全打席計測なら</span>
+                                </div>
+                                <div class="text-green-700 font-bold mt-2 pl-6">
+                                    ▶︎ 365彦根 ・ KSP彦根
+                                </div>
+                            </li>
+                            <li class="bg-slate-50 p-3 rounded border border-slate-100">
+                                <div class="flex items-start font-bold text-slate-800">
+                                    <span class="text-green-500 mr-2 mt-0.5">✔︎</span>
+                                    <span>物理的な的も狙いたいなら</span>
+                                </div>
+                                <div class="text-green-700 font-bold mt-2 pl-6">
+                                    ▶︎ 365彦根
+                                </div>
+                            </li>
+                            <li class="bg-slate-50 p-3 rounded border border-slate-100">
+                                <div class="flex items-start font-bold text-slate-800">
+                                    <span class="text-green-500 mr-2 mt-0.5">✔︎</span>
+                                    <span>パター測定・雨天快適なら</span>
+                                </div>
+                                <div class="text-green-700 font-bold mt-2 pl-6">
+                                    ▶︎ HYPER GOLF
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="border-t-4 border-blue-500 bg-white p-4 rounded shadow hover:shadow-md transition-shadow">
+                        <h3 class="font-bold text-blue-700 text-lg mt-0 mb-3 flex items-center">
+                            📊 エリアの特徴
+                        </h3>
+                        <p class="m-0 text-slate-700 leading-relaxed">彦根周辺は、日本でもトップクラスに測定器環境が整ったエリアです。すべて<strong>「ボール代のみ（無料）」</strong>で使えるため、複数通って好みの機種を見つけるのが正解です。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="my-10">
+                <div class="md:hidden flex justify-end items-center text-xs font-bold text-green-600 mb-2 animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                    表は横にスクロールできます
+                </div>
+                <div class="not-prose overflow-x-auto border border-slate-200 rounded-lg shadow-sm">
+                    <table class="w-full text-sm text-left border-collapse min-w-[500px]">
+                        <thead class="bg-slate-100 border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">施設名</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">導入機種</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">設置打席</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">追加料金</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-3 px-4 font-semibold text-green-700 whitespace-nowrap">多賀ゴルフ練習場</td>
+                                <td class="py-3 px-4 whitespace-nowrap">トラックマン</td>
+                                <td class="py-3 px-4 whitespace-nowrap">一部(1F/2F)</td>
+                                <td class="py-3 px-4 whitespace-nowrap"><strong>無料</strong></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-3 px-4 font-semibold text-green-700 whitespace-nowrap">365ゴルフクラブ 彦根</td>
+                                <td class="py-3 px-4 whitespace-nowrap">トップトレーサー</td>
+                                <td class="py-3 px-4 whitespace-nowrap"><strong>全打席</strong></td>
+                                <td class="py-3 px-4 whitespace-nowrap"><strong>無料</strong></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-3 px-4 font-semibold text-green-700 whitespace-nowrap">KSP彦根</td>
+                                <td class="py-3 px-4 whitespace-nowrap">トップトレーサー</td>
+                                <td class="py-3 px-4 whitespace-nowrap"><strong>全打席</strong></td>
+                                <td class="py-3 px-4 whitespace-nowrap"><strong>無料</strong></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-3 px-4 font-semibold text-green-700 whitespace-nowrap">HYPER GOLF 彦根</td>
+                                <td class="py-3 px-4 whitespace-nowrap">OK ON GOLF</td>
+                                <td class="py-3 px-4 whitespace-nowrap">全打席</td>
+                                <td class="py-3 px-4 whitespace-nowrap">無料(会費制)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-green-500 pb-2 mt-12 mb-6">全打席トップトレーサー完備！365ゴルフクラブ 彦根</h2>
+            
+            <h3 class="text-xl font-bold text-slate-800 mb-4">■ 弾道測定器と施設の特徴</h3>
+            <p>彦根エリアでも貴重な、すべての打席に最新の弾道測定器「トップトレーサー・レンジ」が導入されている施設です。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7723.png" alt="365彦根のトップトレーサーモニター" class="rounded-lg shadow-md w-full h-auto" width={800} height={450} format="webp" loading="lazy" />
+                <figcaption class="text-center text-xs text-slate-500 mt-2">どの打席に座っても最新データが見られる安心感</figcaption>
+            </figure>
+
+            <p><strong>「感覚」と「データ」の完璧な融合：</strong> フェアウェイに物理的なターゲット（的）が豊富に配置されているのが最大の特徴。自分の目で的を狙い、そのブレを正確なデータで即座に確認できます。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7710.png" alt="365彦根のフェアウェイの的" class="rounded-lg shadow-md w-full h-auto" width={800} height={450} format="webp" loading="lazy" />
+                <figcaption class="text-center text-xs text-slate-500 mt-2">豊富なターゲットにより、アプローチ練習の質が劇的に向上します</figcaption>
+            </figure>
+
+            <p><strong>データ分析が捗る「戦略室」：</strong> 全面リニューアルされたばかりで清潔感は抜群。2階のオシャレな休憩スペースで、アプリのデータを振り返りながらじっくり練習できる環境です。</p>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-4">■ 利用時の注意点</h3>
+            <p>キャッシュレス決済（クレカ・QR）に対応していますが、現金だと小銭が出やすいポイント制です。静かな環境で一打の質を高めたいゴルファーにドンピシャな施設です。</p>
+
+            <div class="not-prose bg-green-50 p-5 rounded-lg border border-green-200 my-6">
+                <p class="font-bold text-green-800 mb-2 mt-0 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    スムーズに練習を始めるコツ
+                </p>
+                <p class="text-sm text-slate-700 mb-4">トップトレーサーのデータをスマホに残すには専用アプリが必要です。現地で慌てないよう、事前に準備しておくとスムーズですよ！</p>
+                <div class="flex flex-wrap gap-3">
+                    <a href="https://apps.apple.com/jp/app/toptracer-range/id1336223555" target="_blank" class="bg-black text-white px-4 py-2 rounded text-xs font-bold hover:opacity-80 transition-opacity">App Store</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.toptracer.community&hl=ja" target="_blank" class="bg-slate-700 text-white px-4 py-2 rounded text-xs font-bold hover:opacity-80 transition-opacity">Google Play</a>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-400 my-6">
+                <p class="font-bold mb-1 text-amber-900">👉 さらに詳しく知りたい方はこちら！</p>
+                <p class="text-sm m-0">
+                <a href="/articles/review/365hikone/" class="text-green-700 font-bold hover:underline">▶︎ 【訪問レビュー】365ゴルフクラブ彦根の料金・設備を徹底解説！</a></p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-green-500 pb-2 mt-16 mb-6">広大な打ちっぱなし×トップトレーサー！KSP彦根</h2>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-4">■ 弾道測定器と施設の特徴</h3>
+            <p>全80打席に最新の「トップトレーサー・レンジ」を標準装備。追加料金なしで使い放題です。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6513.jpg" alt="KSP彦根の打席全体" class="rounded-lg shadow-md w-full h-auto" width={800} height={450} format="webp" loading="lazy" />
+                <figcaption class="text-center text-xs text-slate-500 mt-2">全80打席にモニターが並ぶ光景は圧巻</figcaption>
+            </figure>
+
+            <p><strong>初心者の救世主！「クラブ別測定」で飛距離を把握：</strong> 感覚に頼りがちな初心者こそ、このデータが役立ちます。「この番手で何ヤード飛ぶか」を1球ごとに客観的に確認できるため、上達のスピードが違います。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6702.jpg" alt="KSP彦根の測定データ画面" class="rounded-lg shadow-md w-full h-auto" width={800} height={450} format="webp" loading="lazy" />
+                <figcaption class="text-center text-xs text-slate-500 mt-2">飛距離だけでなく、弾道の高さや曲がり幅も一目瞭然</figcaption>
+            </figure>
+
+            <p><strong>270ヤードの圧倒的な開放感：</strong> 奥行きが非常に広く、ドライバーを思いっきり振り抜ける爽快感はエリア随一。ICカードシステムで利便性も高いです。</p>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-4">■ 利用時の注意点</h3>
+            <p>施設が非常に広いですが、お手洗いは1階のみ。2階打席を利用する際は、練習前に済ませておくのがスマートです。</p>
+
+            <div class="not-prose bg-green-50 p-5 rounded-lg border border-green-200 my-6">
+                <p class="font-bold text-green-800 mb-2 mt-0 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    アプリの準備をお忘れなく
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <a href="https://apps.apple.com/jp/app/toptracer-range/id1336223555" target="_blank" class="bg-black text-white px-4 py-2 rounded text-xs font-bold hover:opacity-80 transition-opacity">App Store</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.toptracer.community&hl=ja" target="_blank" class="bg-slate-700 text-white px-4 py-2 rounded text-xs font-bold hover:opacity-80 transition-opacity">Google Play</a>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-400 my-6">
+                <p class="font-bold mb-1 text-amber-900">👉 さらに詳しく知りたい方はこちら！</p>
+                <p class="text-sm m-0">
+                <a href="/articles/ksp-hikone-review/" class="text-green-700 font-bold hover:underline">▶︎ 【KSP彦根】全打席トップトレーサー無料の練習場が初心者の味方だった話</a></p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-green-500 pb-2 mt-16 mb-6">プロ仕様トラックマンが無料！多賀ゴルフ練習場</h2>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-4">■ 弾道測定器と施設の特徴</h3>
+            <p>プロも御用達、世界最高峰の測定器「トラックマン」が追加料金なしで利用できる、県内でも希少な練習場です。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/IMG_1495.png" alt="多賀ゴルフのトラックマン" class="rounded-lg shadow-md w-full h-auto" width={800} height={450} format="webp" loading="lazy" />
+                <figcaption class="text-center text-xs text-slate-500 mt-2">憧れのトラックマンを無料開放。精密なデータ分析が可能です</figcaption>
+            </figure>
+
+            <p><strong>「無料試打×データ計測」の最強コンボ：</strong> ショップ（ゴルフパートナー）が併設されており、気になる中古クラブを打席に持ち込んでトラックマンで数値を測りながら「本当に合うか」を吟味できます。</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/IMG_1550.png" alt="多賀ゴルフ練習場併設のゴルフパートナー" class="rounded-lg shadow-md w-full h-auto" width={800} height={450} format="webp" loading="lazy" />
+                <figcaption class="text-center text-xs text-slate-500 mt-2">クラブ選びに一切の妥協をしたくない人にとって最高の環境</figcaption>
+            </figure>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-4">■ 利用時の注意点</h3>
+            <p>トラックマンは一部の特定打席のみです。狙い撃ちで受付する必要があります。また、打席間隔はややタイトなので、周囲が気になる方は空いている平日の日中や2階がおすすめです。</p>
+
+            <div class="not-prose bg-green-50 p-5 rounded-lg border border-green-200 my-6">
+                <p class="font-bold text-green-800 mb-2 mt-0 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                    データを持ち帰るための準備
+                </p>
+                <p class="text-sm text-slate-700 mb-4">トラックマンの数値をスマホで振り返るなら公式アプリが必須。自宅で設定しておけば打席ですぐに計測を始められます！</p>
+                <div class="flex flex-wrap gap-3">
+                    <a href="https://apps.apple.com/jp/app/trackman-golf/id1245413916" target="_blank" class="bg-black text-white px-4 py-2 rounded text-xs font-bold hover:opacity-80 transition-opacity">App Store</a>
+                    <a href="https://play.google.com/store/apps/details?id=dk.TrackMan.Range&hl=ja" target="_blank" class="bg-slate-700 text-white px-4 py-2 rounded text-xs font-bold hover:opacity-80 transition-opacity">Google Play</a>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-400 my-6">
+                <p class="font-bold mb-1 text-amber-900">👉 さらに詳しく知りたい方はこちら！</p>
+                <p class="text-sm m-0">
+                <a href="/articles/review/taga-golf/" class="text-green-700 font-bold hover:underline">▶︎ 【滋賀】トラックマン無料＆試打し放題！多賀ゴルフ練習場リアルレビュー</a></p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-green-500 pb-2 mt-16 mb-6">最新インドア設備！HYPER GOLF 彦根店</h2>
+            <p>
+                系列の大津京店でその質の高さを体感済み。彦根店はインドアならではの最新設備が揃っています。
+            </p>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-4">■ 弾道測定器と施設の特徴</h3>
+            <ul>
+                <li><strong>天候フリーの最新インドア：</strong> 足元の傾斜が落下地点に合わせて自動で動くラウンドモードなど、より本番に近いシミュレーション練習が可能です。</li>
+                <li><strong>パット専用マシン完備：</strong> 超高速カメラによる精密な「パット測定」が可能。スコアアップの鍵を握るパッティングを科学的に分析できます。</li>
+            </ul>
+
+            <h3 class="text-xl font-bold text-slate-800 mb-4">■ 利用時の注意点</h3>
+            <p>月額制（サブスク）のため、練習頻度が低いと割高に。雨天や真冬・真夏でもガッツリ追い込みたい方には最適な選択肢です。</p>
+
+            <div class="bg-slate-100 p-4 rounded-lg border border-slate-200 my-6">
+                <p class="text-sm m-0">※詳細は公式サイトをご確認ください：<a href="http://www.hypergolf.jp/shop/hikone/" target="_blank" rel="noopener noreferrer" class="text-green-700 font-bold hover:underline">HYPER GOLF 彦根店 公式サイト</a></p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-800 mt-16 mb-6 text-center">【結論】どう使い分けるのが正解？</h2>
+            <div class="grid md:grid-cols-3 gap-4 not-prose text-sm mb-12">
+                <div class="bg-white border-2 border-green-500 p-4 rounded-lg shadow-sm">
+                    <p class="font-bold text-green-700 mb-2 text-center text-lg">多賀ゴルフ</p>
+                    <p class="m-0 text-slate-600 italic">「この中古クラブ、飛んでる？」「プロ並みの精密なデータが欲しい」というストイック派に！</p>
+                </div>
+                <div class="bg-white border-2 border-blue-500 p-4 rounded-lg shadow-sm">
+                    <p class="font-bold text-blue-700 mb-2 text-center text-lg">365・KSP</p>
+                    <p class="m-0 text-slate-600 italic">「何球でも計測したい！」「ゲーム感覚で楽しく上達したい」という初心者・エンジョイ派に！</p>
+                </div>
+                <div class="bg-white border-2 border-slate-500 p-4 rounded-lg shadow-sm">
+                    <p class="font-bold text-slate-700 mb-2 text-center text-lg">HYPER GOLF</p>
+                    <p class="m-0 text-slate-600 italic">「パターを極めたい」「雨や暑さを気にせず最新設備に没入したい」という効率重視派に！</p>
+                </div>
+            </div>
+
+            <p>彦根エリアのゴルファーは、本当に恵まれています。その日の気分や練習テーマに合わせて、これらの“無料測定器”を使い倒してみてくださいね！</p>
+
+            <div class="not-prose my-16 p-8 bg-gradient-to-br from-green-600 to-green-800 rounded-2xl text-white shadow-xl relative overflow-hidden text-center">
+                <div class="relative z-10">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 mt-0">彦根エリアを完全攻略したいあなたへ</h2>
+                    <p class="text-lg opacity-90 mb-6">
+                        「どの練習場が一番安いの？」「アプローチ練習場が広いのはどこ？」<br>
+                        彦根・多賀エリアのゴルフ練習場をあらゆる角度から徹底比較した<br>
+                        <strong>「彦根ゴルフ練習場 完全ガイド（2026年版）」</strong>を近日公開予定！
+                    </p>
+                    <div class="inline-block bg-white text-green-800 font-bold px-6 py-2 rounded-full animate-pulse">
+                        🚧 公開まで今しばらくお待ちください
+                    </div>
+                </div>
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full"></div>
+            </div>
+
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            
+        </article>
+    </div>
+
+    <style is:global>
+        html { scroll-behavior: smooth; }
+        section[id], h2[id] { scroll-margin-top: 80px; }
+    </style>
+</BaseLayout>
