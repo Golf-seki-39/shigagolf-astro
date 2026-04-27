@@ -47,14 +47,8 @@ const experienceReports = [
     { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
 ];
 const comparisonArticles = [
-    { url: '/articles/comparison/omi-pricerank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
-    { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
-    { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
-    { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
-    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
-    { url: '/articles/comparison/o-mihachiman-guide/', title: '【2025年最新】近江八幡市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14)のコピー.jpg' },
-    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
-];
+    { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ｜トラックマン等 | シガゴル', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
+   ];
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
@@ -222,6 +216,20 @@ const comparisonArticles = [
                 KSP彦根は、滋賀県彦根市にある、最新技術と安心のシステムでゴルファーの上達をスマートにサポートしてくれるゴルフ練習場です。その最大の魅力は、なんといっても全打席に無料で使える「トップトレーサー・レンジ」が備わっていること！そして、利用者を考えた便利なシステムが充実している点も見逃せません。「彦根
                 ゴルフ練習場 初心者」で探している方にも、ぜひ知ってほしい場所です。
             </p>
+
+            <div class="not-prose my-10 p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl shadow-sm">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-2xl">⛳️</span>
+                    <p class="font-bold text-green-800 text-lg m-0">彦根・多賀エリアの練習場選びで迷っていませんか？</p>
+                </div>
+                <p class="text-sm text-slate-700 mb-5 leading-relaxed">
+                    実は、彦根周辺の練習場はKSP彦根だけでなく<strong>すべて「弾道測定器」が無料</strong>で使い放題なんです！<br>
+                    「トップトレーサー」と「トラックマン」の違いや、あなたにピッタリの目的別おすすめ施設を徹底比較しました。
+                </p>
+                <a href="/articles/hikone-tracker/" class="flex items-center justify-center w-full md:w-auto px-6 py-3 bg-green-600 text-white font-bold rounded-full hover:bg-green-700 hover:shadow-md transition-all duration-200 no-underline text-sm md:text-base">
+                    彦根エリアの「測定器無料」練習場まとめを見る ＞
+                </a>
+            </div>
 
             <h2
                 id="toptracer"
@@ -493,9 +501,22 @@ const comparisonArticles = [
                 休憩スペースは打席後方だけでなく1階にも2ヶ所。駐車場にはEV充電器、フロントには打席の空席情報がわかる電光掲示板、1階には喫煙所、そして有料のロッカールームも完備されています。KSP彦根は、ゴルファーが練習に集中できる環境が整っています。
             </p>
 
-             <div class="not-prose my-12 space-y-12">
-                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
-                
+               <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' ? (
+                    <>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    </>
+                ) 
+                : category === '比較記事' ? (
+                    <>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                    </>
+                ) 
+                : null
+            }
             </div>
             
             <ShareButtons articleUrl={articleUrl} headline={headline} />
