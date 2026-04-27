@@ -59,6 +59,16 @@ const experienceReports = [
     { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
 ];
 
+const comparisonArticles = [
+    {
+        title: "【彦根】弾道測定器が無料のゴルフ練習場まとめ｜トラックマン等",
+        url: "/articles/omi-hikone-tracker/",
+        image: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-summary-main.png", // 今回作ったアイキャッチURL
+        category: "比較記事"
+    },
+    // ...他の記事
+];
+
 // --- [7] JSON-LD構造化データ ---
 const jsonLd = [
   {
@@ -172,6 +182,14 @@ const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.me
             <p>ここは単なる打ちっぱなしではありません。「ゴルフパートナー併設」という強みを活かした無料試打や、公式が手厚くバックアップするビギナー応援など、他にはない魅力が詰まっています。</p>
 
             <p>しかし、実際に通い詰めているからこそ分かる「打席のリアルな間隔」や「意外な注意点」もありました。今回は、私（セキ）が忖度なしで多賀ゴルフ練習場を徹底レビューします！</p>
+
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 my-8">
+    <p class="text-sm m-0">
+        <strong>💡 彦根・多賀エリアで練習場をお探しの方へ</strong><br>
+        「他の練習場とどっちが良いか迷っている」という方は、先にこちらの比較記事をチェック！<br>
+        <a href="/articles/omi-hikone-tracker/" class="text-green-700 font-bold hover:underline">▶︎ 【彦根】弾道測定器が無料のゴルフ練習場まとめをチェックする</a>
+    </p>
+</div>
 
             <div class="not-prose my-8 p-6 border-2 border-slate-300 rounded-lg bg-slate-50">
                 <h2 class="text-2xl font-bold text-center mt-0 mb-6 text-slate-800">先に結論！多賀ゴルフはどんな人におすすめ？</h2>
@@ -450,6 +468,10 @@ const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.me
 
             <p>多賀ゴルフ最大の目玉が、プロも愛用する弾道測定器「トラックマン（TrackMan）」の導入です。なんと、<strong>追加料金なし、空いていれば誰でも利用可能</strong>なんです！</p>
 
+            <p class="mt-4 text-sm">
+    ※トラックマンと、他店（365やKSP）に導入されている「トップトレーサー」の機能や精度の違いについては、こちらの<a href="/articles/omi-hikone-tracker/" class="text-green-700 font-bold hover:underline">弾道測定器比較ガイド</a>で詳しく解説しています。
+</p>
+
             <p>ただし、「全打席完備」ではありません。私が調べた限り、以下の打席に設置されています。</p>
             
             <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 my-4 not-prose">
@@ -614,7 +636,21 @@ const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.me
             </div>
 
             <div class="not-prose my-12 space-y-12">
-                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+            {
+                category === '体験談' ? (
+                    <>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    </>
+                ) 
+                : category === '比較記事' ? (
+                    <>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                    </>
+                ) 
+                : null
+            }
             </div>
 
             <AuthorProfile />
