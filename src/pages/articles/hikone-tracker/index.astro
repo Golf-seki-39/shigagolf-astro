@@ -23,7 +23,20 @@ const articleUrl = `${baseUrl}/articles/hikone-tracker/`;
 // 🔥 実際のページを開いたときに表示される大見出し（インパクト・熱量重視）
 const headline = "彦根周辺の練習場は全施設「弾道測定器」が無料！？トラックマン・トップトレーサー使い放題まとめ";
 
-// --- [4] JSON-LD構造化データ ---
+// --- [4] 関連記事リストの定義 ---
+const experienceReports = [
+    { url: '/articles/365-nagahama/range/', title: '【体験談①】365ながはま(練習場) 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000ai.jpg' },    
+    { url: '/articles/365-nagahama/short-course/', title: '【体験談②】365ながはま ショートコース徹底攻略法', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg' },
+    { url: '/articles/review/365hikone/', title: '365ゴルフクラブ 彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/0000img.jpg' },
+    { url: '/articles/taga-golf/', title: '多賀ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/aikyatti-taga.png' },
+    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
+];
+
+const comparisonArticles = [
+    { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ｜トラックマン等 | シガゴル', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
+   ];
+
+// --- [5] JSON-LD構造化データ ---
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -349,6 +362,24 @@ const jsonLd = {
 
             <AuthorProfile />
             <ShareButtons articleUrl={articleUrl} headline={headline} />
+
+            <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' ? (
+                    <>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    </>
+                ) 
+                : category === '比較記事' ? (
+                    <>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                    </>
+                ) 
+                : null
+            }
+            </div>
             
         </article>
     </div>
