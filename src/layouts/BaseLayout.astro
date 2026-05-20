@@ -43,21 +43,28 @@ const imageToUse = ogImage || defaultOgImage;
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/fslightbox/3.4.1/index.min.js" is:inline></script>
         
-        <script is:inline>
-            window.dataLayer = window.dataLayer || [];
+       window.dataLayer = window.dataLayer || [];
             function gtag() { dataLayer.push(arguments); }
             gtag("js", new Date());
             if (window.location.hostname !== 'localhost') {
                 gtag("config", "G-S7JPWMHPVS");
             }
 
-            // 全ての画像を自動的に拡大対象にするスクリプト
+            // 全ての画像を自動的に拡大対象にし、施設写真ならギャラリーへのリンクを付与
             document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('img').forEach(img => {
                     if (img.parentElement.tagName === 'A' || img.width < 100) return;
+                    
                     const a = document.createElement('a');
                     a.href = img.src;
                     a.dataset.fslightbox = "gallery";
+                    
+                    // URLから練習場IDを推測してリンクを自動生成
+                    const match = img.src.match(/practice_ranges\/([^\/]+)\//);
+                    if (match && match[1]) {
+                        a.dataset.caption = `<a href='/ranges/${match[1]}/#gallery' style='color:#4ade80; font-weight:bold; text-decoration:underline;'>＞ この施設のフォトギャラリーを見る</a>`;
+                    }
+                    
                     img.parentNode.insertBefore(a, img);
                     a.appendChild(img);
                 });
