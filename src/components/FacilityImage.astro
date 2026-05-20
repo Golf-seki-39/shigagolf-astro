@@ -1,0 +1,14 @@
+---
+// src/components/FacilityImage.astro
+const { src, alt, rangeId, rangeName } = Astro.props;
+---
+
+<div class="facility-image-wrapper my-6">
+    <a href={src} data-fslightbox="gallery" class="block rounded-lg overflow-hidden border border-slate-200">
+        <img src={src} alt={alt} class="w-full h-auto object-cover cursor-pointer hover:opacity-90 transition" />
+    </a>
+    
+    <a href={`/ranges/${rangeId}/#gallery`} class="block bg-slate-800 text-white text-sm py-2 px-4 text-center font-bold hover:bg-green-700 transition-colors">
+        {rangeName} の詳細・フォトギャラリーを見る ＞
+    </a>
+</div>
