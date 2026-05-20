@@ -6,7 +6,6 @@ import Breadcrumbs from "../components/Breadcrumbs.astro";
 import { db } from "../lib/firebase.js";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
-// ポップアップ用に、全ての練習場リストをここで取得します (これはサーバーサイドなので変更なし)
 const rangesCollection = collection(
     db,
     "artifacts",
@@ -19,19 +18,15 @@ const q = query(rangesCollection, orderBy("name"));
 const querySnapshot = await getDocs(q);
 const ranges = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-// ▼▼▼【変更点1】Astro.propsからogImageを受け取る ▼▼▼
 const {
     title = "シガゴル | 滋賀のリアルなゴルフ練習場レビューサイト",
     description = "シガゴルは、滋賀県内のゴルフ練習場のリアルな口コミ・レビューサイト。測定器の有無、アプローチ・バンカー練習場の併設など、あなたの目的に合った練習場探しをサポートします。",
-    ogImage, // 記事ページから渡される画像URL用のプロパティを追加
+    ogImage,
     noindex = false,
 } = Astro.props;
 
-// ▼▼▼【変更点2】デフォルトのOGP画像URLを定義 ▼▼▼
 const defaultOgImage =
-    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"; // サイトのロゴなど
-
-// ▼▼▼【変更点3】ogImageが渡された場合はそれ、なければデフォルト画像を使うロジック ▼▼▼
+    "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png";
 const imageToUse = ogImage || defaultOgImage;
 ---
 
@@ -41,64 +36,57 @@ const imageToUse = ogImage || defaultOgImage;
         <link rel="preconnect" href="https://shigagolf-e31e6.firebaseapp.com" />
         <link rel="preconnect" href="https://apis.google.com" />
 
-        {/* ▼▼▼【変更点】GTMスクリプトから is:inline を削除し、type="text/partytown" を追加 ▼▼▼ */}
         <script
             async
             src="https://www.googletagmanager.com/gtag/js?id=G-S7JPWMHPVS"
         ></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/fslightbox/3.4.1/index.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fslightbox/3.4.1/index.min.js" is:inline></script>
+        
         <script is:inline>
             window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
+            function gtag() { dataLayer.push(arguments); }
             gtag("js", new Date());
-if (window.location.hostname !== 'localhost') {
-            gtag("config", "G-S7JPWMHPVS");
-}
+            if (window.location.hostname !== 'localhost') {
+                gtag("config", "G-S7JPWMHPVS");
+            }
+
+            // 全ての画像を自動的に拡大対象にするスクリプト
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('img').forEach(img => {
+                    if (img.parentElement.tagName === 'A' || img.width < 100) return;
+                    const a = document.createElement('a');
+                    a.href = img.src;
+                    a.dataset.fslightbox = "gallery";
+                    img.parentNode.insertBefore(a, img);
+                    a.appendChild(img);
+                });
+            });
         </script>
+        
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
-
-        <meta
-            name="google-site-verification"
-            content="muQpmdbPlN2etL0O4WpXsvv307PUJ1uuaXjMO2VvHtg"
-        />
+        <meta name="google-site-verification" content="muQpmdbPlN2etL0O4WpXsvv307PUJ1uuaXjMO2VvHtg" />
+        
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={Astro.url} />
-
-        {/* ▼▼▼【変更点4】og:imageのcontentを変数に置き換え ▼▼▼ */}
         <meta property="og:image" content={imageToUse} />
-
         <meta property="og:site_name" content="シガゴル" />
         <meta property="og:type" content="website" />
-
-        {/* ▼▼▼【改善提案】Twitterカード用の設定を追加 ▼▼▼ */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:image" content={imageToUse} />
 
         {noindex && <meta name="robots" content="noindex" />}
-        <link
-            rel="apple-touch-icon"
-            href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
-        />
-        <link
-            rel="icon"
-            href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
-        />
-
-       
+        <link rel="apple-touch-icon" href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" />
+        <link rel="icon" href="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" />
 
         <slot name="head" />
     </head>
     <body class="bg-slate-50 text-slate-800">
         <Header />
-        {
-            /* ページから渡された title をそのままパンクズリストコンポーネントに渡します */
-        }
         <Breadcrumbs pageTitle={title} />
         <slot />
         <Footer />
