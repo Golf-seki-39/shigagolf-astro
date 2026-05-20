@@ -44,26 +44,29 @@ const imageToUse = ogImage || defaultOgImage;
 <script is:inline>
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('img').forEach(img => {
+            // すでにリンク済み、または小さな画像は対象外
             if (img.parentElement.tagName === 'A' || img.width < 100) return;
 
-            // 1. デコードしてURLの中身を見る
-            const decodedUrl = decodeURIComponent(img.src);
-            console.log("Analyzing image:", decodedUrl); // どこでつまずいているかログ出し
+            // 1. src または data-src から元のURLを抽出（Netlifyのパラメータを剥がす）
+            const urlToAnalyze = img.src.includes('.netlify/images') 
+                ? new URLSearchParams(new URL(img.src).search).get('url') 
+                : img.src;
 
-            const match = decodedUrl.match(/practice_ranges\/([^\/]+)\//);
+            // 2. 確実に抽出する
+            if (!urlToAnalyze) return;
+            
+            const match = urlToAnalyze.match(/practice_ranges\/([^\/]+)\//);
             
             const a = document.createElement('a');
-            a.href = img.src;
+            a.href = img.src; // 拡大表示は最適化後の画像で行う
             a.dataset.fslightbox = "gallery";
 
+            // 3. IDが取れたらリンクを生成
             if (match && match[1]) {
                 const rangeId = match[1];
-                console.log("Found rangeId:", rangeId); // IDが見つかったかログ出し
                 a.dataset.caption = `<a href="/ranges/${rangeId}/#gallery" style="color:#4ade80; font-weight:bold; text-decoration:underline;">＞ この施設のフォトギャラリーを見る</a>`;
-            } else {
-                console.warn("Could not find rangeId in:", decodedUrl);
             }
-            
+
             img.parentNode.insertBefore(a, img);
             a.appendChild(img);
         });
