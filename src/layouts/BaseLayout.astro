@@ -41,31 +41,27 @@ const imageToUse = ogImage || defaultOgImage;
             src="https://www.googletagmanager.com/gtag/js?id=G-S7JPWMHPVS"
         ></script>
         
-<script
-            async
-            src="https://www.googletagmanager.com/gtag/js?id=G-S7JPWMHPVS"
-        ></script>
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/fslightbox/3.4.1/index.min.js" is:inline></script>
-        
-       <script is:inline>
+<script is:inline>
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('img').forEach(img => {
             if (img.parentElement.tagName === 'A' || img.width < 100) return;
-            
-            // 1. img.src（現在のURL）または img.dataset.src などからFirebaseのURLを探す
-            // Netlifyの画像URLの中に含まれている FirebaseのURL をデコードして抽出します
+
+            // 1. デコードしてURLの中身を見る
             const decodedUrl = decodeURIComponent(img.src);
+            console.log("Analyzing image:", decodedUrl); // どこでつまずいているかログ出し
+
             const match = decodedUrl.match(/practice_ranges\/([^\/]+)\//);
             
             const a = document.createElement('a');
             a.href = img.src;
             a.dataset.fslightbox = "gallery";
-            
+
             if (match && match[1]) {
                 const rangeId = match[1];
-                // リンクの埋め込み
+                console.log("Found rangeId:", rangeId); // IDが見つかったかログ出し
                 a.dataset.caption = `<a href="/ranges/${rangeId}/#gallery" style="color:#4ade80; font-weight:bold; text-decoration:underline;">＞ この施設のフォトギャラリーを見る</a>`;
+            } else {
+                console.warn("Could not find rangeId in:", decodedUrl);
             }
             
             img.parentNode.insertBefore(a, img);
