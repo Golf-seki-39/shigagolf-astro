@@ -1,0 +1,489 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+
+// --- [3] この記事固有の情報 ---
+const title = "【彦根・多賀】初心者や女性が行きやすい打ちっぱなし3選｜手ぶらOK＆空いてる練習場を比較";
+const description = "「上手い人ばかりで怖い…」そんな初心者や女性向けに、彦根市・多賀町の行きやすいゴルフ練習場を施設レビュアーが徹底比較！受付不要のシステム、教え魔の有無、レンタルクラブ事情、駐車場の広さなど、本当に行きやすいのはどこかを星評価で分かりやすく解説します。";
+const category = "比較記事";
+const pubDate = "2026-05-25"; 
+const pubDateISO = "2026-05-25T10:00:00+09:00"; 
+const updatedDate = null;
+const updatedDateISO = updatedDate ? `${updatedDate}T10:00:00+09:00` : pubDateISO;
+
+// ※とりあえず汎用的なアイキャッチ画像URLを入れています。後で差し替えてください。
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png"; 
+
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/hikone-beginner-guide/`; 
+const headline = "「上手い人ばかりで怖い…」そんな初心者・女性向け！彦根・多賀の行きやすい打ちっぱなし比較";
+
+// --- [4] 関連記事リストの定義 ---
+const experienceReports = [
+    { url: '/articles/taga-golf/', title: '多賀ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/aikyatti-taga.png' },
+    { url: '/articles/review/365hikone/', title: '365ゴルフクラブ 彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/0000img.jpg' },
+    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
+];
+
+const comparisonArticles = [
+    { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
+    { url: '/articles/hikone-pricerank/', title: '【彦根・多賀】打ちっぱなし料金比較シミュレーター', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
+];
+
+// --- [5] JSON-LD構造化データ ---
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+  "headline": headline,
+  "description": description,
+  "image": [imageUrl],
+  "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+  "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" } },
+  "datePublished": pubDateISO,
+  "dateModified": updatedDateISO
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} ogImage={imageUrl}>
+    
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto text-slate-700 leading-relaxed">
+        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline block">
+            ‹ 記事一覧に戻る
+        </a>
+        
+        <article class="prose lg:prose-xl max-w-none">
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id], #furusato-link { scroll-margin-top: 80px; }
+              .table-wrapper { overflow-x: auto; }
+              .responsive-table th:first-child, .responsive-table td:first-child { position: -webkit-sticky; position: sticky; left: 0; z-index: 10; }
+              .responsive-table thead th:first-child { background-color: #f1f5f9; }
+              .responsive-table tbody tr.bg-white td:first-child { background-color: #ffffff; }
+              .responsive-table tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
+            
+              @media (max-width: 767px) and (orientation: portrait) {
+                #article-view .responsive-table { min-width: 100% !important; }
+                #article-view .responsive-table thead { display: none !important; }
+                #article-view .responsive-table tr { display: block !important; margin-bottom: 1.5rem !important; border: 1px solid #cbd5e1 !important; border-radius: 0.5rem !important; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1) !important; overflow: hidden; }
+                #article-view .responsive-table td { display: block !important; text-align: right !important; position: relative !important; border-bottom: 1px solid #e2e8f0 !important; padding: 0.75rem 0.75rem 0.75rem 110px !important; left: auto !important; background-color: #fff !important; }
+                #article-view .responsive-table td:last-child { border-bottom: none !important; }
+                #article-view .responsive-table td::before { content: attr(data-label); position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); font-weight: 600; text-align: left; color: #475569; width: 90px; }
+                #article-view .responsive-table td:first-child { background-color: #f1f5f9 !important; font-weight: bold !important; text-align: center !important; padding-left: 0.75rem !important; }
+                #article-view .responsive-table td:first-child::before { content: '' !important; }
+              }
+            </style>
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2 mb-6">
+                    公開日：{pubDate}
+                    {updatedDate && <span class="ml-2">（更新日：{updatedDate}）</span>}
+                </p>
+                
+                <figure class="m-0 mb-8 flex justify-center bg-slate-50 rounded-lg overflow-hidden">
+                    <Image 
+                        src={imageUrl} 
+                        alt="初心者・女性向けのゴルフ練習場ガイド" 
+                        class="max-w-full w-auto h-auto max-h-[500px] object-contain" 
+                        inferSize={true}
+                        format="webp" 
+                        loading="eager" 
+                        fetchpriority="high" 
+                    />
+                </figure>
+            </header>
+
+            <p>
+                「ゴルフを始めてみたいけど、まだ自分のクラブを持っていない…」<br>
+                「打ちっぱなしに行きたいけど、上手い常連のおじさんばかりだったら恥ずかしい…」<br>
+                「運転が苦手だから、駐車場が狭いところには行きたくない…」
+            </p>
+            <p>
+                これからゴルフを始めようとしている初心者の方や、女性ゴルファーの皆さんが最初にぶつかる壁、それが<strong>「練習場の敷居の高さ（プレッシャー）」</strong>ですよね。ネットで設備を調べても、「初めてでも行きやすい空気感なのか」「女性1人でも恥ずかしくないか」まではなかなか分かりません。
+            </p>
+            <p>
+                そこで今回は、施設レビュアーである私（セキ）が実際に各施設へ何度も足を運び、<strong>「初心者遭遇率」「1人客の多さ」「混雑度」「教え魔の有無」</strong>といったリアルな指標をもとに、彦根・多賀エリアの練習場を徹底比較しました！
+            </p>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside text-green-700 font-medium">
+                    <li><a href="#comparison" class="hover:underline">一目でわかる！あなたの「性格別」星取表＆基本比較</a></li>
+                    <li><a href="#365" class="hover:underline">① 365彦根（プレッシャー皆無の穴場・接客◎）</a></li>
+                    <li><a href="#ksp" class="hover:underline">② KSP彦根（誰とも話さず自分の世界に没頭できる）</a></li>
+                    <li><a href="#taga" class="hover:underline">③ 多賀ゴルフ（初心者キャンペーンがヤバすぎる）</a></li>
+                    <li><a href="#faq" class="hover:underline">💡 必読！ゴルフ初心者の「初めての打ちっぱなし」Q&A</a></li>
+                    <li><a href="#conclusion" class="hover:underline">⛳️ 結論：迷ったらココに行けば間違いなし！</a></li>
+                </ul>
+            </div>
+
+            <h2 id="comparison" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">一目でわかる！あなたの「性格」に合う練習場は？</h2>
+            
+            <p>まずは結論から！「受付で優しく案内してほしい派」と「誰とも喋らずに打席に行きたい派」では、おすすめの施設が全く異なります。各施設の「空気感」を分かりやすく星評価でまとめました。</p>
+
+            <div class="my-6">
+                <div class="md:hidden flex justify-end items-center text-xs font-bold text-green-600 mb-2 animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                    表は横にスクロールできます
+                </div>
+                <div class="not-prose overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white mb-8">
+                    <table class="w-full text-sm text-left border-collapse min-w-[650px]">
+                        <thead class="bg-slate-100 border-b-2 border-slate-300">
+                            <tr>
+                                <th class="py-3 px-4 font-bold text-slate-800">施設名</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 text-center">安心度<br><span class="text-xs font-normal">(プレッシャー無)</span></th>
+                                <th class="py-3 px-4 font-bold text-slate-800 text-center">女性1人<br><span class="text-xs font-normal">(行きやすさ)</span></th>
+                                <th class="py-3 px-4 font-bold text-slate-800 text-center">没入度<br><span class="text-xs font-normal">(干渉されなさ)</span></th>
+                                <th class="py-3 px-4 font-bold text-slate-800 text-center">空きやすさ<br><span class="text-xs font-normal">(ゆとり)</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-green-700">365彦根</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★★★</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★★★</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★☆☆</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★★★</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-green-700">KSP彦根</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★☆☆</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★★☆</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★★★</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★☆☆☆</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-green-700">多賀ゴルフ</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★★★</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★☆☆</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★★☆</td>
+                                <td class="py-4 px-4 text-amber-500 text-center text-lg">★★★☆☆</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <p class="text-sm font-bold text-slate-800 mb-2">▼ レンタル・料金・駐車場の基本スペック比較</p>
+            <div class="my-6">
+                <div class="md:hidden flex justify-end items-center text-xs font-bold text-green-600 mb-2 animate-pulse">
+                 
+                </div>
+                <div class="not-prose overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white mb-8">
+                    <table class="w-full text-sm text-left border-collapse min-w-[800px] responsive-table">
+                        <thead class="bg-slate-100 border-b-2 border-slate-300">
+                            <tr>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">施設名</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">レンタルクラブ<br>＆ スタッフ対応</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">駐車場</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">料金の目安<br>(単価 / 入場料)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-green-700" data-label="施設名"><a href="#365" class="hover:underline">365彦根</a></td>
+                                <td class="py-4 px-4 text-slate-600" data-label="レンタル＆スタッフ">1本 100円<br><span class="text-xs text-blue-600 font-bold">明るく親切な接客</span></td>
+                                <td class="py-4 px-4 text-slate-600" data-label="駐車場">〇 停めやすい</td>
+                                <td class="py-4 px-4 text-slate-600" data-label="料金目安">1球 5円〜11円<br>入場料 250円 (※1)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-green-700" data-label="施設名"><a href="#ksp" class="hover:underline">KSP彦根</a></td>
+                                <td class="py-4 px-4 text-slate-600" data-label="レンタル＆スタッフ">1本 200円 (※2)<br><span class="text-xs font-bold text-purple-600">打席決済・放任主義</span></td>
+                                <td class="py-4 px-4 text-green-600 font-bold" data-label="駐車場">◎ 約95台で超広々</td>
+                                <td class="py-4 px-4 text-slate-600" data-label="料金目安">1球 6.6円〜9.9円<br>入場料 220〜275円 (※3)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-green-700" data-label="施設名"><a href="#taga" class="hover:underline">多賀ゴルフ</a></td>
+                                <td class="py-4 px-4 text-blue-600 font-bold" data-label="レンタル＆スタッフ">無料 (2〜3本)<br><span class="text-xs text-slate-600 font-normal">丁寧で押し売りなし</span></td>
+                                <td class="py-4 px-4 text-slate-600" data-label="駐車場">〇 停めやすい</td>
+                                <td class="py-4 px-4 text-slate-600" data-label="料金目安">1球 4.4円〜10.9円<br>入場料 220円 (※4)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p class="text-xs text-slate-500 mt-2 mb-12">
+                ※1 メンバー(有料)は入場無料。女性はプリカ20%オフあり。<br>
+                ※2 アイアンのみ(PWまで)。ジュニア用は無料。<br>
+                ※3 深夜は入場無料。<a href="#furusato-link" class="text-blue-600 underline font-bold">ふるさと納税で実質30%オフ。</a><br>
+                ※4 早朝・夜間は入場無料。月水は女性1時間500円。
+            </p>
+
+            <!-- 365彦根 -->
+            <h2 id="365" class="text-2xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">① 【圧倒的オアシス】プレッシャー皆無＆接客◎！「365ゴルフクラブ彦根」</h2>
+            
+            <p>
+                「周りに上手いおじさんばっかりいたらどうしよう…」「受付のシステムが分からない」とビクビクしている初心者に、<strong>私が一番おすすめしたいのが『365ゴルフクラブ 彦根』</strong>です。
+            </p>
+
+            <figure class="my-6 flex flex-col md:flex-row gap-4">
+                <div class="w-full md:w-1/2">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7761.png" alt="365彦根の明るく清潔な受付" class="rounded-lg shadow-md w-full h-auto object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">明るく清潔感のある受付。初めてでも丁寧に案内してくれます。</figcaption>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7710.png" alt="365彦根の視認性の高いアプローチの的" class="rounded-lg shadow-md w-full h-auto object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">打席からの風景。隣を気にせずのびのび打てる穴場空間です。</figcaption>
+                </div>
+            </figure>
+
+            <ul class="space-y-3 mb-6">
+                <li><strong>スタッフさんが明るくて親切：</strong> ゴルフ練習場の受付って、少し無愛想で独特の雰囲気があることが多いのですが、ここは違います。接客業としてしっかり対応してくれる明るい女性スタッフさんが多く、初めての打ちっぱなしでも聞きやすい空気が流れています。</li>
+                <li><strong>プレッシャー皆無の「超・穴場」：</strong> 立地も設備（全打席トップトレーサー）も最高なのに、なぜか比較的空いている穴場です。隣の打席に人がいないことも多く、空振りをしてもトップしても、誰の目も気にせず広々とマイペースに練習できます。</li>
+                <li><strong>女性目線の設備：</strong> 施設がリニューアルされており、館内もトイレも非常に清潔です。女性1人でも安心して通える環境が整っています。</li>
+            </ul>
+
+            <div class="bg-pink-50 p-5 rounded-lg border border-pink-200 my-6">
+                <h3 class="text-lg font-bold text-pink-900 mt-0 mb-3 flex items-center">
+                    🌸 女性ゴルファー大歓迎の料金システム
+                </h3>
+                <figure class="my-4 float-right ml-4 w-1/2 md:w-1/3">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7735.png" alt="365彦根 女性専用プリカやお得なクーポンの案内" class="rounded-lg shadow-sm w-full h-auto object-cover border border-slate-200" width={400} height={300} format="webp" loading="lazy" />
+                </figure>
+                <p class="text-sm text-slate-700 leading-relaxed">
+                    女性専用のプリペイドカードが<strong>いつでも20%OFF</strong>になるなど、女性ゴルファーを全力で歓迎してくれています。設備も綺麗で、まさに初心者・女性にうってつけの環境です！
+                </p>
+                <div class="clear-both"></div>
+            </div>
+
+            <div class="bg-amber-50 p-4 rounded-lg border border-amber-200 mt-4 text-center">
+                <a href="/articles/review/365hikone/" class="text-green-700 font-bold hover:underline">▶︎ 365ゴルフクラブ彦根の「トップトレーサー」等の詳しい体験談はこちら</a>
+            </div>
+
+            <!-- KSP彦根 -->
+            <h2 id="ksp" class="text-2xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">② 【人見知り・没頭型】誰とも話さず自分の世界へ！「KSP彦根」</h2>
+            
+            <p>
+                「過剰な接客は苦手」「受付のやり取りすら緊張する」という方に<strong>熱烈におすすめしたいのが、270ヤードの圧倒的な広さを誇るKSP彦根</strong>です。
+            </p>
+            
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6889.png" alt="KSP彦根の広大なフェアウェイ" class="rounded-lg shadow-md w-full h-auto object-cover" width={800} height={450} format="webp" loading="lazy" />
+                <figcaption class="text-center text-xs text-slate-500 mt-2">270ヤードの広大なフェアウェイ。圧倒的な解放感の中で練習できます。</figcaption>
+            </figure>
+
+            <figure class="my-6 flex flex-col md:flex-row gap-4">
+                <div class="w-full md:w-1/2">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/%E9%A9%9A%E3%81%8D%E3%81%AE%E5%A5%B3%E6%80%A7%20(2).png" alt="KSP彦根の広大な駐車場" class="rounded-lg shadow-md w-full h-auto object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">約95台分の広大な駐車場。運転が苦手でもラクラク！</figcaption>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6512.png" alt="KSP彦根の打席決済システム" class="rounded-lg shadow-md w-full h-auto object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">打席のICカードリーダー。これで受付スルーが可能に。</figcaption>
+                </div>
+            </figure>
+
+            <ul class="space-y-3 mb-6">
+                <li><strong>受付不要の「打席決済システム」：</strong> 初回だけICカードの発行とチャージが必要ですが、それ以降は<strong>フロントを素通りして直接打席に行き、機械にカードをかざすだけで入場料の決済とボール出しが完結</strong>します。誰とも喋らなくていい、超スマートなシステムです。</li>
+                <li><strong>「教え魔」を見たことがない：</strong> 練習場あるあるの「勝手にスイングを教えてくるおじさん（教え魔）」。私が通い詰めている限り、KSPでは一度も遭遇したことがありません。上手い人から初心者まで、干渉されずに自分の世界で黙々と打てる空間です。実は女性1人客もちらほら見かけます。</li>
+                <li><strong>駐車場の安心感：</strong> 超広々とした駐車場を完備。運転初心者でも全く焦る必要がありません。</li>
+            </ul>
+
+            <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 my-6 not-prose">
+                <p class="font-bold text-red-800 mb-2 mt-0">⚠️ 注意点：混雑時間と「トイレの場所」</p>
+                <p class="text-sm text-slate-700 m-0 leading-relaxed">
+                    18時以降は仕事終わりのゴルファーでかなり混雑します。また、意外な落とし穴として<strong>2階打席にはトイレがありません（1階のみ）</strong>。女性の方や、途中でトイレに行きたくなりそうな方は、最初から1階打席を選ぶのが無難です。
+                </p>
+            </div>
+
+            <div id="furusato-link" class="bg-blue-50 p-5 md:p-6 rounded-lg border-2 border-blue-300 my-8 not-prose text-center shadow-sm">
+                <p class="font-black text-blue-900 text-lg md:text-xl mb-3 mt-0">🉐 【一番お得】ふるさと納税で実質タダで練習する！</p>
+                <p class="text-sm text-slate-700 mb-5 text-left leading-relaxed">
+                    KSPはふるさと納税の対象施設です。楽天ふるさと納税を経由すれば、寄付額の30%が練習場のポイントとして還元されます！（※楽天ポイントも貯まるので二重でお得です）<br>
+                    <span class="text-xs text-red-600 font-bold mt-2 inline-block">※リンク先は野洲市（KSP希望ヶ丘）の返礼品ですが、全店共通ICカードのため彦根店でも全く問題なく利用可能です。（私自身、1枚のカードで両店舗を利用しています！）</span>
+                </p>
+                <figure class="my-4">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6381.png" alt="KSP彦根 ふるさと納税の案内" class="rounded-lg shadow-md w-full md:w-2/3 mx-auto h-auto object-cover border border-slate-200" width={600} height={400} format="webp" loading="lazy" />
+                </figure>
+                <a href="https://a.r10.to/h5J6tH" target="_blank" rel="noopener sponsored" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold text-sm md:text-base py-3 px-6 md:px-8 rounded-full shadow-md transition-transform transform hover:scale-105">
+                    楽天ふるさと納税（10,000円〜）をチェックする ▶︎
+                </a>
+            </div>
+
+             <div class="bg-amber-50 p-4 rounded-lg border border-amber-200 mt-4 text-center">
+                <a href="/articles/ksp-hikone-review/" class="text-green-700 font-bold hover:underline">▶︎ KSP彦根の「トップトレーサー」等の詳しい体験談はこちら</a>
+            </div>
+
+            <!-- 多賀ゴルフ -->
+            <h2 id="taga" class="text-2xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">③ 【コスパ＆サポート重視】初心者の味方！「多賀ゴルフ練習場」</h2>
+            
+            <p>
+                「これから本気でゴルフを始めたい！」という方に絶対知ってほしいのが、多賀ゴルフ練習場の<strong>初心者向けキャンペーンの凄まじさ</strong>です。
+            </p>
+            
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/IMG_1491.png" alt="多賀ゴルフ練習場の外観" class="rounded-lg shadow-md w-full h-auto object-cover" width={800} height={450} format="webp" loading="lazy" />
+            </figure>
+
+            <figure class="my-6 flex flex-col md:flex-row gap-4">
+                <div class="w-full md:w-1/2">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/IMG_1484.png" alt="多賀ゴルフの打席画面" class="rounded-lg shadow-md w-full h-auto object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">こちらも打席で入場料を払うシステム。マイペースに準備可能。</figcaption>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/IMG_1537.png" alt="多賀ゴルフの清潔なトイレ" class="rounded-lg shadow-md w-full h-auto object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">トイレなどの水回りも綺麗に清掃されており、女性も安心です。</figcaption>
+                </div>
+            </figure>
+
+            <div class="bg-blue-50 p-5 rounded-lg border border-blue-200 my-6">
+                <h3 class="text-lg font-bold text-blue-900 mt-0 mb-3 flex items-center">
+                    🎁 多賀ゴルフの「ビギナー応援」がヤバい
+                </h3>
+                <ul class="space-y-2 m-0 text-sm text-slate-700">
+                    <li><strong>レンタルクラブ無料：</strong> 電話で確認したところ、2〜3本程度のセットが<strong>無料</strong>で借りられます。</li>
+                    <li><strong>クラブ1本プレゼント：</strong> これから始める人に、なんとクラブをプレゼントするキャンペーンを実施中！</li>
+                    <li><strong>実質無料の初心者レッスン：</strong> 基礎からしっかり教えてもらえます。</li>
+                    <li><strong>女性特権：</strong> レディースデー（毎週月曜・水曜）は打放題（1H）なんと<strong>500円</strong>です！（※入場料込み）</li>
+                </ul>
+            </div>
+
+            <p>
+                ここも実は打席決済システムを導入しています。入り口が2カ所あり、スタッフさんは基本的にゴルフパートナー側（ショップ）にいるため、<strong>別の入り口から入ればタイミングによっては誰にも会わずに打席へ直行できる</strong>という裏ワザ的な使い方も可能です。
+            </p>
+
+            <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500 my-6 not-prose">
+                <p class="font-bold text-amber-800 mb-2 mt-0">⚠️ 混雑度と打席間隔に注意</p>
+                <figure class="my-4 float-right ml-4 w-1/2 md:w-1/3">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/IMG_1512.png" alt="多賀ゴルフ練習場の打席の様子" class="rounded-lg shadow-sm w-full h-auto object-cover border border-slate-200" width={400} height={300} format="webp" loading="lazy" />
+                </figure>
+                <p class="text-sm text-slate-700 m-0 leading-relaxed">
+                    人気ゆえに1階が混みやすく、他の施設と比べると<strong>隣の打席との距離が少し近く感じます。</strong>また全打席にトラックマン（弾道測定器）が付いているわけではないため待ちが発生することも。「隣の人に見られている気がする…」と緊張してしまう方は、比較的空いている2階打席を選ぶと安心です。
+                </p>
+                <div class="clear-both"></div>
+            </div>
+
+            <div class="bg-amber-50 p-4 rounded-lg border border-amber-200 mt-4 text-center">
+                <a href="/articles/taga-golf/" class="text-green-700 font-bold hover:underline">▶︎ 多賀ゴルフ練習場の「トラックマン」等の詳しい体験談はこちら</a>
+            </div>
+
+
+            <!-- FAQ -->
+            <h2 id="faq" class="text-2xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">💡 必読！ゴルフ初心者の「初めての打ちっぱなし」Q&A</h2>
+            
+            <p>初めて打ちっぱなしに行く前に、絶対に知っておきたい「よくある疑問」にお答えします！</p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">Q. 初めての打ちっぱなし、初回はいくら持っていけばいい？</h3>
+            <p>
+                「ゴルフってお金がかかりそう…」と不安になるかもしれませんが、<strong>実は最初は2,500円もあれば十分お釣りが来ます！</strong><br>
+                各施設の初回の目安金額（入場料＋ICカード代＋ボール代）は以下の通りです。
+            </p>
+            <ul class="space-y-2 mt-2">
+                <li><strong>365彦根：</strong> 約2,200円〜 （初回プリカ購入代含む）</li>
+                <li><strong>KSP彦根：</strong> 約1,200円〜 （IC発行200円＋チャージ1,000円〜）</li>
+                <li><strong>多賀ゴルフ：</strong> 約1,330円〜 （IC発行330円＋チャージ1,000円〜）</li>
+            </ul>
+            <p>※打つ球数にもよりますが、まずは1,000円〜2,000円分だけチャージして、足りなくなったら追加するのがおすすめです。</p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-12 mb-3">Q. 1人デビューは不安…。友達とクラブの使い回しってOK？</h3>
+            <p>
+                「まだ自分のクラブがないから、友達と一緒に1つの打席に入って、クラブを貸してもらいたい」<br>
+                これ、厳密なルールは練習場によって異なりますが、今回<strong>KSP彦根さんに直接電話して聞いてみたところ…</strong>
+            </p>
+            <p class="text-lg font-bold text-green-700 text-center my-6 bg-green-50 p-4 rounded-lg border border-green-200">
+                「友人同士でのクラブの共有は、特に管理・制限していないので自由にやっていただいて大丈夫です！」
+            </p>
+            <p>
+                との回答をいただきました！常識の範囲内（大声で騒いだり、後ろの通路を塞いだりしない）であれば、友達にクラブを借りながら交代で練習しても全く問題ありません。
+            </p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-12 mb-3">Q. ゴルフ初心者が初めて行く時、本当に手ぶらでOK？</h3>
+            <p>
+                クラブは各施設でレンタルできますが、<strong>「グローブ（手袋）」だけは事前にネットで買っておくことを強くおすすめします！</strong>
+            </p>
+            <p>
+                グローブは衛生面やサイズの問題があり、ほとんどの練習場で「レンタル不可（販売のみ）」です。現地で急いで買うと割高になるため、事前に用意しておきましょう。
+            </p>
+
+            <div class="not-prose bg-white p-5 rounded-lg border-2 border-slate-200 my-6 shadow-sm">
+                <p class="font-bold text-slate-800 text-lg mb-2 mt-0 flex items-center">
+                    <span class="text-2xl mr-2">🧤</span> 私がずっと愛用している最強グローブ
+                </p>
+                <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                    私がゴルフを始めた時に勧められて買ったのが、<strong>フットジョイ（FJ）の「ナノロックツアー」</strong>です。30度以下のぬるま湯で手洗いしても全然破れず、圧倒的に長持ちします。長期的に見れば一番コスパが良かったです。
+                </p>
+                <div class="text-center">
+                    <a href="https://a.r10.to/h5uVyX" target="_blank" rel="noopener sponsored" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold text-sm md:text-base py-3 px-6 rounded-full shadow transition-transform transform hover:scale-105">
+                        楽天で「FJ ナノロックツアー」をチェックする ▶︎
+                    </a>
+                </div>
+            </div>
+
+            <!-- 結論まとめブロック -->
+            <h2 id="conclusion" class="text-2xl font-bold text-slate-800 mt-16 mb-6 text-center">⛳️ 結論：迷ったらココに行けば間違いなし！</h2>
+            
+            <div class="not-prose bg-slate-50 border-2 border-slate-300 rounded-xl p-6 md:p-8 mb-12 shadow-sm">
+                <ul class="space-y-6">
+                    <li class="flex flex-col md:flex-row md:items-center gap-4 border-b border-slate-200 pb-6">
+                        <div class="md:w-1/3 font-bold text-lg text-slate-700">👩 超初心者・女性なら</div>
+                        <div class="md:w-2/3">
+                            <span class="inline-block bg-green-100 text-green-800 font-bold px-3 py-1 rounded mb-2">▶︎ 365彦根</span>
+                            <p class="text-sm text-slate-600 m-0">受付が親切で、とにかく空いていてプレッシャーがゼロ！清潔感も抜群です。</p>
+                        </div>
+                    </li>
+                    <li class="flex flex-col md:flex-row md:items-center gap-4 border-b border-slate-200 pb-6">
+                        <div class="md:w-1/3 font-bold text-lg text-slate-700">🤫 人見知り・没頭派なら</div>
+                        <div class="md:w-2/3">
+                            <span class="inline-block bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded mb-2">▶︎ KSP彦根</span>
+                            <p class="text-sm text-slate-600 m-0">受付不要の打席決済。「教え魔」もおらず、誰とも喋らずに自分の世界で打てます。</p>
+                        </div>
+                    </li>
+                    <li class="flex flex-col md:flex-row md:items-center gap-4">
+                        <div class="md:w-1/3 font-bold text-lg text-slate-700">💰 コスパ・手厚さ重視なら</div>
+                        <div class="md:w-2/3">
+                            <span class="inline-block bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded mb-2">▶︎ 多賀ゴルフ</span>
+                            <p class="text-sm text-slate-600 m-0">無料レンタルやプレゼントなど、初心者を応援するキャンペーンが圧倒的です。</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 初心者ガイドへの内部リンクバナー -->
+            <div class="not-prose my-16 p-8 bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-300 rounded-2xl shadow-lg text-center">
+                <div class="inline-block bg-green-600 text-white font-bold px-4 py-1 rounded-full text-sm mb-4">
+                    次によく読まれている記事（公開予定）
+                </div>
+                <h3 class="text-2xl font-black text-green-900 mt-0 mb-4">行く場所が決まったら、次はこちら！</h3>
+                <p class="text-slate-700 mb-6 leading-relaxed">
+                    「服装はどうすればいい？」「最初は何球くらい打てばいいの？」「一人で行くと変に思われない？」<br>
+                    いざ行くとなると湧いてくる<strong>”打ちっぱなしデビューの不安”</strong>を全て解消する完全ガイドを作成しました！
+                </p>
+                <a href="/articles/beginner-complete-guide/" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-green-700 text-white font-bold rounded-xl hover:bg-green-800 hover:shadow-xl transition-all duration-300 no-underline text-lg">
+                    初めての打ちっぱなし完全ガイドを読む ＞
+                </a>
+            </div>
+
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+
+            <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' ? (
+                    <>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    </>
+                ) 
+                : category === '比較記事' ? (
+                    <>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                    </>
+                ) 
+                : null
+            }
+            </div>
+            
+        </article>
+    </div>
+</BaseLayout>

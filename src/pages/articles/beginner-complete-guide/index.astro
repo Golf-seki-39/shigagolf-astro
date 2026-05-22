@@ -1,0 +1,453 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネントをインポート ---
+import MySlider from '../../../components/MySlider.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+
+// --- [3] この記事固有の情報 ---
+const title = "「空振りしたら恥ずかしい…」初めての打ちっぱなし完全ガイド｜服装・料金・流れを初心者向けに解説";
+const description = "ゴルフ練習場（打ちっぱなし）初心者の不安をすべて解消！「1人で浮かない？」「服装は？」「何球打つべき？」「最初に借りるクラブは？」といった疑問から、受付の流れ、専門用語、やりがちな失敗談まで、全国の初心者ゴルファーに向けて徹底解説します。";
+const category = "お役立ちガイド";
+const pubDate = "2026-05-25"; 
+const pubDateISO = "2026-05-25T10:00:00+09:00"; 
+const updatedDate = null;
+const updatedDateISO = updatedDate ? `${updatedDate}T10:00:00+09:00` : pubDateISO;
+
+// ※アイキャッチ画像URL（後で初心者が安心するような画像に差し替えてください）
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png"; 
+
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/beginner-complete-guide/`; 
+const headline = "「空振りしたら恥ずかしい…」初めての打ちっぱなし完全ガイド";
+
+// --- [4] 関連記事リストの定義 ---
+const comparisonArticles = [
+    { url: '/articles/hikone-beginner-guide/', title: '【彦根・多賀】初心者や女性が行きやすい打ちっぱなし3選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png' },
+    { url: '/articles/hikone-pricerank/', title: '【彦根・多賀】打ちっぱなし料金比較シミュレーター', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
+];
+
+// --- [5] JSON-LD構造化データ ---
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+  "headline": headline,
+  "description": description,
+  "image": [imageUrl],
+  "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+  "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" } },
+  "datePublished": pubDateISO,
+  "dateModified": updatedDateISO
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} ogImage={imageUrl}>
+    
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto text-slate-700 leading-relaxed">
+        
+        <article class="prose lg:prose-xl max-w-none">
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2 mb-6">公開日：{pubDate}</p>
+                
+                <figure class="m-0 mb-8 flex justify-center bg-slate-50 rounded-lg overflow-hidden">
+                    <Image 
+                        src={imageUrl} 
+                        alt="初めての打ちっぱなし完全ガイド" 
+                        class="max-w-full w-auto h-auto max-h-[500px] object-contain" 
+                        inferSize={true}
+                        format="webp" 
+                        loading="eager" 
+                        fetchpriority="high" 
+                    />
+                </figure>
+            </header>
+
+            <p>
+                「上手い人ばかりだったらどうしよう…」<br>
+                「空振りしまくったら恥ずかしい…」<br>
+                「受付で何て言えばいいか分からないし、ゴルフ用語も意味不明…」
+            </p>
+            <p>
+                初めてゴルフの打ちっぱなし（練習場）に行く前って、めちゃくちゃ怖いですよね。私も最初は、謎のプレッシャーに押しつぶされそうになりながら、駐車場の車の中でしばらくフリーズしていました（笑）。
+            </p>
+            <p>
+                でも安心してください！この記事は、そんな<strong>「ゴルフ練習場初心者の恐怖心」を完全に消し去るためのガイド</strong>です。<br>
+                服装マナーが厳しいのはゴルフ場（コース）であって、練習場はかなり自由です。何円必要なのか、何を持っていけばいいのか。初心者が絶対につまずくポイントや、私が実際にやらかした失敗談も交えながら、全国どこでも通用する当日の流れをゼロから解説します！
+            </p>
+
+            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                <ul class="space-y-2 list-disc list-inside text-green-700 font-medium">
+                    <li><a href="#conclusion" class="hover:underline">① 結論：打ちっぱなしは「めちゃくちゃ気軽」な場所！</a></li>
+                    <li><a href="#solo" class="hover:underline">② 「1人で行って変じゃない？」空振りは恥ずかしい？</a></li>
+                    <li><a href="#fashion" class="hover:underline">③ 打ちっぱなし初めての服装は？（女性の注意点）</a></li>
+                    <li><a href="#time" class="hover:underline">④ 狙い目！初心者におすすめの時間帯</a></li>
+                    <li><a href="#money" class="hover:underline">⑤ 最初はいくら必要？何を持っていくべき？</a></li>
+                    <li><a href="#flow" class="hover:underline">⑥ 写真でわかる！当日の流れと「最初に借りるクラブ」</a></li>
+                    <li><a href="#aruaru" class="hover:underline">⑦ 共感必至！初心者あるある5選と用語集</a></li>
+                </ul>
+            </div>
+
+            <h2 id="conclusion" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">① 結論：打ちっぱなしは「めちゃくちゃ気軽」な場所！</h2>
+            
+            <p>まずは、皆さんが抱えている不安をすべてぶっ壊す「結論」からお伝えします。</p>
+
+            <div class="bg-blue-50 p-6 rounded-xl border border-blue-200 my-6 not-prose">
+                <ul class="space-y-3 font-bold text-slate-700 text-lg">
+                    <li class="flex items-start"><span class="text-blue-600 mr-2">✅</span> 服装マナーが厳しいのはコースだけ！ジャージで全然OK！</li>
+                    <li class="flex items-start"><span class="text-blue-600 mr-2">✅</span> 空振りしても、ダフっても誰も気にしない！</li>
+                    <li class="flex items-start"><span class="text-blue-600 mr-2">✅</span> お客さんの大半は「1人客」！</li>
+                    <li class="flex items-start"><span class="text-blue-600 mr-2">✅</span> プリカに2,000円分チャージすれば十分遊べる！</li>
+                    <li class="flex items-start"><span class="text-blue-600 mr-2">✅</span> 50球打てば腕がパンパン。しんどくなったら帰ってOK！</li>
+                </ul>
+            </div>
+            
+            <p>ゴルフ練習場はあくまで「練習する場所」です。バッティングセンターやボウリング場に行くのと同じくらい、気軽な気持ちで行って全く問題ありません。</p>
+
+            <h2 id="solo" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">② 「1人で行って変じゃない？」空振りは恥ずかしい？</h2>
+            
+            <p>
+                「打ちっぱなし 一人」で検索する方が非常に多いのですが、<strong>全く変じゃありません。むしろ打ちっぱなしは1人客がデフォルトです。</strong>女性1人で来ている方もたくさんいます。
+            </p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">空振りは気にしなくてOK！ただし「危ない球」には注意</h3>
+            <p>
+                「空振りしたら隣の人に笑われるんじゃないか…」と自意識過剰になってしまいますよね。でも安心してください。<strong>ゴルフをしている人は、自分のスイングのことで頭がいっぱいで、他人のことなんて1ミリも見ていません。</strong>
+            </p>
+            <p>
+                あなたが10回連続で空振りしようが、地面を叩いてしまおうが、ボールじゃなくてティーだけが飛んでいこうが、誰も気にしません。堂々と空振りしてください！
+            </p>
+            <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500 my-6 not-prose">
+                <p class="font-bold text-red-800 mb-2 mt-0">⚠️ ただし「すごい音」が出た時だけは注意</p>
+                <p class="text-sm text-slate-700 m-0 leading-relaxed">
+                    「何をしても誰も見ていない」というのは少し嘘になります。打ち損じて<strong>ボールが真上の屋根にカーン！とぶつかったり、真後ろの通路に飛んでいったりすると、危険なのですごい音と共に全員が振り向きます（笑）。</strong>もしやってしまったら、恥ずかしがらずに「すみません！」と周りに軽く会釈して謝るのがリアルなマナーです。
+                </p>
+            </div>
+
+            <h2 id="fashion" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">③ 打ちっぱなし初めての服装は？（女性の注意点）</h2>
+            
+            <p>結論から言うと、<strong>動きやすい服装とスニーカーなら何でもOK</strong>です。ジャージ、スウェット、パーカー、Tシャツで全く浮きません。</p>
+            <p>
+                逆に避けた方がいいのは、仕事帰りの「ワイシャツ」です。肩周りが突っ張って非常に動きにくいため、スイングの邪魔になります。
+            </p>
+            
+            <p class="font-bold text-slate-800 mt-6">【女性向けの注意点：かがむ動作について】</p>
+            <p>
+                オートティーアップ（自動でボールが出てくる機械）がない施設では、自分でカゴからボールを取り出し、一つずつセットするために「かがむ動作」が多くなります。そのため、<strong>胸元が広く開いた服や、ヒラヒラした短いスカートは避けたほうが無難</strong>です。<br>
+                また、長いネイルはグリップ（持ち手）を握りにくく、折れてしまう危険があるので注意してください。
+            </p>
+
+            <div class="bg-slate-800 text-white p-6 rounded-xl border border-slate-700 my-8 shadow-lg">
+    <h3 class="text-xl font-bold text-amber-400 mt-0 mb-4 flex items-center">
+        📝 コラム：コーチに聞いた「あえてサンダル」の意外な練習法
+    </h3>
+    <p class="text-sm text-slate-200 mb-4 leading-relaxed">
+        初心者のうちはケガ防止のため「スニーカー」が絶対推奨ですが、実はゴルフ界隈には<strong>「あえて滑りやすいサンダル（クロックス等）で練習する」</strong>という上級者向けの裏ワザが存在します。
+    </p>
+    <p class="text-sm text-slate-200 mb-4 leading-relaxed">
+        指導歴30年のベテランコーチ曰く、「サンダルは足元が滑るため、自分で必死に踏ん張る必要がある。結果、下半身の余計なブレがなくなり、スイングの土台が劇的に安定する」とのこと。
+    </p>
+    <p class="text-sm text-slate-200 m-0 leading-relaxed font-bold">
+        実際、私もサンダル練習の後にスパイクに履き替えたら、地面に根が生えたように打ちやすくて感動しました（笑）。<br>
+        <span class="text-red-400">※ケガの危険があるため、初心者のうちは絶対に真似しないでくださいね！（あくまで上級者の荒療治です）</span><br>
+        ここでお伝えしたかったのは、「専用のゴルフシューズがないと怒られるんじゃ…」なんてマナーを重く受け止めすぎず、普段のスニーカーで気軽に行って大丈夫ですよ！ということです。
+    </p>
+</div>
+
+            <h2 id="time" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">④ 狙い目！初心者におすすめの時間帯</h2>
+            
+            <p>「上手い人に見られたくない」「女性1人だから不安」という方にとって、行く時間帯は超重要です。以下の表を参考に、空いている時間を狙いましょう！</p>
+
+            <figure class="my-6">
+                <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7723.png" alt="平日午後の空いている打席風景" class="rounded-lg shadow-md w-full h-auto object-cover" width={800} height={450} format="webp" loading="lazy" />
+                <figcaption class="text-center text-xs text-slate-500 mt-2">平日午後の練習場。人が少なく、女性1人でも周りを気にせずのびのび打てます。</figcaption>
+            </figure>
+
+            <div class="not-prose overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white mb-8">
+                <table class="w-full text-sm text-left border-collapse min-w-[500px]">
+                    <thead class="bg-slate-100 border-b-2 border-slate-300">
+                        <tr>
+                            <th class="py-3 px-4 font-bold text-slate-800">時間帯</th>
+                            <th class="py-3 px-4 font-bold text-slate-800">混雑度・特徴</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-4 px-4 font-bold text-green-700">平日 午後（13:00〜16:00）</td>
+                            <td class="py-4 px-4 text-slate-700"><span class="font-bold text-blue-600">◎ 超おすすめ。</span>かなり空いており、自分のペースで練習できます。女性1人ならここが一番安心！</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-4 px-4 font-bold text-slate-800">平日 午前（10:00〜12:00）</td>
+                            <td class="py-4 px-4 text-slate-700"><span class="font-bold text-amber-600">△ レッスンに注意。</span>空いていますが、スクールやレッスンが行われていることが多く、「自分も勧誘されるかも？」と気負ってしまう人は避けた方が無難です。</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-4 px-4 font-bold text-slate-800">平日 夜（18:00〜21:00）</td>
+                            <td class="py-4 px-4 text-slate-700"><span class="font-bold text-amber-600">△ 注意。</span>仕事終わりのゴルファーで混雑します。上級者も多め。</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-4 px-4 font-bold text-slate-800">土日 昼間</td>
+                            <td class="py-4 px-4 text-slate-700"><span class="font-bold text-red-600">× 避けるべき。</span>激混みで、打席が空くのを待つ必要があります。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="money" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">⑤ 最初はいくら必要？何を持っていくべき？</h2>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">最初は「2,000円」チャージすれば十分です</h3>
+            <p>
+                練習場は「専用のプリペイドカード」を買って機械に入れるシステムが主流です。カードにお金をチャージして使うため、お釣りが出るという概念はありません。
+            </p>
+            <p>
+                ボール代は1球あたり5円〜10円程度、入場料が200円〜300円。<strong>最初に2,000円分のカードを買えば、初心者には十分すぎるほど遊べます。</strong>
+            </p>
+
+            <div class="bg-blue-50 p-5 rounded-lg border-2 border-blue-200 my-6 not-prose">
+    <p class="font-bold text-blue-900 text-lg mb-2 mt-0 flex items-center">
+        <span class="mr-2">🔎</span> 行く場所が決まったら「初回最低料金」をチェック！
+    </p>
+    <p class="text-sm text-slate-700 mb-0 leading-relaxed">
+        「ICカード発行料（200円〜300円）」や「最低チャージ額（1,000円〜）」など、実は施設によって最初にかかる費用は細かく異なります。<br>
+        <strong>シガゴルの各施設の「詳細ページ」には、すべて『初回にかかる最低料金』を明記しています！</strong><br>
+        自宅や職場から通いやすい練習場を見つけたら、ぜひ行く前に詳細ページでお財布の準備を確認してみてくださいね。
+    </p>
+</div>
+
+            <div class="bg-red-50 p-5 rounded-lg border-l-4 border-red-500 my-6 not-prose">
+                <h3 class="font-bold text-red-800 text-lg mb-2 mt-0">⚠️ 超重要な注意点：練習場は「現金必須」が多い！</h3>
+                <p class="text-sm text-slate-700 m-0 leading-relaxed">
+                    普段の生活をスマホ決済で済ませている若い方は要注意です！ゴルフ練習場の専用カード購入機は、<strong>いまだに「現金（お札）しか使えない」施設が意外と多い</strong>のです。手ぶらでOKとは言え、必ずお財布（現金）を持っていきましょう！
+                </p>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-12 mb-3">【必須】手ぶらでも「グローブ」だけは絶対に必要！</h3>
+            <p>
+                クラブはレンタルできますが、<strong>「グローブ（手袋）」だけは事前にネットで買っておくことを強くおすすめします。</strong>
+                衛生面の問題からレンタル不可（販売のみ）の場所がほとんどで、現地で買うと割高です。
+            </p>
+
+            <div class="not-prose bg-white p-5 rounded-lg border-2 border-slate-200 my-6 shadow-sm">
+                <p class="font-bold text-slate-800 text-lg mb-2 mt-0 flex items-center">
+                    <span class="text-2xl mr-2">🧤</span> 専門家がずっと愛用している最強グローブ
+                </p>
+                <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                    私がゴルフを始めた時に勧められて買ったのが、<strong>フットジョイ（FJ）の「ナノロックツアー」</strong>です。30度以下のぬるま湯で手洗いしても全然破れず、圧倒的に長持ちします。長期的に見れば一番コスパが良かったです。
+                </p>
+                <div class="text-center">
+                    <a href="https://a.r10.to/h5uVyX" target="_blank" rel="noopener sponsored" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold text-sm md:text-base py-3 px-6 rounded-full shadow transition-transform transform hover:scale-105">
+                        楽天で「FJ ナノロックツアー」をチェックする ▶︎
+                    </a>
+                </div>
+            </div>
+
+            <h2 id="flow" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">⑥ 写真でわかる！当日の流れと「最初に借りるクラブ」</h2>
+            
+            <p>初心者が一番怖いのは「次に何をすればいいか分からない」ことですよね。実際の写真と一緒に、到着から帰るまでの流れを完全シミュレーションします。</p>
+            <p class="text-sm text-slate-500 mb-8 font-bold border-l-4 border-slate-400 pl-3">
+    ※使用している写真は筆者がよく行く滋賀県の施設ですが、基本的なシステムや流れは「全国どこの練習場でも同じ」です！安心してシミュレーションしてくださいね。
+</p>
+
+            <div class="space-y-10 my-8 not-prose">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex items-stretch bg-slate-50 border-b border-slate-200">
+            <div class="bg-green-600 text-white font-black text-2xl px-6 md:px-8 flex items-center justify-center shrink-0">
+                1
+            </div>
+            <h3 class="text-lg md:text-xl font-bold text-slate-800 m-0 py-3 px-4 flex items-center">駐車場に車を停める</h3>
+        </div>
+        <div class="p-5 md:p-6 flex flex-col md:flex-row gap-5 items-center">
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ishiyama_gp/gallery/IMG_9648.JPG" alt="ゴルフ練習場の駐車場" class="rounded-lg shadow-sm w-full md:w-1/2 object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+            <p class="text-sm md:text-base text-slate-700 m-0 md:w-1/2 leading-relaxed">自分のクラブを持っていなくても全く問題ありません。手ぶらで堂々と入り口に向かいましょう！</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex items-stretch bg-slate-50 border-b border-slate-200">
+            <div class="bg-green-600 text-white font-black text-2xl px-6 md:px-8 flex items-center justify-center shrink-0">
+                2
+            </div>
+            <h3 class="text-lg md:text-xl font-bold text-slate-800 m-0 py-3 px-4 flex items-center">受付に行く</h3>
+        </div>
+        <div class="p-5 md:p-6 flex flex-col md:flex-row gap-5 items-center">
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7761.png" alt="ゴルフ練習場の受付" class="rounded-lg shadow-sm w-full md:w-1/2 object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+            <p class="text-sm md:text-base text-slate-700 m-0 md:w-1/2 leading-relaxed">フロントで「初めてです」と伝えれば、スタッフさんが丁寧にシステムを教えてくれます。ここで怖がる必要は一切ありません。</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex items-stretch bg-slate-50 border-b border-slate-200">
+            <div class="bg-green-600 text-white font-black text-2xl px-6 md:px-8 flex items-center justify-center shrink-0">
+                3
+            </div>
+            <h3 class="text-lg md:text-xl font-bold text-slate-800 m-0 py-3 px-4 flex items-center">専用カード（プリカ・IC等）を購入する</h3>
+        </div>
+        <div class="p-5 md:p-6 flex flex-col md:flex-row gap-5 items-center">
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/17.png" alt="発券機・チャージ機" class="rounded-lg shadow-sm w-full md:w-1/2 object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+            <p class="text-sm md:text-base text-slate-700 m-0 md:w-1/2 leading-relaxed">現金を機械に入れ、施設専用のカードを発行（チャージ）します。ここで先ほどの「現金必須」の罠が発動するのでお札の準備を忘れずに。</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex items-stretch bg-slate-50 border-b border-slate-200">
+            <div class="bg-green-600 text-white font-black text-2xl px-6 md:px-8 flex items-center justify-center shrink-0">
+                4
+            </div>
+            <h3 class="text-lg md:text-xl font-bold text-slate-800 m-0 py-3 px-4 flex items-center">クラブをレンタルする（※最初は7番アイアン！）</h3>
+        </div>
+        <div class="p-5 md:p-6 flex flex-col md:flex-row gap-5 items-center">
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6436.jpg" alt="レンタルクラブ" class="rounded-lg shadow-sm w-full md:w-1/2 object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+            <p class="text-sm md:text-base text-slate-700 m-0 md:w-1/2 leading-relaxed">自分のクラブがなければ受付で借ります。この時、何を借りればいいか迷ったら<strong>「7番（ななばん）アイアンを1本貸してください」</strong>と言えば完璧です！一番標準的で、練習に最適な長さです。</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex items-stretch bg-slate-50 border-b border-slate-200">
+            <div class="bg-green-600 text-white font-black text-2xl px-6 md:px-8 flex items-center justify-center shrink-0">
+                5
+            </div>
+            <h3 class="text-lg md:text-xl font-bold text-slate-800 m-0 py-3 px-4 flex items-center">打席に入り、ボールを出す</h3>
+        </div>
+        <div class="p-5 md:p-6 flex flex-col md:flex-row gap-5 items-center">
+            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7702.png" alt="ボールが出る機械とカード挿入口" class="rounded-lg shadow-sm w-full md:w-1/2 object-cover aspect-video" width={400} height={225} format="webp" loading="lazy" />
+            <p class="text-sm md:text-base text-slate-700 m-0 md:w-1/2 leading-relaxed">空いている打席に行き、購入したカードを機械に挿入するとボールが出てきます。</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex items-stretch bg-slate-50 border-b border-slate-200">
+            <div class="bg-green-600 text-white font-black text-2xl px-6 md:px-8 flex items-center justify-center shrink-0">
+                6
+            </div>
+            <h3 class="text-lg md:text-xl font-bold text-slate-800 m-0 py-3 px-4 flex items-center">何球打つのが正解？（50球で限界が来ます）</h3>
+        </div>
+        <div class="p-5 md:p-6">
+            <p class="text-sm md:text-base text-slate-700 m-0 mb-4 leading-relaxed">
+                「周りのおじさんみたいに200球打たなきゃ」と思わないでください。<br>
+                初心者は普段使わない筋肉で全力で振るので、<strong>100球打つ頃には握力が消滅し、翌日確実に激しい筋肉痛になります（笑）。50球打てば十分です！</strong>
+            </p>
+            <p class="text-sm md:text-base text-slate-700 m-0 font-bold leading-relaxed">
+                💡 打つ時のコツ：準備体操をしたら、いきなりドライバー（一番長いクラブ）を振り回すのはやめましょう。まずはSW（サンドウェッジ）や7番アイアンなど、短いクラブで「軽く当てる」ところから始めるのがケガをしない秘訣です。
+            </p>
+        </div>
+    </div>
+
+    <div class="bg-red-50 rounded-xl border border-red-200 shadow-sm overflow-hidden">
+        <div class="flex items-stretch bg-red-100 border-b border-red-200">
+            <div class="bg-red-600 text-white font-black text-2xl px-6 md:px-8 flex items-center justify-center shrink-0">
+                7
+            </div>
+            <h3 class="text-lg md:text-xl font-bold text-red-900 m-0 py-3 px-4 flex items-center">帰る（⚠️カードの抜き忘れに超注意！）</h3>
+        </div>
+        <div class="p-5 md:p-6">
+            <p class="text-sm md:text-base text-red-800 m-0 font-bold leading-relaxed">
+                実はここが一番の罠！打ち終わってホッとした瞬間、機械にカードを挿しっぱなしで帰ってしまう事故が多発しています。私も過去に「5,000円チャージしたばかりのカード」を抜き忘れて絶望したことがあります。必ずカードを抜いて帰りましょう！
+            </p>
+        </div>
+    </div>
+</div>
+
+            <h2 id="aruaru" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">⑦ 共感必至！初心者あるある5選と用語集</h2>
+            
+            <p>最後に、練習場で必ず経験する「あるある」と、よく聞く専門用語をご紹介します。これを知っておけば恥ずかしくありません！</p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-8 mb-4">初心者あるある5選</h3>
+            <ul class="space-y-3 mb-8">
+                <li><strong>① 何度も激しく空振りする：</strong> 大丈夫です。風を切る音を楽しみましょう。</li>
+                <li><strong>② ボールに当たらず、ゴムティーだけがパコン！と鳴る：</strong> これもゴルフの通過儀礼です。誰も気にしません。</li>
+                <li><strong>③ いきなりドライバーを振って腰を痛める：</strong> 一番長いクラブは体に負担がかかります。短いクラブから！</li>
+                <li><strong>④ 手にマメができて破れる：</strong> 強く握りすぎ（力みすぎ）の証拠です。絆創膏を持っておくと安心です。</li>
+                <li><strong>⑤ 隣の人が上手すぎて萎える：</strong> 練習場にはプロ級の常連が必ず1人はいます。気にせず自分のスイングに集中しましょう。</li>
+            </ul>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-8 mb-4">これだけ覚えればOK！初心者用語集</h3>
+            <div class="not-prose overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white mb-8">
+                <table class="w-full text-sm text-left border-collapse min-w-[400px]">
+                    <thead class="bg-slate-100 border-b-2 border-slate-300">
+                        <tr>
+                            <th class="py-3 px-4 font-bold text-slate-800 w-1/3">用語</th>
+                            <th class="py-3 px-4 font-bold text-slate-800 w-2/3">意味</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-green-700">ダフる</td>
+                            <td class="py-3 px-4 text-slate-700">ボールより手前の地面を叩いてしまうこと。（ドンッ！と重い音がします）</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-green-700">トップする</td>
+                            <td class="py-3 px-4 text-slate-700">ボールの上半分を叩いてしまい、ゴロになること。</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-green-700">シャンク</td>
+                            <td class="py-3 px-4 text-slate-700">クラブの根元に当たり、ボールが急激に右（真横）に飛んでいくこと。</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="py-3 px-4 font-bold text-green-700">ナイスショット</td>
+                            <td class="py-3 px-4 text-slate-700">芯を捉えた最高の一打！</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr class="my-12 border-slate-200" />
+
+            <h3 class="text-2xl font-bold text-slate-800 text-center mb-6">さあ、まずは1球打ちに行きましょう！</h3>
+            <p>
+                行く前は色々と考えて不安になりますが、いざ打席に立って思い切りクラブを振ってみると、ボールに当たらなくても意外とスカッとするものです。この記事を読んだあなたが、少しでも肩の力を抜いて「打ちっぱなしデビュー」を果たせることを応援しています！
+            </p>
+
+            <div class="not-prose bg-slate-50 p-6 rounded-xl border border-slate-200 my-8">
+                <p class="font-bold text-slate-800 mb-2 mt-0">⛳️ 練習にハマったら、自分のクラブを安く手に入れよう</p>
+                <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                    いきなり新品のフルセットを買う必要はありません。初心者のうちは、ネットで買える数万円の「中古のハーフセット（キャディバッグ付き）」で全く問題なく上達できます！
+                </p>
+                <div class="text-center">
+                    <a href="https://a.r10.to/hPJI4J" target="_blank" rel="noopener sponsored" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm md:text-base py-3 px-6 rounded-lg shadow transition-colors">
+                        楽天で「初心者向けの中古ゴルフセット」を探す ▶︎
+                    </a>
+                </div>
+            </div>
+
+            <div class="not-prose my-16 p-8 bg-gradient-to-br from-amber-50 to-orange-100 border-2 border-amber-300 rounded-2xl shadow-lg text-center">
+    <div class="inline-block bg-amber-600 text-white font-bold px-4 py-1 rounded-full text-sm mb-4">
+        知らなきゃ大損！ゴルフデビュー応援
+    </div>
+    <h3 class="text-2xl font-black text-amber-900 mt-0 mb-4">【最大6,000円還元】一番お得にゴルフを始める裏ワザ</h3>
+    <p class="text-slate-700 mb-6 leading-relaxed">
+        打ちっぱなしで少し打てるようになったら、やっぱりいつかはコースに出てみたいですよね！<br>
+        実は今、<strong>楽天モバイルユーザーなら楽天GORA（ゴルフ場予約サイト）経由で驚くほど大還元（最大6,000円分）が受けられる神キャンペーン</strong>が実施されています。知らずに始めると数千円の損になってしまう、最も賢いデビュー手順を徹底解説します！
+    </p>
+    <a href="/articles/gora-campaign-guide/" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 hover:shadow-xl transition-all duration-300 no-underline text-lg">
+        最大6,000円得するゴルフの始め方をチェックする<br/>※（近日公開予定） ＞
+    </a>
+</div>
+
+<div class="not-prose my-16 p-8 bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-300 rounded-2xl shadow-lg text-center">
+    <div class="inline-block bg-green-600 text-white font-bold px-4 py-1 rounded-full text-sm mb-4">
+        次のステップへ進もう！
+    </div>
+    <h3 class="text-2xl font-black text-green-900 mt-0 mb-4">【失敗談あり】初コースで焦らないための「3つのバッグ」仕分け術</h3>
+    <p class="text-slate-700 mb-6 leading-relaxed">
+        打ちっぱなしで少し打てるようになったら、いよいよ待ちに待ったコースデビューです！<br>
+        でも、ゴルフ場には「持って行くバッグが3つもある」「ロッカールームとカートで荷物を分ける」という独特のルールがあるのを知っていますか？<br>
+        管理人が実際にやってしまった<strong>「ロッカールームで冷や汗をかいた大失敗」</strong>をベースに、恥をかかないジャケットマナーや当日の持ち物リストを徹底解説します！（※写真は滋賀の施設ですが、仕分けルールは全国共通です！）
+    </p>
+    <a href="/articles/beginner-guide/" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-green-700 text-white font-bold rounded-xl hover:bg-green-800 hover:shadow-xl transition-all duration-300 no-underline text-lg">
+        コースデビュー完全準備ガイドを読む ＞
+    </a>
+</div>
+
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            
+        </article>
+    </div>
+</BaseLayout>
