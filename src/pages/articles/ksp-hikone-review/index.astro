@@ -2,6 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
+// [修正点1] AstroのImageコンポーネントをインポート
 import { Image } from "astro:assets";
 
 // --- 共通コンポーネントをインポート ---
@@ -10,16 +11,13 @@ import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 
 // --- This article's specific information ---
-// 🔥 リライト：検索ユーザーが一番知りたい「料金・混雑・お得情報」をタイトルに配置
-const title = "【KSP彦根】料金や混雑状況を徹底レビュー！ふるさと納税で実質タダになる裏ワザも | シガゴル";
-// 🔥 リライト：検索結果でクリックしたくなるようにメリットを強調
-const description = "滋賀県の「KSP彦根」を初心者ゴルファーが徹底体験レビュー！全打席無料のトップトレーサーの使い心地、混雑しやすい時間帯、そして楽天ふるさと納税を使って料金を劇的に安くする裏ワザまで大公開。270ヤードの圧倒的開放感を味わおう！";
+const title = "【KSP彦根】ゴルフの練習が劇的に変わる！全打席トップトレーサー無料の練習場が初心者の味方だった話 | シガゴル";
+const description = "KSP彦根を徹底レビュー！全打席無料のトップトレーサーが初心者の練習をどう変えるのか？ICカードの安心システムから270Yの開放感まで解説。ふるさと納税でお得に練習する裏ワザも紹介！";
 const category = "体験談";
 const pubDate = "2025-06-05";
 const pubDateISO = "2025-06-05T10:00:00+09:00";
-// 🔥 リライトした今日の日付を更新日にセットしてSEO効果を上げる（YYYY-MM-DD形式に変更してください）
-const updatedDate = "2026-05-20"; 
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6889.png"; // アイキャッチを広々とした270Yの画像に変更
+const updatedDate = null;
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png";
 const rangeId = "ksp_hikone";
 // --- End of specific information ---
 
@@ -43,18 +41,18 @@ if (docSnap.exists()) {
 const experienceReports = [
     { url: '/articles/taga-golf/', title: '多賀ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/aikyatti-taga.png' },
     { url: '/articles/review/365hikone/', title: '365ゴルフクラブ 彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/0000img.jpg' },
-    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6889.jpg' },
+    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
     { url: '/articles/ksp_hope-review/', title: 'KSP希望ヶ丘 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hope/gallery/000000img.png' },
 ];
 
 const comparisonArticles = [
     { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
-    // 🔥 料金シミュレーター記事へのリンクを最新のものに変更
-    { url: '/articles/hikone-price-comparison/', title: '【彦根・多賀】打ちっぱなし料金比較シミュレーター', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' }, 
+    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較　シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
+    { url: '/articles/hikone-beginner-guide/', title: '【彦根・多賀】初心者・女性向け！打ちっぱなし比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png' },
 ];
 ---
 
-<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} ogImage={imageUrl}>
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
     <script slot="head" type="application/ld+json" set:html={JSON.stringify([
     {
@@ -76,8 +74,9 @@ const comparisonArticles = [
             "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6527.jpg",
             "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6624 2.jpg",
             "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6688.png",
-            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6889.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6889.png",
             "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6521.jpg",
+            "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6517.jpg",
             "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6525.jpg",
             "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6512.png",
             "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6537.jpg",
@@ -97,7 +96,7 @@ const comparisonArticles = [
             "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
         },
         "datePublished": pubDateISO,
-        "dateModified": updatedDate ? `${updatedDate}T10:00:00+09:00` : pubDateISO
+        "dateModified": pubDateISO
     },
     {
         "@context": "https://schema.org",
@@ -141,10 +140,11 @@ const comparisonArticles = [
             class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed"
         >
             <header>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
                 <div class="text-sm text-slate-500 mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
                     <span>公開日：{pubDate}</span>
                     
+                    {/* updatedDateが設定されている時だけ「更新日」を表示する */}
                     {updatedDate && (
                         <span class="flex items-center gap-1 text-slate-600 font-semibold bg-slate-100 px-2 py-1 rounded">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -157,11 +157,10 @@ const comparisonArticles = [
             </header>
 
             <Image
-                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6889.jpg"
-                alt="270ヤードの開放感！KSP彦根"
-                class="w-full h-auto object-cover rounded-lg my-8 shadow-md"
-                loading="eager"
-                fetchpriority="high"
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6506.jpg"
+                alt="KSP彦根のエントランス＿一部屋根もあり雨の日も安心"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
                 width={1200}
                 height={800}
                 format="webp"
@@ -175,10 +174,10 @@ const comparisonArticles = [
                 ゴルフは感覚も大切ですが、自分のショットが「データで見える化」されたら、練習がもっと楽しく、効率よく上達できそうだと思いませんか？
             </p>
             <p>
-                滋賀県彦根市にある「KSP彦根」は、まさにそんな願いを叶えてくれる、ちょっと未来的なゴルフ練習場です。私がこの練習場に惹かれる最大の理由は、全打席に標準装備された「トップトレーサー・レンジ」。そして、270ヤードの圧倒的な開放感です。
+                滋賀県彦根市にある「KSP彦根」は、まさにそんな願いを叶えてくれる、ちょっと未来的なゴルフ練習場です。何を隠そう、私がこの練習場に惹かれる最大の理由は、全打席に標準装備された「トップトレーサー・レンジ」。そして、広々とした駐車場と十分な打席数で、行きたい時にふらっと立ち寄れる快適さも魅力です。
             </p>
             <p>
-                今回は、ハイテク設備と安心システムが融合した「KSP彦根」の魅力や料金システム、気になる混雑状況、さらには<strong>「ふるさと納税で実質タダで練習する裏ワザ」</strong>まで、私の体験を交えながら徹底的にご紹介します！
+                今回は、ハイテク設備と安心システムが融合した「KSP彦根」を、私の体験や活用術（今後の野望も！）を交えながら、徹底的にご紹介します！
             </p>
 
             <div
@@ -189,36 +188,24 @@ const comparisonArticles = [
                 </h2>
                 <ul class="space-y-2 list-disc list-inside">
                     <li><a href="#about-ksp" class="text-green-700 hover:underline">KSP彦根ってどんなところ？</a></li>
-                    <li><a href="#driving-range" class="text-green-700 hover:underline">【環境＆料金】270ヤードの開放感と料金システム</a></li>
-                    <li><a href="#furusato" class="text-green-700 hover:underline text-red-600 font-bold">🉐【必見】ふるさと納税で実質タダになる裏ワザ</a></li>
-                    <li><a href="#toptracer" class="text-green-700 hover:underline">【設備】全打席トップトレーサーが無料！</a></li>
-                    <li><a href="#ic-card" class="text-green-700 hover:underline">【システム】失くしても安心なICカード</a></li>
-                    <li><a href="#facility-info" class="text-green-700 hover:underline">トイレ事情や混雑状況など</a></li>
+                    <li><a href="#toptracer" class="text-green-700 hover:underline">【最大の推しポイント】全打席トップトレーサーが無料！</a></li>
+                    <li><a href="#ic-card" class="text-green-700 hover:underline">【これはスゴイ！】安心便利なICカードシステム</a></li>
+                    <li><a href="#driving-range" class="text-green-700 hover:underline">【快適練習環境】広々270ヤード＆選べる料金プラン</a></li>
+                    <li><a href="#facility-info" class="text-green-700 hover:underline">知っておくとちょっと便利？施設情報</a></li>
+                    <li><a href="#basic-info" class="text-green-700 hover:underline">KSP彦根の基本情報</a></li>
+                    <li><a href="#summary" class="text-green-700 hover:underline">まとめ：データで楽しむゴルフ練習！</a></li>
                 </ul>
-            </div>
-
-            <div class="not-prose my-10 p-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl shadow-sm">
-                <div class="flex items-center gap-2 mb-3">
-                    <span class="text-2xl">💰</span>
-                    <p class="font-bold text-amber-900 text-lg m-0">彦根エリアで一番「安い」練習場はどこ？</p>
-                </div>
-                <p class="text-sm text-slate-700 mb-5 leading-relaxed">
-                    KSP彦根に行く前にチェック！彦根・多賀エリアの練習場の複雑な料金システムを徹底比較しました。あなたの条件を選ぶだけで<strong>「一番安い施設とプラン」が1秒でわかる自動計算シミュレーター</strong>を公開中です！
-                </p>
-                <a href="/articles/hikone-price-comparison/" class="flex items-center justify-center w-full md:w-auto px-6 py-3 bg-amber-600 text-white font-bold rounded-full hover:bg-amber-700 hover:shadow-md transition-all duration-200 no-underline text-sm md:text-base">
-                    【1秒判定】料金比較シミュレーターを使ってみる ＞
-                </a>
             </div>
 
             <h2
                 id="about-ksp"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b-2 border-green-500 pb-2"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
             >
                 KSP彦根ってどんなところ？〜最新技術と安心システムの融合〜
             </h2>
             <Image
-                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6506.jpg"
-                alt="KSP彦根のエントランス＿一部屋根もあり雨の日も安心"
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6697.jpg"
+                alt="ハイテク練習＿トップトレーサーの実際の画面"
                 class="w-full h-auto object-cover rounded-lg my-6"
                 loading="lazy"
                 width={1200}
@@ -227,70 +214,29 @@ const comparisonArticles = [
                 quality={80}
             />
             <p>
-                KSP彦根は、滋賀県彦根市にある、最新技術と安心のシステムでゴルファーの上達をスマートにサポートしてくれる大型ゴルフ練習場です。
-            </p>
-            <p>
-                その最大の魅力は、なんといっても全打席に無料で使える「トップトレーサー・レンジ」が備わっていること！そして、利用者を考えた便利なICシステムや、圧倒的な広さが人気の理由です。
+                KSP彦根は、滋賀県彦根市にある、最新技術と安心のシステムでゴルファーの上達をスマートにサポートしてくれるゴルフ練習場です。その最大の魅力は、なんといっても全打席に無料で使える「トップトレーサー・レンジ」が備わっていること！そして、利用者を考えた便利なシステムが充実している点も見逃せません。「彦根
+                ゴルフ練習場 初心者」で探している方にも、ぜひ知ってほしい場所です。
             </p>
 
-            <h2
-                id="driving-range"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b-2 border-green-500 pb-2"
-            >
-                【環境＆料金】270ヤードの開放感と選べる料金プラン
-            </h2>
-            <p>
-                KSP彦根のドライビングレンジは、奥行きなんと<strong>270ヤード！</strong>開放感たっぷりで、思いっきりドライバーを振り抜けます。
-            </p>
-            <p>
-                打席は1階・2階合わせて全80打席と十分な数があり、そのうち左利き用打席も6打席用意されています。駐車場も約95台分と広いです。
-            </p>
-
-            <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
-                ✅ 選べる料金システム（単価打ち・打ち放題）
-            </h3>
-             <Image
-                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6374.jpg"
-                alt="KSP彦根の料金表"
-                class="w-full h-auto object-cover rounded-lg my-6"
-                loading="lazy"
-                width={1200}
-                height={800}
-                format="webp"
-                quality={80}
-            />
-            <p>
-                自分の練習時間や目的に合わせて、1球単価と時間貸し（打ち放題）を選べます。じっくりアプローチを打ち込みたい時、ドライバーでたくさん球数を打ちたい時など、状況に合わせて選べるのが嬉しいポイント。
-            </p>
-            <p>
-                さらに、<strong>女性と中学生以下は指定時間帯が優待単価（6.6円〜7.7円）</strong>になるなど、初心者や家族連れにも優しい料金設定になっています！
-            </p>
-
-            <h2
-                id="furusato"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-red-500 pb-2 flex items-center"
-            >
-                <span class="text-3xl mr-2">🉐</span>【必見】ふるさと納税で実質タダになる裏ワザ
-            </h2>
-            <p>
-                KSPで練習するなら、絶対に知っておくべき最強のお得情報があります。それが<strong>「ふるさと納税」の活用</strong>です。
-            </p>
-            
-            <div class="not-prose bg-blue-50 p-5 md:p-6 rounded-lg border-2 border-blue-300 mb-8 text-center shadow-sm">
-                <p class="text-sm text-slate-700 mb-5 text-left leading-relaxed">
-                    KSPのICカードはふるさと納税の返礼品になっています。楽天ふるさと納税を経由すれば、<strong>寄付額の30%が練習場のICカードポイントとして直接還元されます！</strong>（例：1万円の寄付で3,000円分の練習ポイント付与）。税金対策をしながら練習代を浮かせられる、まさに錬金術です。<br>
-                    <span class="text-xs text-red-600 font-bold mt-2 inline-block">※リンク先は野洲市（KSP希望ヶ丘）の返礼品ですが、KSPは全店共通ICカードのため彦根店でも全く問題なく利用可能です。（私自身、1枚のカードで両店舗を利用しています！）</span>
+            <div class="not-prose my-10 p-6 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl shadow-sm">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-2xl">⛳️</span>
+                    <p class="font-bold text-green-800 text-lg m-0">彦根・多賀エリアの練習場選びで迷っていませんか？</p>
+                </div>
+                <p class="text-sm text-slate-700 mb-5 leading-relaxed">
+                    実は、彦根周辺の練習場はKSP彦根だけでなく<strong>すべて「弾道測定器」が無料</strong>で使い放題なんです！<br>
+                    「トップトレーサー」と「トラックマン」の違いや、あなたにピッタリの目的別おすすめ施設を徹底比較しました。
                 </p>
-                <a href="https://a.r10.to/h5J6tH" target="_blank" rel="noopener sponsored" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold text-sm md:text-base py-3 px-6 md:px-8 rounded-full shadow-md transition-transform transform hover:scale-105">
-                    楽天ふるさと納税（10,000円〜）をチェックする ▶︎
+                <a href="/articles/hikone-tracker/" class="flex items-center justify-center w-full md:w-auto px-6 py-3 bg-green-600 text-white font-bold rounded-full hover:bg-green-700 hover:shadow-md transition-all duration-200 no-underline text-sm md:text-base">
+                    彦根エリアの「測定器無料」練習場まとめを見る ＞
                 </a>
             </div>
 
             <h2
                 id="toptracer"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-4 border-b-2 border-green-500 pb-2"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
             >
-                【設備】全打席トップトレーサー・レンジが無料で使い放題！
+                【最大の推しポイント】全打席トップトレーサー・レンジが無料で使い放題！
             </h2>
              <Image
                 src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6513.jpg"
@@ -303,14 +249,24 @@ const comparisonArticles = [
                 quality={80}
             />
             <p>
-                KSP彦根の心臓部とも言えるのが、全80打席に標準装備された「トップトレーサー・レンジ」！これがなんと、追加料金なしで利用可能なのです。
+                KSP彦根の心臓部とも言えるのが、全80打席に標準装備された「トップトレーサー・レンジ」！これがなんと、追加料金なしで利用可能なのです。打席に立つだけで、あなたのショットの飛距離、弾道、ボール初速といった詳細なデータが、目の前のモニターにリアルタイムで表示されます。これは本当に画期的です！
             </p>
+             <Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6702.jpg"
+                alt="弾道測定器＿トップトレーサーのモニター表示画面"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
+            />
             <p>
-                打席に立つだけで、あなたのショットの飛距離、弾道、ボール初速といった詳細なデータが、目の前のモニターにリアルタイムで表示されます。
+                つまり、KSP彦根は「ハイテク」と「安心」が詰まった次世代型練習場なのです。
             </p>
 
             <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
-                🔰初心者ゴルファーの救世主！私の活用術
+                🔰初心者ゴルファーの救世主！〜私の「トップトレーサー」活用術と叶えたい夢〜
             </h3>
              <Image
                 src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6517.jpg"
@@ -323,12 +279,22 @@ const comparisonArticles = [
                 quality={80}
             />
             <p>
-                私自身、初心者なので各番手ごとの正確な飛距離や弾道の傾向をまだ完全に把握できていません。そんな私にとって、このトップトレーサーはまさに「救世主」！
-            </p>
-            <p>
-                特に活用しているのが、「クラブ別測定」モード。番手ごとの飛距離を確認すると、1球ごとの詳細データはもちろん、そのクラブでの平均飛距離や左右のブレ幅などが一目瞭然！「あ、今のショットはトップ気味だったから飛距離が落ちたな」というのを、感覚だけでなくデータで客観的に理解できるのです。
+                私自身、初心者なので各番手ごとの正確な飛距離や弾道の傾向をまだ完全に把握できていません。そんな私にとって、このKSP彦根のトップトレーサーはまさに「救世主」！
             </p>
 
+            <h4 class="text-lg font-semibold text-slate-800 mt-6 mb-2">
+                初心者ゴルファーにおすすめな理由
+            </h4>
+            <p>
+                特に活用しているのが、「クラブ別測定」モード。まずは「フリー計測」で軽くウォーミングアップし、体が温まったところで「クラブ別測定」に切り替え、番手ごとの飛距離を確認します。すると、1球ごとの詳細データはもちろん、そのクラブでの平均飛距離や左右のブレ幅などが一目瞭然！「あ、今のショットはちょっとトップ気味だったから飛距離が落ちたな」とか、「このクラブだと、だいたい150ヤードくらい飛ぶんだな」というのを、感覚だけでなくデータで客観的に理解できるのです。
+            </p>
+            <p>
+                これが本当に効率的な練習に繋がると感じています。まずの目標は、ドライバーで安定して200ヤードを超えること。さらに、アイアンは縦距離の精度アップも狙っています！そして、いつかは憧れの「ペブルビーチ」（バーチャルゴルフモードで！）に挑戦して、自分の実力がどこまで通用するのか試してみたいと思っています（笑）夢は大きく！
+            </p>
+
+            <h4 class="text-lg font-semibold text-slate-800 mt-6 mb-2">
+                💡トップトレーサーの分析力とは？〜“飛距離・球筋・打ち出し角”まで丸わかり！〜
+            </h4>
              <Image
                 src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6527.jpg"
                 alt="トップトレーサーのモニター画面＿総飛距離やボール速度などの詳細"
@@ -339,15 +305,22 @@ const comparisonArticles = [
                 format="webp"
                 quality={80}
             />
+            <p>トップトレーサーは、ただ飛距離が分かるだけじゃありません。</p>
+            <ul class="list-disc pl-5">
+                <li><strong>弾道追跡：</strong> 自分の球筋が視覚的に分かります。（スライス、フック、ストレートなど）</li>
+                <li><strong>ボール初速・打ち出し角・最高到達点：</strong> より専門的な分析も可能に。</li>
+                <li><strong>データの記録・分析：</strong> 専用アプリと連携すれば、練習データをスマートフォンに記録・蓄積し、後から見返して分析したり、過去の自分と比較したりできます。</li>
+                <li><strong>今日のハイライト機能：</strong> その日のベストショットなどを自動でまとめてくれるので、練習のモチベーションも上がりますよ！</li>
+            </ul>
             <p>
-                スマホアプリと連携すれば、練習データを記録して後から見返すことも可能。トップトレーサーは”感覚頼り”の練習から卒業させてくれる”最強の相棒”です。
+                つまり、トップトレーサーは”感覚頼り”の練習から卒業させてくれる”最強の相棒”なんです。初心者の方でも操作は簡単なので、ぜひKSP彦根で臆せず触ってみてください！
             </p>
 
             <h2
                 id="ic-card"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b-2 border-green-500 pb-2"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
             >
-                【システム】紛失しても安心便利なICカード！
+                【これはスゴイ！】ICカードシステム〜安心便利なシステムでもうプリカを失くして泣かない！〜
             </h2>
              <Image
                 src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6624 2.jpg"
@@ -360,36 +333,128 @@ const comparisonArticles = [
                 quality={80}
             />
             <p>
-                「プリペイドカードって、失くしちゃったらどうしよう…」という心配、ありませんか？特に私のようなうっかり者には…（笑）。でも、KSPのチャージ式ICカードなら大丈夫です！
+                KSP彦根は、チャージ式のICカードシステムを採用しています。「プリペイドカードって、失くしちゃったらどうしよう…」という心配、ありますよね？特に私のようなうっかり者には…（笑）。でも、KSP彦根のICカードなら大丈夫です！
             </p>
+            <p><strong>▶︎KSP彦根ICカードは、ここが便利！</strong></p>
             <ul class="list-disc pl-5">
-                <li><strong>カード紛失してもデータ復旧OK：</strong> 最初に無料のカード登録をしておけば、万が一カードを紛失しても残高やポイントはサーバー管理で引き継がれます。</li>
-                <li><strong>チャージ方法が多彩：</strong> 現金だけでなく、クレジットカードや各種QR決済に対応！</li>
-                <li><strong>打つたびにポイントが貯まる：</strong> 打球ごとにもポイントが付与され、ボール代として使えます。</li>
+                <li><strong>カード紛失してもデータ復旧OK：</strong> 最初に無料のカード登録（名前など簡単な情報）をしておけば、万が一カードを紛失しても、残高や貯まったポイントはサーバーで管理されているため、しっかりと引き継がれます。</li>
+                <li><strong>チャージ方法が多彩：</strong> 現金だけでなく、クレジットカードや各種QRコード決済にも対応しています！</li>
+                <li><strong>打つたびにポイントが貯まる！：</strong> 打球ごとにもポイントが付与され、貯まったポイントはボール代として利用可能です。</li>
                 <li><strong>共通利用OK：</strong> KSP希望ヶ丘ゴルフ倶部と共通で使えます。</li>
             </ul>
+             <Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6688.png"
+                alt="ICカードチャージ機"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
+            />
+
+            <div class="not-prose bg-blue-50 p-5 md:p-6 rounded-lg border-2 border-blue-300 my-8 text-center shadow-sm">
+                <p class="font-black text-blue-900 text-lg md:text-xl mb-3 mt-0">🉐 【一番お得】ふるさと納税で実質タダで練習する裏ワザ！</p>
+                <p class="text-sm text-slate-700 mb-5 text-left leading-relaxed">
+                    KSPのICカードは<strong>ふるさと納税の返礼品</strong>になっています。楽天ふるさと納税を経由すれば、寄付額の30%が練習場のICカードポイントとして還元されるため、実質的な自己負担を大幅に減らせます！（※楽天ポイントも貯まるので二重でお得です）<br>
+                    <span class="text-xs text-red-600 font-bold mt-2 inline-block">※リンク先は野洲市（KSP希望ヶ丘）の返礼品ですが、上で紹介した通り全店共通ICカードのため彦根店でも全く問題なく利用可能です。（私自身、1枚のカードで両店舗を利用しています！）</span>
+                </p>
+                <a href="https://a.r10.to/h5J6tH" target="_blank" rel="noopener sponsored" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold text-sm md:text-base py-3 px-6 md:px-8 rounded-full shadow-md transition-transform transform hover:scale-105">
+                    楽天ふるさと納税（10,000円〜）をチェックする ▶︎
+                </a>
+            </div>
+
+            <p>
+                実際に私もプリカをよく忘れたりするので、このシステムは最高にありがたいと感じています。「彦根
+                ゴルフ練習場」で、こんな安心システムがあるのは嬉しいですね。つまり、KSP彦根のICカードシステムは、ゴルファーの「あったらいいな」を形にしたシステムです。
+            </p>
+
+            <h2
+                id="driving-range"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
+                【快適練習環境】KSP彦根の広々270ヤード！〜選べる料金プランで集中力アップ〜
+            </h2>
+             <Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6889.png"
+                alt="270ヤードの開放感！KSP彦根"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
+                width={1600}
+                height={900}
+                format="webp"
+                quality={80}
+            />
+            <p>
+                KSP彦根のドライビングレンジは、奥行きなんと270ヤード！開放感たっぷりで、思いっきりドライバーを振れます。打席は1階・2階合わせて全80打席と十分な数があり、そのうち左利き用打席も6打席用意されています。駐車場も約95台分と広いので、私が行く時間帯では（早朝以外）「打席待ちで練習できなかった…」という経験は今のところありません。行きたい時にふらっと立ち寄れるのは、練習を継続する上でとても重要ですよね。
+            </p>
+
+            <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
+                ✅ 使いやすい打席設備
+            </h3>
+            <ul class="list-disc pl-5">
+                <li><strong>ティーアップ：</strong> 便利なオート式。高さ調整は、打席横にあるボール型のスイッチを足で踏むことで電動で微調整が可能！これが直感的で非常に使いやすいです。</li>
+            </ul>
+             <Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6521.jpg"
+                alt="ティーアップの高さを調整するスイッチ"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
+            />
+            <ul class="list-disc pl-5">
+                <li><strong>ボール：</strong> レンジボールで統一されています。</li>
+            </ul>
+             <Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6517.jpg"
+                alt="ロゴ入りレンジボール"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
+            />
+            <ul class="list-disc pl-5">
+                <li><strong>ターゲット：</strong> 遠くにグリーンや旗も見えますが、やはり各打席のトップトレーサーモニターに表示される詳細な距離情報と自分の弾道が、より実践的で正確な練習を可能にしてくれます。</li>
+            </ul>
+             <Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6525.jpg"
+                alt="トップトレーサーのモニター画面＿ヤード表示"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
+            />
+
+            <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
+                ✅ 選べる料金システム
+            </h3>
+            <p>
+                自分の練習時間や目的に合わせて、1球単価と時間打ち（放題）を選べるのも嬉しいポイント。じっくり打ち込みたい時、たくさん球数を打ちたい時など、状況に合わせて選べます。女性と中学生以下は終日お得な優待単価でプレーできるのも◎
+            </p>
+             <Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6512.png"
+                alt="ICカード挿入機＿打席で単価打ちと時間打ちを選択"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
+            />
 
             <h2
                 id="facility-info"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b-2 border-green-500 pb-2"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
             >
-                知っておくとちょっと便利？施設情報と混雑状況
+                知っておくとちょっと便利？施設情報
             </h2>
-            
-            <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
-                🚻 トイレ事情（初心者あるある！？）
-            </h3>
-            <p>
-                私が初心者の頃に2階打席で練習していて急にトイレに行きたくなった時、「あれ？トイレどこだっけ？」とフロアをうろうろしてしまった経験があります（恥）。実は、<strong>トイレは1階にしかありません。</strong>2階で練習する際は、先に1階で済ませておくのがスマートです！
-            </p>
-
-            <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
-                ⚠️ 平日夜の混雑状況と上級者オーラ
-            </h3>
-            <p>
-                設備が最高なだけに、平日でも18時を過ぎると仕事終わりのゴルファーで非常に混雑し、打席待ちになる日もあります。また、2階の隅の方でかなり上手い常連さんのグループが練習していることも多く、初心者の頃は「隣だとプレッシャーだな…」と気後れしたことも。静かに自分のペースで練習したい人は、平日の日中など時間帯をずらすのがおすすめです。
-            </p>
-
              <Image
                 src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6537.jpg"
                 alt="パター練習場所＿1Fフロント横"
@@ -400,8 +465,53 @@ const comparisonArticles = [
                 format="webp"
                 quality={80}
             />
+
+            <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
+                🅿️ パター練習マットと遊び心
+            </h3>
             <p>
-                その他、1階フロント横には無料のパター練習スペースや、レトロなパターゲーム機なども設置されています。
+                1階フロント横には無料のパター練習スペースがあります。人工芝に移動式カップが置かれ、ボールも用意されています。本格的なグリーンとは言えませんが、打席練習の合間の気分転換や、スタート前のちょっとした調整には便利です。横には、なぜかレトロなパターゲーム機（有料）もあって、ちょっとした遊び心も。
+            </p>
+             <Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6545.jpg"
+                alt="レトロなパター練習マシーン"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
+            />
+
+            <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
+                🚻 トイレ事情（初心者あるある！？）
+            </h3>
+            <p>
+                これ、私が初心者だった頃（いや、今もたまにやるんですが…）の話なんですが、2階打席で練習していて急にトイレに行きたくなった時、「あれ？トイレどこだっけ？」とフロアをうろうろしてしまった経験があります（恥）。実は、トイレは1階にしかないので、2階で練習する際は、先に1階で済ませておくか、余裕を持って移動するのがおすすめです！
+            </p>
+
+            <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
+                🏫 充実のゴルフスクール＆レッスン
+            </h3>
+            <p>
+                各種ゴルフスクールやプロによるレッスンも開催されているようです（予約・詳細はフロントにてご確認ください）
+            </p>
+             <Image
+                src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6539.jpg"
+                alt="ゴルフスクールの詳細案内"
+                class="w-full h-auto object-cover rounded-lg my-6"
+                loading="lazy"
+                width={1200}
+                height={800}
+                format="webp"
+                quality={80}
+            />
+
+            <h3 class="text-xl md:text-2xl font-semibold text-slate-800 mt-8 mb-3">
+                その他設備
+            </h3>
+            <p>
+                休憩スペースは打席後方だけでなく1階にも2ヶ所。駐車場にはEV充電器、フロントには打席の空席情報がわかる電光掲示板、1階には喫煙所、そして有料のロッカールームも完備されています。KSP彦根は、ゴルファーが練習に集中できる環境が整っています。
             </p>
 
                <div class="not-prose my-12 space-y-12">
@@ -507,6 +617,7 @@ const comparisonArticles = [
             {
                 rangeData && (
                     <div class="map-container not-prose my-8 rounded-lg overflow-hidden border">
+                        {/* [修正点2] iframeにloading="lazy"が適用されていることを確認 */}
                         <iframe
                             src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(rangeData.name + " " + rangeData.address)}`}
                             width="100%"
@@ -524,10 +635,10 @@ const comparisonArticles = [
                 id="summary"
                 class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
             >
-                まとめ：賢くお得に、データで楽しむゴルフ練習！
+                まとめ：データで楽しむゴルフ練習！
             </h2>
             <p>
-                KSP彦根の魅力、特に「全打席トップトレーサー無料」というデータ活用の楽しさや、ふるさと納税の裏ワザ、伝わりましたでしょうか？
+                KSP彦根の魅力、特に「全打席トップトレーサー無料」というデータ活用の楽しさ、伝わりましたでしょうか？
             </p>
             <div
                 class="summary-box not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8"
@@ -544,7 +655,19 @@ const comparisonArticles = [
                     </li>
                     <li class="flex items-start">
                         <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">練習場選びで失敗したくない初心者ゴルファー</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
                         <span class="flex-1">各番手の正確な飛距離や課題を客観的に把握したい人</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">混雑を避けて、ふらっと気軽に立ち寄れる環境を探している人</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">打ちっぱなしにハマり始めたばかりで、これからゴルフを本格的に始めたい人</span>
                     </li>
                     <li class="flex items-start">
                         <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
@@ -561,7 +684,7 @@ const comparisonArticles = [
                 </ul>
             </div>
             <p>
-                一度行けば、きっとまた通いたくなるKSP彦根。「もっと早く知っていれば…！」と感じる方も多いはず。ぜひ、未来型ゴルフ練習をお得に体感してみてくださいね！
+                一度行けば、きっとまた通いたくなるKSP彦根。「もっと早く知っていれば…！」と感じる方も多いはず。ぜひ、未来型ゴルフ練習を体感してみてくださいね！
             </p>
             <hr class="my-8" />
 
