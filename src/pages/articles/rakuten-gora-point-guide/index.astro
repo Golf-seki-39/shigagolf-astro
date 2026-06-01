@@ -1,0 +1,267 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネントをインポート ---
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+
+// --- [3] この記事固有の情報 ---
+const title = "【楽天GORA】初回予約で損しないために！3,000〜19,000ポイント獲得する方法";
+const description = "楽天GORAで初めてコース予約をする方必見。初回利用キャンペーンや楽天モバイル特典を活用して、初ラウンドをお得にする具体的な手順と注意点を最短で解説します。";
+const pubDate = "2026-06-05"; 
+
+// ※アイキャッチ画像：汎用的なお得情報・キャンペーン画像
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/gora-campaign.png"; 
+
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/rakuten-gora-point-guide/`; 
+const headline = "【楽天GORA】初回予約で損しないために！3,000〜19,000ポイント獲得する方法";
+
+// --- [4] アフィリエイト・キャンペーンリンク ---
+// ※ご自身のアフィリエイトリンクや公式の紹介URLに差し替えてください
+const links = {
+    goraEntry: "https://a.r10.to/hPRKtq", // スタート1000（GORA初回）エントリーページ
+    rakutenMobile: "https://r10.to/hkew0c", // 楽天モバイル紹介キャンペーン（最大13,000pt）
+    appStore: "https://apps.apple.com/jp/app/rakuten-link/id1498877539", // iOS用リンク
+    googlePlay: "https://play.google.com/store/apps/details?id=jp.co.rakuten.mobile.rcs&hl=ja" // Android用リンク
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto text-slate-700 leading-relaxed">
+        
+        <article class="prose lg:prose-xl max-w-none">
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2 mb-6">公開日：{pubDate}</p>
+            </header>
+
+            <div class="bg-red-50 p-6 rounded-xl border-2 border-red-500 my-8 not-prose">
+                <p class="text-xl font-bold text-red-700 mt-0 mb-2">⚠️ この記事は、今まさに「楽天GORAで予約しよう」としている方に向けて書いています。</p>
+                <p class="text-slate-800 m-0 leading-relaxed text-sm md:text-base">
+                    初ラウンドの予約、そのまま「ポチッ」と押そうとしていませんか？<br>
+                    実は楽天GORAには、<strong>初めて予約・プレーする方限定の特大キャンペーン</strong>が用意されています。<br/>たった3分で終わる以下の手順を必ず確認してください！
+                </p>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">まず結論：なぜポイントがもらえるの？</h2>
+            <p>現在のスマホの契約状況や、各キャンペーンの組み合わせによって、もらえるポイントが変わります。内訳は以下の通りです。</p>
+
+            <div class="overflow-x-auto mb-8 not-prose">
+                <table class="w-full text-left border-collapse border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                    <thead>
+                        <tr class="bg-slate-100 border-b-2 border-slate-300">
+                            <th class="p-3 font-bold text-slate-800">状況</th>
+                            <th class="p-3 font-bold text-slate-800 whitespace-nowrap">獲得ポイント</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-pink-50 border-b border-pink-100">
+                            <td class="p-3 text-slate-700">楽天モバイルに新規・乗り換えで契約</td>
+                            <td class="p-3 font-bold text-pink-600 whitespace-nowrap">最大19,000pt</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-green-50">
+                            <td class="p-3 text-slate-700">すでに楽天モバイルを利用中の方</td>
+                            <td class="p-3 font-bold text-green-700 whitespace-nowrap">6,000pt</td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 text-slate-700">GORA初回利用のみ（携帯はそのまま）</td>
+                            <td class="p-3 font-bold text-blue-600 whitespace-nowrap">3,000pt</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">あなたはどのパターン？現在の状況をチェック！</h2>
+            <p>ご自身のパターンに合った手順を選んで進めてください。</p>
+
+            <div class="grid md:grid-cols-3 gap-4 my-8 not-prose">
+                <!-- パターンA -->
+                <div class="bg-white p-5 rounded-xl border-2 border-pink-300 shadow-sm relative overflow-hidden flex flex-col h-full md:order-1">
+                    <div class="absolute top-0 right-0 bg-pink-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">一番お得！</div>
+                    <h3 class="text-sm font-bold text-pink-600 mb-1 mt-0">パターンA</h3>
+                    <p class="text-base font-black text-slate-800 mb-2 mt-1">楽天モバイル未契約の方</p>
+                    <div class="bg-pink-50 text-pink-700 font-bold p-2 rounded mb-4 text-center text-sm">
+                        最大 19,000pt 獲得可能！
+                    </div>
+                    <div class="mt-auto">
+                        <a href="#pattern-a" class="block w-full py-2 bg-pink-600 text-white text-center font-bold rounded hover:bg-pink-700 transition text-sm">
+                            手順を見る ↓
+                        </a>
+                    </div>
+                </div>
+
+                <!-- パターンB -->
+                <div class="bg-white p-5 rounded-xl border-2 border-slate-200 shadow-sm flex flex-col h-full md:order-2">
+                    <h3 class="text-sm font-bold text-slate-500 mb-1 mt-0">パターンB</h3>
+                    <p class="text-base font-black text-slate-800 mb-2 mt-1">楽天モバイルをご利用中の方</p>
+                    <div class="bg-green-50 text-green-800 font-bold p-2 rounded mb-4 text-center text-sm">
+                        6,000pt 獲得！
+                    </div>
+                    <div class="mt-auto">
+                        <a href="#pattern-bc" class="block w-full py-2 bg-slate-800 text-white text-center font-bold rounded hover:bg-slate-700 transition text-sm">
+                            手順を見る ↓
+                        </a>
+                    </div>
+                </div>
+
+                <!-- パターンC -->
+                <div class="bg-white p-5 rounded-xl border-2 border-slate-200 shadow-sm flex flex-col h-full md:order-3">
+                    <h3 class="text-sm font-bold text-slate-500 mb-1 mt-0">パターンC</h3>
+                    <p class="text-base font-black text-slate-800 mb-2 mt-1">スマホは変えずに利用する方</p>
+                    <div class="bg-blue-50 text-blue-800 font-bold p-2 rounded mb-4 text-center text-sm">
+                        3,000pt 獲得！
+                    </div>
+                    <div class="mt-auto">
+                        <a href="#pattern-bc" class="block w-full py-2 bg-slate-800 text-white text-center font-bold rounded hover:bg-slate-700 transition text-sm">
+                            手順を見る ↓
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-12 border-slate-200" />
+
+            <!-- ==========================================
+                 【パターンA】楽天モバイル未契約の方の手順
+            =========================================== -->
+            <h2 id="pattern-a" class="scroll-mt-24 text-2xl font-bold text-slate-800 mt-12 mb-6 text-pink-700">【パターンA】楽天モバイル未契約の方の予約手順（最大19,000pt）</h2>
+            <p>
+                実は、まだ楽天モバイルを契約していないあなたが、<strong>ゴルフの初ラウンド代が回収できてお釣りがくるレベルのポイント還元</strong>です！
+            </p>
+            
+
+            <p>
+                ここからは、さらにポイントを増やしたい方向けの方法です。<br>
+                楽天モバイルに新規・乗り換えで申し込むことで紹介特典（MNPで13,000pt、新規で10,000pt）がもらえ、GORAの特典（6,000pt）と合わせることで<strong>最大19,000円相当の楽天ポイント還元</strong>になります。
+            </p>
+
+             <div class="bg-yellow-50 p-5 rounded-lg border-l-4 border-yellow-400 my-6 not-prose">
+                <p class="text-slate-800 text-sm m-0 leading-relaxed font-bold">
+                    💡 もちろん、スマホの契約を変えなくても楽天GORA初回特典の3,000ポイントは獲得できます。<br>
+                    携帯会社を変えたくない方は <a href="#pattern-bc" class="text-blue-600 underline hover:text-blue-800">→ こちらの【パターンC】の手順へスキップ</a> してください。
+                </p>
+            </div>
+
+            <div class="bg-pink-50 p-6 rounded-lg border border-pink-200 my-6 not-prose">
+                <ol class="list-decimal list-inside space-y-6 text-slate-800 font-medium m-0">
+                    <li class="pb-4 border-b border-pink-200">
+                        <strong class="text-red-600">まずは専用リンクから楽天会員にログイン</strong><br>
+                        <span class="text-sm font-normal text-slate-600 block mt-2 mb-4">※重要：申し込みの「前」に必ず以下のリンクからログインしてください。ここを間違えると特典がもらえません。</span>
+                        <div class="text-center">
+                            <a href={links.rakutenMobile} target="_blank" rel="noopener sponsored" class="inline-block bg-pink-600 text-white font-bold py-4 px-8 rounded-lg shadow-md hover:bg-pink-700 transition w-full md:w-auto text-lg">
+                                楽天モバイル紹介会場にログイン ▶︎
+                            </a>
+                        </div>
+                    </li>
+                    <li class="pb-4 border-b border-pink-200">
+                        <strong>楽天モバイルに申し込み＆開通する</strong><br>
+                        <span class="text-sm font-normal text-slate-600 block mt-2">※データタイプは対象外なのでご注意ください。</span>
+                    </li>
+                    <li class="pb-4 border-b border-pink-200">
+                        <strong>Rakuten Linkアプリで10秒以上通話する</strong><br>
+                        <span class="text-sm font-normal text-slate-600 block mt-2">※Rakuten Linkアプリを使えば<strong>国内通話料は無料</strong>です。この通話アクションを忘れるとポイントがもらえないので、開通したらすぐに家族や友人にサクッと電話しましょう。</span>
+                        <div class="flex flex-wrap gap-3 mt-3">
+                            <a href={links.appStore} target="_blank" rel="noopener" class="text-xs bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded hover:bg-slate-100 transition shadow-sm font-bold flex items-center">
+                                🍏 iPhoneの方はこちら
+                            </a>
+                            <a href={links.googlePlay} target="_blank" rel="noopener" class="text-xs bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded hover:bg-slate-100 transition shadow-sm font-bold flex items-center">
+                                🤖 Androidの方はこちら
+                            </a>
+                        </div>
+                    </li>
+                    <li>
+                        <strong>GORAのキャンペーンにエントリーしてコースを予約！</strong><br>
+                        <span class="text-sm font-normal text-slate-600 block mt-2">開通が完了したら、下のボタンからエントリーして予約すればすべて完了です！<br>※GORAの予約特典は「2名以上」「1人7,500円以上（税込）」のプランが対象となります。</span>
+                        <div class="text-center mt-4">
+                            <a href={links.goraEntry} target="_blank" rel="noopener sponsored" class="inline-block bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-green-700 transition w-full md:w-auto text-center">
+                                GORA 初回キャンペーンにエントリー ▶︎
+                            </a>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+
+            <hr class="my-12 border-slate-200" />
+
+            <!-- ==========================================
+                 【パターンB・C】すでにモバイル・変えない方の手順
+            =========================================== -->
+            <h2 id="pattern-bc" class="scroll-mt-24 text-2xl font-bold text-slate-800 mt-12 mb-6">【パターンB・C】スマホはそのままでGORAを予約する手順</h2>
+            <p>
+                すでに楽天モバイルを使っている方（6,000pt獲得）も、<strong>スマホは変えずに純粋にGORAだけを初めて使う方（3,000pt獲得）</strong>も、やることは全く同じです！
+            </p>
+            
+            <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 my-6 not-prose">
+                <p class="font-bold text-red-600 mb-4 mt-0 text-center">⚠️ 注意：コースを予約するだけではポイントはもらえません！</p>
+                <ol class="list-decimal list-inside space-y-4 text-slate-700 font-medium m-0">
+                    <li class="pb-4 border-b border-slate-200">
+                        以下のボタンからキャンペーンページへ飛び、<strong>必ず先に「エントリー」</strong>を完了させる。
+                    </li>
+                    <li>
+                        そのまま楽天GORAでお好きなコースを予約し、プレーする。<br>
+                        <span class="text-xs text-slate-500 block mt-1">※2名以上、かつ1人あたりのプレー代が7,500円（税込）以上のプランが対象です。休日のプランならほぼクリアできます！</span>
+                    </li>
+                </ol>
+                <div class="text-center mt-6">
+                    <a href={links.goraEntry} target="_blank" rel="noopener sponsored" class="inline-block bg-green-600 text-white font-bold py-4 px-8 rounded-lg shadow hover:bg-green-700 transition w-full md:w-auto text-lg">
+                        GORA 初回キャンペーンにエントリー ▶︎
+                    </a>
+                </div>
+            </div>
+
+            {/* --- シガゴル便利機能コラム --- */}
+            <div class="bg-slate-800 text-white p-6 rounded-xl my-10 shadow-lg not-prose">
+                <h3 class="text-xl font-bold text-amber-400 mt-0 mb-3 flex items-center">
+                    💡 シガゴルの豆知識：予約時にサクッと入れる「百円台のゴルフ保険」
+                </h3>
+                <p class="text-sm leading-relaxed mb-0">
+                    楽天GORAで予約を進めていくと、途中で<strong>「1dayゴルファー保険（数百円程度〜）」</strong>に加入できるチェックボックスが出てきます。<br><br>
+                    他社の1日保険だと手間がかかることが多いですが、楽天の場合はポイント払い専用な代わりに格安で、予約のついでにサクッと加入できます。「万が一、打ったボールが他の人に当たってしまったら…」と不安な初心者の初ラウンドには、おすすめの機能です！
+                </p>
+            </div>
+
+            <hr class="my-12 border-slate-200" />
+
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">最後にもう一度整理します！</h2>
+            <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8 not-prose">
+                <ul class="space-y-5 m-0 text-slate-700">
+                    <li class="flex items-start">
+                        <span class="text-pink-600 font-bold text-xl mr-3">✓</span>
+                        <div>
+                            <strong class="text-slate-800">楽天モバイル未契約の方</strong><br>
+                            <a href="#pattern-a" class="text-sm text-blue-600 hover:underline">→ 【パターンA】へ。新規・乗り換えで圧倒的にお得！</a>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold text-xl mr-3">✓</span>
+                        <div>
+                            <strong class="text-slate-800">すでに楽天モバイル利用中の方</strong><br>
+                            <a href="#pattern-bc" class="text-sm text-blue-600 hover:underline">→ 【パターンB】へ。GORAのエントリーをして予約するだけ！</a>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-blue-600 font-bold text-xl mr-3">✓</span>
+                        <div>
+                            <strong class="text-slate-800">携帯会社は絶対に変えたくない方</strong><br>
+                            <a href="#pattern-bc" class="text-sm text-blue-600 hover:underline">→ 【パターンC】へ。GORAのエントリーをして予約するだけ！</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <p>
+                エントリーを忘れずに予約するだけで、確実に数千円〜1万円以上のポイント還元が受けられます。<br>
+                ぜひこのお得なキャンペーンを活用して、最高のコースデビューを飾ってくださいね！
+            </p>
+
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            
+        </article>
+    </div>
+</BaseLayout>

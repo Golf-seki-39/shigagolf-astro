@@ -9,6 +9,7 @@ import { Image } from "astro:assets";
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
+import GoraCampaignBanner from "../../../components/GoraCampaignBanner.astro";
 
 // --- [3] 記事の基本情報 ---
 const baseUrl = "https://shigolf.com";
@@ -523,6 +524,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                     </a>
                 </div>
             </div>
+
+            <GoraCampaignBanner />
 
             <div class="not-prose my-12 space-y-12">
                 <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
