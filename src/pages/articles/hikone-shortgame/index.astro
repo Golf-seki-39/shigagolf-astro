@@ -1,0 +1,203 @@
+---
+// --- [1] AstroとBaseLayoutの設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+// ※画像挿入時にコメントアウトを解除してください
+// import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネントをインポート ---
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+
+// --- [3] この記事固有の情報 ---
+const title = "【彦根・多賀】アプローチ・パター練習場まとめ｜目的別おすすめ施設3選";
+const description = "彦根市・多賀町周辺でアプローチやパターを徹底的に練習できる施設をまとめました。本物の芝から打てる多賀ゴルフ、巨大な屋内パター室がある365彦根、気軽に転がせるKSP彦根など、目的別の使い分けをシガゴル独自の視点で解説します。";
+const pubDate = "2024-05-15"; // ※公開日に合わせて調整してください
+
+// ※アイキャッチ画像：写真は保留のため、一旦ダミーURL
+const ogImageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/short-game-practice.png";
+
+const baseUrl = "https://shigolf.com";
+// ※実際の記事パスに合わせて調整してください
+const articleUrl = `${baseUrl}/practice_ranges/area/hikone/short-game-practice-summary/`; 
+const headline = "【彦根・多賀】アプローチ・パター練習場まとめ｜目的別おすすめ施設3選";
+
+// --- [4] 内部リンク用パス設定 ---
+// ※実際の個別記事パスに合わせて調整してください
+const links = {
+    reviewTaga: "/practice_ranges/area/hikone/taga_golf/", // 多賀ゴルフ個別レビュー
+    review365: "/practice_ranges/area/hikone/hikone_365/", // 365彦根個別レビュー
+    reviewKsp: "/practice_ranges/area/hikone/ksp_hikone/", // KSP彦根個別レビュー
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={ogImageUrl}>
+    
+    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto text-slate-700 leading-relaxed">
+        
+        <article class="prose lg:prose-xl max-w-none">
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2 mb-6">公開日：{pubDate}</p>
+            </header>
+
+            {/* --- 冒頭の結論ボックス --- */}
+            <div class="bg-slate-50 p-6 rounded-xl border-2 border-slate-200 my-8 not-prose">
+                <h2 class="text-xl font-bold text-slate-800 mt-0 mb-4 text-center">⛳ まずは結論！目的に合わせたおすすめはココ</h2>
+                <div class="grid md:grid-cols-3 gap-4 text-center">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+                        <p class="text-sm text-slate-500 m-0">アプローチ・バンカーを<br/>極めるなら</p>
+                        <p class="font-bold text-lg text-emerald-700 m-0 mt-1">多賀ゴルフ</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+                        <p class="text-sm text-slate-500 m-0">室内で本格パターを<br/>極めるなら</p>
+                        <p class="font-bold text-lg text-blue-700 m-0 mt-1">365彦根</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+                        <p class="text-sm text-slate-500 m-0">打席待ちや、<br/>帰る前の軽い調整なら</p>
+                        <p class="font-bold text-lg text-amber-700 m-0 mt-1">KSP彦根</p>
+                    </div>
+                </div>
+            </div>
+
+            <p>
+                <strong>彦根周辺でアプローチ練習場やパター練習場を探している方へ。</strong><br>
+                通常の打ちっぱなしのレンジ（単価打ち）でアプローチを練習しようとすると、どうしても1球あたりの料金が気になってガッツリ打てないことが多いですよね。<br/>
+                しかし、専用の練習場なら、本物の芝の感覚を掴みながら、圧倒的にコストパフォーマンスの高い練習が可能です。<br/>
+                今回は、彦根・多賀エリアでそんな「実戦的なショートゲーム練習」ができる貴重な施設を、目的別にスパッと断言してご紹介します！
+            </p>
+
+            <hr class="my-12 border-slate-200" />
+
+            {/* ==========================================
+                 ① 多賀ゴルフ
+            =========================================== */}
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">① 本格アプローチ＆バンカーの最有力候補「多賀ゴルフ」</h2>
+
+            {/* 📷 【写真挿入予定位置】2階打席からアプローチ練習場全体を見下ろしている写真、または外観の写真。 */}
+            <div class="bg-slate-100 p-4 rounded text-center my-6 text-slate-500 text-sm">📷 【写真挿入】多賀ゴルフ・アプローチ練習場全体、または外観</div>
+            {/* <Image src={tagalImagePath} alt="多賀ゴルフ アプローチ練習場全体" class="rounded-lg shadow-md my-6" /> */}
+
+            <ul>
+                <li>
+                    <strong>ここが凄い：</strong> 彦根・多賀エリアで本格的なアプローチ練習場を探すなら、多賀ゴルフが最有力候補です。ここには60ydのアプローチ練習場があり、バンカーの練習もできます。
+                </li>
+                <li class="text-red-700 font-semibold">
+                    <strong>注意ポイント：</strong> 施設内には簡易的なパターマットも設置されていますが、メインはあくまでアプローチとバンカーです。ここは完全にショートゲーム（打つ練習）に特化して使うのがおすすめです。
+                </li>
+                <li>
+                    <strong>料金の破壊力と圧倒的コスパ：</strong><br/>
+                    料金は<strong>30分毎に220円</strong>（アプローチのみ利用は別途入場料220円）で、嬉しいボール無料貸出付きです。<br/>
+                    多賀ゴルフの通常の打席には「時間貸し（打ち放題）」プラン（30分780円〜など）がありますが、アプローチを徹底的に練習するなら、実はこの専用エリアを使う方が圧倒的に高コスパなんです。<br/>
+                    もちろん単価打ちと比べても破格ですし、何より<strong>「本物の芝の上から、さまざまなライ（傾斜や芝のハゲ具合など）を想定して打てる」</strong>という実戦的なメリットは、どれだけレンジのマットから打ち放題で打っても絶対に得られません。
+                </li>
+            </ul>
+
+            <div class="bg-green-50 p-5 rounded-lg border-l-4 border-green-500 my-8 not-prose">
+                <p class="text-slate-800 text-sm m-0 leading-relaxed">
+                    <strong class="text-green-700">💡 シガゴル目線（正直レビュー）：</strong><br/>
+                    ただし、私は天候や時間の都合でまだ実際にアプローチエリアを利用できていません。打席（2F）から確認した限りでは非常に実戦的な良い環境ですので、近いうちに必ず体験レビューを追記予定です！
+                </p>
+                <div class="text-center mt-4">
+                    <a href={links.reviewTaga} class="inline-block bg-white text-green-700 font-bold py-2 px-4 rounded-lg border-2 border-green-600 shadow-sm hover:bg-green-50 transition text-sm">
+                        さらに詳しい多賀ゴルフの全体レビューはこちら ▶︎
+                    </a>
+                </div>
+            </div>
+
+            <hr class="my-12 border-slate-200" />
+
+            {/* ==========================================
+                 ② 365彦根
+            =========================================== */}
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">② 雨でもガッツリ！パター練習するなら「365彦根」</h2>
+
+            {/* 📷 【写真挿入予定位置】リニューアルされた綺麗なロビーや打席の様子。パター室の写真は、雰囲気が伝わるもの。 */}
+            <div class="bg-slate-100 p-4 rounded text-center my-6 text-slate-500 text-sm">📷 【写真挿入】365彦根・施設の綺麗さ、パター室の雰囲気</div>
+            {/* <Image src={hikone365ImagePath} alt="365彦根 屋内パター専用室" class="rounded-lg shadow-md my-6" /> */}
+
+            <ul>
+                <li>
+                    <strong>ここが凄い：</strong> 365彦根の2F打席の角には、なんと<strong>約8m四方の巨大なパター専用室（屋内）</strong>が用意されています。
+                </li>
+                <li>
+                    <strong>メリット：</strong> 屋内の人工芝なので、雨の日でも、真夏や真冬でも、天候を一切気にせず快適にタッチの練習ができます。カップも6ヶ所ほど切ってあるので、飽きずにいろんなラインの練習が可能です。
+                </li>
+                <li>
+                    <strong>料金：</strong> メンバーは30分無料、ビジターは30分300円。
+                </li>
+            </ul>
+
+            <div class="bg-blue-50 p-5 rounded-lg border-l-4 border-blue-500 my-8 not-prose">
+                <p class="text-slate-800 text-sm m-0 leading-relaxed">
+                    <strong class="text-blue-700">💡 シガゴル目線（正直レビュー）：</strong><br/>
+                    この施設、リニューアルされてめちゃくちゃ綺麗なのに、近隣の他の練習場と比べると実はいつもお客さんが少なめで、かなり快適に練習できる「最高の穴場」なんです。<br/>
+                    ただ、私が写真を撮ろうとした時に限って熱心な先客がおられ、ガラスの反射に自分の顔が映り込んでしまい上手く撮影できていません（笑）。施設自体の綺麗さは保証しますので、ぜひ安心して行ってみてください！
+                </p>
+                <p class="text-red-600 text-xs mt-3 mb-0">※ただし、ここでアプローチやバンカーの練習はできないため、ショートゲーム全体を鍛えるなら多賀ゴルフとの使い分けがおすすめです。</p>
+                <div class="text-center mt-4">
+                    <a href={links.review365} class="inline-block bg-white text-blue-700 font-bold py-2 px-4 rounded-lg border-2 border-blue-600 shadow-sm hover:bg-blue-50 transition text-sm">
+                        さらに詳しい365彦根の全体レビューはこちら ▶︎
+                    </a>
+                </div>
+            </div>
+
+            <hr class="my-12 border-slate-200" />
+
+            {/* ==========================================
+                 ③ KSP彦根
+            =========================================== */}
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">③ 絶妙な配置でついつい触っちゃう！「KSP彦根」</h2>
+
+            {/* 📷 【写真挿入予定位置】ご提供いただいた「メインのパター部屋」「窓際の簡易マット」「レトロゲーム機」の写真をギャラリー風に並べる。 */}
+            <div class="bg-slate-100 p-4 rounded text-center my-6 text-slate-500 text-sm">📷 【写真挿入】KSP彦根・点在する3つのパター設備（ギャラリー）</div>
+            {/* <div class="grid grid-cols-2 md:grid-cols-3 gap-3 my-6">
+                <Image src={kspImagePath1} alt="KSP彦根 メインパター部屋" class="rounded shadow-sm" />
+                <Image src={kspImagePath2} alt="KSP彦根 窓際簡易マット" class="rounded shadow-sm" />
+                <Image src={kspImagePath3} alt="KSP彦根 レトロパターゲーム" class="rounded shadow-sm" />
+            </div> */}
+
+            <ul>
+                <li>
+                    <strong>どんなところ？：</strong> 1F受付周辺に、なんと3パターンの設備が点在しています。広々とした「メインのパター部屋」、休憩所の窓際にある「簡易マット」、そして昭和レトロな雰囲気がたまらない「パターゲーム機（TEN HOLE IN ONE）」です。
+                </li>
+            </ul>
+
+            <div class="bg-amber-50 p-5 rounded-lg border-l-4 border-amber-500 my-8 not-prose">
+                <p class="text-slate-800 text-sm m-0 leading-relaxed">
+                    <strong class="text-amber-700">💡 シガゴル流・最強の活用法：</strong><br/>
+                    ここは「ガッツリ練習する場所」というより、**利用シーンの優秀さ**が光ります。混雑して打席待ちをしている時の時間潰しにも最適ですし、何より「入り口すぐ横」という配置が抜群に良いんです。<br/>
+                    練習前や帰る前に目に入るので、「ちょっとパター触ろう！」という気にさせてくれます。<strong>実際、私も練習の帰りにほぼ必ずここでパターを転がして帰っています。</strong>
+                </p>
+                <div class="text-center mt-4">
+                    <a href={links.reviewKsp} class="inline-block bg-white text-amber-700 font-bold py-2 px-4 rounded-lg border-2 border-amber-600 shadow-sm hover:bg-amber-50 transition text-sm">
+                        さらに詳しいKSP彦根の全体レビューはこちら ▶︎
+                    </a>
+                </div>
+            </div>
+
+            <hr class="my-12 border-slate-200" />
+
+            {/* ==========================================
+                 まとめ
+            =========================================== */}
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">■ まとめ：今日鍛えたいテーマで練習場を選ぼう！</h2>
+            <p>
+                ショートゲームと一口に言っても、施設によって得意な分野はまったく違います。
+            </p>
+            <ul>
+                <li><strong>芝からアプローチの距離感を養うなら ➔ <a href="#tagagolf">多賀ゴルフ</a></strong></li>
+                <li><strong>綺麗な室内でパターのタッチを合わせるなら ➔ <a href="#hikone365">365彦根</a></strong></li>
+                <li><strong>打席練習のついでにパターも触っておくなら ➔ <a href="#ksphikone">KSP彦根</a></strong></li>
+            </ul>
+            <p>
+                「今日は何を練習するか？」という目的に合わせて、ぜひこの3施設を使い分けてみてください！
+            </p>
+
+            {/* --- 記事下コンポーネント --- */}
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            
+        </article>
+    </div>
+</BaseLayout>

@@ -41,38 +41,47 @@ const imageToUse = ogImage || defaultOgImage;
             src="https://www.googletagmanager.com/gtag/js?id=G-S7JPWMHPVS"
         ></script>
         
-<script is:inline>
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('img').forEach(img => {
-            // すでにリンク済み、または小さな画像は対象外
-            if (img.parentElement.tagName === 'A' || img.width < 100) return;
-
-            // 1. src または data-src から元のURLを抽出（Netlifyのパラメータを剥がす）
-            const urlToAnalyze = img.src.includes('.netlify/images') 
-                ? new URLSearchParams(new URL(img.src).search).get('url') 
-                : img.src;
-
-            // 2. 確実に抽出する
-            if (!urlToAnalyze) return;
-            
-            const match = urlToAnalyze.match(/practice_ranges\/([^\/]+)\//);
-            
-            const a = document.createElement('a');
-            a.href = img.src; // 拡大表示は最適化後の画像で行う
-            a.dataset.fslightbox = "gallery";
-
-            // 3. IDが取れたらリンクを生成
-            if (match && match[1]) {
-                const rangeId = match[1];
-                a.dataset.caption = `<a href="/ranges/${rangeId}/#gallery" style="color:#4ade80; font-weight:bold; text-decoration:underline;">＞ この施設のフォトギャラリーを見る</a>`;
+        <script is:inline>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag("js", new Date());
+            if (window.location.hostname !== 'localhost') {
+                gtag("config", "G-S7JPWMHPVS");
             }
-
-            img.parentNode.insertBefore(a, img);
-            a.appendChild(img);
-        });
-    });
-</script>
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fslightbox/3.4.1/index.min.js" is:inline></script>
         
+        <script is:inline>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('img').forEach(img => {
+                    // すでにリンク済み、または小さな画像は対象外
+                    if (img.parentElement.tagName === 'A' || img.width < 100) return;
+
+                    // 1. src または data-src から元のURLを抽出（Netlifyのパラメータを剥がす）
+                    const urlToAnalyze = img.src.includes('.netlify/images') 
+                        ? new URLSearchParams(new URL(img.src).search).get('url') 
+                        : img.src;
+
+                    // 2. 確実に抽出する
+                    if (!urlToAnalyze) return;
+                    
+                    const match = urlToAnalyze.match(/practice_ranges\/([a-zA-Z0-9_-]+)\//);
+                    
+                    const a = document.createElement('a');
+                    a.href = img.src; // 拡大表示は最適化後の画像で行う
+                    a.dataset.fslightbox = "gallery";
+
+                    // 3. IDが取れたらリンクを生成
+                    if (match && match[1]) {
+                        const rangeId = match[1];
+                        a.dataset.caption = `<a href="/ranges/${rangeId}/#gallery" style="color:#4ade80; font-weight:bold; text-decoration:underline;">＞ この施設のフォトギャラリーを見る</a>`;
+                    }
+
+                    img.parentNode.insertBefore(a, img);
+                    a.appendChild(img);
+                });
+            });
+        </script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
         <meta name="google-site-verification" content="muQpmdbPlN2etL0O4WpXsvv307PUJ1uuaXjMO2VvHtg" />
