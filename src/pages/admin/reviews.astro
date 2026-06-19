@@ -1,0 +1,172 @@
+---
+// src/pages/admin/reviews.astro
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const title = "口コミ承認管理 | シガゴル";
+const description = "シガゴル管理人専用のレビュー承認ページです。";
+
+const clientFirebaseConfig = {
+    apiKey: import.meta.env.PUBLIC_FIREBASE_API_KEY,
+    authDomain: import.meta.env.PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET,
+    appId: import.meta.env.PUBLIC_FIREBASE_APP_ID,
+};
+---
+
+<BaseLayout title={title} description={description}>
+    <main class="container mx-auto p-4 max-w-3xl mt-8">
+        <div class="flex items-center gap-2 mb-6">
+            <span class="text-3xl">🔐</span>
+            <h1 class="text-2xl font-bold text-slate-800">口コミ承認ダッシュボード</h1>
+        </div>
+
+        <div id="auth-section" class="bg-white p-8 rounded-lg shadow-md text-center">
+            <p class="mb-4 text-slate-600">管理用パスワードを入力してください</p>
+            <input type="password" id="admin-pass" class="border border-slate-300 p-2 rounded w-full max-w-xs mb-4 text-center" placeholder="パスワード">
+            <br>
+            <button id="login-btn" class="bg-slate-800 text-white font-bold py-2 px-6 rounded hover:bg-slate-700 transition">ログイン</button>
+        </div>
+
+        <div id="dashboard-section" class="hidden">
+            <div id="admin-reviews-list" class="space-y-4">
+               <p class="text-slate-500 text-center py-8">承認待ちのデータを読み込んでいます...</p>
+            </div>
+        </div>
+    </main>
+    
+    <script define:vars={{ passedConfig: clientFirebaseConfig }}>
+        // ★★★ 簡易パスワード（お好きなものに変更してください） ★★★
+        const SECRET_PASS = "shiga2026"; 
+
+        async function initAdmin() {
+            const loginBtn = document.getElementById('login-btn');
+            const passInput = document.getElementById('admin-pass');
+            const authSection = document.getElementById('auth-section');
+            const dashboardSection = document.getElementById('dashboard-section');
+            const listContainer = document.getElementById('admin-reviews-list');
+
+            // ログイン処理
+            loginBtn.addEventListener('click', () => {
+                if(passInput.value === SECRET_PASS) {
+                    authSection.classList.add('hidden');
+                    dashboardSection.classList.remove('hidden');
+                    loadPendingReviews();
+                } else {
+                    alert('パスワードが違います');
+                }
+            });
+
+            async function loadPendingReviews() {
+                try {
+                    const [ { initializeApp }, { getFirestore, collectionGroup, query, where, getDocs, updateDoc } ] = await Promise.all([
+                        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
+                        import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')
+                    ]);
+                    
+                    let app = window._firebaseAppV10 || initializeApp(passedConfig);
+                    window._firebaseAppV10 = app;
+                    const db = getFirestore(app);
+
+                    // Firestoreの「collectionGroup」を使って全練習場のreviewsからpendingを探す
+                    const q = query(collectionGroup(db, 'reviews'), where('status', '==', 'pending'));
+                    const snapshot = await getDocs(q);
+                    
+                    if (snapshot.empty) {
+                        listContainer.innerHTML = '<div class="bg-green-50 text-green-700 p-6 rounded-lg text-center font-bold border border-green-200">🎉 現在、承認待ちの口コミはありません。</div>';
+                        return;
+                    }
+
+                    // JavaScript側で日付順にソート（Firestoreのインデックスエラーを回避するため）
+                    let reviews = [];
+                    snapshot.forEach(doc => {
+                        reviews.push({ id: doc.id, ref: doc.ref, data: doc.data() });
+                    });
+                    reviews.sort((a, b) => (b.data.createdAt?.seconds || 0) - (a.data.createdAt?.seconds || 0));
+
+                    listContainer.innerHTML = '';
+                    
+                    reviews.forEach(review => {
+                        const d = review.data;
+                        let dateStr = '日付不明';
+                        if(d.createdAt?.seconds) {
+                            dateStr = new Date(d.createdAt.seconds * 1000).toLocaleString('ja-JP');
+                        }
+                        
+                        // DBのパスから施設IDを取得 (例: artifacts/xxx/public/data/practice_ranges/azuchi_gc/reviews/xxx)
+                        const pathSegments = review.ref.path.split('/');
+                        const rangeId = pathSegments[pathSegments.length - 3] || '不明な施設';
+
+                        const card = document.createElement('div');
+                        card.className = 'bg-white p-5 rounded-lg shadow border border-slate-200';
+                        card.innerHTML = `
+                            <div class="flex justify-between items-start mb-3 border-b border-slate-100 pb-2">
+                                <span class="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-bold">施設: ${rangeId}</span>
+                                <span class="text-slate-500 text-sm">${dateStr}</span>
+                            </div>
+                            <p class="font-bold text-lg mb-2"><span class="text-amber-500">★${d.rating}</span> ${d.title}</p>
+                            <div class="bg-slate-50 p-4 rounded text-sm text-slate-700 whitespace-pre-wrap mb-4 border border-slate-100">${d.body}</div>
+                            <p class="text-sm text-slate-500 mb-4 font-semibold">投稿者: ${d.author}</p>
+                            
+                            <div class="flex gap-3 mt-4">
+                                <button class="approve-btn flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition shadow-sm">✅ 承認して公開</button>
+                                <button class="reject-btn flex-1 bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-lg transition">🗑️ 却下（非表示）</button>
+                            </div>
+                        `;
+
+                        // ✅ 承認ボタンの処理
+                        card.querySelector('.approve-btn').addEventListener('click', async (e) => {
+                            const btn = e.target;
+                            btn.textContent = '処理中...';
+                            btn.disabled = true;
+                            try {
+                                await updateDoc(review.ref, { status: 'approved' });
+                                card.style.opacity = '0.5';
+                                setTimeout(() => {
+                                    card.remove();
+                                    if(listContainer.children.length === 0) loadPendingReviews();
+                                }, 300);
+                            } catch(err) {
+                                alert('エラーが発生しました: ' + err.message);
+                                btn.textContent = '✅ 承認して公開';
+                                btn.disabled = false;
+                            }
+                        });
+
+                        // 🗑️ 却下ボタンの処理
+                        card.querySelector('.reject-btn').addEventListener('click', async (e) => {
+                            if(!confirm('本当にこの口コミを却下（サイトに非表示）にしますか？')) return;
+                            const btn = e.target;
+                            btn.textContent = '処理中...';
+                            btn.disabled = true;
+                            try {
+                                await updateDoc(review.ref, { status: 'rejected' });
+                                card.style.opacity = '0.5';
+                                setTimeout(() => {
+                                    card.remove();
+                                    if(listContainer.children.length === 0) loadPendingReviews();
+                                }, 300);
+                            } catch(err) {
+                                alert('エラーが発生しました: ' + err.message);
+                                btn.textContent = '🗑️ 却下（非表示）';
+                                btn.disabled = false;
+                            }
+                        });
+
+                        listContainer.appendChild(card);
+                    });
+
+                } catch(error) {
+                    console.error(error);
+                    listContainer.innerHTML = '<p class="text-red-500 text-center py-4">読み込みエラーが発生しました。コンソールを確認してください。</p>';
+                }
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initAdmin);
+        } else {
+            initAdmin();
+        }
+    </script>
+</BaseLayout>
