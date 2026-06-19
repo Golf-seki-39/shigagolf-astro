@@ -382,10 +382,9 @@ const clientFirebaseConfig = {
     }
 
     // --- Helper Functions ---
-    // ★★★ 変更点: SyntaxErrorの原因だった 'escapeHTML' 関数を修正 ★★★
+    // ★★★ 修正箇所①：文法エラーを直し、正しいHTMLエスケープ処理に修正 ★★★
     const escapeHTML = (str) => {
         if (typeof str !== 'string' || !str) return '';
-        // ' ' ' という不正なトークンを修正し、正しくHTMLエスケープする
         return str.replace(/[&<>"']/g, (match) => ({
             '&': '&amp;',
             '<': '&lt;',
@@ -418,7 +417,6 @@ const clientFirebaseConfig = {
         const safeBody = review?.body ? escapeHTML(review.body).replace(/\n/g, '<br>') : '';
         const safeAuthor = escapeHTML(review?.author || '匿名');
 
-        // ★★★ ここから追加：Firebaseから adminReply を安全に取得してHTMLを作成 ★★★
         const safeAdminReply = review?.adminReply ? escapeHTML(review.adminReply).replace(/\n/g, '<br>') : '';
         let adminReplyHTML = '';
         if (safeAdminReply) {
@@ -432,8 +430,6 @@ const clientFirebaseConfig = {
                 </div>
             `;
         }
-        // ★★★ 追加ここまで ★★★
-
 
         let imagesHTML = '';
         if (review?.imageUrls && Array.isArray(review.imageUrls) && review.imageUrls.length > 0) {
@@ -472,7 +468,6 @@ const clientFirebaseConfig = {
     async function renderRadarCharts() { 
         if (typeof Chart === 'undefined') {
             try {
-                // UMD版をインポートしてグローバル (window.Chart) に登録
                 await import('https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.js');
                 if (typeof Chart === 'undefined') {
                      throw new Error("Chart.js UMD module did not register window.Chart");
@@ -508,20 +503,39 @@ const clientFirebaseConfig = {
             const q = query(reviewsCollectionRef, orderBy("createdAt", "desc"));
             const querySnapshot = await getDocs(q);
             reviewsListContainer.innerHTML = '';
-            if (querySnapshot.empty) { reviewsListContainer.innerHTML = `<p id="no-reviews-message" class="text-center text-slate-500 py-8">この練習場にはまだレビューがありません。</p>`; return; }
+            
             const adminReviews = [], userReviews = [];
-            querySnapshot.forEach(doc => { const review = doc.data(); (review?.author === "関＠シガゴル管理人" ? adminReviews : userReviews).push(review); });
+            
+            querySnapshot.forEach(doc => { 
+                const review = doc.data(); 
+
+                // ★★★ 修正箇所②：承認フィルターを追加 ★★★
+                // status が 'pending' (承認待ち) または 'rejected' (却下) の場合はスキップ
+                // ※過去の口コミ（statusが存在しないもの）は表示される安全設計です
+                if (review.status === 'pending' || review.status === 'rejected') {
+                    return; 
+                }
+
+                (review?.author === "関＠シガゴル管理人" ? adminReviews : userReviews).push(review); 
+            });
+
             const sortedReviews = [...adminReviews, ...userReviews];
+            
+            if (sortedReviews.length === 0) { 
+                reviewsListContainer.innerHTML = `<p id="no-reviews-message" class="text-center text-slate-500 py-8">この練習場にはまだ表示できるレビューがありません。</p>`; 
+                return; 
+            }
+
             const fragment = document.createDocumentFragment();
             sortedReviews.forEach(review => { if (review) { fragment.appendChild(createReviewArticle(review)); } });
             reviewsListContainer.appendChild(fragment);
             
-            await renderRadarCharts(); // チャートを描画
+            await renderRadarCharts(); 
 
         } catch (error) { console.error("レビューの読み込みに失敗しました:", error); if (reviewsListContainer) { reviewsListContainer.innerHTML = `<p class="text-center text-red-600 py-8">レビューの読み込み中にエラーが発生しました。</p>`; } }
     }
 
-    // --- Initialize Static Scripts (フォトギャラリーの表示切替など) ---
+    // --- Initialize Static Scripts ---
     function initializeStaticScripts() {
         const showButton = document.getElementById("show-review-form-btn");
         const formWrapper = document.getElementById("review-form-wrapper");
@@ -536,8 +550,6 @@ const clientFirebaseConfig = {
         const galleryItems = document.querySelectorAll('.gallery-item');
         const showMoreBtn = document.getElementById('show-more-gallery-btn');
         const initialVisibleCount = 8;
-        
-        console.log(`[Shigagolf Debug] initializeStaticScripts: Found ${galleryItems.length} gallery items.`);
         
         if (galleryItems.length > 0) { 
             galleryItems.forEach((item, index) => { 
@@ -565,21 +577,13 @@ const clientFirebaseConfig = {
     // --- 汎用的な遅延読み込みオブザーバー ---
     function createLazyLoader(targetSelector, callback, rootMargin = '200px') {
         const targetElement = document.querySelector(targetSelector);
-        if (!targetElement) {
-            console.warn(`[Shigagolf Debug] createLazyLoader: Target ${targetSelector} not found.`);
-            return;
-        }
-        const observerOptions = {
-            root: null, 
-            rootMargin: rootMargin, 
-            threshold: 0.01 
-        };
+        if (!targetElement) return;
+        const observerOptions = { root: null, rootMargin: rootMargin, threshold: 0.01 };
         const observerCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     callback(); 
                     observer.unobserve(targetElement); 
-                    console.log(`[Shigagolf Debug] ${targetSelector} loaded lazily.`);
                 }
             });
         };
@@ -589,32 +593,20 @@ const clientFirebaseConfig = {
 
     // --- カスタムイベント 'reviewPosted' のリスナー ---
     document.addEventListener('reviewPosted', async (event) => { 
-        console.log('[Shigagolf Debug] New review posted:', event.detail);
-        const newReviewData = event.detail;
-        const reviewsListContainer = document.getElementById('reviews-list');
-        const noReviewsEl = document.getElementById('no-reviews-message');
-        if (!reviewsListContainer) return;
-        if (noReviewsEl) noReviewsEl.remove();
-        const article = createReviewArticle(newReviewData);
-        reviewsListContainer.prepend(article);
-        
-        if (newReviewData?.author === "関＠シガゴル管理人" && newReviewData?.scores) { 
-            await renderRadarCharts(); 
-        }
+        // ★★★ 修正箇所③：投稿直後は画面に出さず、メッセージだけ表示する ★★★
+        // (以前はここに、投稿を即座に画面にねじ込むコードがありました。それを削除しました)
+        console.log('[Shigagolf] Review posted as pending. Waiting for admin approval.');
     });
 
     // --- スクリプトの実行（DOMの準備を待つ） ---
     function runScripts() {
         try {
-            console.log("[Shigagolf Debug] runScripts: Executing.");
             initializeStaticScripts();
             createLazyLoader('#reviews-list', loadReviews, '300px');
             createLazyLoader('#map-section', () => {
                 const mapIframe = document.getElementById('map-iframe');
                 if (mapIframe && mapIframe.dataset.src) {
                     mapIframe.src = mapIframe.dataset.src;
-                } else {
-                     console.warn("[Shigagolf Debug] Map iframe or data-src not found.");
                 }
             }, '100px');
         } catch (e) {
@@ -622,13 +614,9 @@ const clientFirebaseConfig = {
         }
     }
 
-    // ★★★ 変更点: DOMContentLoaded ではなく、readyState をチェック ★★★
     if (document.readyState === 'loading') {
-        console.log("[Shigagolf Debug] DOM is loading, adding DOMContentLoaded listener.");
         document.addEventListener('DOMContentLoaded', runScripts);
     } else {
-        
-        console.log(`[Shigagolf Debug] DOM is ${document.readyState}, running scripts directly.`);
         runScripts();
     }
 
