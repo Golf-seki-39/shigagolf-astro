@@ -1,67 +1,36 @@
-const { onDocumentCreated } = require("firebase-functions/v2/firestore");
-const { setGlobalOptions } = require("firebase-functions/v2");
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-const fetch = require("node-fetch");
+const functions = require("firebase-functions/v1"); // ← ここに「/v1」を足しただけです！
+const axios = require("axios");
 
-admin.initializeApp();
-setGlobalOptions({ region: "asia-northeast1" });
+// 先ほど取得したDiscordのWebhook URL
+const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1517355790204403802/gGVD-zVxlu_wNcaq3oAOigqMuzwGImgzrlbbCdWUMr5v1FRySXb4GDsPxoohbdeUIpyf";
 
-const NETLIFY_BUILD_HOOK_URL = "https://api.netlify.com/build_hooks/68b3b7a74e7aa45923289078";
+// Firestoreの「reviews」コレクションに新しいデータが作成されたら起動する
+exports.notifyReview = functions.region('asia-northeast1').firestore
+  .document("artifacts/{appId}/public/data/practice_ranges/{rangeId}/reviews/{reviewId}")
+  .onCreate(async (snap, context) => {
+    
+    // 投稿された口コミのデータ
+    const review = snap.data();
+    // どの練習場（URLのID）に投稿されたか
+    const rangeId = context.params.rangeId;
 
-exports.updateStatsAndTriggerBuild = onDocumentCreated(
-    "artifacts/{appId}/public/data/practice_ranges/{rangeId}/reviews/{reviewId}",
-    async (event) => {
-        functions.logger.info("Function triggered for stats update and build!", { params: event.params });
+    // 管理人（関さん）の返信テストなどは通知しないようにする
+    if (review.author === "関＠シガゴル管理人") {
+        return null;
+    }
 
-        try {
-            const { appId, rangeId } = event.params;
-            const db = admin.firestore();
+    // Discordに送るメッセージのレイアウト
+    const message = {
+      content: `🎉 **シガゴルに新しい口コミが届きました！**\n\n**対象施設:** ${rangeId}\n**投稿者:** ${review.author || "匿名"}\n**評価:** ⭐️ ${review.rating}\n**タイトル:** ${review.title || "なし"}\n**本文:**\n\`\`\`\n${review.body || "なし"}\n\`\`\``
+    };
 
-            const rangeRef = db.doc(`artifacts/${appId}/public/data/practice_ranges/${rangeId}`);
-            const reviewsRef = rangeRef.collection("reviews");
-            
-            const reviewsSnapshot = await reviewsRef.get();
-            
-            // ★★★ ここからが修正箇所です ★★★
-
-            let validReviewsCount = 0; // 有効なレビューの数
-            let totalRating = 0;       // 有効な評価の合計
-
-            reviewsSnapshot.forEach(doc => {
-                const reviewData = doc.data();
-                // 'rating'フィールドが存在し、かつ、それが数値として有効かを確認
-                if (reviewData && typeof reviewData.rating === 'number' && !isNaN(reviewData.rating)) {
-                    totalRating += reviewData.rating;
-                    validReviewsCount++; // 有効なレビューとしてカウント
-                }
-            });
-            
-            // 全てのレビューの総数は newReviewCount として保持
-            const newReviewCount = reviewsSnapshot.size;
-
-            // 平均評価は「有効なレビュー」だけで計算
-            const newAvgRating = validReviewsCount > 0 ? totalRating / validReviewsCount : 0;
-            const roundedAvgRating = Math.round(newAvgRating * 10) / 10;
-            
-            // データベースには、総レビュー数と、計算された平均評価を更新
-            await rangeRef.update({ 
-                reviewCount: newReviewCount,
-                avgRating: roundedAvgRating 
-            });
-            // ★★★ 修正箇所はここまで ★★★
-
-            functions.logger.info(`Successfully updated stats for ${rangeId}: Count=${newReviewCount}, AvgRating=${roundedAvgRating}`);
-
-            if (NETLIFY_BUILD_HOOK_URL) {
-                await fetch(NETLIFY_BUILD_HOOK_URL, { method: 'POST' });
-                functions.logger.info("Successfully triggered a new build on Netlify!");
-            } else {
-                functions.logger.warn("NETLIFY_BUILD_HOOK_URL is not set. Skipping build trigger.");
-            }
-
-        } catch (error) {
-            functions.logger.error("An error occurred:", error);
-        }
-    },
-);
+    try {
+      // Discordへ送信！
+      await axios.post(DISCORD_WEBHOOK_URL, message);
+      console.log("Discord通知成功！");
+    } catch (error) {
+      console.error("Discord通知エラー:", error);
+    }
+    
+    return null;
+  });
