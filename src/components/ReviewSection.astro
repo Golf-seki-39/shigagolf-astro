@@ -18,155 +18,287 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
 ---
 
 <section
-    id="review-form-section"
-    class="max-w-2xl mx-auto mt-12 p-6 bg-white rounded-lg shadow-md"
+  id="review-form-section"
+  class="max-w-2xl mx-auto mt-12 p-6 bg-white rounded-lg shadow-md"
 >
-    <h2 class="text-3xl font-bold mb-2 text-center">レビューを投稿する</h2>
-    <p class="text-slate-500 mb-6 text-xl text-center">{range.name}</p>
+  <h2 class="text-3xl font-bold mb-2 text-center">レビューを投稿する</h2>
+  <p class="text-slate-500 mb-6 text-xl text-center">{range.name}</p>
 
-    <form id="review-form">
-        <input type="hidden" id="rangeId" value={range.id} />
-        <div class="space-y-6">
-            <div>
-                <label for="reviewerName" class="block text-lg font-semibold mb-2">ニックネーム</label>
-                <input
-                    type="text"
-                    id="reviewerName"
-                    required
-                    class="w-full p-3 border border-slate-300 rounded-md"
-                    placeholder="例：シガゴルファー"
-                />
-            </div>
+  <form id="review-form">
+    <input type="hidden" id="rangeId" value={range.id} />
+    <div class="space-y-6">
+      <div>
+        <label for="reviewerName" class="block text-lg font-semibold mb-2"
+          >ニックネーム</label
+        >
+        <input
+          type="text"
+          id="reviewerName"
+          required
+          class="w-full p-3 border border-slate-300 rounded-md"
+          placeholder="例：シガゴルファー"
+        />
+      </div>
 
-            <div id="admin-scores-section" class="hidden space-y-4 pt-4 border-t border-dashed">
-                <h3 class="text-lg font-bold text-green-700">【管理人用】レーダーチャート評価</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="score_range" class="block text-sm font-medium text-slate-700">打席・レンジの質</label>
-                        <input type="number" id="score_range" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
-                    </div>
-                    <div>
-                        <label for="score_facilities" class="block text-sm font-medium text-slate-700">設備の充実度</label>
-                        <input type="number" id="score_facilities" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
-                    </div>
-                    <div>
-                        <label for="score_variety" class="block text-sm font-medium text-slate-700">練習環境の多様性</label>
-                        <input type="number" id="score_variety" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
-                    </div>
-                    <div>
-                        <label for="score_cost" class="block text-sm font-medium text-slate-700">コストパフォーマンス</label>
-                        <input type="number" id="score_cost" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label for="score_hospitality" class="block text-sm font-medium text-slate-700">快適性・ホスピタリティ</label>
-                        <input type="number" id="score_hospitality" min="1" max="5" class="mt-1 block w-full p-2 border border-slate-300 rounded-md" />
-                    </div>
-                </div>
-            </div>
-
-            <div id="user-rating-section">
-                <p class="block text-lg font-semibold mb-2">総合評価</p>
-                <div class="flex justify-between items-center">
-                    <div class="star-rating flex flex-row-reverse justify-end">
-                        <input type="radio" id="star5" name="rating" value="5" required /><label for="star5">★</label>
-                        <input type="radio" id="star4" name="rating" value="4" /><label for="star4">★</label>
-                        <input type="radio" id="star3" name="rating" value="3" /><label for="star3">★</label>
-                        <input type="radio" id="star2" name="rating" value="2" /><label for="star2">★</label>
-                        <input type="radio" id="star1" name="rating" value="1" /><label for="star1">★</label>
-                    </div>
-                    <a href="/criteria/" target="_blank" class="text-sm text-green-700 hover:underline">評価基準についてはこちら</a>
-                </div>
-            </div>
-            
-            <div>
-                <label for="reviewTitle" class="block text-lg font-semibold mb-2">レビュータイトル</label>
-                <input type="text" id="reviewTitle" required class="w-full p-3 border border-slate-300 rounded-md" placeholder="例：最高の練習環境でした！" />
-            </div>
-            
-            <div>
-                <label for="reviewComment" class="block text-lg font-semibold mb-2">レビュー本文</label>
-                <textarea id="reviewComment" rows="6" required class="w-full p-3 border border-slate-300 rounded-md" placeholder="施設の良かった点、改善してほしい点などを具体的に教えてください。"></textarea>
-            </div>
-            
-            <div>
-                <label class="block text-lg font-semibold mb-2">写真を追加 (5枚まで)</label>
-                <div id="image-preview-container" class="flex flex-wrap gap-2 p-2 border-2 border-dashed border-slate-300 rounded-md min-h-[110px] bg-slate-50"></div>
-                <div class="mt-2">
-                    <label for="review-image-upload" class="cursor-pointer bg-white text-green-700 font-bold py-2 px-4 border border-green-700 rounded-lg hover:bg-green-50 transition">ファイルを選択</label>
-                    <input type="file" id="review-image-upload" accept="image/png, image/jpeg" class="hidden" multiple />
-                    <p id="image-error" class="text-red-500 text-sm mt-1 hidden"></p>
-                </div>
-            </div>
-            
-            <div id="form-error-message" class="hidden text-center p-4 bg-red-50 text-red-700 rounded-md"></div>
-
-            <div class="text-right">
-                <button type="submit" class="submit-button bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition text-lg disabled:bg-slate-400">投稿する</button>
-            </div>
+      <div
+        id="admin-scores-section"
+        class="hidden space-y-4 pt-4 border-t border-dashed"
+      >
+        <h3 class="text-lg font-bold text-green-700">
+          【管理人用】レーダーチャート評価
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label
+              for="score_range"
+              class="block text-sm font-medium text-slate-700"
+              >打席・レンジの質</label
+            >
+            <input
+              type="number"
+              id="score_range"
+              min="1"
+              max="5"
+              class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
+            />
+          </div>
+          <div>
+            <label
+              for="score_facilities"
+              class="block text-sm font-medium text-slate-700"
+              >設備の充実度</label
+            >
+            <input
+              type="number"
+              id="score_facilities"
+              min="1"
+              max="5"
+              class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
+            />
+          </div>
+          <div>
+            <label
+              for="score_variety"
+              class="block text-sm font-medium text-slate-700"
+              >練習環境の多様性</label
+            >
+            <input
+              type="number"
+              id="score_variety"
+              min="1"
+              max="5"
+              class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
+            />
+          </div>
+          <div>
+            <label
+              for="score_cost"
+              class="block text-sm font-medium text-slate-700"
+              >コストパフォーマンス</label
+            >
+            <input
+              type="number"
+              id="score_cost"
+              min="1"
+              max="5"
+              class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
+            />
+          </div>
+          <div class="sm:col-span-2">
+            <label
+              for="score_hospitality"
+              class="block text-sm font-medium text-slate-700"
+              >快適性・ホスピタリティ</label
+            >
+            <input
+              type="number"
+              id="score_hospitality"
+              min="1"
+              max="5"
+              class="mt-1 block w-full p-2 border border-slate-300 rounded-md"
+            />
+          </div>
         </div>
-    </form>
-    
-    <div id="review-thanks-message" class="hidden text-center py-12">
-        <h3 class="text-2xl font-bold text-green-700">レビューありがとうございます！</h3>
-        <p class="mt-4 text-slate-600">投稿が一覧に反映されました。このページ上部のレビュー欄をご確認ください。</p>
+      </div>
+
+      <div id="user-rating-section">
+        <p class="block text-lg font-semibold mb-2">総合評価</p>
+        <div class="flex justify-between items-center">
+          <div class="star-rating flex flex-row-reverse justify-end">
+            <input
+              type="radio"
+              id="star5"
+              name="rating"
+              value="5"
+              required
+            /><label for="star5">★</label>
+            <input type="radio" id="star4" name="rating" value="4" /><label
+              for="star4">★</label
+            >
+            <input type="radio" id="star3" name="rating" value="3" /><label
+              for="star3">★</label
+            >
+            <input type="radio" id="star2" name="rating" value="2" /><label
+              for="star2">★</label
+            >
+            <input type="radio" id="star1" name="rating" value="1" /><label
+              for="star1">★</label
+            >
+          </div>
+          <a
+            href="/criteria/"
+            target="_blank"
+            class="text-sm text-green-700 hover:underline"
+            >評価基準についてはこちら</a
+          >
+        </div>
+      </div>
+
+      <div>
+        <label for="reviewTitle" class="block text-lg font-semibold mb-2"
+          >レビュータイトル</label
+        >
+        <input
+          type="text"
+          id="reviewTitle"
+          required
+          class="w-full p-3 border border-slate-300 rounded-md"
+          placeholder="例：最高の練習環境でした！"
+        />
+      </div>
+
+      <div>
+        <label for="reviewComment" class="block text-lg font-semibold mb-2"
+          >レビュー本文</label
+        >
+        <textarea
+          id="reviewComment"
+          rows="6"
+          required
+          class="w-full p-3 border border-slate-300 rounded-md"
+          placeholder="施設の良かった点、改善してほしい点などを具体的に教えてください。"
+        ></textarea>
+      </div>
+
+      <div>
+        <label class="block text-lg font-semibold mb-2"
+          >写真を追加 (5枚まで)</label
+        >
+        <div
+          id="image-preview-container"
+          class="flex flex-wrap gap-2 p-2 border-2 border-dashed border-slate-300 rounded-md min-h-[110px] bg-slate-50"
+        >
+        </div>
+        <div class="mt-2">
+          <label
+            for="review-image-upload"
+            class="cursor-pointer bg-white text-green-700 font-bold py-2 px-4 border border-green-700 rounded-lg hover:bg-green-50 transition"
+            >ファイルを選択</label
+          >
+          <input
+            type="file"
+            id="review-image-upload"
+            accept="image/png, image/jpeg"
+            class="hidden"
+            multiple
+          />
+          <p id="image-error" class="text-red-500 text-sm mt-1 hidden"></p>
+        </div>
+      </div>
+
+      <div
+        id="form-error-message"
+        class="hidden text-center p-4 bg-red-50 text-red-700 rounded-md"
+      >
+      </div>
+
+      <div class="text-right">
+        <button
+          type="submit"
+          class="submit-button bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition text-lg disabled:bg-slate-400"
+          >投稿する</button
+        >
+      </div>
     </div>
+  </form>
+
+  <div id="review-thanks-message" class="hidden text-center py-12">
+    <h3 class="text-2xl font-bold text-green-700">
+      レビューありがとうございます！
+    </h3>
+    <p class="mt-4 text-slate-600 leading-relaxed">
+      レビューをご投稿いただき、ありがとうございます！
+      シガゴルでは、スパム投稿や不適切な内容を防ぎ、ゴルファーの皆様が安心して参考にできるサイトを保つため、投稿内容の確認を行っております。<br
+      />
+
+      レビューは確認後に公開されますので、反映まで今しばらくお待ちください。<br
+      />
+
+      あなたの体験談が、これからゴルフを始める方や練習場・レッスン選びに悩む方の大きな助けになります🏌️‍♂️✨<br
+      />
+
+      ご協力ありがとうございます！
+    </p>
+  </div>
 </section>
 
 <style>
-    .star-rating input[type="radio"] {
-        position: absolute;
-        opacity: 0;
-        width: 0;
-        height: 0;
-        pointer-events: none;
+  .star-rating input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+  .star-rating label {
+    font-size: 2.5rem;
+    color: #d1d5db;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .star-rating input[type="radio"]:checked ~ label,
+  .star-rating label:hover,
+  .star-rating label:hover ~ label {
+    color: #f59e0b;
+  }
+  .preview-image-wrapper {
+    position: relative;
+  }
+  .remove-image-btn {
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 9999px;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    border: 2px solid white;
+    line-height: 1;
+  }
+  .submit-button.loading::after {
+    content: "";
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: translateY(-50%) rotate(360deg);
     }
-    .star-rating label {
-        font-size: 2.5rem;
-        color: #d1d5db;
-        cursor: pointer;
-        transition: color 0.2s;
-    }
-    .star-rating input[type="radio"]:checked ~ label,
-    .star-rating label:hover,
-    .star-rating label:hover ~ label {
-        color: #f59e0b;
-    }
-    .preview-image-wrapper {
-        position: relative;
-    }
-    .remove-image-btn {
-        position: absolute;
-        top: -0.5rem;
-        right: -0.5rem;
-        background-color: rgba(0,0,0,0.7);
-        color: white;
-        border-radius: 9999px;
-        width: 1.75rem;
-        height: 1.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        cursor: pointer;
-        border: 2px solid white;
-        line-height: 1;
-    }
-    .submit-button.loading::after {
-        content: '';
-        position: absolute;
-        right: 1.5rem;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 1.5rem;
-        height: 1.5rem;
-        border: 3px solid rgba(255,255,255,0.3);
-        border-top-color: white;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-        to { transform: translateY(-50%) rotate(360deg); }
-    }
+  }
 </style>
 
 <script define:vars={{ appId, apiKey, authDomain, projectId, storageBucket }}>
@@ -176,188 +308,248 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
       { initializeApp },
       { getAuth, signInAnonymously, onAuthStateChanged },
       { getFirestore, collection, addDoc, serverTimestamp },
-      { getStorage, ref, uploadBytes, getDownloadURL }
+      { getStorage, ref, uploadBytes, getDownloadURL },
     ] = await Promise.all([
-      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
-      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js'),
-      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'),
-      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js')
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"),
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"),
     ]);
-    return { initializeApp, getAuth, signInAnonymously, onAuthStateChanged, getFirestore, collection, addDoc, serverTimestamp, getStorage, ref, uploadBytes, getDownloadURL };
+    return {
+      initializeApp,
+      getAuth,
+      signInAnonymously,
+      onAuthStateChanged,
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp,
+      getStorage,
+      ref,
+      uploadBytes,
+      getDownloadURL,
+    };
   };
 
   let db, storage, auth;
   let collection, addDoc, serverTimestamp, ref, uploadBytes, getDownloadURL;
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    const form = document.getElementById('review-form');
+  document.addEventListener("DOMContentLoaded", async () => {
+    const form = document.getElementById("review-form");
     if (!form) return;
 
     const submitButton = form.querySelector('button[type="submit"]');
-    const rangeId = document.getElementById('rangeId').value;
-    const imageUploadInput = document.getElementById('review-image-upload');
-    const imagePreviewContainer = document.getElementById('image-preview-container');
-    const imageError = document.getElementById('image-error');
-    const formErrorMessage = document.getElementById('form-error-message');
+    const rangeId = document.getElementById("rangeId").value;
+    const imageUploadInput = document.getElementById("review-image-upload");
+    const imagePreviewContainer = document.getElementById(
+      "image-preview-container",
+    );
+    const imageError = document.getElementById("image-error");
+    const formErrorMessage = document.getElementById("form-error-message");
     let imageFiles = [];
 
-    const reviewerNameInput = document.getElementById('reviewerName');
-    const adminScoresSection = document.getElementById('admin-scores-section');
-    const userRatingSection = document.getElementById('user-rating-section');
+    const reviewerNameInput = document.getElementById("reviewerName");
+    const adminScoresSection = document.getElementById("admin-scores-section");
+    const userRatingSection = document.getElementById("user-rating-section");
 
     try {
       const modules = await getFirebaseModules();
-      const firebaseConfig = { apiKey, authDomain, projectId, storageBucket, appId };
-      
+      const firebaseConfig = {
+        apiKey,
+        authDomain,
+        projectId,
+        storageBucket,
+        appId,
+      };
+
       // ★★★ 修正: [rangeId].astro と初期化を共有するためのグローバル変数 ★★★
       if (!window._firebaseAppV10) {
         window._firebaseAppV10 = modules.initializeApp(firebaseConfig);
       }
       const app = window._firebaseAppV10;
-      
+
       db = modules.getFirestore(app);
       storage = modules.getStorage(app);
       auth = modules.getAuth(app);
-      
+
       collection = modules.collection;
       addDoc = modules.addDoc;
       serverTimestamp = modules.serverTimestamp;
       ref = modules.ref;
       uploadBytes = modules.uploadBytes;
       getDownloadURL = modules.getDownloadURL;
-      
-      modules.onAuthStateChanged(auth, user => {
+
+      modules.onAuthStateChanged(auth, (user) => {
         if (!user) {
-          modules.signInAnonymously(auth).catch(err => console.error("Anonymous sign-in failed", err));
+          modules
+            .signInAnonymously(auth)
+            .catch((err) => console.error("Anonymous sign-in failed", err));
         }
       });
     } catch (e) {
       console.error("Firebase initialization failed:", e);
-      formErrorMessage.textContent = 'サービスの初期化に失敗しました。ページを再読み込みしてください。';
-      formErrorMessage.classList.remove('hidden');
+      formErrorMessage.textContent =
+        "サービスの初期化に失敗しました。ページを再読み込みしてください。";
+      formErrorMessage.classList.remove("hidden");
       submitButton.disabled = true;
       return;
     }
 
     // (reviewerNameInput リスナーはあなたのコードのまま変更ありません)
-    reviewerNameInput.addEventListener('input', () => {
-      const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
-      adminScoresSection.classList.toggle('hidden', !isAdmin);
-      userRatingSection.classList.toggle('hidden', isAdmin);
-      adminScoresSection.querySelectorAll('input').forEach(input => input.required = isAdmin);
-      userRatingSection.querySelectorAll('input[name="rating"]').forEach(input => input.required = !isAdmin);
+    reviewerNameInput.addEventListener("input", () => {
+      const isAdmin = reviewerNameInput.value === "関＠シガゴル管理人";
+      adminScoresSection.classList.toggle("hidden", !isAdmin);
+      userRatingSection.classList.toggle("hidden", isAdmin);
+      adminScoresSection
+        .querySelectorAll("input")
+        .forEach((input) => (input.required = isAdmin));
+      userRatingSection
+        .querySelectorAll('input[name="rating"]')
+        .forEach((input) => (input.required = !isAdmin));
     });
 
     // (imageUploadInput リスナーはあなたのコードのまま変更ありません)
-    imageUploadInput.addEventListener('change', (event) => {
-        const newFiles = Array.from(event.target.files);
-        imageError.classList.add('hidden');
-        if (imageFiles.length + newFiles.length > 5) {
-            imageError.textContent = '写真は合計5枚までです。';
-            imageError.classList.remove('hidden');
-            return;
-        }
-        imageFiles.push(...newFiles);
-        renderImagePreviews();
-        imageUploadInput.value = '';
+    imageUploadInput.addEventListener("change", (event) => {
+      const newFiles = Array.from(event.target.files);
+      imageError.classList.add("hidden");
+      if (imageFiles.length + newFiles.length > 5) {
+        imageError.textContent = "写真は合計5枚までです。";
+        imageError.classList.remove("hidden");
+        return;
+      }
+      imageFiles.push(...newFiles);
+      renderImagePreviews();
+      imageUploadInput.value = "";
     });
 
     // (renderImagePreviews 関数はあなたのコードのまま変更ありません)
     function renderImagePreviews() {
-        imagePreviewContainer.innerHTML = '';
-        imageFiles.forEach((file, index) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'preview-image-wrapper w-24 h-24';
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'w-full h-full object-cover rounded-md';
-                const removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.className = 'remove-image-btn';
-                removeBtn.textContent = '×';
-                removeBtn.onclick = () => {
-                    imageFiles.splice(index, 1);
-                    renderImagePreviews();
-                };
-                wrapper.appendChild(img);
-                wrapper.appendChild(removeBtn);
-                imagePreviewContainer.appendChild(wrapper);
-            };
-            reader.readAsDataURL(file);
-        });
+      imagePreviewContainer.innerHTML = "";
+      imageFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "preview-image-wrapper w-24 h-24";
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.className = "w-full h-full object-cover rounded-md";
+          const removeBtn = document.createElement("button");
+          removeBtn.type = "button";
+          removeBtn.className = "remove-image-btn";
+          removeBtn.textContent = "×";
+          removeBtn.onclick = () => {
+            imageFiles.splice(index, 1);
+            renderImagePreviews();
+          };
+          wrapper.appendChild(img);
+          wrapper.appendChild(removeBtn);
+          imagePreviewContainer.appendChild(wrapper);
+        };
+        reader.readAsDataURL(file);
+      });
     }
-    
+
     // ★★★ submit ハンドラを修正 ★★★
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
+
       if (!auth.currentUser) {
-        formErrorMessage.textContent = '認証に失敗しました。ページを再読み込みしてください。';
-        formErrorMessage.classList.remove('hidden');
+        formErrorMessage.textContent =
+          "認証に失敗しました。ページを再読み込みしてください。";
+        formErrorMessage.classList.remove("hidden");
         return;
       }
 
       submitButton.disabled = true;
-      submitButton.classList.add('loading');
-      submitButton.textContent = '投稿中...';
-      formErrorMessage.classList.add('hidden');
+      submitButton.classList.add("loading");
+      submitButton.textContent = "投稿中...";
+      formErrorMessage.classList.add("hidden");
 
       try {
         // (isAdminチェック、rating計算、画像圧縮、アップロード処理などは一切変更ありません)
-        const isAdmin = reviewerNameInput.value === '関＠シガゴル管理人';
+        const isAdmin = reviewerNameInput.value === "関＠シガゴル管理人";
         let rating = 0;
         let scores = {};
 
         if (isAdmin) {
           scores = {
-            '打席・レンジ': parseInt(document.getElementById('score_range').value, 10),
-            '設備': parseInt(document.getElementById('score_facilities').value, 10),
-            '練習環境': parseInt(document.getElementById('score_variety').value, 10),
-            'コスパ': parseInt(document.getElementById('score_cost').value, 10),
-            '快適性': parseInt(document.getElementById('score_hospitality').value, 10),
+            "打席・レンジ": parseInt(
+              document.getElementById("score_range").value,
+              10,
+            ),
+            設備: parseInt(
+              document.getElementById("score_facilities").value,
+              10,
+            ),
+            練習環境: parseInt(
+              document.getElementById("score_variety").value,
+              10,
+            ),
+            コスパ: parseInt(document.getElementById("score_cost").value, 10),
+            快適性: parseInt(
+              document.getElementById("score_hospitality").value,
+              10,
+            ),
           };
-          const scoreValues = Object.values(scores).filter(v => !isNaN(v));
-          rating = scoreValues.length > 0 ? scoreValues.reduce((s, v) => s + v, 0) / scoreValues.length : 0;
+          const scoreValues = Object.values(scores).filter((v) => !isNaN(v));
+          rating =
+            scoreValues.length > 0
+              ? scoreValues.reduce((s, v) => s + v, 0) / scoreValues.length
+              : 0;
         } else {
-          const ratingInput = form.querySelector('input[name="rating"]:checked');
-          if (!ratingInput) throw new Error('総合評価を選択してください。');
+          const ratingInput = form.querySelector(
+            'input[name="rating"]:checked',
+          );
+          if (!ratingInput) throw new Error("総合評価を選択してください。");
           rating = parseInt(ratingInput.value, 10);
         }
 
-        if (imageFiles.length > 0 && typeof imageCompression === 'undefined') {
-            await new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js';
-                script.onload = resolve;
-                script.onerror = reject;
-                document.head.appendChild(script);
-            });
+        if (imageFiles.length > 0 && typeof imageCompression === "undefined") {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src =
+              "https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js";
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+          });
         }
-        
+
         const uploadPromises = imageFiles.map(async (file) => {
-            const compressedFile = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true });
-            const imageRef = ref(storage, `reviews/${rangeId}/${Date.now()}_${compressedFile.name}`);
-            const snapshot = await uploadBytes(imageRef, compressedFile);
-            return getDownloadURL(snapshot.ref);
+          const compressedFile = await imageCompression(file, {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+          });
+          const imageRef = ref(
+            storage,
+            `reviews/${rangeId}/${Date.now()}_${compressedFile.name}`,
+          );
+          const snapshot = await uploadBytes(imageRef, compressedFile);
+          return getDownloadURL(snapshot.ref);
         });
         const imageUrls = await Promise.all(uploadPromises);
 
-        const reviewDataToSave = {
+       const reviewDataToSave = {
           author: reviewerNameInput.value || '匿名',
           rating: Number(rating.toFixed(1)),
           title: document.getElementById('reviewTitle').value,
           body: document.getElementById('reviewComment').value,
           imageUrls,
-          createdAt: serverTimestamp(), // DBにはサーバー時刻を保存
+          createdAt: serverTimestamp(), 
           userId: auth.currentUser.uid,
+          status: isAdmin ? 'approved' : 'pending', // ★管理人は即公開、一般ユーザーは承認待ち
           ...(isAdmin && { scores }),
         };
 
-        const reviewsCollection = collection(db, `artifacts/${appId}/public/data/practice_ranges`, rangeId, 'reviews');
+        const reviewsCollection = collection(
+          db,
+          `artifacts/${appId}/public/data/practice_ranges`,
+          rangeId,
+          "reviews",
+        );
         await addDoc(reviewsCollection, reviewDataToSave);
-        
+
         // ★★★ 修正点 2/2: ここからが修正箇所です ★★★
         // window.location.href = `/ranges/${rangeId}`; // ← このリダイレクト行を削除
 
@@ -370,32 +562,33 @@ const storageBucket = import.meta.env.PUBLIC_FIREBASE_STORAGE_BUCKET;
         };
 
         // 2. カスタムイベントを発行（これで [rangeId].astro 側が検知します）
-        const event = new CustomEvent('reviewPosted', { detail: eventData });
+        const event = new CustomEvent("reviewPosted", { detail: eventData });
         document.dispatchEvent(event);
 
         // 3. フォームを非表示にし、サンキューメッセージを表示
-        form.style.display = 'none'; // フォームを隠す
-        const thanksMessage = document.getElementById('review-thanks-message'); // 復活させたDIV
+        form.style.display = "none"; // フォームを隠す
+        const thanksMessage = document.getElementById("review-thanks-message"); // 復活させたDIV
         if (thanksMessage) {
-            thanksMessage.classList.remove('hidden');
-            // フォームセクション自体（の上部）にスクロール
-            const formSection = document.getElementById('review-form-section');
-            if (formSection) {
-                 formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+          thanksMessage.classList.remove("hidden");
+          // フォームセクション自体（の上部）にスクロール
+          const formSection = document.getElementById("review-form-section");
+          if (formSection) {
+            formSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
         }
         // ★★★ 修正はここまで ★★★
-
       } catch (error) {
         // (エラー処理は変更なし)
         console.error("レビュー投稿中にエラーが発生しました: ", error);
-        formErrorMessage.textContent = error.message.includes('storage/unauthorized')
-            ? '画像のアップロード権限がありません。ページの再読み込み後、もう一度お試しください。'
-            : 'エラーが発生しました。入力内容を確認し、再度お試しください。';
-        formErrorMessage.classList.remove('hidden');
+        formErrorMessage.textContent = error.message.includes(
+          "storage/unauthorized",
+        )
+          ? "画像のアップロード権限がありません。ページの再読み込み後、もう一度お試しください。"
+          : "エラーが発生しました。入力内容を確認し、再度お試しください。";
+        formErrorMessage.classList.remove("hidden");
         submitButton.disabled = false;
-        submitButton.classList.remove('loading');
-        submitButton.textContent = '投稿する';
+        submitButton.classList.remove("loading");
+        submitButton.textContent = "投稿する";
       }
     });
 
