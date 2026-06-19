@@ -59,7 +59,7 @@ const clientFirebaseConfig = {
 
             async function loadPendingReviews() {
                 try {
-                    const [ { initializeApp }, { getFirestore, collectionGroup, query, where, getDocs, updateDoc } ] = await Promise.all([
+                    const [ { initializeApp }, { getFirestore, collectionGroup, query, where, getDocs, updateDoc, deleteDoc } ] = await Promise.all([
                         import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'),
                         import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')
                     ]);
@@ -133,14 +133,15 @@ const clientFirebaseConfig = {
                             }
                         });
 
-                        // 🗑️ 却下ボタンの処理
+                      // 🗑️ 却下（物理削除）ボタンの処理
                         card.querySelector('.reject-btn').addEventListener('click', async (e) => {
-                            if(!confirm('本当にこの口コミを却下（サイトに非表示）にしますか？')) return;
+                            if(!confirm('本当にこの口コミを完全に削除しますか？（Firebaseからも完全に消去され、復旧できません）')) return;
                             const btn = e.target;
-                            btn.textContent = '処理中...';
+                            btn.textContent = '削除中...';
                             btn.disabled = true;
                             try {
-                                await updateDoc(review.ref, { status: 'rejected' });
+                                // ★ updateDoc ではなく deleteDoc で完全に消し去る！
+                                await deleteDoc(review.ref);
                                 card.style.opacity = '0.5';
                                 setTimeout(() => {
                                     card.remove();
@@ -148,7 +149,7 @@ const clientFirebaseConfig = {
                                 }, 300);
                             } catch(err) {
                                 alert('エラーが発生しました: ' + err.message);
-                                btn.textContent = '🗑️ 却下（非表示）';
+                                btn.textContent = '🗑️ 却下（削除）';
                                 btn.disabled = false;
                             }
                         });
