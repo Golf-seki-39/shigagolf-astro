@@ -1,36 +1,111 @@
 ---
 // --- [1] AstroとBaseLayoutの設定 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-// ※画像挿入時にコメントアウトを解除してください
-// import { Image } from "astro:assets";
+import { Image } from "astro:assets";
 
 // --- [2] 共通コンポーネントをインポート ---
 import AuthorProfile from '../../../components/AuthorProfile.astro';
+import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 
 // --- [3] この記事固有の情報 ---
-const title = "【彦根・多賀】アプローチ・パター練習場まとめ｜目的別おすすめ施設3選";
-const description = "彦根市・多賀町周辺でアプローチやパターを徹底的に練習できる施設をまとめました。本物の芝から打てる多賀ゴルフ、巨大な屋内パター室がある365彦根、気軽に転がせるKSP彦根など、目的別の使い分けをシガゴル独自の視点で解説します。";
+const title = "【彦根・多賀】アプローチ練習ができるゴルフ練習場3選｜バンカー・パターも紹介";
+// ★修正：「100切り」を「コースデビューやスコアアップ」に変更
+const description = "コースデビューやスコアアップを目指す初心者ゴルファー必見！彦根市・多賀町周辺でアプローチやバンカー、パターの練習ができる施設をまとめました。本物の芝から打てる多賀ゴルフ、巨大な屋内パター室がある365彦根など、シガゴル独自の視点で徹底解説します。";
+const category = "比較記事"; 
 const pubDate = "2024-05-15"; // ※公開日に合わせて調整してください
 
-// ※アイキャッチ画像：写真は保留のため、一旦ダミーURL
-const ogImageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/short-game-practice.png";
+const ogImageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/shortgame-aicatch.jpg";
 
 const baseUrl = "https://shigolf.com";
-// ※実際の記事パスに合わせて調整してください
-const articleUrl = `${baseUrl}/practice_ranges/area/hikone/short-game-practice-summary/`; 
-const headline = "【彦根・多賀】アプローチ・パター練習場まとめ｜目的別おすすめ施設3選";
+const articleUrl = `${baseUrl}/articles/hikone-shortgame/`; 
+const headline = "【彦根・多賀】アプローチ練習ができるゴルフ練習場3選｜バンカー・パターも紹介";
 
 // --- [4] 内部リンク用パス設定 ---
-// ※実際の個別記事パスに合わせて調整してください
 const links = {
-    reviewTaga: "/practice_ranges/area/hikone/taga_golf/", // 多賀ゴルフ個別レビュー
-    review365: "/practice_ranges/area/hikone/hikone_365/", // 365彦根個別レビュー
-    reviewKsp: "/practice_ranges/area/hikone/ksp_hikone/", // KSP彦根個別レビュー
+    reviewTaga: "/practice_ranges/area/hikone/taga_golf/", 
+    review365: "/practice_ranges/area/hikone/hikone_365/", 
+    reviewKsp: "/practice_ranges/area/hikone/ksp_hikone/", 
 };
+
+// --- [5] 関連記事リストの定義 ---
+const experienceReports = [
+    { url: '/articles/taga-golf/', title: '多賀ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/aikyatti-taga.png' },
+    { url: '/articles/review/365hikone/', title: '365ゴルフクラブ 彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/0000img.jpg' },
+    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
+];
+
+const comparisonArticles = [
+    { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
+    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較 シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
+    { url: '/articles/hikone-biginner-guide/', title: '【彦根・多賀】初心者・女性向け！打ちっぱなし比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png' },
+    { url: '/articles/beginner-complete-guide/', title: '初めての打ちっぱなし完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/aikyattiiieieiosakojda.png' },
+];
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline,
+    "description": description,
+    "image": [ogImageUrl],
+    "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+    "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" } },
+    "datePublished": "2024-05-15T10:00:00+09:00"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "打ちっぱなし（打席）は使わず、アプローチ練習だけしに行っても大丈夫？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "もちろん大丈夫です！多賀ゴルフなどでは、打席でのフルスイング練習はせず、アプローチエリアだけを利用して帰る熱心なゴルファーもたくさんいます。（※多賀ゴルフの場合、入場料220円＋アプローチ利用料30分220円がかかります）"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "バンカー練習場だけ利用することはできる？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "はい、利用可能です。基本的にはアプローチエリアに併設されているため、同じエリア入場料で利用できます。アプローチ練習の合間に、苦手なバンカーの砂の感覚を確かめるのがおすすめです。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "初心者は何ヤードくらいから練習すればいい？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "まずは「グリーン周りの短いアプローチ（10〜20ヤード）」から練習して、距離感を掴むのが一番大事です！ここでミスを減らすことが、コースでの焦りをなくしスコアアップに直結します。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "アプローチとパター、どっちを優先して練習するべき？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "どちらも超重要ですが、練習場に行くなら「アプローチ」を優先するのがおすすめです。パターは自宅でも練習できますが、「本物の芝からウェッジで打つ感覚」や「ダフリの怖さ」は実際の芝生環境でしか経験できないからです。"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ゴルフシューズじゃなくてスニーカーでも大丈夫？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "施設にも確認しましたが、ルール上はスニーカーでも全く問題ありません！ただし、天然芝のアプローチ練習場やバンカーに入ると想像以上に靴が汚れるため、現地でゴルフシューズ（スパイクレスなど）に履き替えることを強くおすすめします。"
+        }
+      }
+    ]
+  }
+];
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={ogImageUrl}>
+
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     
     <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto text-slate-700 leading-relaxed">
         
@@ -39,68 +114,163 @@ const links = {
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
                 <p class="text-sm text-slate-500 mt-2 mb-6">公開日：{pubDate}</p>
+                
+                <figure class="m-0 mb-8 flex justify-center bg-slate-50 rounded-lg overflow-hidden">
+                    <Image 
+                        src={ogImageUrl} 
+                        alt="【彦根・多賀】アプローチ・パター練習場まとめ｜初心者向けおすすめ施設3選" 
+                        class="max-w-full w-auto h-auto max-h-[500px] object-contain" 
+                        inferSize={true}
+                        format="webp" 
+                        loading="eager" 
+                        fetchpriority="high" 
+                    />
+                </figure>
             </header>
+
+            {/* --- 冒頭のリード文（なぜアプローチ練習が必要か） --- */}
+            <h2 class="text-2xl font-bold text-slate-800 mt-8 mb-6 border-b-2 border-slate-200 pb-2">初心者のスコアアップには「ショートゲーム」</h2>
+            <p>
+                ゴルフを始めたばかりで打ちっぱなしに通っていると、<strong>ついつい楽しくてドライバーや7番アイアンばかりフルスイングして練習していませんか？</strong>
+            </p>
+            <p>
+                もちろんそれも大切ですが、実は18ホールのラウンド中にドライバーを打つのは最大でも14回だけ。対して、パターやアプローチなどの「ショートゲーム」は、全打数の半分近くを占めると言われています。
+            </p>
+            <p>
+                初心者のうちは、OBやセカンドのミスショットなどスコアを落とす原因は山ほどありますよね。でも、せっかくグリーン近くまで運んだのに、そこから<strong>「アプローチでダフって目の前」「トップしてグリーン奥へ…」と無駄な打数を重ねてしまうのが、一番もったいなくてメンタルが削られる瞬間</strong>です。
+            </p>
+            <p>
+                つまり、初心者にとって「一番手っ取り早く無駄なスコアを減らし」、コースでの焦りやプレッシャーを和らげてくれるのが「アプローチとパター」の練習なんです。<br>
+                しかし、彦根・多賀周辺で「本物の芝からショートゲームを練習できる施設」は意外と少なく、探すのも大変です。そこで今回は、実際にシガゴルが現地を調査した施設の中から、実戦的なショートゲーム練習ができる貴重な施設を目的別にご紹介します！
+            </p>
 
             {/* --- 冒頭の結論ボックス --- */}
             <div class="bg-slate-50 p-6 rounded-xl border-2 border-slate-200 my-8 not-prose">
-                <h2 class="text-xl font-bold text-slate-800 mt-0 mb-4 text-center">⛳ まずは結論！目的に合わせたおすすめはココ</h2>
+                <h2 class="text-xl font-bold text-slate-800 mt-0 mb-4 text-center">⛳ まずは結論！目的に合わせたおすすめはココ！！！</h2>
                 <div class="grid md:grid-cols-3 gap-4 text-center">
                     <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
-                        <p class="text-sm text-slate-500 m-0">アプローチ・バンカーを<br/>極めるなら</p>
+                        <p class="text-sm text-slate-500 m-0">芝からのアプローチ・バンカー</p>
                         <p class="font-bold text-lg text-emerald-700 m-0 mt-1">多賀ゴルフ</p>
                     </div>
                     <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
-                        <p class="text-sm text-slate-500 m-0">室内で本格パターを<br/>極めるなら</p>
+                        <p class="text-sm text-slate-500 m-0">室内で本格的なパター練習</p>
                         <p class="font-bold text-lg text-blue-700 m-0 mt-1">365彦根</p>
                     </div>
                     <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-100">
-                        <p class="text-sm text-slate-500 m-0">打席待ちや、<br/>帰る前の軽い調整なら</p>
+                        <p class="text-sm text-slate-500 m-0">打席待ちや日々の練習</p>
                         <p class="font-bold text-lg text-amber-700 m-0 mt-1">KSP彦根</p>
                     </div>
                 </div>
             </div>
 
-            <p>
-                <strong>彦根周辺でアプローチ練習場やパター練習場を探している方へ。</strong><br>
-                通常の打ちっぱなしのレンジ（単価打ち）でアプローチを練習しようとすると、どうしても1球あたりの料金が気になってガッツリ打てないことが多いですよね。<br/>
-                しかし、専用の練習場なら、本物の芝の感覚を掴みながら、圧倒的にコストパフォーマンスの高い練習が可能です。<br/>
-                今回は、彦根・多賀エリアでそんな「実戦的なショートゲーム練習」ができる貴重な施設を、目的別にスパッと断言してご紹介します！
-            </p>
+            {/* --- 比較表セクション（スマホ・横スクロール対応） --- */}
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">一目でわかる！ショートゲーム設備 比較表</h2>
+            
+            <div class="my-8 not-prose">
+                <div class="md:hidden flex justify-end items-center text-xs font-bold text-green-600 mb-2 animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                    表は横にスクロールできます
+                </div>
+                
+                <div class="overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white pb-1">
+                    <table class="w-full text-sm text-left border-collapse min-w-[600px]">
+                        <thead class="bg-slate-100 border-b-2 border-slate-300">
+                            <tr>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">施設名</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">アプローチ（芝）</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">バンカー</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">パター（専用）</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">料金の目安</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-green-700"><a href="#tagagolf" class="hover:underline">多賀ゴルフ</a></td>
+                                <td class="py-4 px-4 text-emerald-600 font-bold whitespace-nowrap">〇 最長60yd</td>
+                                <td class="py-4 px-4 text-emerald-600 font-bold whitespace-nowrap">〇 あり</td>
+                                <td class="py-4 px-4 text-slate-400 whitespace-nowrap">△ 簡易マットのみ</td>
+                                <td class="py-4 px-4 text-slate-600 whitespace-nowrap">30分220円〜</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-blue-700"><a href="#hikone365" class="hover:underline">365彦根</a></td>
+                                <td class="py-4 px-4 text-slate-400 whitespace-nowrap">× なし</td>
+                                <td class="py-4 px-4 text-slate-400 whitespace-nowrap">× なし</td>
+                                <td class="py-4 px-4 text-blue-600 font-bold whitespace-nowrap">〇 屋内巨大グリーン</td>
+                                <td class="py-4 px-4 text-slate-600 whitespace-nowrap">30分300円<br><span class="text-xs">（メンバー無料）</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-amber-700"><a href="#ksphikone" class="hover:underline">KSP彦根</a></td>
+                                <td class="py-4 px-4 text-slate-400 whitespace-nowrap">× なし</td>
+                                <td class="py-4 px-4 text-slate-400 whitespace-nowrap">× なし</td>
+                                <td class="py-4 px-4 text-amber-600 font-bold whitespace-nowrap">〇 複数エリアあり</td>
+                                <td class="py-4 px-4 text-slate-600 whitespace-nowrap">無料<br><span class="text-xs">（施設利用者に限る）</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <hr class="my-12 border-slate-200" />
 
             {/* ==========================================
                  ① 多賀ゴルフ
             =========================================== */}
-            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">① 本格アプローチ＆バンカーの最有力候補「多賀ゴルフ」</h2>
+            <h2 id="tagagolf" class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">① 彦根・多賀でアプローチ練習場・バンカー練習場を探すなら！<br/>「多賀ゴルフ」</h2>
 
-            {/* 📷 【写真挿入予定位置】2階打席からアプローチ練習場全体を見下ろしている写真、または外観の写真。 */}
-            <div class="bg-slate-100 p-4 rounded text-center my-6 text-slate-500 text-sm">📷 【写真挿入】多賀ゴルフ・アプローチ練習場全体、または外観</div>
-            {/* <Image src={tagalImagePath} alt="多賀ゴルフ アプローチ練習場全体" class="rounded-lg shadow-md my-6" /> */}
+            <figure class="m-0 my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/IMG_1519.png" 
+                    alt="多賀ゴルフ練習場のアプローチ・バンカー練習エリア全体" 
+                    class="rounded-lg shadow-md w-full h-auto max-h-[400px] object-cover" 
+                    inferSize={true}
+                    format="webp" 
+                    loading="lazy" 
+                />
+            </figure>
 
             <ul>
                 <li>
-                    <strong>ここが凄い：</strong> 彦根・多賀エリアで本格的なアプローチ練習場を探すなら、多賀ゴルフが最有力候補です。ここには60ydのアプローチ練習場があり、バンカーの練習もできます。
+                    <strong>ここが凄い：</strong> 彦根・多賀エリアで本格的なアプローチ・バンカー練習場を探すなら、多賀ゴルフが最有力候補です。最長60ヤードのアプローチエリアに加え、初心者にはハードルが高いバンカーの練習も可能です。
                 </li>
                 <li class="text-red-700 font-semibold">
-                    <strong>注意ポイント：</strong> 施設内には簡易的なパターマットも設置されていますが、メインはあくまでアプローチとバンカーです。ここは完全にショートゲーム（打つ練習）に特化して使うのがおすすめです。
+                    <strong>注意ポイント：</strong> 施設内には簡易的なパターマットも設置されていますが、メインはあくまでアプローチとバンカー。ここは完全に「芝から打つ練習」に特化して使うのがおすすめです。
                 </li>
                 <li>
-                    <strong>料金の破壊力と圧倒的コスパ：</strong><br/>
-                    料金は<strong>30分毎に220円</strong>（アプローチのみ利用は別途入場料220円）で、嬉しいボール無料貸出付きです。<br/>
-                    多賀ゴルフの通常の打席には「時間貸し（打ち放題）」プラン（30分780円〜など）がありますが、アプローチを徹底的に練習するなら、実はこの専用エリアを使う方が圧倒的に高コスパなんです。<br/>
-                    もちろん単価打ちと比べても破格ですし、何より<strong>「本物の芝の上から、さまざまなライ（傾斜や芝のハゲ具合など）を想定して打てる」</strong>という実戦的なメリットは、どれだけレンジのマットから打ち放題で打っても絶対に得られません。
+                    <strong>圧倒的なコスパ：</strong><br/>
+                    料金は<strong>30分毎に220円</strong>（アプローチのみ利用は別途入場料220円）で、ボールの無料貸出付き。多賀ゴルフの通常打席には時間貸しプランがありますが、アプローチを徹底的に練習するなら、実はこの専用エリアを使う方が圧倒的に高コスパです。<br/>
+                    <strong>「本物の芝の上から、さまざまなライ（傾斜や芝のハゲ具合など）を想定して打てる」</strong>という実戦的なメリットは、マットから打つだけでは得られません。
                 </li>
             </ul>
 
             <div class="bg-green-50 p-5 rounded-lg border-l-4 border-green-500 my-8 not-prose">
                 <p class="text-slate-800 text-sm m-0 leading-relaxed">
                     <strong class="text-green-700">💡 シガゴル目線（正直レビュー）：</strong><br/>
-                    ただし、私は天候や時間の都合でまだ実際にアプローチエリアを利用できていません。打席（2F）から確認した限りでは非常に実戦的な良い環境ですので、近いうちに必ず体験レビューを追記予定です！
+                    打席（2F）から何度も環境を確認していますが、初心者の距離感作りに最適な非常に実戦的な環境です。現在、実際の利用体験レビューも準備中ですのでお楽しみに！
                 </p>
                 <div class="text-center mt-4">
                     <a href={links.reviewTaga} class="inline-block bg-white text-green-700 font-bold py-2 px-4 rounded-lg border-2 border-green-600 shadow-sm hover:bg-green-50 transition text-sm">
                         さらに詳しい多賀ゴルフの全体レビューはこちら ▶︎
+                    </a>
+                </div>
+            </div>
+
+            {/* --- ウェッジのアフィリエイト導線（中古推奨のリアルな本音） --- */}
+            <div class="not-prose mt-8 mb-12 ml-4 p-5 md:p-6 bg-orange-50 border border-orange-200 rounded-lg shadow-sm">
+                <p class="text-base md:text-lg font-bold text-orange-800 mb-3 mt-0 flex items-center gap-2">
+                    <span class="text-2xl">⛳️</span> アプローチ練習を始める初心者の方へ
+                </p>
+                <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                    芝からのアプローチ練習を始めると、「ダフリのミスを助けてくれる、ソールが広いお助けウェッジ」が1本欲しくなってきますよね。でも、<strong>いきなり高額な新品を買う必要は全くありません！</strong><br><br>
+                    実は、私のクラブもほとんどがもらい物です。ずっとゴルフを続けるか分からない初心者のうちは、新品を買うのはもったいないですし、何より<strong>「新品のピカピカなクラブでダフって傷がついた時のショック」</strong>は計り知れません（笑）。傷がついても精神的ダメージが少ない「中古クラブ」から始めるのが絶対にオススメです。<br><br>
+                    中古なら数千円で安く買えますし、もし使わなくなっても、メルカリやヤフオクなどで手軽に売ってしまえば、お財布へのダメージも最小限で済みますよ！
+                </p>
+                <div class="text-center mt-5">
+                    {/* ↓↓↓ ここに中古ウェッジの楽天リンクを貼る ↓↓↓ */}
+                    <a href="https://a.r10.to/hNa50c" target="_blank" rel="noopener sponsored" class="inline-flex flex-col items-center justify-center w-full md:w-auto bg-white text-orange-700 font-bold py-3 px-6 border-2 border-orange-600 rounded-lg shadow-sm hover:bg-orange-100 transition no-underline">
+                        <span class="text-sm md:text-base">▶︎ 傷ついても安心！コスパ最強</span>
+                        <span class="text-xs text-orange-600 mt-0.5">初心者向けの中古ウェッジを探す（楽天）</span>
                     </a>
                 </div>
             </div>
@@ -110,18 +280,25 @@ const links = {
             {/* ==========================================
                  ② 365彦根
             =========================================== */}
-            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">② 雨でもガッツリ！パター練習するなら「365彦根」</h2>
+            <h2 id="hikone365" class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">② 彦根のパター練習場ならココ！巨大な屋内専用室がある<br/>「365彦根」</h2>
 
-            {/* 📷 【写真挿入予定位置】リニューアルされた綺麗なロビーや打席の様子。パター室の写真は、雰囲気が伝わるもの。 */}
-            <div class="bg-slate-100 p-4 rounded text-center my-6 text-slate-500 text-sm">📷 【写真挿入】365彦根・施設の綺麗さ、パター室の雰囲気</div>
-            {/* <Image src={hikone365ImagePath} alt="365彦根 屋内パター専用室" class="rounded-lg shadow-md my-6" /> */}
+            <figure class="m-0 my-6">
+                <Image 
+                    src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/365hikone-putting.jpg" 
+                    alt="365ゴルフクラブ彦根の広々とした屋内パター専用室" 
+                    class="rounded-lg shadow-md w-full h-auto max-h-[400px] object-cover" 
+                    inferSize={true}
+                    format="webp" 
+                    loading="lazy" 
+                />
+            </figure>
 
             <ul>
                 <li>
                     <strong>ここが凄い：</strong> 365彦根の2F打席の角には、なんと<strong>約8m四方の巨大なパター専用室（屋内）</strong>が用意されています。
                 </li>
                 <li>
-                    <strong>メリット：</strong> 屋内の人工芝なので、雨の日でも、真夏や真冬でも、天候を一切気にせず快適にタッチの練習ができます。カップも6ヶ所ほど切ってあるので、飽きずにいろんなラインの練習が可能です。
+                    <strong>メリット：</strong> 屋内の人工芝なので、雨の日でも、真夏や真冬でも天候を気にせず快適にタッチの練習ができます。カップも複数切ってあるので、初心者が苦手な様々な距離感のライン練習が可能です。
                 </li>
                 <li>
                     <strong>料金：</strong> メンバーは30分無料、ビジターは30分300円。
@@ -131,10 +308,10 @@ const links = {
             <div class="bg-blue-50 p-5 rounded-lg border-l-4 border-blue-500 my-8 not-prose">
                 <p class="text-slate-800 text-sm m-0 leading-relaxed">
                     <strong class="text-blue-700">💡 シガゴル目線（正直レビュー）：</strong><br/>
-                    この施設、リニューアルされてめちゃくちゃ綺麗なのに、近隣の他の練習場と比べると実はいつもお客さんが少なめで、かなり快適に練習できる「最高の穴場」なんです。<br/>
-                    ただ、私が写真を撮ろうとした時に限って熱心な先客がおられ、ガラスの反射に自分の顔が映り込んでしまい上手く撮影できていません（笑）。施設自体の綺麗さは保証しますので、ぜひ安心して行ってみてください！
+                    この施設、<strong>リニューアルされて</strong>めちゃくちゃ綺麗なのに、近隣の練習場と比べると実はいつもお客さんが少なめで、かなり快適に練習できる「最高の穴場」なんです。<br/>
+                    ただ、私が写真を撮ろうとした時に限って熱心な先客がおられ、ガラスの反射に顔が映り込んで上手く撮影できていません（笑）。施設自体の綺麗さは保証します！
                 </p>
-                <p class="text-red-600 text-xs mt-3 mb-0">※ただし、ここでアプローチやバンカーの練習はできないため、ショートゲーム全体を鍛えるなら多賀ゴルフとの使い分けがおすすめです。</p>
+                <p class="text-red-600 text-xs mt-3 mb-0">※ここにはアプローチやバンカーの専用練習場はないので、ショートゲーム全体を鍛えるなら多賀ゴルフとの使い分けがおすすめです。</p>
                 <div class="text-center mt-4">
                     <a href={links.review365} class="inline-block bg-white text-blue-700 font-bold py-2 px-4 rounded-lg border-2 border-blue-600 shadow-sm hover:bg-blue-50 transition text-sm">
                         さらに詳しい365彦根の全体レビューはこちら ▶︎
@@ -147,27 +324,51 @@ const links = {
             {/* ==========================================
                  ③ KSP彦根
             =========================================== */}
-            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">③ 絶妙な配置でついつい触っちゃう！「KSP彦根」</h2>
+            <h2 id="ksphikone" class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">③ 彦根でパター練習場を隙間時間に活用するなら！<br/>「KSP彦根」</h2>
 
-            {/* 📷 【写真挿入予定位置】ご提供いただいた「メインのパター部屋」「窓際の簡易マット」「レトロゲーム機」の写真をギャラリー風に並べる。 */}
-            <div class="bg-slate-100 p-4 rounded text-center my-6 text-slate-500 text-sm">📷 【写真挿入】KSP彦根・点在する3つのパター設備（ギャラリー）</div>
-            {/* <div class="grid grid-cols-2 md:grid-cols-3 gap-3 my-6">
-                <Image src={kspImagePath1} alt="KSP彦根 メインパター部屋" class="rounded shadow-sm" />
-                <Image src={kspImagePath2} alt="KSP彦根 窓際簡易マット" class="rounded shadow-sm" />
-                <Image src={kspImagePath3} alt="KSP彦根 レトロパターゲーム" class="rounded shadow-sm" />
-            </div> */}
+            {/* KSP彦根の実際の写真埋め込み（1大＋2小のギャラリー風） */}
+            <div class="my-6">
+                {/* メイン写真（大） */}
+                <figure class="m-0 mb-3">
+                    <img 
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6537.jpg" 
+                        alt="KSP彦根の広々としたメインパター部屋" 
+                        class="rounded-lg shadow-md w-full h-auto max-h-[400px] object-cover border border-slate-200" 
+                        loading="lazy" 
+                    />
+                </figure>
+                {/* おまけ写真（小）2枚を横並び */}
+                <div class="grid grid-cols-2 gap-3">
+                    <figure class="m-0">
+                        <img 
+                            src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6544.png" 
+                            alt="休憩所にある簡易パターマット" 
+                            class="rounded-lg shadow-sm w-full h-[150px] object-cover border border-slate-200" 
+                            loading="lazy" 
+                        />
+                    </figure>
+                    <figure class="m-0">
+                        <img 
+                            src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6545.jpg" 
+                            alt="昭和レトロなパターゲーム機" 
+                            class="rounded-lg shadow-sm w-full h-[150px] object-cover border border-slate-200" 
+                            loading="lazy" 
+                        />
+                    </figure>
+                </div>
+            </div>
 
             <ul>
                 <li>
-                    <strong>どんなところ？：</strong> 1F受付周辺に、なんと3パターンの設備が点在しています。広々とした「メインのパター部屋」、休憩所の窓際にある「簡易マット」、そして昭和レトロな雰囲気がたまらない「パターゲーム機（TEN HOLE IN ONE）」です。
+                    <strong>どんなところ？：</strong> 1F受付周辺に、3パターンの設備が点在しています。広々とした「メインのパター部屋」、休憩所の窓際にある「簡易マット」、そして<strong>昭和レトロな雰囲気</strong>がたまらない「パターゲーム機（TEN HOLE IN ONE）」です。
                 </li>
             </ul>
 
             <div class="bg-amber-50 p-5 rounded-lg border-l-4 border-amber-500 my-8 not-prose">
                 <p class="text-slate-800 text-sm m-0 leading-relaxed">
                     <strong class="text-amber-700">💡 シガゴル流・最強の活用法：</strong><br/>
-                    ここは「ガッツリ練習する場所」というより、**利用シーンの優秀さ**が光ります。混雑して打席待ちをしている時の時間潰しにも最適ですし、何より「入り口すぐ横」という配置が抜群に良いんです。<br/>
-                    練習前や帰る前に目に入るので、「ちょっとパター触ろう！」という気にさせてくれます。<strong>実際、私も練習の帰りにほぼ必ずここでパターを転がして帰っています。</strong>
+                    ここはガッツリ練習する場所というより、利用シーンの優秀さが光ります。混雑して打席待ちをしている時の時間潰しにも最適ですし、入り口すぐ横という配置が抜群。<br/>
+                    練習前や帰る前に目に入るので、「ちょっとパター触ろう！」という気にさせてくれます。<strong>実際、私も練習の帰りにほぼ必ずここでパターを転がして帰っています。</strong>初心者はパターに触れる回数を増やすだけでもスコアが縮まります。
                 </p>
                 <div class="text-center mt-4">
                     <a href={links.reviewKsp} class="inline-block bg-white text-amber-700 font-bold py-2 px-4 rounded-lg border-2 border-amber-600 shadow-sm hover:bg-amber-50 transition text-sm">
@@ -178,25 +379,158 @@ const links = {
 
             <hr class="my-12 border-slate-200" />
 
+            {/* --- FAQセクション --- */}
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">初心者のギモンを解決！ショートゲーム練習Q&A</h2>
+            <div class="space-y-4 not-prose mb-12">
+                
+                <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                    <h3 class="font-bold text-slate-800 flex items-start gap-2 mt-0 mb-2">
+                        <span class="text-green-600">Q.</span> 打ちっぱなし（打席）は使わず、アプローチ練習だけしに行っても大丈夫？
+                    </h3>
+                    <p class="text-slate-600 text-sm m-0 pl-6">
+                        <span class="font-bold text-green-600">A.</span> <strong>もちろん大丈夫です！</strong><br>
+                        多賀ゴルフなどでは、打席でのフルスイング練習はせず、アプローチエリアだけを利用して帰る熱心なゴルファーもたくさんいます。（※多賀ゴルフの場合、入場料220円＋アプローチ利用料30分220円がかかります）
+                    </p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                    <h3 class="font-bold text-slate-800 flex items-start gap-2 mt-0 mb-2">
+                        <span class="text-green-600">Q.</span> バンカー練習場だけ利用することはできる？
+                    </h3>
+                    <p class="text-slate-600 text-sm m-0 pl-6">
+                        <span class="font-bold text-green-600">A.</span> <strong>はい、利用可能です。</strong><br>
+                        基本的にはアプローチエリアに併設されているため、同じエリア入場料で利用できます。アプローチ練習の合間に、苦手なバンカーの砂の感覚を確かめるのがおすすめです。
+                    </p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                    <h3 class="font-bold text-slate-800 flex items-start gap-2 mt-0 mb-2">
+                        <span class="text-green-600">Q.</span> 初心者は何ヤードくらいから練習すればいい？
+                    </h3>
+                    <p class="text-slate-600 text-sm m-0 pl-6">
+                        <span class="font-bold text-green-600">A.</span> まずは<strong>「グリーン周りの短いアプローチ（10〜20ヤード）」</strong>から練習して、距離感を掴むのが一番大事です！<br>
+                        コースに出た際、グリーン周りからショートして乗らなかったり、逆にトップして奥へオーバーしたりすると、非常にもったいない1打を失うだけでなく、<strong>「しょうもないミスをしてしまった…」と焦ってしまい、その後のプレーの集中力やメンタルまで一気に崩れてしまいます。</strong>まずは確実な短い距離を体に染み込ませましょう。
+                    </p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                    <h3 class="font-bold text-slate-800 flex items-start gap-2 mt-0 mb-2">
+                        <span class="text-green-600">Q.</span> アプローチとパター、どっちを優先して練習するべき？
+                    </h3>
+                    <p class="text-slate-600 text-sm m-0 pl-6">
+                        <span class="font-bold text-green-600">A.</span> どちらも超重要ですが、練習場に行くなら<strong>「アプローチ」を優先</strong>するのがおすすめです。<br>
+                        パターは自宅にマットを買えば毎日転がして距離感を養えますが、「本物の芝からウェッジで打つ感覚」や「ザックリ（ダフリ）の怖さ」は、多賀ゴルフのような実際の芝生環境でしか経験できないからです。
+                    </p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+                    <h3 class="font-bold text-slate-800 flex items-start gap-2 mt-0 mb-2">
+                        <span class="text-green-600">Q.</span> ゴルフシューズじゃなくてスニーカーでも大丈夫？
+                    </h3>
+                    <div class="text-slate-600 text-sm m-0 pl-6">
+                        <span class="font-bold text-green-600">A.</span> 施設にも確認しましたが、ルール上はスニーカーでも全く問題ありません！<br>
+                        ただし、天然芝のアプローチ練習場（多賀ゴルフなど）やバンカーに入ると、想像以上に靴が砂や泥で汚れます。<strong>特に多賀ゴルフは、靴の汚れを風で吹き飛ばす「コンプレッサー（エアガン）」がなく、砂落としマットのみの設置</strong>となっています。
+                    </div>
+                    
+                    <div class="mt-5 ml-6 p-4 md:p-5 bg-slate-50 border border-slate-200 rounded-lg">
+                        <p class="text-sm md:text-base font-bold text-slate-800 mb-3 mt-0 flex items-center gap-2">
+                            <span class="text-xl">💡</span> シガゴル管理人のワンポイントアドバイス
+                        </p>
+                        
+                        <figure class="m-0 mb-4">
+                            <img src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/IMG_2836-2.jpg" alt="シガゴル管理人が愛用しているプーマのスパイクレスシューズとキャディバッグ" class="rounded-md shadow-sm w-full md:w-3/4 mx-auto object-cover border border-slate-200" />
+                        </figure>
+
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            ルール上はスニーカーでもOKですが、私は<strong>「現地での履き替え」</strong>を強くおすすめします。私自身、普段履きのスニーカーが砂まみれになるのが絶対に嫌なので、アプローチ練習の時は必ずゴルフシューズに履き替えています。<br><br>
+                            ゴルフシューズは「ゴルフ場（泥や砂）で汚れてもいい靴」と割り切れますし、実際のラウンドに行けば強力なコンプレッサーで綺麗にできます。<br>
+                            「まだゴルフシューズを持っていない」という初心者は、いきなり数万円のものを買わなくても大丈夫です。私が最近買い替えたプーマのスパイクレスのように、<strong>7,000円台で買えるお手頃でおしゃれなモデル</strong>も探せばたくさんあります。まずはキャディバッグに安価な一足を入れておくのがおすすめです！
+                        </p>
+                        <div class="text-center mt-4">
+                            <a href="https://a.r10.to/h5SyDa" target="_blank" rel="noopener sponsored" class="inline-flex flex-col items-center justify-center w-full md:w-auto bg-white text-green-700 font-bold py-3 px-6 border-2 border-green-600 rounded-lg shadow-sm hover:bg-green-50 transition no-underline">
+                                <span class="text-sm md:text-base">▶︎ お手頃でカッコいい！</span>
+                                <span class="text-xs text-green-600 mt-0.5">プーマのゴルフシューズを探す（楽天）</span>
+                            </a>
+                            <p class="text-[10px] text-slate-500 mt-2 mb-0">※私が購入したモデルは売り切れの可能性があるため、最新のラインナップ一覧へリンクしています。</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            {/* --- ★追加：初心者ガイドへの導線 --- */}
+            <div class="not-prose mt-12 mb-16 p-6 md:p-8 bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-300 rounded-2xl shadow-lg text-center">
+                <h3 class="text-2xl font-black text-green-900 mt-0 mb-3 flex justify-center items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg>
+                    「そもそも打ちっぱなしが初めて…」という方へ
+                </h3>
+                <p class="text-slate-700 mb-6 leading-relaxed font-semibold">
+                    「服装はどうすればいい？」「一人で行っても大丈夫？」<br>
+                    そんな不安を全て解消する、シガゴル渾身の完全ガイドをご用意しています！
+                </p>
+                <a href="/articles/beginner-complete-guide/" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-green-700 text-white font-bold rounded-xl hover:bg-green-800 hover:shadow-xl transition-all duration-300 no-underline text-lg">
+                    初めての打ちっぱなし完全ガイドを読む ＞
+                </a>
+            </div>
+
+
             {/* ==========================================
                  まとめ
             =========================================== */}
-            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">■ まとめ：今日鍛えたいテーマで練習場を選ぼう！</h2>
+            <h2 class="text-2xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">まとめ：初心者は今日鍛えたいテーマで練習場を選ぼう！</h2>
             <p>
-                ショートゲームと一口に言っても、施設によって得意な分野はまったく違います。
+                ショートゲームと一口に言っても、施設によって得意な分野はまったく違います。目的に合わせた使い分けが、コースデビューやスコアアップの近道です。
             </p>
             <ul>
-                <li><strong>芝からアプローチの距離感を養うなら ➔ <a href="#tagagolf">多賀ゴルフ</a></strong></li>
-                <li><strong>綺麗な室内でパターのタッチを合わせるなら ➔ <a href="#hikone365">365彦根</a></strong></li>
-                <li><strong>打席練習のついでにパターも触っておくなら ➔ <a href="#ksphikone">KSP彦根</a></strong></li>
+                <li><strong>本物の芝からアプローチ・バンカーの距離感を養うなら ➔ <a href="#tagagolf" class="text-emerald-700 font-bold hover:underline">多賀ゴルフ</a></strong></li>
+                <li><strong>綺麗な室内でパターのタッチを徹底的に合わせるなら ➔ <a href="#hikone365" class="text-blue-700 font-bold hover:underline">365彦根</a></strong></li>
+                <li><strong>打席練習のついでにパター感覚を染み込ませるなら ➔ <a href="#ksphikone" class="text-amber-700 font-bold hover:underline">KSP彦根</a></strong></li>
             </ul>
             <p>
-                「今日は何を練習するか？」という目的に合わせて、ぜひこの3施設を使い分けてみてください！
+                「今日は何を練習するか？」というテーマを持って、ぜひこの3施設を活用してみてください！
             </p>
 
-            {/* --- 記事下コンポーネント --- */}
+           {/* ==========================================
+                 記事末尾：黄金の4ステップ
+            =========================================== */}
+
+            {/* 1. 個別最適化バナー（料金比較シミュレーターへ誘導） */}
+            <div class="not-prose my-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-300 rounded-2xl shadow-lg text-center">
+                <div class="inline-block bg-blue-600 text-white font-bold px-4 py-1 rounded-full text-sm mb-4">
+                    次によく読まれている記事
+                </div>
+                <h3 class="text-2xl font-black text-blue-900 mt-0 mb-4">アプローチの次は、普段の練習代も見直しませんか？</h3>
+                <p class="text-slate-700 mb-6 leading-relaxed">
+                    ショートゲーム専用施設も良いですが、普段の打ちっぱなしの「1球単価」も気になりますよね。<br>
+                    シガゴル謹製の<strong>「料金比較シミュレーター」</strong>を使えば、あなたにとって一番安くてお得な練習場が1秒で分かります！
+                </p>
+                <a href="/articles/hikone-pricerank/" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-blue-700 text-white font-bold rounded-xl hover:bg-blue-800 hover:shadow-xl transition-all duration-300 no-underline text-lg">
+                    最安値がわかる料金シミュレーターを試す ＞
+                </a>
+            </div>
+
+            {/* 2. & 3. プロフィールとシェアボタン */}
             <AuthorProfile />
             <ShareButtons articleUrl={articleUrl} headline={headline} />
+
+            {/* 4. 関連記事スライダー */}
+            <div class="not-prose my-12 space-y-12">
+            {
+                category === '体験談' ? (
+                    <>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                    </>
+                ) 
+                : category === '比較記事' ? (
+                    <>
+                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
+                    </>
+                ) 
+                : null
+            }
+            </div>
             
         </article>
     </div>
