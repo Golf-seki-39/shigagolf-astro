@@ -1,0 +1,84 @@
+---
+// src/components/Sidebar.astro
+---
+
+<aside class="w-full lg:w-[320px] flex-shrink-0">
+    <div class="h-full space-y-8">
+        
+        {/* 1. 運営者プロフィール */}
+        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+            <h3 class="font-bold text-slate-800 border-b-2 border-green-600 pb-2 mb-4 text-base">この記事を書いた人</h3>
+            <div class="flex items-center gap-4 mb-3">
+                <img src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png" alt="関（せき）" class="w-16 h-16 rounded-full object-cover border border-slate-200">
+                <div>
+                    <p class="font-bold text-slate-800 m-0 text-base">関（せき）</p>
+                    <p class="text-xs text-green-700 font-bold m-0 mt-1">初心者向けゴルフ施設レビュアー</p>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600 leading-relaxed mb-3">
+                ゴルフ歴1年未満。初心者の壁をなくすため、滋賀県の練習場を自腹で巡り「忖度なしのリアルな情報」を発信中！
+            </p>
+            <div class="text-right">
+                <a href="/about/" class="text-xs text-green-700 font-bold hover:underline">詳しいプロフィールを見る ＞</a>
+            </div>
+        </div>
+
+        <div class="sticky top-24 space-y-8">
+
+        {/* 2. 大まとめ（ハブ）記事バナー */}
+        <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+            <a href="/articles/hikone-hub/" class="block">
+                <img src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-matome.jpg" alt="彦根・多賀ゴルフ練習場完全ガイド" class="w-full h-auto">
+            </a>
+        </div>
+
+        {/* 3. 初心者応援！ゴルフデビューロードマップ */}
+        <div class="bg-white p-5 rounded-lg shadow-sm border border-slate-200">
+            <h3 class="font-bold text-slate-800 border-b-2 border-green-600 pb-2 mb-4 text-base">ゴルフデビュー必読ガイド</h3>
+            <ul class="space-y-4 text-sm">
+                {/* ステップ1：打ちっぱなし */}
+                <li>
+                    <a href="/articles/beginner-complete-guide/" class="group flex gap-3 items-start">
+                        <span class="flex-shrink-0 w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold text-xs group-hover:bg-green-600 group-hover:text-white transition-colors">1</span>
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold text-slate-400 block">練習場デビューに</span>
+                            <span class="text-slate-700 group-hover:text-green-700 group-hover:underline font-semibold leading-tight block">「空振りしても恥ずかしくない」初めての打ちっぱなし完全ガイド</span>
+                        </div>
+                    </a>
+                </li>
+                {/* ステップ2：ショートコース */}
+                <li>
+                    <a href="/articles/shiga-short-courses/" class="group flex gap-3 items-start"> {/* ※実際のURLに合わせてください */}
+                        <span class="flex-shrink-0 w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold text-xs group-hover:bg-green-600 group-hover:text-white transition-colors">2</span>
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold text-red-500 block">🔥 圧倒的人気記事</span>
+                            <span class="text-slate-700 group-hover:text-green-700 group-hover:underline font-semibold leading-tight block">滋賀のショートコースは2ヶ所だけ！【安曇川 vs 365長浜】徹底比較</span>
+                        </div>
+                    </a>
+                </li>
+                {/* ステップ3：3つのバッグ */}
+                <li>
+                    <a href="/articles/beginner-guide/" class="group flex gap-3 items-start">
+                        <span class="flex-shrink-0 w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold text-xs group-hover:bg-green-600 group-hover:text-white transition-colors">3</span>
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold text-slate-400 block">本番の服装・マナーに</span>
+                            <span class="text-slate-700 group-hover:text-green-700 group-hover:underline font-semibold leading-tight block">【失敗談あり】初コースで焦らない「3つのバッグ」仕分け術</span>
+                        </div>
+                    </a>
+                </li>
+                {/* ステップ4：楽天GORA */}
+                <li>
+                    <a href="/articles/rakuten-gora-point-guide/" class="group flex gap-3 items-start">
+                        <span class="flex-shrink-0 w-6 h-6 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold text-xs group-hover:bg-green-600 group-hover:text-white transition-colors">4</span>
+                        <div class="space-y-1">
+                            <span class="text-xs font-bold text-slate-400 block">お得にコースを予約する</span>
+                            <span class="text-slate-700 group-hover:text-green-700 group-hover:underline font-semibold leading-tight block">【楽天GORA】初回予約で損しない！最大19,000pt獲得ワザ</span>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        </div>
+    </div>
+</aside>
