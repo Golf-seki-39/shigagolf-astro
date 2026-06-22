@@ -540,35 +540,27 @@ const comparisonArticles = [
                 <p class="text-xs text-center text-slate-400 mt-6">※「1球ごとに1pt加算」の特典も考慮した実質負担額の目安です。</p>
             </div>
 
-            <script is:inline>
-                document.addEventListener('DOMContentLoaded', () => {
+            <script>
+                function initKSPSimulator() {
                     const sim = document.getElementById('ksp-simulator');
                     if(!sim) return;
 
-                    const els = {
-                        day: () => sim.querySelector('input[name="ksp-day"]:checked').value,
-                        time: () => sim.getElementById('ksp-time').value,
-                        floor: () => sim.querySelector('input[name="ksp-floor"]:checked').value,
-                        user: () => sim.getElementById('ksp-user').value,
-                        chargeRate: () => parseFloat(sim.getElementById('ksp-charge').value),
-                        balls: () => parseInt(sim.getElementById('ksp-balls').value),
-                        
-                        ballsDisplay: sim.getElementById('ksp-balls-val'),
-                        totalYen: sim.getElementById('ksp-total-yen'),
-                        totalPt: sim.getElementById('ksp-total-pt'),
-                        recBox: sim.getElementById('ksp-recommend'),
-                        recList: sim.getElementById('ksp-recommend-list')
-                    };
-
                     const update = () => {
-                        const day = els.day();
-                        const time = els.time();
-                        const floor = els.floor();
-                        const user = els.user();
-                        const rate = els.chargeRate();
-                        const balls = els.balls();
+                        // 【修正】エラーにならないよう、正しく要素を取得
+                        const day = document.querySelector('input[name="ksp-day"]:checked')?.value || 'weekday';
+                        const floor = document.querySelector('input[name="ksp-floor"]:checked')?.value || '1f';
+                        const time = document.getElementById('ksp-time')?.value || 'normal';
+                        const user = document.getElementById('ksp-user')?.value || 'general';
+                        const rate = parseFloat(document.getElementById('ksp-charge')?.value) || 1.0;
+                        const balls = parseInt(document.getElementById('ksp-balls')?.value) || 150;
+                        
+                        const ballsDisplay = document.getElementById('ksp-balls-val');
+                        const totalYen = document.getElementById('ksp-total-yen');
+                        const totalPt = document.getElementById('ksp-total-pt');
+                        const recBox = document.getElementById('ksp-recommend');
+                        const recList = document.getElementById('ksp-recommend-list');
 
-                        els.ballsDisplay.textContent = balls + "球";
+                        if (ballsDisplay) ballsDisplay.textContent = balls + "球";
 
                         // 打席料
                         let entryFee = 0;
@@ -598,13 +590,14 @@ const comparisonArticles = [
                             usedPoints -= balls; // 1球1円還元
                         }
 
+                        // チャージ還元率を掛けて実質的な日本円に
                         const realYen = Math.ceil(usedPoints * rate);
                         
-                        els.totalPt.textContent = Math.ceil(usedPoints).toLocaleString();
-                        els.totalYen.textContent = realYen.toLocaleString();
+                        if (totalPt) totalPt.textContent = Math.ceil(usedPoints).toLocaleString();
+                        if (totalYen) totalYen.textContent = realYen.toLocaleString();
 
                         // 打ち放題(時間打ち)との比較
-                        els.recBox.classList.add('hidden');
+                        if (recBox) recBox.classList.add('hidden');
                         if(time !== 'late') {
                             let timePrices = {};
                             if(day === 'weekday') {
@@ -614,7 +607,6 @@ const comparisonArticles = [
                             }
 
                             let recs = [];
-                            // 時間打ちの料金(pt)に打席料を足して、実質円に変換
                             Object.entries(timePrices).forEach(([mins, pricePt]) => {
                                 const timeRealYen = Math.ceil((pricePt + entryFee) * rate);
                                 if(realYen > timeRealYen) {
@@ -622,20 +614,27 @@ const comparisonArticles = [
                                 }
                             });
 
-                            if(recs.length > 0) {
-                                els.recList.innerHTML = recs.join('<br>');
-                                els.recBox.classList.remove('hidden');
+                            if(recs.length > 0 && recBox && recList) {
+                                recList.innerHTML = recs.join('<br>');
+                                recBox.classList.remove('hidden');
                             }
                         }
                     };
 
+                    // イベントリスナーの登録
                     sim.querySelectorAll('input, select').forEach(el => {
                         el.addEventListener('change', update);
                         if(el.type === 'range') el.addEventListener('input', update);
                     });
                     
+                    // 初回の計算を実行
                     update();
-                });
+                }
+
+                // ページ読み込み時に実行
+                document.addEventListener('DOMContentLoaded', initKSPSimulator);
+                // ※AstroのViewTransitionsを入れた場合も動くようにする保険
+                document.addEventListener('astro:page-load', initKSPSimulator);
             </script>
             {/* --- シミュレーターここまで --- */}
 
