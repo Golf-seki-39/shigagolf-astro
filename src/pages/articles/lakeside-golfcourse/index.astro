@@ -9,6 +9,7 @@ import { Image } from "astro:assets";
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
+import Sidebar from '../../../components/Sidebar.astro'; 
 
 // --- [3] 記事の基本設定 ---
 // FirebaseのドキュメントID
@@ -130,12 +131,21 @@ if (typeof faqElements !== 'undefined' && faqElements) {
     <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
 
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(schemaData)} />
-    <div id="article-view" class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
-        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
-            ‹ お役立ち記事一覧に戻る
-        </a>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
+
         
-        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+
+        {/* ▼ 左側のメイン記事エリア ▼ */}
+
+        <main id="article-view" class="w-full lg:flex-1 bg-white p-6 md:p-8 rounded-lg shadow-lg text-slate-700 leading-relaxed overflow-hidden">
+
+            
+
+            <a href="/articles/" class="nav-link back-button mb-6 inline-block text-green-700 font-semibold hover:underline">
+
+                ‹ お役立ち記事一覧に戻る
+
+            </a>
             
             <style is:global>
               html { scroll-behavior: smooth; }
@@ -153,6 +163,8 @@ if (typeof faqElements !== 'undefined' && faqElements) {
                   font-weight: bold;
               }
             </style>
+
+            <article class="prose lg:prose-xl max-w-none">
             
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
@@ -546,6 +558,12 @@ if (typeof faqElements !== 'undefined' && faqElements) {
                 )
             }
         </article>
+        </main> {/* ← メイン記事エリアを閉じる */}
+
+        {/* ▼ 右側のサイドバーを呼び出す ▼ */}
+        <Sidebar />
+        
+    </div>
     </div>
 
     <style>

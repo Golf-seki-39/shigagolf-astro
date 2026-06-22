@@ -3,6 +3,7 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
+import Sidebar from '../../../components/Sidebar.astro'; 
 
 // --- [1] 記事情報 ---
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/newgate_kusatsu/gallery/000000img.png"; 
@@ -129,12 +130,21 @@ const outdoorRanges = [
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
     
-    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
-        <a href="/articles/" class="nav-link back-button mb-6 text-green-700 font-semibold hover:underline">
-            ‹ 記事一覧に戻る
-        </a>
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
+
         
-        <article class="prose lg:prose-xl max-w-none text-slate-700 leading-relaxed">
+
+        {/* ▼ 左側のメイン記事エリア ▼ */}
+
+        <main id="article-view" class="w-full lg:flex-1 bg-white p-6 md:p-8 rounded-lg shadow-lg text-slate-700 leading-relaxed overflow-hidden">
+
+            
+
+            <a href="/articles/" class="nav-link back-button mb-6 inline-block text-green-700 font-semibold hover:underline">
+
+                ‹ お役立ち記事一覧に戻る
+
+            </a>
             
             <header class="mb-8 border-b pb-6">
                 <span class="bg-gray-600 text-white text-xs font-bold px-2 py-1 rounded mb-2 inline-block">閉店情報</span>
@@ -287,5 +297,11 @@ const outdoorRanges = [
             <AuthorProfile />
             
         </article>
+        </main> {/* ← メイン記事エリアを閉じる */}
+
+        {/* ▼ 右側のサイドバーを呼び出す ▼ */}
+        <Sidebar />
+        
+    </div>
     </div>
 </BaseLayout>
