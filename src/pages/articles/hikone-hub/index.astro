@@ -1,0 +1,275 @@
+---
+// --- [1] AstroとBaseLayoutの設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネントをインポート ---
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import MySlider from '../../../components/MySlider.astro';
+
+// --- [3] この記事固有の情報 ---
+const title = "【2026年版】彦根・多賀の打ちっぱなしおすすめ完全ガイド｜目的別に選ぶゴルフ練習場";
+const description = "彦根市・多賀町周辺のゴルフ練習場をシガゴルが徹底調査！「一番安いのは？」「芝からアプローチしたい」「最新の測定器があるのは？」など、あなたの目的に合わせて最適な練習場を案内します。";
+const pubDate = "2024-05-20"; // ※公開日に合わせて調整してください
+
+const ogImageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png";
+
+const baseUrl = "https://shigolf.com";
+const articleUrl = `${baseUrl}/articles/hikone-hub/`; 
+const headline = "【2026年版】彦根・多賀の打ちっぱなしおすすめ完全ガイド｜目的別に選ぶゴルフ練習場";
+
+// --- [4] 目的別の第2階層（比較記事）へのリンク設定 ---
+const navPanels = [
+    {
+        title: "とにかく安く打ちたい！",
+        desc: "彦根・多賀エリアの最安値はここ。シミュレーターでお得な施設を判定！",
+        link: "/articles/hikone-pricerank/",
+        icon: "fa-calculator",
+        color: "bg-blue-600",
+        btnLabel: "料金比較を見る"
+    },
+    {
+        title: "芝からアプローチしたい！",
+        desc: "コースデビューの鍵。天然芝やバンカー、巨大パター室がある施設を厳選。",
+        link: "/articles/hikone-shortgame/",
+        icon: "fa-flag",
+        color: "bg-emerald-600",
+        btnLabel: "ショートゲーム比較を見る"
+    },
+    {
+        title: "データや飛距離を知りたい！",
+        desc: "トップトレーサーなど無料で最新の弾道測定器が使えるハイテク練習場まとめ。",
+        link: "/articles/hikone-tracker/",
+        icon: "fa-chart-line",
+        color: "bg-indigo-600",
+        btnLabel: "測定器まとめを見る"
+    },
+    {
+        title: "綺麗で安心な施設に行きたい！",
+        desc: "周りの目が気になる初心者や女性に。清潔感があり設備が充実した練習場比較。",
+        link: "/articles/hikone-biginner-guide/",
+        icon: "fa-heart",
+        color: "bg-rose-600",
+        btnLabel: "初心者向けガイドを見る"
+    }
+];
+
+// --- [5] スライダー用の関連記事リスト ---
+const experienceReports = [
+    { url: '/articles/taga-golf/', title: '多賀ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/aikyatti-taga.png' },
+    { url: '/articles/review/365hikone/', title: '365ゴルフクラブ 彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/0000img.jpg' },
+    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
+];
+
+const comparisonArticles = [
+    { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
+    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較 シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
+    { url: '/articles/hikone-biginner-guide/', title: '【彦根・多賀】初心者・女性向け！打ちっぱなし比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png' },
+    { url: '/articles/beginner-complete-guide/', title: '初めての打ちっぱなし完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/aikyattiiieieiosakojda.png' },
+    { url: '/articles/hikone-shortgame/', title: '【彦根】ショートゲームの練習が出来るゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/shortgame-aicatch.jpg' },
+];
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={ogImageUrl}>
+    
+    <div class="bg-white p-6 md:p-10 rounded-lg shadow-lg max-w-4xl mx-auto text-slate-700 leading-relaxed">
+        
+        <article class="prose lg:prose-xl max-w-none">
+            
+            <header class="text-center">
+                <h1 class="text-3xl md:text-5xl font-black text-slate-800 leading-tight mb-4">{headline}</h1>
+                <p class="text-slate-500 mb-8">「あなたにぴったりの練習場」がここなら見つかる</p>
+                
+                <figure class="m-0 mb-10 overflow-hidden rounded-2xl shadow-xl">
+                    <Image 
+                        src={ogImageUrl} 
+                        alt="彦根・多賀エリアのゴルフ練習場ガイド" 
+                        class="w-full h-auto object-cover" 
+                        inferSize={true}
+                    />
+                </figure>
+            </header>
+
+            {/* --- 案内所（ハブ）としての目的別ナビパネル --- */}
+            <section class="not-prose my-12">
+                <h2 class="text-2xl font-bold text-slate-800 text-center mb-8 flex justify-center items-center gap-2">
+                    <span class="text-3xl">🧭</span> あなたの「目的」はどれですか？
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    {navPanels.map((panel) => (
+                        <a href={panel.link} class="group block bg-white border-2 border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all duration-300 no-underline">
+                            <div class="flex items-start gap-4">
+                                <div class={`${panel.color} text-white p-4 rounded-xl shadow-lg group-hover:scale-110 transition-transform`}>
+                                    <i class={`fa-solid ${panel.icon} text-2xl w-8 text-center`}></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-800 m-0 group-hover:text-blue-700 transition-colors">{panel.title}</h3>
+                                    <p class="text-slate-500 text-sm mt-2 mb-4 leading-snug">{panel.desc}</p>
+                                    <span class={`inline-block text-xs font-bold py-1 px-3 rounded-full border border-slate-200 text-slate-600 group-hover:bg-slate-800 group-hover:text-white transition-colors`}>
+                                        {panel.btnLabel} ＞
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    ))}
+                </div>
+            </section>
+
+            {/* --- ★追加：彦根・多賀エリア主要施設一覧（簡易表） --- */}
+            <section class="my-16 not-prose">
+                <h2 class="text-2xl font-bold text-slate-800 mt-0 mb-6 border-b-2 border-slate-200 pb-2">彦根・多賀エリア 主要施設一覧</h2>
+
+                {/* ★追加: スマホ閲覧時のみ表示されるスクロール案内 */}
+                <div class="md:hidden flex justify-end items-center text-xs font-bold text-green-600 mb-2 animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                    表は横にスクロールできます
+                </div>
+
+                <div class="overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white">
+                    <table class="w-full text-sm text-left border-collapse min-w-[500px]">
+                        <thead class="bg-slate-100 border-b-2 border-slate-300">
+                            <tr>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">施設名</th>
+                                <th class="py-3 px-4 font-bold text-slate-800">最大の特徴</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">タイプ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-green-700">多賀ゴルフ</td>
+                                <td class="py-4 px-4 text-slate-700">天然芝のアプローチ＆バンカー専用エリアを完備。実戦練習に最適。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">屋外大型</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-blue-700">365彦根</td>
+                                <td class="py-4 px-4 text-slate-700">全打席にトップトレーサー導入。巨大な屋内パター室が魅力の次世代施設。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">屋外大型</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-amber-700">KSP彦根</td>
+                                <td class="py-4 px-4 text-slate-700">エリア最多クラスの打席数と広大なフェアウェイ。のびのび打てる定番施設。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">屋外大型</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-indigo-700">HYPER GOLF</td>
+                                <td class="py-4 px-4 text-slate-700">天候に左右されない冷暖房完備。最新シミュレーターでラウンド体験も可能。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">インドア</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-200 my-12">
+                <h2 class="text-xl font-bold text-slate-800 mt-0 mb-4">「どこに行っても同じ」ではありません</h2>
+                <p class="text-sm md:text-base m-0">
+                    彦根市・多賀町エリアには、上記のように個性豊かな練習場が集まっています。
+                    料金システムはもちろん、マットの質、ボールの飛び方、そしてショートゲーム設備の有無など、選ぶ場所によって上達の効率や財布への優しさが大きく変わります。<br><br>
+                    シガゴルでは、エリア内の主要施設をすべて実際に訪問し、忖度なしのデータとレビューを作成しました。上記の目的別パネルから、今のあなたに一番必要な情報をチェックしてください。
+                </p>
+            </div>
+
+            {/* --- ★修正：施設詳細と体験談のダブルリンクUI --- */}
+            <h2 class="text-2xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">調査対象施設の詳細データ・体験レビュー</h2>
+            <p>シガゴルでは、各施設の「基本情報（料金や営業時間など）」をまとめたデータベースと、管理人が実際に打ってみた「体験レポート」を分けてご用意しています。気になる施設をチェックしてみてください。</p>
+            
+            <div class="space-y-6 not-prose mb-12">
+                
+                {/* 多賀ゴルフ */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">多賀ゴルフ</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">天然芝アプローチ / コスパ優秀</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/taga_gr/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
+                        </a>
+                        <a href="/articles/taga-golf/" class="px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition text-center shadow-sm">
+                            <i class="fa-solid fa-pen-nib mr-1"></i> 体験レビューを読む
+                        </a>
+                    </div>
+                </div>
+
+                {/* 365彦根 */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">365ゴルフクラブ 彦根</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">トップトレーサー / 巨大屋内パター</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/365_hikone/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
+                        </a>
+                        <a href="/articles/review/365hikone/" class="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition text-center shadow-sm">
+                            <i class="fa-solid fa-pen-nib mr-1"></i> 体験レビューを読む
+                        </a>
+                    </div>
+                </div>
+
+                {/* KSP彦根 */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">KSP彦根</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">地域最大級の広さ / 設備充実</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/ksp_hikone/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
+                        </a>
+                        <a href="/articles/ksp-hikone-review/" class="px-4 py-2 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition text-center shadow-sm">
+                            <i class="fa-solid fa-pen-nib mr-1"></i> 体験レビューを読む
+                        </a>
+                    </div>
+                </div>
+
+                {/* HYPER GOLF (詳細ページのみなど、状況に合わせて) */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">HYPER GOLF 彦根店</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">最新インドア / 冷暖房完備</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/hyper_hikone/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center w-full">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
+                        </a>
+                        {/* HYPER GOLFの体験談がまだ無い場合はボタンを隠すか「準備中」にするのもありです */}
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="my-16 border-slate-200" />
+
+            {/* ==========================================
+                 記事末尾：黄金の4ステップ（ハブ記事版）
+            =========================================== */}
+            <div class="not-prose my-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-300 rounded-2xl shadow-lg text-center">
+                <div class="inline-block bg-blue-600 text-white font-bold px-4 py-1 rounded-full text-sm mb-4">
+                    迷ったらまずはコレ！
+                </div>
+                <h3 class="text-2xl font-black text-blue-900 mt-0 mb-4">結局、自分にとって一番安い練習場はどこ？</h3>
+                <p class="text-slate-700 mb-6 leading-relaxed">
+                    「色々あって選べない…」という方は、シガゴル謹製の<strong>「料金比較シミュレーター」</strong>にお任せください！<br>
+                    あなたが打ちたい球数を入力するだけで、彦根エリアの最安値施設を1秒で判定します。
+                </p>
+                <a href="/articles/hikone-pricerank/" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-blue-700 text-white font-bold rounded-xl hover:bg-blue-800 hover:shadow-xl transition-all duration-300 no-underline text-lg">
+                    最安値がわかる料金シミュレーターを試す ＞
+                </a>
+            </div>
+
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={comparisonArticles} title="目的別・練習場比較まとめ" />
+                <MySlider articles={experienceReports} title="各施設の体験レポート" />
+            </div>
+            
+        </article>
+    </div>
+</BaseLayout>

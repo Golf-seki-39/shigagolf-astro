@@ -7,6 +7,7 @@ import { Image } from "astro:assets";
 import MySlider from '../../../components/MySlider.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
+import HikoneHubBanner from '../../../components/HikoneHubBanner.astro'; 
 
 // --- [3] この記事固有の情報 ---
 const title = "【彦根・多賀】初心者や女性が行きやすい打ちっぱなし3選｜手ぶらOK＆空いてる練習場を比較";
@@ -450,6 +451,9 @@ const jsonLd = {
                 </ul>
             </div>
 
+            {/* --- 大まとめ（ハブ記事）への誘導バナー --- */}
+            <HikoneHubBanner />
+
             <!-- 初心者ガイドへの内部リンクバナー -->
             <div class="not-prose my-16 p-8 bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-300 rounded-2xl shadow-lg text-center">
                 <div class="inline-block bg-green-600 text-white font-bold px-4 py-1 rounded-full text-sm mb-4">
@@ -465,8 +469,7 @@ const jsonLd = {
                 </a>
             </div>
 
-            <AuthorProfile />
-            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            
 
             <div class="not-prose my-12 space-y-12">
             {
@@ -485,6 +488,9 @@ const jsonLd = {
                 : null
             }
             </div>
+
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
             
         </article>
     </div>

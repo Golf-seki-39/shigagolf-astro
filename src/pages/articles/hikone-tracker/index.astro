@@ -7,6 +7,7 @@ import { Image } from "astro:assets";
 import MySlider from '../../../components/MySlider.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
+import HikoneHubBanner from '../../../components/HikoneHubBanner.astro'; 
 
 // --- [3] この記事固有の情報 ---
 // 🚀 検索エンジン（Google検索結果）用の最適化タイトル（35文字前後＋サイト名）
@@ -34,9 +35,10 @@ const experienceReports = [
 
 const comparisonArticles = [
     { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
-    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較　シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
+    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較 シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
     { url: '/articles/hikone-biginner-guide/', title: '【彦根・多賀】初心者・女性向け！打ちっぱなし比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png' },
     { url: '/articles/beginner-complete-guide/', title: '初めての打ちっぱなし完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/aikyattiiieieiosakojda.png' },
+    { url: '/articles/hikone-shortgame/', title: '【彦根】ショートゲームの練習が出来るゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/shortgame-aicatch.jpg' },
 ];
 
 // --- [5] JSON-LD構造化データ ---
@@ -348,23 +350,9 @@ const jsonLd = {
 
             <p>彦根エリアのゴルファーは、本当に恵まれています。その日の気分や練習テーマに合わせて、これらの“無料測定器”を使い倒してみてくださいね！</p>
 
-            <div class="not-prose my-16 p-8 bg-gradient-to-br from-green-600 to-green-800 rounded-2xl text-white shadow-xl relative overflow-hidden text-center">
-                <div class="relative z-10">
-                    <h2 class="text-2xl md:text-3xl font-bold mb-4 mt-0">彦根エリアを完全攻略したいあなたへ</h2>
-                    <p class="text-lg opacity-90 mb-6">
-                        「どの練習場が一番安いの？」「アプローチ練習場が広いのはどこ？」<br>
-                        彦根・多賀エリアのゴルフ練習場をあらゆる角度から徹底比較した<br>
-                        <strong>「彦根ゴルフ練習場 完全ガイド（2026年版）」</strong>を近日公開予定！
-                    </p>
-                    <div class="inline-block bg-white text-green-800 font-bold px-6 py-2 rounded-full animate-pulse">
-                        🚧 公開まで今しばらくお待ちください
-                    </div>
-                </div>
-                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full"></div>
-            </div>
 
-            <AuthorProfile />
-            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            {/* --- 大まとめ（ハブ記事）への誘導バナー --- */}
+            <HikoneHubBanner />
 
             <div class="not-prose my-12 space-y-12">
             {
@@ -383,6 +371,9 @@ const jsonLd = {
                 : null
             }
             </div>
+
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
             
         </article>
     </div>

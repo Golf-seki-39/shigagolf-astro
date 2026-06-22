@@ -9,6 +9,7 @@ import { Image } from "astro:assets";
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
+import HikoneHubBanner from '../../../components/HikoneHubBanner.astro'; 
 
 // --- [3] この記事固有の情報 ---
 const title = "【滋賀】トラックマン無料＆試打し放題！多賀ゴルフ練習場リアルレビュー【料金計算機付】 | シガゴル";
@@ -59,8 +60,10 @@ const experienceReports = [
 
 const comparisonArticles = [
     { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
-    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較　シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
+    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較 シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
     { url: '/articles/hikone-biginner-guide/', title: '【彦根・多賀】初心者・女性向け！打ちっぱなし比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png' },
+    { url: '/articles/beginner-complete-guide/', title: '初めての打ちっぱなし完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/aikyattiiieieiosakojda.png' },
+    { url: '/articles/hikone-shortgame/', title: '【彦根】ショートゲームの練習が出来るゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/shortgame-aicatch.jpg' },
 ];
 
 // --- [7] JSON-LD構造化データ ---
@@ -634,6 +637,9 @@ const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.me
                     写真の通り、すぐ隣に名神高速道路の「多賀スマートIC」のETCゲートが開通しています。左に大きく曲げてネットを超えるような打球には要注意です！
                 </p>
             </div>
+
+            {/* --- 大まとめ（ハブ記事）への誘導バナー --- */}
+            <HikoneHubBanner />
 
             <div class="not-prose my-12 space-y-12">
             {

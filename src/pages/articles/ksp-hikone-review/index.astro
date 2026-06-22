@@ -9,6 +9,7 @@ import { Image } from "astro:assets";
 import MySlider from '../../../components/MySlider.astro';
 import ShareButtons from '../../../components/ShareButtons.astro';
 import AuthorProfile from '../../../components/AuthorProfile.astro';
+import HikoneHubBanner from '../../../components/HikoneHubBanner.astro'; 
 
 // --- This article's specific information ---
 const title = "【KSP彦根】ゴルフの練習が劇的に変わる！全打席トップトレーサー無料の練習場が初心者の味方だった話 | シガゴル";
@@ -47,8 +48,10 @@ const experienceReports = [
 
 const comparisonArticles = [
     { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
-    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較　シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
+    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較 シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
     { url: '/articles/hikone-biginner-guide/', title: '【彦根・多賀】初心者・女性向け！打ちっぱなし比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png' },
+    { url: '/articles/beginner-complete-guide/', title: '初めての打ちっぱなし完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/aikyattiiieieiosakojda.png' },
+    { url: '/articles/hikone-shortgame/', title: '【彦根】ショートゲームの練習が出来るゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/shortgame-aicatch.jpg' },
 ];
 ---
 
@@ -514,6 +517,67 @@ const comparisonArticles = [
                 休憩スペースは打席後方だけでなく1階にも2ヶ所。駐車場にはEV充電器、フロントには打席の空席情報がわかる電光掲示板、1階には喫煙所、そして有料のロッカールームも完備されています。KSP彦根は、ゴルファーが練習に集中できる環境が整っています。
             </p>
 
+            <h2
+                id="summary"
+                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
+            >
+                まとめ：データで楽しむゴルフ練習！
+            </h2>
+            <p>
+                KSP彦根の魅力、特に「全打席トップトレーサー無料」というデータ活用の楽しさ、伝わりましたでしょうか？
+            </p>
+            <div
+                class="summary-box not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8"
+            >
+                <h3
+                    class="text-xl font-bold text-slate-800 mb-4 text-center md:text-left"
+                >
+                    KSP彦根は、こんなあなたにピッタリ！
+                </h3>
+                <ul class="list-none p-0 m-0 space-y-3">
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">自分のショットをデータで見える化して効率よく練習したい人</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">練習場選びで失敗したくない初心者ゴルファー</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">各番手の正確な飛距離や課題を客観的に把握したい人</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">混雑を避けて、ふらっと気軽に立ち寄れる環境を探している人</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">打ちっぱなしにハマり始めたばかりで、これからゴルフを本格的に始めたい人</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">目標設定やゲーム感覚で、楽しく練習のモチベーションを維持したい人</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
+                        <span class="flex-1">プリペイドカードの管理が苦手な、私のようなうっかりさん！</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-500 font-bold mr-2 mt-1 shrink-0">🉐</span>
+                        <span class="flex-1 font-bold text-red-700">ふるさと納税を活用して、賢くお得に練習したい人（<a href="https://a.r10.to/h5J6tH" target="_blank" rel="noopener sponsored" class="underline hover:text-red-800">楽天ふるさと納税をチェック</a>）</span>
+                    </li>
+                </ul>
+            </div>
+            <p>
+                一度行けば、きっとまた通いたくなるKSP彦根。「もっと早く知っていれば…！」と感じる方も多いはず。ぜひ、未来型ゴルフ練習を体感してみてくださいね！
+            </p>
+            <hr class="my-8" />
+
+
+            {/* --- 大まとめ（ハブ記事）への誘導バナー --- */}
+            <HikoneHubBanner />
+
                <div class="not-prose my-12 space-y-12">
             {
                 category === '体験談' ? (
@@ -531,6 +595,7 @@ const comparisonArticles = [
                 : null
             }
             </div>
+            
             
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
@@ -631,62 +696,7 @@ const comparisonArticles = [
                 )
             }
 
-            <h2
-                id="summary"
-                class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4"
-            >
-                まとめ：データで楽しむゴルフ練習！
-            </h2>
-            <p>
-                KSP彦根の魅力、特に「全打席トップトレーサー無料」というデータ活用の楽しさ、伝わりましたでしょうか？
-            </p>
-            <div
-                class="summary-box not-prose bg-slate-50 p-6 rounded-lg border border-slate-200 my-8"
-            >
-                <h3
-                    class="text-xl font-bold text-slate-800 mb-4 text-center md:text-left"
-                >
-                    KSP彦根は、こんなあなたにピッタリ！
-                </h3>
-                <ul class="list-none p-0 m-0 space-y-3">
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
-                        <span class="flex-1">自分のショットをデータで見える化して効率よく練習したい人</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
-                        <span class="flex-1">練習場選びで失敗したくない初心者ゴルファー</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
-                        <span class="flex-1">各番手の正確な飛距離や課題を客観的に把握したい人</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
-                        <span class="flex-1">混雑を避けて、ふらっと気軽に立ち寄れる環境を探している人</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
-                        <span class="flex-1">打ちっぱなしにハマり始めたばかりで、これからゴルフを本格的に始めたい人</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
-                        <span class="flex-1">目標設定やゲーム感覚で、楽しく練習のモチベーションを維持したい人</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-green-600 font-bold mr-2 mt-1 shrink-0">✅</span>
-                        <span class="flex-1">プリペイドカードの管理が苦手な、私のようなうっかりさん！</span>
-                    </li>
-                    <li class="flex items-start">
-                        <span class="text-red-500 font-bold mr-2 mt-1 shrink-0">🉐</span>
-                        <span class="flex-1 font-bold text-red-700">ふるさと納税を活用して、賢くお得に練習したい人（<a href="https://a.r10.to/h5J6tH" target="_blank" rel="noopener sponsored" class="underline hover:text-red-800">楽天ふるさと納税をチェック</a>）</span>
-                    </li>
-                </ul>
-            </div>
-            <p>
-                一度行けば、きっとまた通いたくなるKSP彦根。「もっと早く知っていれば…！」と感じる方も多いはず。ぜひ、未来型ゴルフ練習を体感してみてくださいね！
-            </p>
-            <hr class="my-8" />
+            
 
             <p class="text-center font-bold text-lg">
                 🎯
