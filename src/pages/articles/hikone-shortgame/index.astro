@@ -21,6 +21,10 @@ const ogImageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestora
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/hikone-shortgame/`; 
 const headline = "【彦根・多賀】アプローチ練習ができるゴルフ練習場3選｜バンカー・パターも紹介";
+const parentHub = {
+    name: "彦根・多賀完全ガイド",
+    href: "/articles/hikone-hub/"
+};
 
 // --- [4] 内部リンク用パス設定 ---
 const links = {
@@ -105,7 +109,7 @@ const jsonLd = [
 ];
 ---
 
-<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={ogImageUrl}>
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={ogImageUrl} parentHub={parentHub}>
 
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     

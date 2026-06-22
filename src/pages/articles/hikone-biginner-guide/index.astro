@@ -17,6 +17,10 @@ const pubDate = "2026-05-25";
 const pubDateISO = "2026-05-25T10:00:00+09:00"; 
 const updatedDate = null;
 const updatedDateISO = updatedDate ? `${updatedDate}T10:00:00+09:00` : pubDateISO;
+const parentHub = {
+    name: "彦根・多賀完全ガイド",
+    href: "/articles/hikone-hub/"
+};
 
 // ※とりあえず汎用的なアイキャッチ画像URLを入れています。後で差し替えてください。
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-biginner.png"; 
@@ -54,7 +58,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} ogImage={imageUrl}>
+<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} ogImage={imageUrl} parentHub={parentHub}>
     
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     

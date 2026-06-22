@@ -23,6 +23,10 @@ const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/hikone-pricerank/`; 
 const headline = "【彦根・多賀】打ちっぱなし料金比較！コスパ最強の練習場が1秒でわかる専用シミュレーター";
+const parentHub = {
+    name: "彦根・多賀完全ガイド",
+    href: "/articles/hikone-hub/"
+};
 
 // --- [4] 関連記事リストの定義 ---
 const experienceReports = [
@@ -54,7 +58,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} ogImage={imageUrl}>
+<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} ogImage={imageUrl} parentHub={parentHub}>
     
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     
