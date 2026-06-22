@@ -138,13 +138,14 @@ uniqueSubCategories.sort();
             
             data-area={article.area || 'none'}
             data-subcategory={article.subCategory || 'none'} >
-            <div class="relative">
-              <div class="w-full h-40 bg-slate-100 flex items-center justify-center">
-                <img src={article.imageUrl} alt={article.title} class="w-full h-full object-contain" />
-              </div>
+           {/* ▼ 修正: relative の枠自体を aspect-video (16:9) にする */}
+            <div class="relative w-full aspect-video bg-slate-100 overflow-hidden">
+                {/* ▼ 修正: 高さを固定せず、object-cover で綺麗に敷き詰める */}
+                <img src={article.imageUrl} alt={article.title} class="w-full h-full object-cover" />
             </div>
             <div class="p-4 flex-grow flex flex-col">
-              <h3 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors">
+              {/* ▼ 修正: leading-tight で行間を詰め、text-balance で美しく改行させる */}
+              <h3 class="text-lg font-bold text-slate-800 group-hover:text-green-700 transition-colors leading-tight text-balance">
                 {article.title}
               </h3>
               <p class="text-sm text-slate-600 mt-2 flex-grow">
