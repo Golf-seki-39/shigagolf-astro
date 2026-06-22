@@ -23,6 +23,7 @@ const {
     description = "シガゴルは、滋賀県内のゴルフ練習場のリアルな口コミ・レビューサイト。測定器の有無、アプローチ・バンカー練習場の併設など、あなたの目的に合った練習場探しをサポートします。",
     ogImage,
     noindex = false,
+    parentHub,
 } = Astro.props;
 
 const defaultOgImage =
@@ -105,7 +106,7 @@ const imageToUse = ogImage || defaultOgImage;
     </head>
     <body class="bg-slate-50 text-slate-800">
         <Header />
-        <Breadcrumbs pageTitle={title} />
+        <Breadcrumbs pageTitle={title}　parentHub={parentHub} />
         <slot />
         <Footer />
 
