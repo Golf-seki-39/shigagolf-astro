@@ -75,6 +75,14 @@ const navPanels = [
         icon: "fa-scale-balanced", // 天秤のアイコン
         color: "bg-amber-500", // VSっぽく少し目立つ色に
         btnLabel: "2大施設徹底比較を見る"
+    },
+    {
+        title: "東近江の2大施設で迷ったら",
+        desc: "ジャンボとさくら、結局どっち？現地ライターが本音で徹底比較！",
+        link: "/articles/comparison/higashiomi-guide/", 
+        icon: "fa-fire-flame-curved", // 対決の熱さを出す炎アイコン
+        color: "bg-orange-500", // 近江八幡（アンバー）と少し色味を変えて目立たせる
+        btnLabel: "東近江VS比較を見る"
     }
 ];
 
@@ -224,16 +232,23 @@ const comparisonArticles = [
                 </div>
             </section>
 
-            {/* --- 施設詳細と体験談のダブルリンクUI --- */}
+{/* --- 施設詳細と体験談のダブルリンクUI --- */}
             <h2 class="text-2xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">調査対象施設の詳細データ・体験レビュー</h2>
             <p>シガゴルでは、各施設の「基本情報（料金や営業時間など）」をまとめたデータベースと、管理人が実際に打ってみた「体験レポート」を分けてご用意しています。気になる施設をチェックしてみてください。</p>
             
             <div class="space-y-6 not-prose mb-12">
+                
                 {/* リバーサイドジャンボ */}
-                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                {/* ▼ relative overflow-hidden を追加 ▼ */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+                    {/* ▼ 左側のオレンジラインを追加 ▼ */}
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-400"></div>
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 m-0">リバーサイドジャンボゴルフ</h3>
-                        <p class="text-sm text-slate-500 m-0 mt-1">極上の芝管理 / 中〜上級者向け</p>
+                        <p class="text-sm text-slate-500 m-0 mt-1 mb-2">極上の芝管理 / 中〜上級者向け</p>
+                        <a href="/articles/comparison/higashiomi-guide/" class="inline-block text-xs md:text-sm font-bold text-orange-600 hover:text-orange-700 hover:underline bg-orange-50 py-1 px-2 rounded mb-2">
+                            👉 さくらゴルフとどっちが良い？徹底比較を読む
+                        </a>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <a href="/ranges/riverside_jumbo/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
@@ -246,10 +261,15 @@ const comparisonArticles = [
                 </div>
 
                 {/* さくらゴルフ */}
-                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+                    {/* ▼ 左側のオレンジラインを追加 ▼ */}
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-orange-400"></div>
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 m-0">さくらゴルフ倶楽部</h3>
-                        <p class="text-sm text-slate-500 m-0 mt-1">女性特権多数 / 初心者専用打席</p>
+                        <p class="text-sm text-slate-500 m-0 mt-1 mb-2">女性特権多数 / 初心者専用打席</p>
+                        <a href="/articles/comparison/higashiomi-guide/" class="inline-block text-xs md:text-sm font-bold text-orange-600 hover:text-orange-700 hover:underline bg-orange-50 py-1 px-2 rounded mb-2">
+                            👉 ジャンボとどっちが良い？徹底比較を読む
+                        </a>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <a href="/ranges/sakura_gc/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
@@ -261,14 +281,13 @@ const comparisonArticles = [
                     </div>
                 </div>
 
-               {/* グリーンピア */}
+                {/* グリーンピア */}
                 <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-400"></div>
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 m-0">グリーンピア近江八幡ゴルフ</h3>
                         <p class="text-sm text-slate-500 m-0 mt-1 mb-2">衝撃の低価格 / 穴場スポット</p>
-                        {/* ▼ ここにVS記事への自然なリンクを追加！ ▼ */}
-                        <a href="/articles/comparison/o-mihachiman-guide/" class="inline-block text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 hover:underline bg-amber-50 py-1 px-2 rounded">
+                        <a href="/articles/comparison/o-mihachiman-guide/" class="inline-block text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 hover:underline bg-amber-50 py-1 px-2 rounded mb-2">
                             👉 安土ゴルフとどっちが良い？徹底比較を読む
                         </a>
                     </div>
@@ -282,14 +301,13 @@ const comparisonArticles = [
                     </div>
                 </div>
 
-               {/* 安土 */}
+                {/* 安土 */}
                 <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
                     <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-400"></div>
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 m-0">安土ゴルフクラブ</h3>
                         <p class="text-sm text-slate-500 m-0 mt-1 mb-2">現金で手軽 / バンカー特化</p>
-                        {/* ▼ ここにVS記事への自然なリンクを追加！ ▼ */}
-                        <a href="/articles/comparison/o-mihachiman-guide/" class="inline-block text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 hover:underline bg-amber-50 py-1 px-2 rounded">
+                        <a href="/articles/comparison/o-mihachiman-guide/" class="inline-block text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 hover:underline bg-amber-50 py-1 px-2 rounded mb-2">
                             👉 グリーンピアとどっちが良い？徹底比較を読む
                         </a>
                     </div>
@@ -303,11 +321,11 @@ const comparisonArticles = [
                     </div>
                 </div>
 
-                {/* がれーじぱーく */}
+                {/* がれーじぱーく（VS比較対象外なのでプレーンなまま） */}
                 <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 m-0">がれーじぱーく東近江</h3>
-                        <p class="text-sm text-slate-500 m-0 mt-1">インドア施設 / 弾道測定器完備</p>
+                        <p class="text-sm text-slate-500 m-0 mt-1">最新インドア / 弾道測定器完備</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <a href="/ranges/garage_park/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
@@ -319,14 +337,14 @@ const comparisonArticles = [
                     </div>
                 </div>
 
-                {/* ELGRACE */}
+                {/* ELGRACE（VS比較対象外なのでプレーンなまま） */}
                 <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 m-0">ELGRACE近江八幡</h3>
                         <p class="text-sm text-slate-500 m-0 mt-1">ラグジュアリー / インドア施設</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <a href="/ranges/elgrace_omihachiman/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center w-full">
+                        <a href="/ranges/elgrace_oh/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center w-full">
                             <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
                         </a>
                     </div>
