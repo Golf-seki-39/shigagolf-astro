@@ -22,7 +22,7 @@ const parentHub = {
 
 // --- SEOコピー ---
 const title = "【滋賀】打ちっぱなし料金比較！一番安い練習場はどこ？【シミュレーター付】(近江八幡・東近江)";
-const description = "滋賀県（近江八幡・東近江）で一番安い打ちっぱなしはどこ？グリーンピア、さくらゴルフ、安土など全5施設の複雑な料金システム（単価・打ち放題・入場料・レディースデー）を徹底比較。あなたに最適な最安施設が1秒でわかる「料金比較シミュレーター」搭載！";
+const description = "滋賀県（近江八幡・東近江）で一番安い打ちっぱなしはどこ？グリーンピア、さくらゴルフ、安土など全 5 施設の複雑な料金システム（単価・打ち放題・入場料・レディースデー）を徹底比較。あなたに最適な最安施設が 1 秒でわかる「料金比較シミュレーター」搭載！";
 const headline = "近江八幡・東近江で一番安い打ちっぱなしは？最強の料金比較シミュレーター";
 const category = "比較記事"; 
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg";
@@ -101,7 +101,6 @@ const additionalData = {
 const images = {
     azuchi_gc: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8076 2.png", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8069 2.png" },
     greenpia_oh: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6879.png", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/名称未設定.png" },
-    rose_gc: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9787.png", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6020.jpg" }, // 後方互換性のため維持
     sakura_gc: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_9787.png", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/IMG_6020.jpg" },
     riverside_jumbo: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6450 2.jpg", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_9009.png" },
     garage_park: { full: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/IMG_9502.png", detail: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/シガゴル.jpg" }
@@ -259,7 +258,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
               .responsive-table tbody tr.bg-white td:first-child { background-color: #ffffff; }
               .responsive-table tbody tr.bg-slate-50 td:first-child { background-color: #f8fafc; }
 
-              /* スマホ用レスポンシブテーブルCSS（A案から完全移植） */
               @media (max-width: 767px) and (orientation: portrait) {
                 #article-view .responsive-table { min-width: 100% !important; }
                 #article-view .responsive-table thead { display: none !important; }
@@ -447,7 +445,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <div class="mt-8 bg-slate-800 p-4 md:p-6 rounded-lg text-white">
                     <p class="text-center font-bold text-green-400 mb-4 text-sm md:text-base border-b border-slate-600 pb-2">🏆 最安値ランキング（入場料等すべて込み）</p>
                     <div id="sim-results" class="space-y-3">
-                        {/* クローラー・JS無効対策として、初期表示用の静的HTMLをここに設置（JSロード時に上書きされます） */}
                         <p class="text-center text-sm text-slate-400">シミュレーターを読み込み中...</p>
                     </div>
                 </div>
@@ -496,6 +493,10 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         管理人の詳細体験レポート
                     </a>
                 </div>
+                 <a href="/articles/comparison/o-mihachiman-guide/" class="inline-block text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 hover:underline bg-amber-50 py-1 px-2 rounded">
+                            👉 グリーンピアVS安土 どっちが良い？徹底比較を読む
+                        </a>
+                {/* [修正点1] ここにあった余分なバナーと重複した </div> </div> を綺麗に削除 */}
             </div>
 
             {/* --- 施設2: さくらゴルフ --- */}
@@ -509,8 +510,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         </figure>
                         <div class="text-slate-700">
                             <p class="mb-2 text-sm md:text-base leading-relaxed">
-                                女性やジュニアへの優遇特典が非常に手厚く、対象者にとってはエリア最高の練習環境です。夏場はしっかり冷房が効くため非常に涼しく快適。広々とした本格アプローチ練習場や初心者優先打席も完備され、幅広い層への配慮が行き届いています。<br/>
-                                <strong>【管理人本音レビュー】</strong>設備が新しく清潔感も抜群ですが、<strong>駐車場の一部（奥側など）にはポールが設置されており、ワンボックスなどの大型車は少々停めにくく感じる場合があります。</strong>
+                                女性やジュニアへの特典が非常に手厚く、対象者にとっては最高の練習環境です。<br/>
+                                夏場は冷房が強く快適。広々としたアプローチ練習場や初心者優先打席など、幅広い層に配慮されていますが、<strong>駐車場の一部はポールがあり停めにくい場合があります。</strong>
                             </p>
                             <ul class="text-sm text-slate-600 list-disc list-inside bg-slate-50 p-4 rounded-lg m-0">
                                 <li><strong>入場料:</strong> 平日280円 / 土日祝320円（女性・ジュニア・早朝夜間は無料）</li>
@@ -574,6 +575,10 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         管理人の詳細体験レポート
                     </a>
                 </div>
+                 <a href="/articles/comparison/o-mihachiman-guide/" class="inline-block text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 hover:underline bg-amber-50 py-1 px-2 rounded">
+                            👉 グリーンピアVS安土 どっちが良い？徹底比較を読む
+                        </a>
+                {/* [修正点2] ここに誤ってコピペで混ざっていた重複バナーと余分な </div> </div> を綺麗に削除 */}
             </div>
 
             {/* --- 施設4: ジャンボ --- */}
@@ -617,7 +622,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 
             {/* --- 施設5: がれーじぱーく --- */}
             <div id="garage_park" class="mt-8 bg-white border border-slate-200 rounded-xl shadow-sm p-6 md:p-8 scroll-mt-24">
-                <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-0 flex items-center gap-2"><span class="text-indigo-600">⑤</span> がれーじぱーく東近江 <span class="text-sm font-normal text-slate-500">（インドア）</span></h3>
+                <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-0 flex items-center gap-2"><span class="text-indigo-600">⑤</span> がれーじぱーく東近江 <span class="text-sm font-normal text-slate-500"></span></h3>
                 
                 <div class="grid md:grid-cols-2 gap-4 mt-6">
                     <figure class="m-0">
@@ -631,7 +636,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <div class="text-slate-700 mt-6">
                     <p class="mb-3 text-sm md:text-base leading-relaxed">
                         蒲生スマートICからわずか2分という抜群のアクセスを誇る24時間営業のインドア練習場です。完全冷暖房完備のため真夏や真冬、天候を一切気にせず快適そのもの。全打席に高性能な弾道測定器が完備されており、番手ごとの正確なキャリーやスピン量をデータ化し、超効率的なスコアアップを目指せます。<br/>
-                        <strong>【管理人本音レビュー】</strong>1回あたりの都度利用（1時間1,000円）も安いですが、練習頻度が高い人向けの**「月額5,000円の通い放題フリーパス」は界隈トップクラスの神プラン**。駐車場も店舗目の前で荷物の出し入れがとても楽です。
+                        <strong>【管理人本音レビュー】</strong>1回あたりの都度利用（1時間1,000円）も安いですが、練習頻度が高い人向けの<strong>「月額5,000円の通い放題フリーパス」は界隈トップクラス</strong>。駐車場も店舗目の前で荷物の出し入れがところ楽です。
                     </p>
                     <ul class="text-sm text-slate-600 list-disc list-inside bg-slate-50 p-4 rounded-lg m-0">
                         <li><strong>時間制料金:</strong> 1時間 1,000円 / 3時間 2,500円</li>
@@ -659,7 +664,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                     </div>
                     <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
                         <h3 class="text-lg font-bold text-slate-800 m-0 flex items-start gap-1"><span class="text-green-700">Q.</span> 一番安いゴルフ練習場（打ちっぱなし）はどこですか？</h3>
-                        <p class="mt-2 mb-0 text-sm md:text-base text-slate-600">A. 料金はプランや曜日、時間帯によって大きく変動しますが、特定の割引（SDカード提示等）を組み合わせるなら「<a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a>」の平日2階打席（1球5円）が最も安くなる可能性が高いです。また、仕事終わりの軽い練習や、たくさん打ちたい夜間帯なら「安土ゴルフクラブ」のナイターパック（1,200円で300球まで）も圧倒的にお得です。</p>
+                        <p class="mt-2 mb-0 text-sm md:text-base text-slate-600">A. 料金はプランや曜日、時間帯によって大きく変動しますが、特定の割引（SDカード提示等）を組み合わせるなら「<a href="/ranges/greenpia_oh/" class="text-blue-600 hover:underline">グリーンピア近江八幡ゴルフ</a>」の平日2階打席（1球5円）が最も安くなる可能性が高いです。また、仕事終わりの軽い練習架や、たくさん打ちたい夜間帯なら「安土ゴルフクラブ」のナイターパック（1,200円で300球まで）も圧倒的にお得です。</p>
                     </div>
                 </div>
             </section>
@@ -693,7 +698,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 <p class="text-slate-700 mb-6 leading-relaxed">
                     「アプローチ練習場の具体的な広さは？」「混み合う曜日や時間帯は？」など、料金以外の詳細な比較は、エリアの完全ガイドで徹底解説しています！
                 </p>
-                <a href="/articles/omi-higashiomi-comparison/" class="inline-block bg-green-600 text-white font-bold px-8 py-4 rounded-xl shadow-md hover:bg-green-700 transition-all no-underline">
+                <a href="/articles/omi-higashiomi-hub/" class="inline-block bg-green-600 text-white font-bold px-8 py-4 rounded-xl shadow-md hover:bg-green-700 transition-all no-underline">
                     近江八幡・東近江エリア完全ガイドを見る ＞
                 </a>
             </div>
@@ -724,7 +729,6 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         const reviewCount = range.reviewCount || 0;
                         
                         const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                        // テンプレートリテラルの構文およびGoogle提供の標準URL構造に完全修正
                         const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
                         const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
 
@@ -766,9 +770,8 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                 </div>
             </section>
 
-            
         </article>
-        </main>
+        </main> {/* [重要] ここでメインエリアが正しく閉じるため、サイドバーが横に並びます */}
 
         {/* ▼ 右側のサイドバー ▼ */}
         <Sidebar />

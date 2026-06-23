@@ -67,6 +67,14 @@ const navPanels = [
         icon: "fa-golf-ball-tee", 
         color: "bg-indigo-600",
         btnLabel: "パター比較を見る"
+    },
+    {
+        title: "近江八幡の2大施設で迷ったら",
+        desc: "グリーンピアと安土ゴルフ、結局どっち？現地ライターが本音で比較！",
+        link: "/articles/comparison/o-mihachiman-guide/", // VS記事のURL
+        icon: "fa-scale-balanced", // 天秤のアイコン
+        color: "bg-amber-500", // VSっぽく少し目立つ色に
+        btnLabel: "2大施設徹底比較を見る"
     }
 ];
 
@@ -253,11 +261,16 @@ const comparisonArticles = [
                     </div>
                 </div>
 
-                {/* グリーンピア */}
-                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+               {/* グリーンピア */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-400"></div>
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 m-0">グリーンピア近江八幡ゴルフ</h3>
-                        <p class="text-sm text-slate-500 m-0 mt-1">衝撃の低価格 / 穴場スポット</p>
+                        <p class="text-sm text-slate-500 m-0 mt-1 mb-2">衝撃の低価格 / 穴場スポット</p>
+                        {/* ▼ ここにVS記事への自然なリンクを追加！ ▼ */}
+                        <a href="/articles/comparison/o-mihachiman-guide/" class="inline-block text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 hover:underline bg-amber-50 py-1 px-2 rounded">
+                            👉 安土ゴルフとどっちが良い？徹底比較を読む
+                        </a>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <a href="/ranges/greenpia_oh/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
@@ -269,11 +282,16 @@ const comparisonArticles = [
                     </div>
                 </div>
 
-                {/* 安土 */}
-                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+               {/* 安土 */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-400"></div>
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 m-0">安土ゴルフクラブ</h3>
-                        <p class="text-sm text-slate-500 m-0 mt-1">現金で手軽 / バンカー特化</p>
+                        <p class="text-sm text-slate-500 m-0 mt-1 mb-2">現金で手軽 / バンカー特化</p>
+                        {/* ▼ ここにVS記事への自然なリンクを追加！ ▼ */}
+                        <a href="/articles/comparison/o-mihachiman-guide/" class="inline-block text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 hover:underline bg-amber-50 py-1 px-2 rounded">
+                            👉 グリーンピアとどっちが良い？徹底比較を読む
+                        </a>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <a href="/ranges/azuchi_gc/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
@@ -289,7 +307,7 @@ const comparisonArticles = [
                 <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 m-0">がれーじぱーく東近江</h3>
-                        <p class="text-sm text-slate-500 m-0 mt-1">最新インドア / 弾道測定器完備</p>
+                        <p class="text-sm text-slate-500 m-0 mt-1">インドア施設 / 弾道測定器完備</p>
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <a href="/ranges/garage_park/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
@@ -347,13 +365,14 @@ const comparisonArticles = [
                 </div>
             </div>
 
-            <AuthorProfile />
-            <ShareButtons articleUrl={articleUrl} headline={headline} />
 
             <div class="not-prose my-12 space-y-12">
                 <MySlider articles={comparisonArticles} title="目的別・練習場比較まとめ" />
                 <MySlider articles={experienceReports} title="各施設の体験レポート" />
             </div>
+
+            <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
             
         </main>
 
