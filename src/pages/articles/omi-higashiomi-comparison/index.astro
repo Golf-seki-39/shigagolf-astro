@@ -1,40 +1,44 @@
 ---
+// --- [1] AstroとBaseLayoutの設定 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { db } from "../../../lib/firebase.js";
 import { doc, getDoc } from "firebase/firestore";
-// [修正点1] AstroのImageコンポーネントをインポート
 import { Image } from "astro:assets";
 
-// --- 共通コンポーネント ---
-import MySlider from '../../../components/MySlider.astro';
-import ShareButtons from '../../../components/ShareButtons.astro';
+// --- [2] 共通コンポーネントをインポート ---
 import AuthorProfile from '../../../components/AuthorProfile.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import MySlider from '../../../components/MySlider.astro';
 import Sidebar from '../../../components/Sidebar.astro'; 
 
-// --- この記事固有の情報 ---
-const baseUrl = "https://shigolf.com";
-const articleUrl = `${baseUrl}/articles/omi-higashiomi-comparison/`;
-const publicationDate = "2025-07-24";
+// --- [3] この記事固有の情報 ---
+const title = "【2026年版】近江八幡・東近江の打ちっぱなしおすすめ完全ガイド｜目的別に選ぶゴルフ練習場 | シガゴル";
+const description = "近江八幡市・東近江市周辺のゴルフ練習場をシガゴルが徹底調査！「一番安いのは？」「芝からアプローチしたい」「パターを極めたい」など、あなたの目的に合わせて最適な練習場を案内します。";
+const pubDate = "2026-06-23"; // ※公開日に合わせて調整してください
 const lastModified = new Date();
+const updatedDate = "2026-06-23";
 
-const title = "【近江八幡・東近江】ゴルフ練習場4選・徹底比較！ | シガゴル";
-const description =
-    "近江八幡・東近江エリアの主要なゴルフ練習場4ヶ所を、料金、設備、目的別に徹底比較。あなたにピッタリの練習場が必ず見つかります。";
-const category = "比較記事"; 
-const headline = "【徹底比較】近江八幡・東近江エリアのゴルフ練習場4選";
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png";
 
-// --- Firebaseから各練習場の情報を取得 ---
+// アイキャッチ画像（旧総合比較の画像を引き継ぎ）
+const ogImageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/omi-higasi-hub.jpg";
+
+const baseUrl = "https://shigagolf.com";
+// ※フォルダ名（URL）に合わせて変更してください（例: omi-higashiomi-hub にリネーム推奨）
+const articleUrl = `${baseUrl}/articles/omi-higashiomi-comparison/`; 
+const headline = "【2026年版】近江八幡・東近江の打ちっぱなしおすすめ完全ガイド｜目的別に選ぶゴルフ練習場";
+
+// --- Firebaseから各練習場の情報を取得（構造化データ＆詳細情報用） ---
 const rangeIds = [
-    "azuchi_gc",
     "sakura_gc",
     "riverside_jumbo",
     "greenpia_oh",
+    "azuchi_gc",
     "garage_park",
+    "elgrace_oh" // ELGRACE近江八幡のID（間違っていれば修正してください）
 ];
 const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
 const rangePromises = rangeIds.map((id) =>
-    getDoc(doc(db, `artifacts/${appId}/public/data/practice_ranges/${id}`)),
+    getDoc(doc(db, `artifacts/${appId}/public/data/practice_ranges/${id}`))
 );
 const rangeDocs = await Promise.all(rangePromises);
 
@@ -51,507 +55,310 @@ if (rangesData.greenpia_oh) {
     rangesData.greenpia_oh.name = "グリーンピア近江八幡ゴルフ";
 }
 
-// --- 各施設のアイキャッチ画像URLを定義 ---
-const rangeImages = {
-    azuchi_gc: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/IMG_8140 2.png",
-    sakura_gc: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/15.png",
-    riverside_jumbo: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/IMG_6452.jpg",
-    greenpia_oh: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/IMG_6751.png",
-};
-
-// --- 早見表のデータをループ処理用に整理 ---
-const summaryConfig = [
-    { id: "azuchi_gc", recommend: "初心者・安心感重視", approach: "×", bunker: "◯", putter: "△", feature: ["プリカ不要で手軽！", "優しい店主がお出迎え。"] },
-    { id: "sakura_gc", recommend: "女性・ジュニア・お得好き", approach: "◎", bunker: "◯", putter: "◯", feature: ["女性・ジュニアの天国！", "特典がとにかく凄い。"] },
-    { id: "riverside_jumbo", recommend: "スコアアップを目指す中・上級者", approach: "◎", bunker: "◎", putter: "◎", feature: ["ショートゲーム施設の質は随一！", "本気で上手くなりたいならここ。"] },
-    { id: "greenpia_oh", recommend: "価格最優先・練習量重視", approach: "◯", bunker: "◯", putter: "◯", feature: ["SDカード持参で衝撃価格！", "施設の古さはご愛嬌。"] },
+// --- [4] 目的別の第2階層（中まとめ記事）へのリンク設定 ---
+const navPanels = [
+    {
+        title: "とにかく安く打ちたい！",
+        desc: "近江八幡・東近江エリアの最安値はここ。料金・コスパ徹底比較！",
+        link: "/articles/comparison/omi-pricerank/",
+        icon: "fa-calculator",
+        color: "bg-blue-600",
+        btnLabel: "料金比較を見る"
+    },
+    {
+        title: "芝からアプローチしたい！",
+        desc: "コースデビューの鍵。天然芝やバンカー練習ができる施設を厳選。",
+        link: "/articles/omi-higashiomi-approach/", // ※アプローチ特化記事のURL
+        icon: "fa-flag",
+        color: "bg-emerald-600",
+        btnLabel: "ショートゲーム比較を見る"
+    },
+    {
+        title: "パターを徹底的に極めたい！",
+        desc: "スコアメイクの要。パター練習場が充実している施設まとめ。",
+        link: "/articles/comparison/omi-putting/",
+        icon: "fa-golf-ball-tee", 
+        color: "bg-indigo-600",
+        btnLabel: "パター練習場まとめを見る"
+    },
+    {
+        title: "初心者向け・レッスンを受けたい！",
+        desc: "一からゴルフを始めたい方に。初心者向けの環境とレッスン比較。",
+        link: "/articles/comparison/omi-lesson/",
+        icon: "fa-chalkboard-user",
+        color: "bg-rose-600",
+        btnLabel: "レッスン・初心者ガイドを見る"
+    }
 ];
-const summaryData = summaryConfig.map((item) => ({
-    ...item,
-    name: rangesData[item.id]?.name || "練習場名",
-    city: rangesData[item.id]?.city || "",
-}));
 
-// --- 構造化データ(JSON-LD)の生成 ---
-const itemListElements = rangeIds.slice(0, 4).map((id, index) => {
-    const range = rangesData[id];
-    if (!range) return null;
-    const openingHours = range.business_hours_structured?.map((item) => ({ "@type": "OpeningHoursSpecification", dayOfWeek: item.dayOfWeek, opens: item.opens, closes: item.closes }));
-    return {
-        "@type": "ListItem",
-        position: index + 1,
-        item: {
-            "@type": "SportsActivityLocation", name: range.name, url: `${baseUrl}/ranges/${id}/`, image: rangeImages[id], telephone: range.phone, priceRange: range.priceRange || "¥1000-¥3000",
-            address: { "@type": "PostalAddress", streetAddress: range.address, addressLocality: range.city, addressRegion: "滋賀県", postalCode: range.postalCode, addressCountry: "JP" },
-            geo: { "@type": "GeoCoordinates", latitude: range.lat, longitude: range.lng },
-            openingHoursSpecification: openingHours,
-        },
-    };
-}).filter(Boolean);
-
-const faqElements = {
-    "@type": "FAQPage",
-    mainEntity: [
-        { "@type": "Question", name: "初心者におすすめのゴルフ練習場はどこですか？", acceptedAnswer: { "@type": "Answer", text: "本記事で紹介している中では「安土ゴルフクラブ」と「さくらゴルフ倶楽部」が特におすすめです。安土ゴルフクラブは料金が分かりやすく、アットホームな雰囲気です。さくらゴルフ倶楽部には初心者優先スペースがあり、周りの目を気にせず練習に集中できます。" } },
-        { "@type": "Question", name: "一番安いゴルフ練習場はどこですか？", acceptedAnswer: { "@type": "Answer", text: "料金はプランや時間帯によって大きく異なりますが、特定の割引（SDカード等）が適用されるなら「グリーンピア近江八幡ゴルフ」が1球あたりの単価が最も安くなる可能性があります。女性やジュニアの方であれば、「さくらゴルフ倶楽部」の特典が非常にお得です。" } },
-    ],
-};
-
-// --- [6] 全ての記事で共通して使う「関連記事リスト」を定義 ---
+// --- [5] スライダー用の関連記事リスト ---
 const experienceReports = [
     { url: '/articles/azuchi-review/', title: '安土ゴルフクラブ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/azuchi_gc/gallery/0000image0000.png' },
     { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
     { url: '/articles/garege-park-review/', title: 'がれーじぱーく東近江 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg' },
-　　 { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
     { url: '/articles/review/riverside-jumbo/', title: 'リバーサイドジャンボゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg' },
 ];
+
 const comparisonArticles = [
     { url: '/articles/comparison/omi-pricerank/', title: '【料金で徹底比較】近江八幡・東近江の安い練習場5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (2).jpg' },
     { url: '/articles/omi-higashiomi-approach/', title: '【アプローチ＆バンカー練習場】近江八幡・東近江5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/approach.jpg' },
     { url: '/articles/comparison/omi-putting/', title: '【パター練習場が充実】近江八幡・東近江エリア5選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル.jpg' },
     { url: '/articles/comparison/omi-lesson/', title: '【レッスン比較】近江八幡・東近江の初心者向け4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (12).jpg' },
-    { url: '/articles/comparison/higashiomi-guide/', title: '【2025年最新】東近江市のゴルフ練習場まとめ｜全3施設を料金・設備で徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/シガゴル (14).jpg' },
-    { url: '/articles/comparison/o-mihachiman-guide/', title: '【近江八幡 打ちっぱなし】グリーンピア vs 安土 結局どっち？料金・質・アクセスを現地ライターが本音で徹底比較 ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hachiman-guide.jpg' },
-    { url: '/articles/comparison/omi-higashiomi-comparison/', title: '【総合比較】近江八幡・東近江エリアのゴルフ練習場4選', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
 ];
-
-const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 ---
 
-<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl}>
-    <script
-        slot="head"
-        type="application/ld+json"
-        set:html={JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
-            headline: headline,
-            description: description,
-            // [修正点4] 記事内の全画像を追加
-            image: [imageUrl, ...Object.values(rangeImages)],
-            author: { "@type": "Person", name: "関（せき）", url: `${baseUrl}/about/`, image: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png" },
-            publisher: {
-                "@type": "Organization",
-                name: "シガゴル",
-                logo: { "@type": "ImageObject", url: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png", width: 600, height: 60 },
-            },
-            datePublished: new Date(publicationDate).toISOString(),
-            dateModified: lastModified.toISOString(),
-            hasPart: { "@type": "ItemList", itemListElement: itemListElements },
-            mainEntity: faqElements,
-            about: [ { "@type": "Thing", name: "滋賀 ゴルフ練習場" }, { "@type": "Thing", name: "近江八幡 ゴルフ" }, { "@type": "Thing", name: "東近江 ゴルフ" } ],
-        })}
-    />
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
-
-        
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={ogImageUrl}>
+    
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
 
         {/* ▼ 左側のメイン記事エリア ▼ */}
-
         <main id="article-view" class="w-full lg:flex-1 bg-white p-6 md:p-8 rounded-lg shadow-lg text-slate-700 leading-relaxed overflow-hidden">
 
-            
-
+            {/* ハブ記事自体のパンくず/戻るボタンは「一覧」へ */}
             <a href="/articles/" class="nav-link back-button mb-6 inline-block text-green-700 font-semibold hover:underline">
-
                 ‹ お役立ち記事一覧に戻る
-
             </a>
-            <style>
-                html { scroll-behavior: smooth; }
-                section[id] { scroll-margin-top: 80px; }
-                .cta-icon { width: 1.2em; height: 1.2em; margin-right: 0.5em; vertical-align: text-bottom; }
-            </style>
-
-<article class="prose lg:prose-xl max-w-none">
-
-            <header>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{title.split(" | ")[0]}</h1>
-                <p class="text-sm text-slate-500 mt-2">
-                    最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, "0")}-{String(lastModified.getDate()).padStart(2, "0")}
-                </p>
+            
+            <header class="text-center">
+                <h1 class="text-3xl md:text-5xl font-black text-slate-800 leading-tight mb-4">{headline}</h1>
+                <p class="text-slate-500 mb-8">「あなたにぴったりの練習場」がここなら見つかる</p>
+                
+                <figure class="m-0 mb-10 overflow-hidden rounded-2xl shadow-xl">
+                    <Image 
+                        src={ogImageUrl} 
+                        alt="近江八幡・東近江エリアのゴルフ練習場ガイド" 
+                        class="w-full h-auto object-cover" 
+                        inferSize={true}
+                    />
+                </figure>
             </header>
 
-            <Image
-                src={imageUrl}
-                alt="滋賀県（近江八幡・東近江）のゴルフ練習場"
-                class="w-full h-auto object-cover rounded-lg my-6"
-                loading="eager"
-                width={1200}
-                height={800}
-                fetchpriority="high"
-                format="webp" quality={80}
-            />
-
-            <div class="not-prose bg-blue-50 p-4 my-6 rounded-lg border border-l-4 border-blue-500">
-                <p class="font-bold text-slate-800 text-lg">
-                    結論：初心者なら<a href="#article-azuchi" class="text-green-700 hover:underline">安土ゴルフクラブ</a>、スコアアップ目的なら<a href="#article-riverside" class="text-green-700 hover:underline">リバーサイドジャンボゴルフ</a>がおすすめです。
-                </p>
-            </div>
-
-            <p>
-                滋賀県内でゴルフ練習場を探しているけれど、「どこが自分に合っているか分からない…」と悩んでいませんか？この記事では、特に<strong>近江八幡市・東近江市エリア</strong>に絞り、主要なゴルフ練習場4ヶ所を運営者が実際に足を運んだ経験から徹底比較します。
-            </p>
-
-            <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
-                <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
-                <ul class="space-y-2 list-disc list-inside">
-                    <li><a href="#summary-table" class="text-green-700 hover:underline">結論から！比較早見表</a></li>
-                    <li>
-                        <a href="#review-details" class="text-green-700 hover:underline">【目的別】各ゴルフ練習場の詳細レビュー</a>
-                        <ul class="pl-6 mt-2 space-y-1 list-disc list-inside">
-                            <li><a href="#article-azuchi" class="text-slate-600 hover:underline">A. 安土ゴルフクラブ</a></li>
-                            <li><a href="#article-sakura" class="text-slate-600 hover:underline">B. さくらゴルフ倶楽部</a></li>
-                            <li><a href="#article-riverside" class="text-slate-600 hover:underline">C. リバーサイドジャンボゴルフ</a></li>
-                            <li><a href="#article-greenpia" class="text-slate-600 hover:underline">D. グリーンピア近江八幡ゴルフ</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#conclusion-summary" class="text-green-700 hover:underline">結論まとめ</a></li>
-                    <li><a href="#faq" class="text-green-700 hover:underline">ゴルフ練習場選びのよくある質問</a></li>
-                    <li><a href="#info-summary" class="text-green-700 hover:underline">各施設の基本情報まとめ</a></li>
-                </ul>
-            </div>
-
-            <div class="not-prose bg-slate-50 p-4 my-6 rounded-lg border border-l-4 border-green-600">
-                <p class="font-bold text-slate-800 m-0">
-                    この記事は、シガゴル運営者が実際に近江八幡・東近江エリアの全4施設に足を運んで執筆しています。
-                </p>
-            </div>
-
-            <h2 id="summary-table" class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200 scroll-mt-24">
-                結論から！比較早見表
-            </h2>
-            <p>忙しいあなたのために、まずは各練習場の特徴を一覧でまとめました。</p>
-
-            <div class="overflow-x-auto my-4 not-prose hidden md:block">
-                <table class="w-full text-sm text-left border border-slate-300 min-w-[900px]">
-                    <thead class="bg-slate-50">
-                        <tr>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 align-middle text-center whitespace-nowrap text-base font-semibold normal-case">練習場名</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">こんな人におすすめ</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">アプローチ</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">バンカー</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">パター</th>
-                            <th scope="col" class="px-4 py-3 border border-slate-300 text-center whitespace-nowrap">一言メモ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {summaryData.map((item, index) => (
-                                <tr class={index % 2 !== 0 ? "bg-slate-50 border-b" : "bg-white border-b"}>
-                                    <td class="px-4 py-2 border align-middle">
-                                        <a href={`/ranges/${item.id}/`} class="text-blue-600 hover:underline">
-                                            <span class="whitespace-nowrap">{item.name}</span><br />
-                                            <span class="text-xs text-slate-500">({item.city})</span>
-                                        </a>
-                                    </td>
-                                    <td class="px-4 py-2 border align-middle"><span class="whitespace-nowrap">{item.recommend}</span></td>
-                                    <td class="px-4 py-2 border text-center align-middle font-bold text-lg">{item.approach}</td>
-                                    <td class="px-4 py-2 border text-center align-middle font-bold text-lg">{item.bunker}</td>
-                                    <td class="px-4 py-2 border text-center align-middle font-bold text-lg">{item.putter}</td>
-                                    <td class="px-4 py-2 border text-center align-middle">
-                                        {item.feature.map((line) => (<span class="block whitespace-nowrap">{line}</span>))}
-                                    </td>
-                                </tr>
-                            ))}
-                    </tbody>
-                </table>
-                <p class="text-sm text-slate-600 mt-2">
-                    ※ショートゲーム評価：◎は特に優れている、◯は良い、△は簡易的、×は無しを示します。
-                </p>
-            </div>
-
-            <div class="space-y-4 my-4 not-prose md:hidden">
-                {summaryData.map((item) => (
-                        <div class="border rounded-lg p-4">
-                            <h3 class="text-lg font-bold m-0">
-                                <a href={`/ranges/${item.id}/`} class="text-blue-600 hover:underline">{item.name}</a>
-                            </h3>
-                            <p class="text-sm text-slate-500 m-0">{item.city}</p>
-                            <table class="w-full mt-2 text-sm">
-                                <tbody>
-                                    <tr>
-                                        <td class="font-semibold pr-2 py-1 align-top w-1/3">おすすめ</td>
-                                        <td class="py-1">{item.recommend}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-semibold pr-2 py-1">アプローチ</td>
-                                        <td class="py-1 font-bold text-lg">{item.approach}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-semibold pr-2 py-1">バンカー</td>
-                                        <td class="py-1 font-bold text-lg">{item.bunker}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-semibold pr-2 py-1">パター</td>
-                                        <td class="py-1 font-bold text-lg">{item.putter}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="font-semibold pr-2 py-1 align-top">一言メモ</td>
-                                        <td class="py-1">{item.feature.join(" ")}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+            {/* --- 案内所（ハブ）としての目的別ナビパネル --- */}
+            <section class="not-prose my-12">
+                <h2 class="text-2xl font-bold text-slate-800 text-center mb-8 flex justify-center items-center gap-2">
+                    <span class="text-3xl">🧭</span> あなたの「目的」はどれですか？
+                </h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    {navPanels.map((panel) => (
+                        <a href={panel.link} class="group block bg-white border-2 border-slate-100 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all duration-300 no-underline">
+                            <div class="flex items-start gap-4">
+                                <div class={`${panel.color} text-white p-4 rounded-xl shadow-lg group-hover:scale-110 transition-transform`}>
+                                    <i class={`fa-solid ${panel.icon} text-2xl w-8 text-center`}></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-800 m-0 group-hover:text-blue-700 transition-colors">{panel.title}</h3>
+                                    <p class="text-slate-500 text-sm mt-2 mb-4 leading-snug">{panel.desc}</p>
+                                    <span class={`inline-block text-xs font-bold py-1 px-3 rounded-full border border-slate-200 text-slate-600 group-hover:bg-slate-800 group-hover:text-white transition-colors`}>
+                                        {panel.btnLabel} ＞
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
                     ))}
+                </div>
+            </section>
+
+            {/* --- 近江八幡・東近江エリア主要施設一覧（簡易表） --- */}
+            <section class="my-16 not-prose">
+                <h2 class="text-2xl font-bold text-slate-800 mt-0 mb-6 border-b-2 border-slate-200 pb-2">近江八幡・東近江エリア 主要施設一覧</h2>
+
+                <div class="md:hidden flex justify-end items-center text-xs font-bold text-green-600 mb-2 animate-pulse">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                    表は横にスクロールできます
+                </div>
+
+                <div class="overflow-x-auto border border-slate-300 rounded-lg shadow-sm bg-white">
+                    <table class="w-full text-sm text-left border-collapse min-w-[500px]">
+                        <thead class="bg-slate-100 border-b-2 border-slate-300">
+                            <tr>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">施設名</th>
+                                <th class="py-3 px-4 font-bold text-slate-800">最大の特徴</th>
+                                <th class="py-3 px-4 font-bold text-slate-800 whitespace-nowrap">エリア</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-green-700">リバーサイドジャンボゴルフ</td>
+                                <td class="py-4 px-4 text-slate-700">最高の芝管理。本気でスコアアップを目指す中〜上級者向け。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">東近江市</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-rose-600">さくらゴルフ倶楽部</td>
+                                <td class="py-4 px-4 text-slate-700">女性はアプローチ無料！コスパ最強で初心者専用打席も完備。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">東近江市</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-blue-700">グリーンピア近江八幡ゴルフ</td>
+                                <td class="py-4 px-4 text-slate-700">特定割引で1球3円！車での道中は少し狭いので要注意。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">近江八幡市</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-amber-700">安土ゴルフクラブ</td>
+                                <td class="py-4 px-4 text-slate-700">プリカ不要で手軽。打席利用者はバンカー練習が追加料金なし。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">近江八幡市</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-indigo-700">がれーじぱーく東近江</td>
+                                <td class="py-4 px-4 text-slate-700">高性能な弾道測定器を完備。天候に左右されないインドア環境。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">東近江市</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="py-4 px-4 font-bold text-slate-800">ELGRACE近江八幡</td>
+                                <td class="py-4 px-4 text-slate-700">近江八幡エリアのインドア施設。ラグジュアリーで完全個室。</td>
+                                <td class="py-4 px-4 text-slate-500 whitespace-nowrap">近江八幡市</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-200 my-12">
+                <h2 class="text-xl font-bold text-slate-800 mt-0 mb-4">目的に合わせて選べば、上達スピードが変わる</h2>
+                <p class="text-sm md:text-base m-0">
+                    近江八幡・東近江エリアには、上記のように個性豊かな練習場が集まっています。
+                    「とにかく安くたくさん打ちたい」「コース前に芝からアプローチを練習したい」「最新のデータを取りたい」など、あなたの今の課題に合わせて練習場を選ぶことが、スコアアップへの一番の近道です。<br><br>
+                    シガゴルでは、エリア内の主要施設をすべて実際に訪問し、忖度なしのデータとレビューを作成しました。上記の目的別パネルから、一番必要な情報をチェックしてください。
+                </p>
             </div>
 
-            <section id="review-details">
-                <h2 class="text-2xl font-bold mt-8 pt-4 border-t border-slate-200">【目的別】各ゴルフ練習場の詳細レビュー</h2>
-                <p>
-                    比較表で気になる練習場は見つかりましたか？ここからは、それぞれの練習場のリアルな魅力と、「知っておくと良いポイント」を詳しくご紹介します！
-                </p>
-
-                <section class="mt-8 scroll-mt-24" id="article-azuchi">
-                    <p class="text-lg font-semibold text-green-700">A. 初心者・安心感重視ならここ！</p>
-                    <h3 class="text-2xl font-bold text-slate-800 mt-1">{rangesData.azuchi_gc?.name}</h3>
-                    <Image src={rangeImages.azuchi_gc} alt={`${rangesData.azuchi_gc?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1600} height={900} format="webp" quality={80} />
-                    <h4 class="text-xl font-bold mt-4">ここがスゴい！3つの魅力</h4>
-                    <ul class="list-none space-y-2 mt-2 pl-2">
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>プリカ不要！現金払いの究極の手軽さ</strong><br />「今日は100球だけ」と700円を握りしめて行ける気軽さが最高！差額を払えば打ち放題に変更してくれる”神対応”も。</li>
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>強面だけど超優しい店主の人柄</strong><br />初めてだと伝えれば満面の笑みで丁寧に教えてくれます。その温かい人柄とアットホームな雰囲気が、初心者の不安を吹き飛ばしてくれます。</li>
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>本物のツアープロによる本格レッスン</strong><br />ツアー経験者の入江賢プロから、本物の技術をマンツーマンで学べます。本気で上手くなりたいなら、これ以上ない最高の環境です。</li>
-                    </ul>
-                    <h4 class="text-xl font-bold mt-4">知っておくと良いポイント</h4>
-                    <ul class="list-disc list-inside space-y-2 mt-2 pl-4">
-                        <li>距離が約180ヤードと短めなので、ドライバーの飛距離確認には不向きです。</li>
-                        <li>アプローチやパターの専用グリーンはありません。</li>
-                        <li>自動ティーアップや弾道測定器はなく、昔ながらのスタイルです。</li>
-                    </ul>
-                    <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
-                        <a href="/articles/azuchi-review/" class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
-                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
-                            管理人の詳細体験レポートを読む
+            {/* --- 施設詳細と体験談のダブルリンクUI --- */}
+            <h2 class="text-2xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">調査対象施設の詳細データ・体験レビュー</h2>
+            <p>シガゴルでは、各施設の「基本情報（料金や営業時間など）」をまとめたデータベースと、管理人が実際に打ってみた「体験レポート」を分けてご用意しています。気になる施設をチェックしてみてください。</p>
+            
+            <div class="space-y-6 not-prose mb-12">
+                
+                {/* リバーサイドジャンボ */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">リバーサイドジャンボゴルフ</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">極上の芝管理 / 中〜上級者向け</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/riverside_jumbo/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
                         </a>
-                        <a href="/ranges/azuchi_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
-                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
-                            この練習場の施設詳細ページへ
+                        <a href="/articles/review/riverside-jumbo/" class="px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition text-center shadow-sm">
+                            <i class="fa-solid fa-pen-nib mr-1"></i> 体験レビューを読む
                         </a>
-                    </div>
-                </section>
-
-                <section class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24" id="article-sakura">
-                    <p class="text-lg font-semibold text-green-700">B. コスパ最強！女性・ジュニアなら断然ここ！</p>
-                    <h3 class="text-2xl font-bold text-slate-800 mt-1">{rangesData.sakura_gc?.name}</h3>
-                    <Image src={rangeImages.sakura_gc} alt={`${rangesData.sakura_gc?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1600} height={900} format="webp" quality={80} />
-                    <h4 class="text-xl font-bold mt-4">ここがスゴい！3つの魅力</h4>
-                    <ul class="list-none space-y-2 mt-2 pl-2">
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>異次元の女性・ジュニア特典</strong><br />簡単な登録だけで、打ち放題が1時間515円、入場料もアプローチ練習場も無料に。東近江エリアでここまで安い場所は他にありません。</li>
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>初心者も集中できる専用打席</strong><br />2階にはパーテーションで仕切られた「初心者優先スペース」が。「空振りしたら恥ずかしい…」なんて心配は無用です！</li>
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>無料とは思えない！実践的なアプローチ練習場</strong><br />約60ヤードの広さにバンカーも完備。スコアアップを目指すゴルファーの強い味方です。</li>
-                    </ul>
-                    <h4 class="text-xl font-bold mt-4">知っておくと良いポイント</h4>
-                    <ul class="list-disc list-inside space-y-2 mt-2 pl-4">
-                        <li>施設全体は最新というよりは、少し年季が入っている印象です。</li>
-                        <li>アプローチ練習場の芝は、逆にコースの難しいライを想定した実践的な練習になります。</li>
-                        <li>男性ビジターの料金は標準的です。</li>
-                    </ul>
-                    <div class="not-prose text-center my-6 space-y-4 md:space-y-0 md:space-x-4">
-                        <a href="/articles/sakura-gc-review/" class="nav-link inline-flex items-center justify-center bg-orange-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-orange-600 transition-colors duration-200 text-base no-underline">
-                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4a4 4 0 1 1 0 8a4 4 0 0 1 0-8Zm0 10c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4Z"></path></svg>
-                            管理人の詳細体験レポートを読む
-                        </a>
-                        <a href="/ranges/sakura_gc/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
-                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
-                            この練習場の施設詳細ページへ
-                        </a>
-                    </div>
-                </section>
-
-                <section class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24" id="article-riverside">
-                    <p class="text-lg font-semibold text-green-700">C. スコアアップ！ショートゲーム練習の聖地</p>
-                    <h3 class="text-2xl font-bold text-slate-800 mt-1">{rangesData.riverside_jumbo?.name}</h3>
-                    <Image src={rangeImages.riverside_jumbo} alt={`${rangesData.riverside_jumbo?.name}の入口`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} format="webp" quality={80} />
-                    <h4 class="text-xl font-bold mt-4">ここがスゴい！3つの魅力</h4>
-                    <ul class="list-none space-y-2 mt-2 pl-2">
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>無料で使える、超本格パター練習場</strong><br />まるで本コースのような複雑な傾斜と広大なグリーンが無料。「パターイズマネー」を極めたいなら、ここ以外に選択肢はありません。</li>
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>正確無比！打席ごとのヤード表示</strong><br />「あの旗まで何ヤード？」を解消する詳細なヤード表示で、番手ごとの正確な距離感を体に叩き込めます。</li>
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>多彩なライから打てるアプローチ練習場（会員限定）</strong><br />会員になれば利用できるアプローチ練習場は超実践仕様。コースでの対応力が格段に上がります。</li>
-                    </ul>
-                    <h4 class="text-xl font-bold mt-4">知っておくと良いポイント</h4>
-                    <ul class="list-disc list-inside space-y-2 mt-2 pl-4">
-                        <li>質の高いアプローチ練習場は会員限定です（年会費2,000円＋利用料）。</li>
-                        <li>弾道測定器は1台のみで有料です。</li>
-                        <li>パター練習場のすぐ横が喫煙所のため、煙が気になる場合も。</li>
-                    </ul>
-                    <div class="not-prose text-center my-6">
-                        <a href="/ranges/riverside_jumbo/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
-                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
-                            この練習場の施設詳細ページへ
-                        </a>
-                    </div>
-                </section>
-
-                <section class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24" id="article-greenpia">
-                    <p class="text-lg font-semibold text-green-700">D. [割引対象者限定] 環境は問わない！価格最優先なら</p>
-                    <h3 class="text-2xl font-bold text-slate-800 mt-1">{rangesData.greenpia_oh?.name}</h3>
-                    <Image src={rangeImages.greenpia_oh} alt={`${rangesData.greenpia_oh?.name}の外観`} class="w-full h-auto object-cover rounded-lg my-4" loading="lazy" width={1200} height={800} format="webp" quality={80} />
-                    <h4 class="text-xl font-bold mt-4">ここがスゴい！3つの魅力</h4>
-                    <ul class="list-none space-y-2 mt-2 pl-2">
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>衝撃の1球3円！特定の割引が超強力</strong><br />SDカードやJAF会員証など、対象カードでボール単価が一律2円引きに。平日2階なら1球3円という衝撃価格で練習できます。</li>
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>女性もお得な打ち放題プラン</strong><br />尖った魅力だけでなく、女性向けの打ち放題プラン（1時間550円〜）もしっかり用意されています。</li>
-                        <li><span class="text-green-600 font-bold">✔</span> <strong>様々なライを想定！4種の傾斜マット</strong><br />平坦なライだけでなく、コースで遭遇する様々な傾斜を想定した練習ができるユニークな設備です。</li>
-                    </ul>
-                    <h4 class="text-xl font-bold mt-4">知っておくと良いポイント</h4>
-                    <ul class="list-disc list-inside space-y-2 mt-2 pl-4">
-                        <li>施設の老朽化は否めず、マットが波打っているなど練習環境は万全でないことも。</li>
-                        <li>料金体系が非常に複雑なので、事前の確認をおすすめします。</li>
-                        <li>良くも悪も、昔ながらのローカルな雰囲気です。</li>
-                    </ul>
-                    <div class="not-prose text-center my-6">
-                        <a href="/ranges/greenpia_oh/" class="nav-link inline-flex items-center justify-center bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 text-base no-underline">
-                            <svg class="cta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M4 21V9.975L12 3L20 9.975V21H14V14H10V21H4Z"></path></svg>
-                            この練習場の施設詳細ページへ
-                        </a>
-                    </div>
-                </section>
-            </section>
-
-            <section id="conclusion-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">まとめ：あなたにピッタリの練習場はここだ！</h2>
-                <p>
-                    4つの個性豊かな練習場をご紹介しましたが、あなたにピッタリの場所は見つかりましたか？最後に、あなたのタイプ別に結論をまとめます。
-                </p>
-                <div class="space-y-4 mt-4">
-                    <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-green-500">
-                        <h5 class="font-bold">🔰 ゴルフを始めたばかりで不安なあなたへ</h5>
-                        <p class="m-0">👉 <strong>{rangesData.azuchi_gc?.name}</strong>がおすすめです。プリカ不要のここで、ゴルフ練習場の温かい雰囲気に慣れてみませんか？</p>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-green-500">
-                        <h5 class="font-bold">💰 お得にたくさん練習したい女性・ジュニアのあなたへ</h5>
-                        <p class="m-0">👉 <strong>{rangesData.sakura_gc?.name}</strong>がおすすめです。他のどこよりもお得な特典で、上達への最短ルートを走りましょう！</p>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-green-500">
-                        <h5 class="font-bold">📈 本気でスコアアップを目指したいあなたへ</h5>
-                        <p class="m-0">👉 <strong>{rangesData.riverside_jumbo?.name}</strong>がおすすめです。ここの“神”施設があなたのスコアを劇的に変えてくれるはずです。</p>
-                    </div>
-                    <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-green-500">
-                        <h5 class="font-bold">💪 環境は問わない“練習の虫”のあなたへ</h5>
-                        <p class="m-0">👉 <strong>{rangesData.greenpia_oh?.name}</strong>がおすすめです。割引対象なら1球3円の衝撃価格。まさに“猛者”向けの練習場です。</p>
                     </div>
                 </div>
-            </section>
 
-            <section id="faq" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">ゴルフ練習場選びのよくある質問</h2>
-                <div class="space-y-6 mt-4">
+                {/* さくらゴルフ */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800">Q. 初心者におすすめのゴルフ練習場はどこですか？</h3>
-                        <p class="mt-2">
-                            A.
-                            本記事で紹介している中では「安土ゴルフクラブ」と「さくらゴルフ倶楽部」が特におすすめです。安土ゴルフクラブは料金が分かりやすく、アットホームな雰囲気です。さくらゴルフ倶楽部には初心者優先スペースがあり、周りの目を気にせず練習に集中できます。
-                        </p>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">さくらゴルフ倶楽部</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">女性特権多数 / 初心者専用打席</p>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-slate-800">Q. 一番安いゴルフ練習場はどこですか？</h3>
-                        <p class="mt-2">
-                            A.
-                            料金はプランや時間帯によって大きく異なりますが、特定の割引（SDカード等）が適用されるなら「グリーンピア近江八幡ゴルフ」が1球あたりの単価が最も安くなる可能性があります。女性やジュニアの方であれば、「さくらゴルフ倶楽部」の特典が非常にお得です。
-                        </p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/sakura_gc/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
+                        </a>
+                        <a href="/articles/sakura-gc-review/" class="px-4 py-2 bg-rose-500 text-white text-sm font-bold rounded-lg hover:bg-rose-600 transition text-center shadow-sm">
+                            <i class="fa-solid fa-pen-nib mr-1"></i> 体験レビューを読む
+                        </a>
                     </div>
                 </div>
-            </section>
+
+                {/* グリーンピア */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">グリーンピア近江八幡ゴルフ</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">衝撃の低価格 / 昔ながらの施設</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/greenpia_oh/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
+                        </a>
+                        <a href="/articles/review/greenpia-oh/" class="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition text-center shadow-sm">
+                            <i class="fa-solid fa-pen-nib mr-1"></i> 体験レビューを読む
+                        </a>
+                    </div>
+                </div>
+
+                {/* 安土 */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">安土ゴルフクラブ</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">現金で手軽 / レッスンがすごい</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/azuchi_gc/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
+                        </a>
+                        <a href="/articles/azuchi-review/" class="px-4 py-2 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition text-center shadow-sm">
+                            <i class="fa-solid fa-pen-nib mr-1"></i> 体験レビューを読む
+                        </a>
+                    </div>
+                </div>
+
+                {/* がれーじぱーく */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">がれーじぱーく東近江</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">インドア施設 / 弾道測定器完備</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/garage_park/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
+                        </a>
+                        <a href="/articles/garege-park-review/" class="px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-lg hover:bg-indigo-700 transition text-center shadow-sm">
+                            <i class="fa-solid fa-pen-nib mr-1"></i> 体験レビューを読む
+                        </a>
+                    </div>
+                </div>
+
+                {/* ELGRACE近江八幡（体験談なしのため詳細ボタンのみ） */}
+                <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 m-0">ELGRACE近江八幡</h3>
+                        <p class="text-sm text-slate-500 m-0 mt-1">インドア施設 / ラグジュアリー空間</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <a href="/ranges/elgrace_oh/" class="px-4 py-2 bg-slate-100 text-slate-700 text-sm font-bold rounded-lg border border-slate-300 hover:bg-slate-200 transition text-center w-full">
+                            <i class="fa-solid fa-list-ul mr-1"></i> 施設詳細を見る
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <hr class="my-16 border-slate-200" />
+
+            {/* ==========================================
+                 記事末尾：黄金の4ステップ（ハブ記事版）
+            =========================================== */}
+            <div class="not-prose my-16 p-8 bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-300 rounded-2xl shadow-lg text-center">
+                <div class="inline-block bg-blue-600 text-white font-bold px-4 py-1 rounded-full text-sm mb-4">
+                    迷ったらまずはコレ！
+                </div>
+                <h3 class="text-2xl font-black text-blue-900 mt-0 mb-4">結局、自分にとって一番安い練習場はどこ？</h3>
+                <p class="text-slate-700 mb-6 leading-relaxed">
+                    「色々あって選べない…」という方は、近江八幡・東近江エリアの<strong>「料金徹底比較」</strong>からチェックしてみてください！<br>
+                    あなたのお財布に一番優しい、コスパ最強の施設が見つかります。
+                </p>
+                <a href="/articles/comparison/omi-pricerank/" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-blue-700 text-white font-bold rounded-xl hover:bg-blue-800 hover:shadow-xl transition-all duration-300 no-underline text-lg">
+                    最安値がわかる料金比較を見る ＞
+                </a>
+            </div>
+
+            
 
             <div class="not-prose my-12 space-y-12">
-            {
-                category === '比較記事' ? (
-                    <>
-                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
-                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
-                    </>
-                ) 
-                : category === '体験談' ? (
-                    <>
-                        <MySlider articles={comparisonArticles} title="あわせて読みたい「比較記事」"/>
-                        <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
-                    </>
-                ) 
-                : null
-            }
+                <MySlider articles={comparisonArticles} title="目的別・練習場比較まとめ" />
+                <MySlider articles={experienceReports} title="各施設の体験レポート" />
             </div>
-            <ShareButtons articleUrl={articleUrl} headline={headline} />
+
             <AuthorProfile />
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
             
-            <section id="info-summary" class="mt-12 pt-6 border-t border-slate-200 scroll-mt-24">
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">各施設の基本情報まとめ</h2>
-                <div class="space-y-8 mt-4">
-                    {rangeIds.slice(0, 4).map((id) => {
-                            const range = rangesData[id];
-                            if (!range) return null;
-                            
-                            const avgRating = range.avgRating || 0;
-                            const reviewCount = range.reviewCount || 0;
-
-                            const searchQuery = encodeURIComponent(`${range.name}, ${range.address}`);
-                            const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
-                            const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${gmapsApiKey}&q=${searchQuery}`;
-
-                            return (
-                                <div id={`${id}-info`} class="scroll-mt-24">
-                                    <h3 class="text-xl font-bold flex items-center flex-wrap gap-x-2 gap-y-1">
-                                        <span>{range.name}</span>
-                                        {/* [修正点3] SVG星評価をここに追加 */}
-                                        {avgRating > 0 && (
-                                        <div class="flex items-center" role="img" aria-label={`評価 ${avgRating.toFixed(1)}/5`}>
-                                            {Array.from({ length: 5 }).map((_, i) => (
-                                                <svg class={`w-5 h-5 ${i < Math.round(avgRating) ? 'text-amber-400' : 'text-slate-300'}`} fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                </svg>
-                                            ))}
-                                        </div>
-                                        )}
-                                        <span class="text-sm text-slate-500 font-normal">({avgRating > 0 ? avgRating.toFixed(1) : '-'} / {reviewCount}件)</span>
-                                    </h3>
-                                    <div class="not-prose overflow-x-auto mt-4">
-                                        <table class="w-full text-left border-collapse">
-                                            <tbody>
-                                                <tr class="border-b border-slate-200">
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold w-1/3">住所</th>
-                                                    <td class="py-3 px-4"><a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{range.address}</a></td>
-                                                </tr>
-                                                <tr class="border-b border-slate-200">
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">電話番号</th>
-                                                    <td class="py-3 px-4">{range.phone ? <a href={`tel:${range.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{range.phone}</a> : '-'}</td>
-                                                </tr>
-                                                <tr class="border-b border-slate-200">
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">営業時間</th>
-                                                    <td class="py-3 px-4" set:html={range.business_hours?.replace(/\n/g, '<br />') || '-'} />
-                                                </tr>
-                                                <tr class="border-b border-slate-200">
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">ヤード数</th>
-                                                    <td class="py-3 px-4">{range.yardage ? `${range.yardage}ヤード` : 'インドア'}</td>
-                                                </tr>
-                                                <tr>
-                                                    <th class="py-3 px-4 bg-slate-50 font-semibold">打席数</th>
-                                                    <td class="py-3 px-4">{range.bays ? `${range.bays}打席` : '-'}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="not-prose mt-4">
-                                        <iframe
-                                            src={mapsEmbedUrl}
-                                            width="100%"
-                                            height="350"
-                                            style="border:0;"
-                                            allowfullscreen=""
-                                            loading="lazy"
-                                            referrerpolicy="no-referrer-when-downgrade"
-                                            title={`${range.name}の地図`}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                </div>
-            </section>
-        </article>
-        </main> {/* ← メイン記事エリアを閉じる */}
+        </main>
 
         {/* ▼ 右側のサイドバーを呼び出す ▼ */}
         <Sidebar />
         
-    </div>
     </div>
 </BaseLayout>

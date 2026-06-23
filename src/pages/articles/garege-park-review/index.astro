@@ -18,6 +18,13 @@ const pubDateISO = "2025-09-28T10:00:00+09:00";
 const updatedDate = null;
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/garage_park/gallery/00000ai.jpg";
 const rangeId = "garage_park";
+const parentHub = {
+
+    name: "近江八幡・東近江完全ガイド", 
+
+    href: "/articles/omi-higashiomi-comparison/" 
+
+};
 
 // --- シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigagolf.com"; // ※ドメイン修正済み
@@ -115,7 +122,7 @@ const reviewSchema = rangeData?.avgRating ? {
 const jsonLdArray = [articleSchema, reviewSchema].filter(Boolean);
 ---
 
-<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl} parentHub={parentHub}>
 
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLdArray)} />
     

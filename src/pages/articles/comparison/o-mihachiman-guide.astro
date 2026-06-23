@@ -16,6 +16,13 @@ const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/comparison/o-mihachiman-guide/`;
 const publicationDate = "2025-10-17"; // 元の公開日を維持
 const lastModified = new Date(); // 最終更新日を自動取得
+const parentHub = {
+
+    name: "近江八幡・東近江完全ガイド", 
+
+    href: "/articles/omi-higashiomi-comparison/" 
+
+};
 
 // ★★★ SEOコピーを「対決」型に全面変更 ★★★
 const title = "【近江八幡 打ちっぱなし】グリーンピア vs 安土 結局どっち？料金・質・アクセスを現地ライターが本音で徹底比較 | シガゴル";
@@ -96,7 +103,7 @@ const comparisonArticles = [
 const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 ---
 
-<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl}>
+<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl} parentHub={parentHub}>
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(mainEntity)} />
     <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqElements)} />
 

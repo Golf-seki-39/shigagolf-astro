@@ -20,6 +20,13 @@ const pubDateISO = "2025-10-18T11:00:00+09:00";
 const updatedDate = "2026-04-20";
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/riverside_jumbo/gallery/シガゴル (15).jpg";
 const rangeId = "riverside_jumbo";
+const parentHub = {
+
+    name: "近江八幡・東近江完全ガイド", 
+
+    href: "/articles/omi-higashiomi-comparison/" 
+
+};
 
 // --- [4] シェアボタン用の変数を定義 ---
 const baseUrl = "https://shigolf.com";
@@ -102,7 +109,7 @@ const comparisonArticles = [
 
 
 {/* ★ 注意: BaseLayout.astro 側で <slot /> が <main> タグで囲まれているか確認してください */}
-<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl} parentHub={parentHub}>
 
      <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
 

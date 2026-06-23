@@ -16,6 +16,13 @@ const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/comparison/omi-putting/`;
 const publicationDate = "2025-09-29";
 const lastModified = new Date(); 
+const parentHub = {
+
+    name: "近江八幡・東近江完全ガイド", 
+
+    href: "/articles/omi-higashiomi-comparison/" 
+
+};
 
 const title = "【滋賀・徹底比較】パター練習が充実しているゴルフ練習場5選｜近江八幡・東近江エリア | シガゴル";
 const description = "近江八幡・東近江エリアの全5施設のゴルフ練習場を実地調査！スコアメイクの鍵を握るパター練習場の環境を徹底比較。本格グリーンから、屋内で快適に練習できる穴場まで、あなたの目的に合った練習場が必ず見つかります。";
@@ -106,7 +113,7 @@ const comparisonArticles = [
 
 const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 ---
-<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl}>
+<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl} parentHub={parentHub}>
 
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
@@ -151,7 +158,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             </style>
             
             <article class="prose lg:prose-xl max-w-none">
-                
+
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{title.split(" | ")[0]}</h1>
                 <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>

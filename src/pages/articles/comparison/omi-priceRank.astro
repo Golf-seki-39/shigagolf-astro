@@ -16,6 +16,13 @@ const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/comparison/omi-priceRank/`;
 const publicationDate = "2025-10-03";
 const lastModified = new Date();
+const parentHub = {
+
+    name: "近江八幡・東近江完全ガイド", 
+
+    href: "/articles/omi-higashiomi-comparison/" 
+
+};
 
 // --- SEOコピー ---
 const title = "【滋賀の打ちっぱなし】安い練習場はどこ？料金・コスパで5施設を徹底比較（近江八幡・東近江）";
@@ -214,7 +221,7 @@ const comparisonArticles = [
 const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 ---
 
-<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl}>
+<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl} parentHub={parentHub}>
     <script slot="head" type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
         "@type": "BlogPosting",
@@ -301,7 +308,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             </style>
             
             <article class="prose lg:prose-xl max-w-none">
-                
+
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
                 <p class="text-sm text-slate-500 mt-2">最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}</p>

@@ -19,6 +19,13 @@ const modifiedDateISO = new Date().toISOString();
 const updatedDate = "2026-04-20";
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png";
 const rangeId = "sakura_gc";
+const parentHub = {
+
+    name: "近江八幡・東近江完全ガイド", 
+
+    href: "/articles/omi-higashiomi-comparison/" 
+
+};
 // --- End of specific information ---
 
 const baseUrl = "https://shigolf.com";
@@ -99,7 +106,7 @@ const comparisonArticles = [
 ];
 ---
 
-<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl} parentHub={parentHub}>
 
     <script slot="head" type="application/ld+json" set:html={JSON.stringify([
     {

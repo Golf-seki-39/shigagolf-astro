@@ -17,6 +17,10 @@ const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/comparison/higashiomi-guide/`;
 const publicationDate = "2025-10-16";
 const lastModified = new Date();
+const parentHub = {
+    name: "近江八幡・東近江完全ガイド", 
+    href: "/articles/omi-higashiomi-comparison/" 
+};
 
 // --- SEOコピー ---
 const title =
@@ -136,6 +140,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 
 <BaseLayout
     title={title}
+    parentHub={parentHub}
     description={description}
     pubDate={new Date(publicationDate).toISOString()}
     ogImage={imageUrl}
