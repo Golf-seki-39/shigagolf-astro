@@ -165,8 +165,18 @@ const comparisonArticles = [
                 </div>
             </header>
 
-            <Image src={imageUrl} alt="安土ゴルフクラブ アイキャッチ" class="w-full h-auto object-cover rounded-lg my-6" loading="lazy" width={1200} height={800} format="webp" quality={80} />
-            
+{/* ▼ 修正点1: アイキャッチ画像を見切れないようにし、背景をつけて美しく配置 ▼ */}
+            <figure class="m-0 my-8 flex justify-center bg-slate-50 rounded-lg overflow-hidden border border-slate-100">
+                <Image 
+                    src={imageUrl} 
+                    alt="安土ゴルフクラブ アイキャッチ" 
+                    class="max-w-full w-auto h-auto max-h-[500px] object-contain" 
+                    inferSize={true} 
+                    fetchpriority="high" 
+                    format="webp" 
+                    quality={80} 
+                />
+            </figure>            
             <p>家の引き出しの奥に眠る、使いかけのプリペイドカード。「あと数百円…」の残高が気になって、そわそわしながらボールを打つ。…そんな、ゴルファーなら誰もが経験する「プリカ地獄」に、あなたは疲れていませんか？</p>
             <p>こんにちは、「ゴルフ初心者代表」の関です。滋賀のゴルフ練習場でお悩みの方へ。今回ご紹介するのは、そんな僕たちの悩みを一掃してくれる、近江八幡市にある「安土ゴルフクラブ」。ここは、僕にとって“ゴルファーの駆け込み寺”のような場所です。</p>
             

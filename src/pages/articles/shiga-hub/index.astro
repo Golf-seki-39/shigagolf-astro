@@ -1,0 +1,230 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import Sidebar from '../../../components/Sidebar.astro'; 
+
+// --- この記事固有の情報 ---
+const baseUrl = "https://shigagolf.com";
+const articleUrl = `${baseUrl}/articles/shiga-hub/`;
+const publicationDate = "2026-06-24";
+const lastModified = new Date();
+
+// --- SEOコピー ---
+const title = "【2026年最新】滋賀県のゴルフ練習場・打ちっぱなし完全ガイド｜エリア別まとめ | シガゴル";
+const description = "滋賀県全域のゴルフ練習場（打ちっぱなし）を完全網羅！大津、草津・守山、近江八幡、彦根などのエリア別に、料金の安さや弾道測定器の有無、初心者向け施設を比較。あなたにピッタリの練習場がすぐに見つかります。";
+const headline = "【完全版】滋賀県のゴルフ練習場・打ちっぱなし全網羅ガイド";
+const category = "まとめ記事"; 
+// 滋賀県全体をイメージできるアイキャッチ画像
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/shiga-top-hub.jpg"; 
+
+// --- 関連記事リスト ---
+const experienceReports = [
+    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
+    { url: '/articles/sakura-gc-review/', title: 'さくらゴルフ倶楽部 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/sakura_gc/gallery/00000ai.png' },
+    { url: '/articles/review/greenpia-oh/', title: 'グリーンピア近江八幡ゴルフ 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/greenpia_oh/gallery/シガゴル (14).jpg' },
+    { url: '/articles/365-nagahama/range/', title: '365ながはま 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000ai.jpg' },
+];
+
+const comparisonArticles = [
+    { url: '/articles/omi-higashiomi-hub/', title: '【総合比較】近江八幡・東近江エリア完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ナイスミス (9).png' },
+    { url: '/articles/hikone-hub/', title: '【総合比較】彦根・多賀エリア完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/aikyattiiieieiosakojda.png' },
+    { url: '/articles/comparison/hikone-vs/', title: '【彦根対決】KSP vs 365 徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
+    { url: '/articles/comparison/higashiomi-guide/', title: '【東近江対決】ジャンボ vs さくら 徹底比較', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/higashiomi-guide.jpg' },
+];
+
+// --- JSON-LD構造化データ（SEO対策） ---
+const mainEntity = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline,
+    "description": description,
+    "image": [imageUrl],
+    "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+    "publisher": {
+        "@type": "Organization",
+        "name": "シガゴル",
+        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+    },
+    "datePublished": new Date(publicationDate).toISOString(),
+    "dateModified": lastModified.toISOString()
+};
+
+const faqElements = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "滋賀県で一番安いゴルフ練習場を探すには？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "シガゴルでは、近江八幡・東近江エリアや、彦根エリアなど各地域ごとに「料金比較シミュレーター」をご用意しています。ご自身の利用時間や打球数を入力するだけで、その日の最安値施設が一発で分かります。"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "トップトレーサーなど弾道測定器が使える滋賀の練習場は？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "彦根エリアの「KSP彦根」「365ゴルフクラブ彦根」や、長浜エリアの「365ゴルフクラブながはま」など、滋賀県内には無料で最新の弾道測定器が使える練習場が多数あります。詳細は各エリアのガイドをご覧ください。"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "初心者や女性でも通いやすい滋賀の打ちっぱなしは？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "東近江市の「さくらゴルフ倶楽部」のように初心者専用の打席パーテーションがある施設や、女性・ジュニアの入場料や打ち放題が大幅に割引される施設があります。初心者向けまとめ記事をご活用ください。"
+            }
+        }
+    ]
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl}>
+    
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(mainEntity)} />
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqElements)} />
+
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
+
+        {/* ▼ 左側のメイン記事エリア ▼ */}
+        <main id="article-view" class="w-full lg:flex-1 bg-white p-6 md:p-8 rounded-lg shadow-lg text-slate-700 leading-relaxed overflow-hidden">
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id], h3[id] { scroll-margin-top: 80px; }
+            </style>
+            
+            <article class="prose lg:prose-xl max-w-none">
+
+            <header>
+                <div class="inline-block bg-green-100 text-green-800 text-sm font-bold px-3 py-1 rounded-full mb-3">滋賀県 総合トップページ</div>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2 mb-6">
+                    最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}
+                </p>
+                <figure class="m-0 mb-8 flex justify-center bg-slate-50 rounded-lg overflow-hidden border border-slate-200">
+                    <Image src={imageUrl} alt="滋賀県のゴルフ練習場・打ちっぱなしガイド" class="w-full aspect-video object-cover" width={1200} height={675} format="webp" fetchpriority="high" />
+                </figure>
+            </header>
+
+            <p class="lead text-lg md:text-xl font-bold text-slate-800">「滋賀県で打ちっぱなしに行きたいけど、どこが自分に合っているのか分からない…」</p>
+            <p>そんなゴルファーの悩みをすべて解決するために作られたのが、この<strong>滋賀県特化型ゴルフ練習場メディア「シガゴル」</strong>です。</p>
+            <p>管理人である私（関）自身が、日々滋賀県内の練習場に足を運び、料金表を分析し、自分の目で見て感じたリアルな情報だけをまとめています。このページは、<strong>滋賀県内の全練習場情報を探せる「巨大な案内所（ハブ）」</strong>です。</p>
+
+            {/* =========================================
+                経路B：データベース（6エリア）検索
+            ========================================= */}
+            <div class="toc-container bg-slate-50 p-6 rounded-xl border border-slate-200 my-10 not-prose shadow-sm">
+                <h2 class="text-xl font-bold mb-4 text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-map-location-dot text-blue-600"></i> エリアから全施設を探す（データベース）
+                </h2>
+                <p class="text-sm text-slate-600 mb-4">お住まいの地域や、よく行くエリアを選択してください。各エリアの練習場の営業時間や料金などの詳細データを確認できます。</p>
+                
+                {/* ユーザー指定の6エリアで分割 */}
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <a href="/areas/otsu/" class="bg-white border border-slate-300 text-slate-700 font-bold text-center py-3 rounded-lg hover:bg-blue-50 transition-colors">大津</a>
+                    <a href="/areas/kusatsu-ritto-moriyama-yasu/" class="bg-white border border-slate-300 text-slate-700 font-bold text-center py-3 rounded-lg hover:bg-blue-50 transition-colors flex flex-col justify-center leading-tight"><span>草津・栗東</span><span>守山・野洲</span></a>
+                    <a href="/areas/koka-konan/" class="bg-white border border-slate-300 text-slate-700 font-bold text-center py-3 rounded-lg hover:bg-blue-50 transition-colors">甲賀・湖南</a>
+                    <a href="/areas/omihachiman-higashiomi/" class="bg-white border border-slate-300 text-slate-700 font-bold text-center py-3 rounded-lg hover:bg-blue-50 transition-colors flex flex-col justify-center leading-tight"><span>近江八幡</span><span>東近江</span></a>
+                    <a href="/areas/kohoku/" class="bg-white border border-slate-300 text-slate-700 font-bold text-center py-3 rounded-lg hover:bg-blue-50 transition-colors">湖北</a>
+                    <a href="/areas/kosei/" class="bg-white border border-slate-300 text-slate-700 font-bold text-center py-3 rounded-lg hover:bg-blue-50 transition-colors">湖西</a>
+                </div>
+            </div>
+
+            {/* =========================================
+                経路A：徹底比較ガイド（トピッククラスター）
+            ========================================= */}
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">👑 迷ったらここ！シガゴル厳選・エリア別完全ガイド</h2>
+            <p>「ただ施設の一覧を見るだけじゃなくて、<strong>結局どこが安いの？どこが初心者向けなの？</strong>という結論を知りたい！」という方は、以下のシガゴル特製・徹底比較ガイドをご覧ください。</p>
+
+            <div class="grid md:grid-cols-2 gap-6 my-8 not-prose">
+                {/* 近江八幡・東近江ブロック */}
+                <div class="border-2 border-green-500 rounded-xl overflow-hidden shadow-sm flex flex-col relative bg-green-50">
+                    <div class="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">激戦区</div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <h3 class="font-bold text-xl text-green-800 mb-2 mt-2">近江八幡・東近江エリア</h3>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            初心者向けの優しい練習場から、本格的なアプローチやバンカー、インドア施設までバリエーション豊か。専用の「料金シミュレーター」を使えばどこが一番安いか一発で分かります。
+                        </p>
+                        <a href="/articles/omi-higashiomi-hub/" class="block w-full bg-green-600 hover:bg-green-700 text-white text-center font-bold py-3 rounded-lg transition-colors text-sm">
+                            近江八幡・東近江ガイドを見る ＞
+                        </a>
+                    </div>
+                </div>
+
+                {/* 彦根・多賀ブロック */}
+                <div class="border-2 border-blue-500 rounded-xl overflow-hidden shadow-sm flex flex-col relative bg-blue-50">
+                    <div class="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">ハイテク</div>
+                    <div class="p-5 flex-1 flex flex-col justify-between">
+                        <h3 class="font-bold text-xl text-blue-800 mb-2 mt-2">彦根・多賀エリア</h3>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            彦根周辺は「全施設で弾道測定器（トップトレーサーやトラックマン）が無料」という全国でも珍しい超ハイテク激戦区！データで効率よく上達したい方に最高の環境です。
+                        </p>
+                        <a href="/articles/hikone-hub/" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center font-bold py-3 rounded-lg transition-colors text-sm">
+                            彦根・多賀ガイドを見る ＞
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-sm text-slate-500 text-center">※大津・草津・甲賀などのエリア別完全ガイドも現在鋭意制作中です！順次公開していきますのでお楽しみに。</p>
+
+
+            {/* =========================================
+                選び方のコツ
+            ========================================= */}
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">失敗しない！ゴルフ練習場の選び方 3つのポイント</h2>
+            <p>滋賀県内にはたくさんの練習場がありますが、以下の3つのポイントを意識して選ぶと、自分の目的にピッタリの場所が見つかります。</p>
+            
+            <div class="space-y-6 my-8 not-prose">
+                <div class="flex gap-4 items-start">
+                    <div class="bg-amber-100 text-amber-600 font-black text-xl w-12 h-12 flex items-center justify-center rounded-full shrink-0">1</div>
+                    <div>
+                        <h4 class="font-bold text-lg text-slate-800 m-0">料金システム（単価打ち or 打ち放題）</h4>
+                        <p class="text-sm text-slate-600 mt-1">「今日はフォーム固めで50球だけ」「アプローチも含めて2時間みっちり打ちたい」など、その日の目的に合わせて一番安いプランがある練習場を選びましょう。当サイトの<strong class="text-amber-600">料金シミュレーター</strong>を使えば一発で最安値がわかります。</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <div class="bg-blue-100 text-blue-600 font-black text-xl w-12 h-12 flex items-center justify-center rounded-full shrink-0">2</div>
+                    <div>
+                        <h4 class="font-bold text-lg text-slate-800 m-0">弾道測定器の有無</h4>
+                        <p class="text-sm text-slate-600 mt-1">飛距離やスピン量を正確に知りたいなら、トップトレーサーやトラックマンが完備された練習場へ。彦根エリアなどは全打席無料で使える神施設が密集しています。</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-start">
+                    <div class="bg-rose-100 text-rose-600 font-black text-xl w-12 h-12 flex items-center justify-center rounded-full shrink-0">3</div>
+                    <div>
+                        <h4 class="font-bold text-lg text-slate-800 m-0">初心者の通いやすさ</h4>
+                        <p class="text-sm text-slate-600 mt-1">周りの視線が気にならない「初心者優先・専用打席」があるか、レンタルクラブが無料か、店員さんが親切かなど、デビュー直後でも安心して通える環境かも重要です。</p>
+                    </div>
+                </div>
+            </div>
+
+            <p>さあ、シガゴルのエリア別ガイドを活用して、今週末は最高のゴルフ練習を楽しんでください！</p>
+
+            </article>
+
+            {/* --- SNSシェア・プロフィール --- */}
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+
+            {/* --- 関連記事スライダー --- */}
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={comparisonArticles} title="各エリアの徹底比較ガイド" />
+                <MySlider articles={experienceReports} title="管理人のリアルな体験談" />
+            </div>
+            
+        </main>
+
+        {/* ▼ 右側のサイドバーを呼び出す ▼ */}
+        <Sidebar />
+        
+    </div>
+</BaseLayout>

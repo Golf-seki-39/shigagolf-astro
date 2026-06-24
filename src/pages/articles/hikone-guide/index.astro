@@ -1,0 +1,449 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { doc, getDoc } from "firebase/firestore";
+import { Image } from "astro:assets";
+
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import Sidebar from '../../../components/Sidebar.astro'; 
+
+// --- この記事固有の情報 ---
+const baseUrl = "https://shigagolf.com";
+const articleUrl = `${baseUrl}/articles/comparison/hikone-vs/`;
+const publicationDate = "2026-06-24";
+const lastModified = new Date();
+const parentHub = {
+    name: "彦根・多賀完全ガイド", 
+    href: "/articles/hikone-hub/" 
+};
+
+// --- SEOコピー ---
+const title = "【彦根の2大打ちっぱなし】KSP vs 365 結局どっち？現地ライターが本音で比較 | シガゴル";
+const description = "滋賀県彦根市で「全打席トップトレーサー無料」の2大ゴルフ練習場、KSP彦根と365ゴルフクラブ彦根を徹底比較！料金シミュレーター付き。マットの綺麗さ、混雑度、パター練習場、そして店員さんの対応まで、現地ライターのリアルな本音で判定します。";
+const headline = "【彦根の2大打ちっぱなし】KSP vs 365 結局どっち？現地ライターが本音で比較！";
+const category = "比較記事"; 
+// VS風のアイキャッチ画像を仮置き
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg";
+
+// --- 関連記事リスト ---
+const experienceReports = [
+    { url: '/articles/ksp-hikone-review/', title: 'KSP彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/000000img.png' },
+    { url: '/articles/review/365hikone/', title: '365ゴルフクラブ彦根 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/0000img.jpg' },
+    { url: '/articles/taga-golf/', title: '多賀ゴルフ練習場 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/taga_gr/gallery/aikyatti-taga.png' },
+];
+const comparisonArticles = [
+    { url: '/articles/hikone-tracker/', title: '【彦根】弾道測定器が無料のゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/ai-hikonetore-sa-.jpg' },
+    { url: '/articles/hikone-pricerank/', title: '【彦根】打ちっぱなし料金比較 シミュレーター付', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-price.png' },
+    { url: '/articles/hikone-hub/', title: '【総合比較】彦根・多賀エリアの完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/aikyattiiieieiosakojda.png' },
+];
+
+// --- Firebaseから練習場データを取得（基本情報用） ---
+const rangeIds = ['ksp_hikone', '365_hikone'];
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const rangePromises = rangeIds.map(id => getDoc(doc(db, `artifacts/${appId}/public/data/practice_ranges/${id}`)));
+const rangeDocs = await Promise.all(rangePromises);
+
+const rangesData = rangeDocs.reduce((acc, docSnap, index) => {
+    if (docSnap.exists()) { acc[rangeIds[index]] = docSnap.data(); }
+    else { acc[rangeIds[index]] = null; }
+    return acc;
+}, {});
+
+// --- JSON-LD構造化データ（SEO対策） ---
+const mainEntity = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline,
+    "description": description,
+    "image": [
+        imageUrl,
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6702.jpg",
+        "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7710.png"
+    ],
+    "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+    "publisher": {
+        "@type": "Organization",
+        "name": "シガゴル",
+        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+    },
+    "datePublished": new Date(publicationDate).toISOString(),
+    "dateModified": lastModified.toISOString()
+};
+
+const faqElements = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "彦根市でトップトレーサーが使える練習場はどこ？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "彦根エリアでは「KSP彦根」と「365ゴルフクラブ彦根（旧ゴルフプラザ彦根）」の両施設で、全打席にトップトレーサー・レンジが標準装備されており、追加料金なしで利用できます。"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "KSP彦根と365彦根、打席が綺麗で空いているのはどっち？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "打席の綺麗さと空き具合なら「365ゴルフクラブ彦根」が圧倒的におすすめです。リニューアルされたばかりでマットが非常に美しく、まだ穴場として知られていないため混雑を避けて快適に練習できます。"
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "安く練習できるのはKSP彦根と365彦根どっち？",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "ふるさと納税を利用できる場合は「KSP彦根」が実質的に最安クラスになります。しかし、通常利用で静かに集中したい場合や、綺麗なパター練習場を使いたい場合は「365彦根」への投資がコスパに優れています。"
+            }
+        }
+    ]
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={publicationDate} ogImage={imageUrl} parentHub={parentHub}>
+    
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(mainEntity)} />
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqElements)} />
+
+     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
+
+        {/* ▼ 左側のメイン記事エリア ▼ */}
+        <main id="article-view" class="w-full lg:flex-1 bg-white p-6 md:p-8 rounded-lg shadow-lg text-slate-700 leading-relaxed overflow-hidden">
+
+            <a href="/articles/hikone-hub/" class="nav-link back-button mb-6 inline-block text-green-700 font-semibold hover:underline">
+                ‹ 彦根・多賀エリア完全ガイドに戻る
+            </a>
+            
+            <style is:global>
+              html { scroll-behavior: smooth; }
+              section[id], h2[id], h3[id] { scroll-margin-top: 80px; }
+            </style>
+            
+            <article class="prose lg:prose-xl max-w-none">
+
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                <p class="text-sm text-slate-500 mt-2 mb-6">
+                    最終更新日：{lastModified.getFullYear()}-{String(lastModified.getMonth() + 1).padStart(2, '0')}-{String(lastModified.getDate()).padStart(2, '0')}
+                </p>
+                <figure class="m-0 mb-8 flex justify-center bg-slate-50 rounded-lg overflow-hidden relative">
+                    {/* VS風のアイキャッチレイアウト */}
+                    <div class="flex w-full h-[300px] md:h-[400px]">
+                        <div class="w-1/2 relative">
+                            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6506.jpg" alt="KSP彦根" class="w-full h-full object-cover" width={600} height={400} format="webp" />
+                            <div class="absolute bottom-4 left-4 bg-emerald-600 text-white font-bold px-3 py-1 rounded shadow">KSP</div>
+                        </div>
+                        <div class="w-1/2 relative">
+                            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7723.png" alt="365ゴルフクラブ彦根" class="w-full h-full object-cover" width={600} height={400} format="webp" />
+                            <div class="absolute bottom-4 right-4 bg-orange-500 text-white font-bold px-3 py-1 rounded shadow">365</div>
+                        </div>
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-slate-900 font-black text-4xl italic px-4 py-2 rounded-full border-4 border-white shadow-xl rotate-[-10deg]">VS</div>
+                    </div>
+                </figure>
+            </header>
+
+            <p>滋賀県彦根市で、最新の「トップトレーサー・レンジ（弾道測定器）」を使ってハイテクな練習がしたい。そう思った時、あなたの目の前には2つの選択肢が現れます。</p>
+            <p>
+                <strong>「KSP彦根」か、「365ゴルフクラブ彦根（旧ゴルフプラザ彦根）」か。</strong><br>
+                <span class="text-sm text-slate-500">（※多賀ゴルフなど、その他の施設も含めた彦根エリア全体の比較は<a href="/articles/hikone-hub/" class="text-blue-600 font-bold hover:underline">彦根・多賀エリア完全ガイド</a>をご覧ください）</span>
+            </p>
+            <p>実はこの2つの練習場、<strong>「全打席トップトレーサー完備」「オートティーアップ」という最強スペックは完全に引き分け（互角）</strong>です。だからこそ、「どっちに行けばいいの？」と迷うゴルファーが後を絶ちません。</p>
+            <p>はじめまして、「シガゴル」運営者の関（<a href="/about/">@seki</a>）です。<br>
+            この記事では、両方の練習場に足繁く通う私が、スペック表には絶対に載っていない<strong>「マットの綺麗さ」「リアルな混雑度」「パター練習場の違い」そして「店員さんの空気感（本音）」</strong>まで、徹底的に比較・暴露します！</p>
+
+            <h2 id="simulator" class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-6 border-b-2 border-slate-200 pb-2">【どっちが安い？】彦根2大巨頭 専用料金シミュレーター</h2>
+            <p>まずは気になる「料金」から。あなたの属性や打つ球数に合わせて、<strong>「KSP」と「365」のどちらが今日いくらで練習できるか</strong>を自動計算します。ポチポチ選んでみてください！</p>
+
+            {/* ▼ 彦根専用VSシミュレーターUI ▼ */}
+            <div id="vs-hikone-simulator" class="not-prose bg-slate-800 p-4 md:p-6 rounded-2xl my-8 shadow-xl text-white"> 
+                <h3 class="text-lg md:text-xl font-bold mb-6 text-center text-yellow-400 mt-0">
+                    <i class="fa-solid fa-bolt mr-2"></i> KSP vs 365 料金シミュレーター
+                </h3>
+            
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div> 
+                        <label class="font-bold text-slate-300 text-sm mb-1 block">① 会員ですか？（両施設共通として計算）</label>
+                        <select id="vs-h-member" class="w-full p-2.5 border border-slate-600 rounded-md bg-slate-700 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                            <option value="visitor" selected>ビジター（非会員）</option>
+                            <option value="member">メンバー（会員）</option>
+                        </select>
+                    </div>
+                    <div> 
+                        <label class="font-bold text-slate-300 text-sm mb-1 block">② 練習に行く曜日</label>
+                        <select id="vs-h-day" class="w-full p-2.5 border border-slate-600 rounded-md bg-slate-700 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                            <option value="weekday" selected>平日</option>
+                            <option value="weekend">土日祝</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6 bg-slate-700 p-4 rounded-lg">
+                    <label class="font-bold text-slate-300 text-sm flex justify-between mb-2">
+                        <span>③ 何球打ちますか？（※1階・通常時間帯の単価打ちで計算）</span>
+                        <span class="text-yellow-400 text-xl" id="vs-h-ball-display">150球</span>
+                    </label>
+                    <input type="range" id="vs-h-ball-slider" min="50" max="300" step="10" value="150" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-yellow-400">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    {/* KSP 結果 */}
+                    <div class="bg-emerald-900 border-2 border-emerald-500 rounded-xl p-4 text-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-br-lg">KSP彦根</div>
+                        <p class="text-sm text-emerald-200 mt-4 mb-1">実質負担額（目安）</p>
+                        <p class="text-2xl md:text-3xl font-black text-white" id="vs-h-res-ksp">¥---</p>
+                        <p class="text-[10px] md:text-xs text-emerald-300 mt-2 min-h-[2.5rem]" id="vs-h-note-ksp"></p>
+                    </div>
+                    {/* 365 結果 */}
+                    <div class="bg-orange-900 border-2 border-orange-500 rounded-xl p-4 text-center relative overflow-hidden">
+                         <div class="absolute top-0 left-0 bg-orange-600 text-white text-xs font-bold px-2 py-1 rounded-br-lg">365彦根</div>
+                        <p class="text-sm text-orange-200 mt-4 mb-1">実質負担額（目安）</p>
+                        <p class="text-2xl md:text-3xl font-black text-white" id="vs-h-res-365">¥---</p>
+                        <p class="text-[10px] md:text-xs text-orange-300 mt-2 min-h-[2.5rem]" id="vs-h-note-365"></p>
+                    </div>
+                </div>
+                <p class="text-[10px] text-center text-slate-400 mt-4 leading-relaxed">
+                    ※KSPは「5,000円チャージ時の還元率」と「1球1pt還元」を加味した概算です。<br>
+                    ※365は「通常プリカ利用時」の概算です（女性割やLINE割を使うとさらに安くなります）。
+                </p>
+            </div>
+
+            <p class="text-sm text-slate-600 mt-2 mb-8 bg-slate-50 p-3 rounded border border-slate-200">
+                👉 <strong>【もっと安さを追求したい方へ】</strong><br>
+                彦根・多賀エリアの全施設の詳細な料金比較や、打ち放題の最安値を知りたい方は、<a href="/articles/hikone-pricerank/" class="text-blue-600 font-bold hover:underline">彦根エリア打ちっぱなし料金比較（シミュレーター付）</a>もあわせてご覧ください。
+            </p>
+
+
+            <h2 id="battle" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">【徹底比較】KSP彦根 vs 365彦根 5番勝負！</h2>
+            <p>打席の広さやオートティーアップなどの基本スペックは「ほぼ同じ」です。だからこそ、ここから語る<strong>違い（本音）</strong>が重要になります。</p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-10 mb-4 flex items-center gap-2">
+                <span class="bg-slate-800 text-white w-8 h-8 flex items-center justify-center rounded-full text-sm">1</span> 
+                料金・コスパ対決
+            </h3>
+            <p><strong>【KSP彦根】ふるさと納税が使える最強の裏ワザ</strong><br>
+            KSPの料金システムは一見普通ですが、実は<strong>ICカードが「ふるさと納税の返礼品」になっている</strong>というズルい（最高の）裏ワザがあります。<a href="https://a.r10.to/h5J6tH" target="_blank" rel="noopener sponsored" class="text-emerald-600 font-bold hover:underline">楽天ふるさと納税（野洲市・KSP共通利用可）</a>を経由すれば、実質タダ同然で練習ができるため、このカードを切られたら他施設は太刀打ちできません。</p>
+            <p><strong>【365彦根】ポイントシステムと女性・LINE割がお得</strong><br>
+            365彦根は、ビジターの入場料（250円）がかかったりと一見割高に見えますが、女性割やLINE割のチャージ還元率が非常に高く、システムを理解してメンバーになれば適正価格で快適に練習できます。</p>
+            <div class="bg-slate-100 p-4 rounded-lg text-sm mb-6 border border-slate-300">
+                <p class="m-0 text-center font-bold">🏆 料金対決の勝者は…<br>
+                <span class="text-emerald-600 text-lg">【KSP彦根】（ふるさと納税の存在が強すぎる！）</span></p>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-10 mb-4 flex items-center gap-2">
+                <span class="bg-slate-800 text-white w-8 h-8 flex items-center justify-center rounded-full text-sm">2</span> 
+                練習環境（マットの綺麗さ）対決
+            </h3>
+            <p><strong>【KSP彦根】標準的な綺麗さ</strong><br>
+            十分綺麗で問題なく練習できますが、長年愛されている施設ならではの「それなりの使用感」はあります。</p>
+            <p><strong>【365彦根】圧倒的な美しさと清潔感！</strong><br>
+            ここは365彦根の圧勝です！旧ゴルフプラザ彦根からリニューアルしたばかりということもあり、<strong>打席のマットが圧倒的に綺麗</strong>です。ふかふかのマットはアイアンを打ち込んでも手首に優しく、清潔な環境が練習のモチベーションを爆上がりさせてくれます。新しくなった施設の全貌は、<a href="/articles/review/365hikone/" class="text-orange-600 font-bold hover:underline">365ゴルフクラブ彦根の訪問レビュー</a>でも写真付きで詳しく解説しています。</p>
+            <figure class="my-4 not-prose flex flex-col md:flex-row gap-4">
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/ksp_hikone/gallery/IMG_6517.jpg" alt="KSPの打席マット" class="w-full md:w-1/2 h-auto object-cover rounded-lg shadow-sm border border-slate-200" width={600} height={337} format="webp" />
+                 <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_hikone/gallery/IMG_7710.png" alt="365の綺麗な打席マット" class="w-full md:w-1/2 h-auto object-cover rounded-lg shadow-sm border border-slate-200" width={600} height={337} format="webp" />
+            </figure>
+            <div class="bg-slate-100 p-4 rounded-lg text-sm mb-6 border border-slate-300">
+                <p class="m-0 text-center font-bold">🏆 練習環境（マット）対決の勝者は…<br>
+                <span class="text-orange-600 text-lg">【365彦根】（圧倒的に綺麗！）</span></p>
+            </div>
+
+            <p class="text-sm text-slate-600 mt-2 mb-8 bg-slate-50 p-3 rounded border border-slate-200">
+                👉 <strong>【これからゴルフを始める方へ】</strong><br>
+                「施設が綺麗」「周りの目が気にならない」といった初心者・女性目線での徹底比較は、<a href="/articles/hikone-biginner-guide/" class="text-blue-600 font-bold hover:underline">【彦根・多賀】初心者・女性向け！打ちっぱなし比較</a>で詳しく解説しています。
+            </p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-10 mb-4 flex items-center gap-2">
+                <span class="bg-slate-800 text-white w-8 h-8 flex items-center justify-center rounded-full text-sm">3</span> 
+                ショートゲーム（パター）対決
+            </h3>
+            <p>※両施設とも、アプローチ専用の練習場（バンカー等）はありません。</p>
+            <p><strong>【KSP彦根】無料だけどちょっと狭い</strong><br>
+            フロントの横に無料のパターマットが敷かれています。家にあるマットと比べれば広いですが、あくまで「おまけ」程度のスペースです。</p>
+            <p><strong>【365彦根】有料（メンバー無料）だが広くて本格的</strong><br>
+            365彦根のパターグリーンはかなり広いです！ビジターは有料ですが、メンバーになれば無料でこの広いグリーンが使い放題になります。本格的にパターの距離感を養いたいならこちらです。</p>
+            <div class="bg-slate-100 p-4 rounded-lg text-sm mb-6 border border-slate-300">
+                <p class="m-0 text-center font-bold">🏆 パター対決の勝者は…<br>
+                <span class="text-orange-600 text-lg">【365彦根】（※広さと質で勝利）</span></p>
+            </div>
+
+            <p class="text-sm text-slate-600 mt-2 mb-8 bg-slate-50 p-3 rounded border border-slate-200">
+                👉 <strong>【ショートゲームを極めたい方へ】</strong><br>
+                芝から打てるアプローチや本格バンカー練習がしたい方は、<a href="/articles/hikone-shortgame/" class="text-blue-600 font-bold hover:underline">【彦根】ショートゲームの練習が出来るゴルフ練習場まとめ</a>をご覧ください。
+            </p>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-10 mb-4 flex items-center gap-2">
+                <span class="bg-slate-800 text-white w-8 h-8 flex items-center justify-center rounded-full text-sm">4</span> 
+                混雑度・快適さ（穴場感）対決
+            </h3>
+            <p><strong>【KSP彦根】大人気ゆえの激混み</strong><br>
+            トップトレーサー完備の超人気施設なだけあって、<strong>とにかくよく混みます。</strong> 行く時間帯によっては打席待ちが発生することもあり、ワイワイと活気がある反面、少し騒がしく感じることも。とはいえ、計測器を無料で使い倒せるメリットは絶大なので、トップトレーサーの便利な活用術は<a href="/articles/ksp-hikone-review/" class="text-emerald-600 font-bold hover:underline">KSP彦根の体験レポート</a>で予習しておくことをおすすめします。</p>
+            <p><strong>【365彦根】なぜか空いている「奇跡の穴場」</strong><br>
+            これだけ設備が新しくて綺麗なのに、<strong>なぜか空いている時が多い</strong>のです！おそらく「ゴルフプラザ彦根」からリニューアルした事実がまだ世間に知れ渡っていないからだと思います。<br>
+            周りを気にせず、まるで貸切状態のように優雅に練習できる快適さは、今の365彦根だけの特権です。正直、あまり人に教えたくありません（笑）。</p>
+            <div class="bg-slate-100 p-4 rounded-lg text-sm mb-6 border border-slate-300">
+                <p class="m-0 text-center font-bold">🏆 快適さ対決の勝者は…<br>
+                <span class="text-orange-600 text-lg">【365彦根】（最高の穴場スポット！）</span></p>
+            </div>
+
+            <h3 class="text-xl font-bold text-slate-800 mt-10 mb-4 flex items-center gap-2">
+                <span class="bg-slate-800 text-white w-8 h-8 flex items-center justify-center rounded-full text-sm">5</span> 
+                客層・雰囲気（店員さん）対決
+            </h3>
+            <p><strong>【KSP彦根】ビジネスライクな対応</strong><br>
+            来客数が多いせいか、スタッフの方の対応は少しドライというか「あんまり関わりたくないのかな？」と感じることがあります。もちろん業務はしっかりされていますが、アットホーム感は薄めです。</p>
+            <p><strong>【365彦根】明るくて何でも答えてくれる！</strong><br>
+            365の店員さんは本当に明るくて親切です！システムが分からない時や、ちょっとしたゴルフの疑問にも笑顔で答えてくれます。この「人の温かさ」が、練習場の居心地の良さを底上げしてくれています。</p>
+            <div class="bg-slate-100 p-4 rounded-lg text-sm mb-6 border border-slate-300">
+                <p class="m-0 text-center font-bold">🏆 雰囲気対決の勝者は…<br>
+                <span class="text-orange-600 text-lg">【365彦根】（心遣いが最高）</span></p>
+            </div>
+
+            <h2 id="conclusion" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">【結論まとめ】あなたはどっちに行くべき？</h2>
+            <p>5番勝負の結果は、<strong>1勝4敗で「365彦根」の圧勝（※コスパはふるさと納税次第）</strong>となりました！<br>
+            以下の基準で選べば、今日のあなたにとって最高の練習環境が手に入ります。</p>
+
+            <div class="grid md:grid-cols-2 gap-6 my-8 not-prose">
+                <div class="border-2 border-emerald-400 rounded-xl p-6 bg-emerald-50 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white font-bold px-4 py-1 rounded-full shadow">今日は【KSP】の日！</div>
+                    <ul class="list-disc list-inside text-slate-700 mt-4 space-y-2 text-sm">
+                        <li><strong><a href="https://a.r10.to/h5J6tH" target="_blank" rel="noopener sponsored" class="text-emerald-700 hover:underline">ふるさと納税</a></strong>を使って、とにかく実質料金を安く抑えたい</li>
+                        <li>ワイワイ活気のある中で練習したい</li>
+                        <li>店員さんとのやり取りは最小限で、サクッと打って帰りたい</li>
+                    </ul>
+                    <a href="/articles/ksp-hikone-review/" class="mt-4 block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3 rounded-lg transition-colors text-sm">KSP彦根の体験レビューを読む</a>
+                </div>
+
+                <div class="border-2 border-orange-400 rounded-xl p-6 bg-orange-50 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white font-bold px-4 py-1 rounded-full shadow">今日は【365】の日！</div>
+                    <ul class="list-disc list-inside text-slate-700 mt-4 space-y-2 text-sm">
+                        <li><strong>新品でふかふかのマット</strong>で気持ちよくアイアンを打ちたい</li>
+                        <li>混雑を避けて、静かに自分のスイングと向き合いたい</li>
+                        <li>広いパターグリーンでしっかり距離感を養いたい</li>
+                        <li>明るく親切なスタッフさんに癒やされたい</li>
+                    </ul>
+                    <a href="/articles/review/365hikone/" class="mt-4 block w-full bg-orange-500 hover:bg-orange-600 text-white text-center font-bold py-3 rounded-lg transition-colors text-sm">365彦根の体験レビューを読む</a>
+                </div>
+            </div>
+
+            <p>彦根エリアでトップトレーサーを楽しむなら、この2大巨頭の使い分けができれば最強です。特に今の「空いている365彦根」は奇跡のような穴場なので、混んでしまう前にぜひ足を運んでみてくださいね！</p>
+
+            <div class="not-prose my-10 p-6 bg-green-50 border border-green-200 rounded-xl">
+                <h3 class="text-lg font-bold text-green-800 mt-0 mb-2">⛳ 彦根・多賀エリアの全施設を俯瞰したい方へ</h3>
+                <p class="text-slate-700 text-sm leading-relaxed m-0">
+                    「多賀ゴルフやショートコースも含めて全体を見たい！」「そもそもトップトレーサーって何が良いの？」という方は、シガゴルが総力を挙げて作成した<a href="/articles/hikone-hub/" class="text-green-700 font-bold hover:underline text-base">【総合比較】彦根・多賀の打ちっぱなし完全ガイド（ハブ記事）</a>へお戻りください。あなたの目的にピッタリの練習場が必ず見つかります！
+                </p>
+            </div>
+
+            </article>
+
+            {/* --- SNSシェア・プロフィール --- */}
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+
+            {/* --- 関連記事スライダー --- */}
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={comparisonArticles} title="目的別・練習場比較まとめ" />
+                <MySlider articles={experienceReports} title="各施設の体験レポート" />
+            </div>
+
+            {/* --- 基本情報 --- */}
+            <h2 id="info-summary" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">調査対象2施設の基本情報・アクセス</h2>
+            <div class="space-y-12 not-prose">
+                {rangeIds.map(id => {
+                    const range = rangesData[id];
+                    if (!range) return null;
+                    const mapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${range.name}, ${range.address}`)}`;
+                    const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(`${range.name}, ${range.address}`)}`;
+                    
+                    return (
+                        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                            <h3 class="text-xl font-bold text-slate-800 mt-0 mb-4">{range.name}</h3>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="text-sm">
+                                    <table class="w-full text-left border-collapse">
+                                        <tbody>
+                                            <tr class="border-b border-slate-100"><th class="py-2 pr-4 font-semibold text-slate-600 whitespace-nowrap">住所</th><td class="py-2"><a href={mapsSearchUrl} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{range.address}</a></td></tr>
+                                            <tr class="border-b border-slate-100"><th class="py-2 pr-4 font-semibold text-slate-600 whitespace-nowrap">電話</th><td class="py-2">{range.phone ? <a href={`tel:${range.phone.replace(/-/g, "")}`} class="text-blue-600 hover:underline">{range.phone}</a> : '-'}</td></tr>
+                                            <tr class="border-b border-slate-100"><th class="py-2 pr-4 font-semibold text-slate-600 whitespace-nowrap">営業時間</th><td class="py-2" set:html={range.business_hours?.replace(/\n/g, '<br />') || "-"} /></tr>
+                                            <tr><th class="py-2 pr-4 font-semibold text-slate-600 whitespace-nowrap">打席/距離</th><td class="py-2">{range.bays} / {range.yardage}</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="h-48 md:h-auto min-h-[200px] rounded-lg overflow-hidden border border-slate-200 relative">
+                                    <iframe src={mapsEmbedUrl} class="absolute top-0 left-0 w-full h-full" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title={`${range.name}の地図`}></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+            
+        </main>
+
+        {/* ▼ 右側のサイドバーを呼び出す ▼ */}
+        <Sidebar />
+        
+    </div>
+
+    {/* =======================================================
+        専用 VS料金シミュレーター JavaScript (簡易版)
+    ======================================================== */}
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const simulator = document.getElementById('vs-hikone-simulator');
+        if (!simulator) return;
+
+        const memSel = document.getElementById('vs-h-member');
+        const daySel = document.getElementById('vs-h-day');
+        const ballSlider = document.getElementById('vs-h-ball-slider');
+        const ballDisplay = document.getElementById('vs-h-ball-display');
+
+        const resKsp = document.getElementById('vs-h-res-ksp');
+        const noteKsp = document.getElementById('vs-h-note-ksp');
+        const res365 = document.getElementById('vs-h-res-365');
+        const note365 = document.getElementById('vs-h-note-365');
+
+        function calculate() {
+            const isMem = memSel.value === "member";
+            const day = daySel.value; // weekday, weekend
+            const balls = parseInt(ballSlider.value);
+            ballDisplay.textContent = `${balls}球`;
+
+            // --- KSPの計算（簡易概算） ---
+            // 入場料
+            let kEntry = (day === 'weekday') ? 220 : 275;
+            // ボール代 (1F通常時間帯)
+            let kBallPt = (day === 'weekday') ? 8.8 : 9.9;
+            // 還元処理: 一般は1球1pt還元、チャージ還元率約4% (0.961)
+            let kUsedPt = kEntry + (kBallPt * balls) - balls; 
+            let kTotal = Math.ceil(kUsedPt * 0.961);
+            
+            resKsp.textContent = `¥${kTotal.toLocaleString()}`;
+            noteKsp.innerHTML = `入場料${kEntry}円 + 実質単価${(kBallPt-1).toFixed(1)}pt<br><span class="text-emerald-300 font-bold">(※ふるさと納税を使えば実質0円に！)</span>`;
+
+            // --- 365の計算（簡易概算） ---
+            // 入場料
+            let sEntry = isMem ? 0 : 250;
+            // ボール代 (1F通常時間帯)
+            let sBallPt = 0;
+            if(isMem) sBallPt = (day === 'weekday') ? 7 : 9;
+            else sBallPt = (day === 'weekday') ? 10 : 11;
+            
+            // ポイント単価 (ビジター1.1円, メンバー1.0円として計算)
+            let sRate = isMem ? 1.0 : 1.1;
+            let sTotal = sEntry + Math.ceil(sBallPt * balls * sRate);
+
+            res365.textContent = `¥${sTotal.toLocaleString()}`;
+            note365.innerHTML = `入場料${sEntry}円 + 単価${sBallPt}pt<br><span class="text-orange-300 font-bold">(※LINE割・女性割などで更に安くなります)</span>`;
+        }
+
+        [memSel, daySel].forEach(el => el.addEventListener('change', calculate));
+        ballSlider.addEventListener('input', calculate);
+        calculate();
+    });
+    </script>
+</BaseLayout>
