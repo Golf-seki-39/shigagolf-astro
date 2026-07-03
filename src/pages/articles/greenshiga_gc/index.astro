@@ -12,8 +12,8 @@ import AuthorProfile from '../../../components/AuthorProfile.astro';
 import Sidebar from '../../../components/Sidebar.astro'; 
 
 // --- [3] この記事固有の情報 ---
-const title = "【滋賀】木曜はペアで1,000円打ち放題！グリーンシガゴルフセンター正直レビュー【料金計算機付】 | シガゴル";
-const description = "滋賀県甲賀市水口の「グリーンシガゴルフセンター」を徹底取材！女性同伴なら男性も安くなる驚異のペア割引や、水曜のプロ無料レッスン、初心者に嬉しい「飛ぶロストボール」の秘密を公開。料金シミュレーターで、あなたに最適な打ち放題プランがすぐわかります。";
+const title = "【グリーンシガ】料金は1球8円〜！打ち放題やペア割がお得なゴルフ練習場レビュー | シガゴル";
+const description = "滋賀県甲賀市水口の「グリーンシガゴルフセンター」の料金体系を徹底解説！気になる1球単価（8円〜）や打ち放題プラン、木曜限定のペア割引まで、実質料金がすぐわかるシミュレーター付きで分かりやすくレビューします。";
 const category = "体験談";
 const pubDate = "2026-03-22"; 
 const pubDateISO = "2026-03-22T17:00:00+09:00"; 
@@ -152,7 +152,7 @@ const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.me
             </style>
             
             <article class="prose lg:prose-xl max-w-none">
-                
+
             <header>
                 <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
                 <div class="text-sm text-slate-500 mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -231,6 +231,65 @@ const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.me
                 </ul>
             </div>
 
+            {/* ▼ 【フェーズ2追加】スマホユーザー向け：グリーンシガはどれくらい安いの？ ▼ */}
+            <div class="not-prose my-10 p-5 md:p-8 bg-green-50 border-2 border-green-300 rounded-2xl shadow-sm">
+                <h3 class="text-lg md:text-xl font-bold text-green-900 mt-0 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-coins text-green-600"></i> 【1秒でわかる】結局、100球打ったらいくら？
+                </h3>
+                <p class="text-sm text-slate-700 mb-4">
+                    細かい料金表を見る前に！<strong>平日の昼間に100球打った場合</strong>の目安料金はこちらです。（※1階打席の場合）
+                </p>
+                
+                <div class="space-y-4">
+                    {/* 会員（メンバー）の場合 */}
+                    <div class="bg-white p-4 md:p-5 rounded-xl border-2 border-green-400 shadow-sm relative mt-4">
+                        <span class="absolute -top-3 left-4 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">会員（メンバー）</span>
+                        <ul class="space-y-2 text-sm text-slate-700 mt-2 mb-3 pl-0">
+                            <li class="flex justify-between border-b border-slate-100 pb-2">
+                                <span>入場料（打席料）</span>
+                                <span class="font-bold">100円</span>
+                            </li>
+                            <li class="flex justify-between border-b border-slate-100 pb-2">
+                                <span>ボール代（100球×7円）</span>
+                                <span class="font-bold">700円</span>
+                            </li>
+                        </ul>
+                        <div class="flex justify-between items-center bg-green-100 p-3 rounded-lg border border-green-200">
+                            <span class="font-bold text-green-900 text-sm md:text-base">100球合計</span>
+                            <div class="text-right">
+                                <span class="font-black text-red-600 text-2xl leading-none">800円</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 非会員（ビジター）の場合 */}
+                    <div class="bg-slate-100 p-4 md:p-5 rounded-xl border border-slate-300 shadow-sm relative mt-5">
+                        <span class="absolute -top-3 left-4 bg-slate-500 text-white text-xs font-bold px-3 py-1 rounded-full">非会員（ビジター）</span>
+                        <ul class="space-y-2 text-sm text-slate-600 mt-2 mb-3 pl-0">
+                            <li class="flex justify-between border-b border-slate-200 pb-2">
+                                <span>入場料（打席料）</span>
+                                <span class="font-bold">200円</span>
+                            </li>
+                            <li class="flex justify-between border-b border-slate-200 pb-2">
+                                <span>ボール代（100球×8円）</span>
+                                <span class="font-bold">800円</span>
+                            </li>
+                        </ul>
+                        <div class="flex justify-between items-center bg-slate-200 p-4 rounded-lg border border-slate-300">
+                            <span class="font-bold text-slate-700 text-sm md:text-base">100球合計</span>
+                            <div class="text-right">
+                                <span class="font-black text-slate-800 text-xl md:text-2xl leading-none">1,000円</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-500 mt-5 mb-0 leading-relaxed">
+                    ※2階打席は<strong>ボール単価が-1円</strong>になります。<br>
+                    ※ガッツリ打つなら「打ち放題（平日1時間1,400円〜）」や「木曜ペア割（1人1,000円）」が圧倒的にお得です。下のシミュレーターであなたにぴったりのプランを計算してみてください！
+                </p>
+            </div>
+            {/* ▲ ここまで ▲ */}
             <h2 id="simulator" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">かんたん料金シミュレーター</h2>
             <p>グリーンシガゴルフセンターは時間帯や曜日によって細かく料金が変わるため、「結局いくら持っていけばいいの？」がすぐわかる専用シミュレーターを作りました。条件を選択してみてください！</p>
 
@@ -423,6 +482,19 @@ const mapsEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${import.me
                     私のようなアベレージゴルファーや初心者にとっては、飛ばないレンジボールよりも<strong>「実戦と同じボールだから飛距離が出る！」という純粋な喜び</strong>があります。飛ぶからこそ楽しくて、ドライバーの練習量が増え、ポジティブな気持ちで練習を終えられました。
                 </p>
             </div>
+
+            {/* ▼ 【フェーズ3追加】ロストボールのアフィリエイト導線 ▼ */}
+            <div class="not-prose my-8 p-5 bg-slate-50 border-l-4 border-amber-500 rounded-r-lg shadow-sm">
+                <p class="font-bold text-slate-800 text-base mb-2 mt-0">💡 コースデビューに向けて、ボールの準備はできていますか？</p>
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                    グリーンシガの「本物のボール」で飛距離の感覚を掴んだら、コース本番への準備はバッチリです！ただし、初心者のうちは林や池にボールを無くしてしまう（ロストする）ことが多いため、<strong>安くて綺麗な「ロストボール」をネットでまとめ買いしておく</strong>のが、お財布に優しくゴルフを楽しむ鉄則です。
+                </p>
+                {/* ※以下のhrefに、楽天アフィリエイトのリンクURLを貼ってください */}
+                <a href="https://a.r10.to/h5xqfY" target="_blank" rel="noopener sponsored" class="inline-flex items-center text-amber-700 font-bold hover:underline text-sm md:text-base">
+                    👉 【送料無料】楽天で一番売れている「ロストボール」の最安値をチェックする ＞
+                </a>
+            </div>
+            {/* ▲ ここまで ▲ */}
 
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">② 水曜夜は「プロの無料ワンポイントレッスン」が受けられる！</h3>
             <figure class="my-6">
