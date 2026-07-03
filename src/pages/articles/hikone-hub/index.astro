@@ -10,8 +10,8 @@ import MySlider from '../../../components/MySlider.astro';
 import Sidebar from '../../../components/Sidebar.astro'; 
 
 // --- [3] この記事固有の情報 ---
-const title = "【2026年版】彦根・多賀の打ちっぱなしおすすめ完全ガイド｜目的別に選ぶゴルフ練習場";
-const description = "彦根市・多賀町周辺のゴルフ練習場をシガゴルが徹底調査！「一番安いのは？」「芝からアプローチしたい」「最新の測定器があるのは？」など、あなたの目的に合わせて最適な練習場を案内します。";
+const title = "【2026年版】彦根市のゴルフ練習場・打ちっぱなし全3施設を徹底比較！安さや設備で選ぶならココ";
+const description = "彦根・多賀エリアのゴルフ練習場を探している方へ。KSP彦根、365、多賀ゴルフの全3施設を料金や設備で徹底比較！「初心者におすすめ」「一番安い」「最新測定器」など、目的に合わせた最適な打ちっぱなしがすぐわかります。";
 const pubDate = "2024-05-20"; // ※公開日に合わせて調整してください
 
 const ogImageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/hikone-matome.jpg";
@@ -186,6 +186,19 @@ const comparisonArticles = [
                 </p>
             </div>
 
+            {/* ▼ 初めての打ちっぱなし完全ガイドへの回遊リンク ▼ */}
+            <div class="not-prose my-10 p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl shadow-sm">
+                <h3 class="text-lg font-bold text-green-900 mt-0 mb-2">
+                    <i class="fa-solid fa-graduation-cap mr-2"></i> 「そもそも打ちっぱなしに行くのが初めて」という方へ
+                </h3>
+                <p class="text-sm text-slate-700 leading-relaxed mb-4">
+                    「行く場所は決まりそうだけど、一人で行っても浮かない？」「どんな服装で行けばいいの？」と不安な超初心者の方へ。当日の持ち物から受付の流れまで、失敗しないための完全マニュアルをご用意しました！
+                </p>
+                <a href="/articles/beginner-complete-guide/" class="inline-flex items-center text-green-700 font-bold hover:underline text-sm md:text-base">
+                    👉 「空振りしたら恥ずかしい…」初めての打ちっぱなし完全ガイドはこちら
+                </a>
+            </div>
+
             {/* --- ★修正：施設詳細と体験談のダブルリンクUI --- */}
             <h2 class="text-2xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-slate-200 pb-2">調査対象施設の詳細データ・体験レビュー</h2>
             <p>シガゴルでは、各施設の「基本情報（料金や営業時間など）」をまとめたデータベースと、管理人が実際に打ってみた「体験レポート」を分けてご用意しています。気になる施設をチェックしてみてください。</p>
@@ -257,6 +270,23 @@ const comparisonArticles = [
             </div>
 
             <hr class="my-16 border-slate-200" />
+
+            {/* ▼ コースデビュー完全準備ガイドへの回遊リンク ▼ */}
+            <div class="not-prose my-12 p-8 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl shadow-lg text-center">
+                <div class="inline-block bg-amber-600 text-white font-bold px-4 py-1 rounded-full text-sm mb-4">
+                    練習の成果をコースで試そう！
+                </div>
+                <h3 class="text-2xl font-black text-amber-900 mt-0 mb-4">
+                    <i class="fa-solid fa-golf-ball-tee mr-2"></i> いざ、コースデビューへ！
+                </h3>
+                <p class="text-slate-700 mb-6 leading-relaxed text-sm md:text-base">
+                    彦根・多賀エリアの練習場でボールが前に飛ぶようになったら、いよいよゴルフ場デビューです！<br>
+                    でも、コースには「持ち込むバッグが3つもある」という独特のルールがあります。管理人が実際にやらかした大失敗をベースに、恥をかかない準備リストと、楽天GORAでお得にコースを予約する裏ワザを徹底解説しています。
+                </p>
+                <a href="/articles/beginner-guide/" class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 hover:shadow-xl transition-all duration-300 no-underline text-lg">
+                    【失敗談あり】「3つのバッグ」仕分け術はこちら ＞
+                </a>
+            </div>
 
             {/* ==========================================
                  記事末尾：黄金の4ステップ（ハブ記事版）
