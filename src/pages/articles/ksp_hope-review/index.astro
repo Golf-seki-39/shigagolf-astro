@@ -12,8 +12,8 @@ import AuthorProfile from '../../../components/AuthorProfile.astro';
 import Sidebar from '../../../components/Sidebar.astro'; 
 
 // --- This article's specific information ---
-const title = "【KSP希望ヶ丘 体験記】「一滴の汗」が僕を救ったコンペ前夜の小さな奇跡 | シガゴル";
-const description = "コンペ前夜、焦った僕がKSP希望ヶ丘で得たものとは？トップトレーサーの気づきと、一滴の汗が繋いだ奇跡のパット体験記。";
+const title = "【KSP希望ヶ丘】トップトレーサー体験レビュー！ふるさと納税でお得に練習 | シガゴル";
+const description = "滋賀県野洲市の「KSP希望ヶ丘」をゴルフ初心者が徹底レビュー！全打席トップトレーサー完備の設備から、パター練習場、ふるさと納税（楽天）で実質タダで練習する裏ワザまで紹介。コンペ前夜のリアルな体験記も！";
 const category = "体験談";
 const pubDate = "2025-07-11";
 const pubDateISO = "2025-07-11T10:00:00+09:00";
@@ -340,6 +340,19 @@ const schemaData = [
             <p>衝撃でした。 自分の好きな「ゴルフ」という趣味が、自分が貢献すべき「納税」という義務と、こんなに素晴らしい形で繋がるなんて。</p>
             <p>多くの人にとって、ふるさと納税は「返礼品」に目が行きがちです。 でも、その本質は、自分が応援したい自治体を選んで貢献すること。 そして、その結果として、自身の税金への意識が高まったり、お金の仕組みについて学んだりする、絶好の機会になることだと、僕は思います。</p>
             <p>ゴルフの練習をしながら、地域に貢献し、さらには社会の仕組みやお金の勉強にもなる。 KSP希望ヶ丘は、そんな新しい「価値」に気づかせてくれました。まだ利用したことのない僕が言うのもなんですが、これは、僕たち社会人ゴルファーにとって、非常に賢くて、意義のある選択肢の一つではないでしょうか。</p>
+
+            {/* ▼ ふるさと納税（楽天）へのアフィリエイト導線 ▼ */}
+            <div class="not-prose bg-blue-50 p-5 md:p-6 rounded-xl border-2 border-blue-300 my-8 text-center shadow-sm">
+                <p class="font-black text-blue-900 text-lg md:text-xl mb-3 mt-0">🉐 KSPのICカードは「ふるさと納税」でもらえます！</p>
+                <p class="text-sm text-slate-700 mb-5 text-left leading-relaxed">
+                    KSPのICカード（希望ヶ丘・彦根 共通利用可）は、<strong>滋賀県野洲市のふるさと納税の返礼品</strong>になっています。楽天ふるさと納税を経由すれば、寄付額の30%が練習場のICカードポイントとして還元されるため、実質的な自己負担を2,000円に抑えて大量のポイントをゲットできます！（※楽天ポイントも貯まるので二重でお得です）
+                </p>
+                {/* ※以下のhrefに、楽天アフィリエイトのリンクURL（野洲市のKSP返礼品）を貼ってください */}
+                <a href="https://a.r10.to/h5J6tH" target="_blank" rel="noopener sponsored" class="inline-block bg-red-600 hover:bg-red-700 text-white font-bold text-sm md:text-base py-3 px-6 md:px-8 rounded-full shadow-md transition-transform transform hover:scale-105">
+                    👉 楽天ふるさと納税（10,000円〜）をチェックする
+                </a>
+            </div>
+            {/* ▲ ここまで ▲ */}
 
             <h2 id="summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
                 💡 まとめ：僕がKSP希望ヶ丘で得た、本当の収穫
