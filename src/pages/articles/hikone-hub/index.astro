@@ -70,6 +70,53 @@ const comparisonArticles = [
     { url: '/articles/beginner-complete-guide/', title: '初めての打ちっぱなし完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/aikyattiiieieiosakojda.png' },
     { url: '/articles/hikone-shortgame/', title: '【彦根】ショートゲームの練習が出来るゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/shortgame-aicatch.jpg' },
 ];
+// --- [6] 楽天GORA APIで5%アフィリエイトリンクを自動生成 ---
+const rakutenAppId = import.meta.env.RAKUTEN_APP_ID;
+const rakutenAffId = import.meta.env.RAKUTEN_AFFILIATE_ID;
+
+const courseIds = {
+  omi: "250005",   // 近江カントリー倶楽部
+  ryuo: "250041",  // 竜王ゴルフコース
+  hikone: "250029" // 彦根カントリー倶楽部
+};
+
+async function getGoraLink(courseId) {
+  const apiUrl = 
+    `https://app.rakuten.co.jp/services/api/Gora/GoraGolfCourseDetail/20170623` +
+    `?format=json` +
+    `&applicationId=${rakutenAppId}` +
+    `&affiliateId=${rakutenAffId}` +
+    `&golfCourseId=${courseId}`;
+
+  try {
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data?.Item?.reserveCalUrl) {
+      return data.Item.reserveCalUrl;
+    }
+
+    throw new Error("reserveCalUrlが取得できませんでした");
+
+  } catch (error) {
+    console.error(`楽天GORA APIエラー (ID: ${courseId}):`, error);
+
+    // API障害時は通常の楽天GORAページへフォールバック
+    return `https://booking.gora.golf.rakuten.co.jp/guide/disp/c_id/${courseId}`;
+  }
+}
+
+// ビルド時に一括でリンクを生成
+const goraLinks = {};
+for (const [name, courseId] of Object.entries(courseIds)) {
+  goraLinks[name] = await getGoraLink(courseId);
+}
+// ----------------------------------------------------
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={ogImageUrl}>
@@ -327,9 +374,9 @@ const comparisonArticles = [
                             330ヤード・16打席という雄大なドライビングレンジが魅力！さらに実戦さながらのバンカー練習場も併設されており、スタート前の総仕上げや苦手克服に最適な環境です。
                         </p>
                         {/* ※以下のhrefをご自身の楽天GORAアフィリエイトリンクに差し替えてください */}
-                        <a href="https://a.r10.to/hP8Ff3" target="_blank" rel="noopener sponsored" class="flex justify-center items-center w-full px-4 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 hover:shadow-md transition-all duration-200 no-underline text-sm md:text-base mt-auto">
-                            👉 楽天GORAで空き状況を見る
-                        </a>
+                       <a href={goraLinks.omi} target="_blank" rel="noopener sponsored" class="flex justify-center items-center w-full px-4 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 hover:shadow-md transition-all duration-200 no-underline text-sm md:text-base mt-auto">
+    👉 楽天GORAで空き状況を見る
+</a>
                     </div>
 
                     {/* 2. 竜王ゴルフコースPGM（新規記事予告付き） */}
@@ -340,9 +387,9 @@ const comparisonArticles = [
                             名神高速「竜王IC」から好アクセス！広々とした練習場を備えており、コースに出る前のウォーミングアップもバッチリ。近々シガゴルでも詳細な体験レビュー記事を公開予定です！
                         </p>
                         {/* ※以下のhrefをご自身の楽天GORAアフィリエイトリンクに差し替えてください */}
-                        <a href="https://a.r10.to/h5mhob" target="_blank" rel="noopener sponsored" class="flex justify-center items-center w-full px-4 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 hover:shadow-md transition-all duration-200 no-underline text-sm md:text-base mt-auto">
-                            👉 楽天GORAで空き状況を見る
-                        </a>
+                        <a href={goraLinks.ryuo} target="_blank" rel="noopener sponsored" class="flex justify-center items-center w-full px-4 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 hover:shadow-md transition-all duration-200 no-underline text-sm md:text-base mt-auto">
+    👉 楽天GORAで空き状況を見る
+</a>
                     </div>
                     
                     {/* 3. 彦根カントリー倶楽部 */}
@@ -352,9 +399,9 @@ const comparisonArticles = [
                             琵琶湖と彦根城を見下ろす絶景コース。こちらも充実した練習場を備えており、フェアウェイが広く初心者でものびのびプレーできると地元のゴルファーから高く支持されています。
                         </p>
                         {/* ※以下のhrefをご自身の楽天GORAアフィリエイトリンクに差し替えてください */}
-                        <a href="https://a.r10.to/hYdAOS" target="_blank" rel="noopener sponsored" class="flex justify-center items-center w-full px-4 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 hover:shadow-md transition-all duration-200 no-underline text-sm md:text-base mt-auto">
-                            👉 楽天GORAで空き状況を見る
-                        </a>
+                        <a href={goraLinks.hikone} target="_blank" rel="noopener sponsored" class="flex justify-center items-center w-full px-4 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 hover:shadow-md transition-all duration-200 no-underline text-sm md:text-base mt-auto">
+    👉 楽天GORAで空き状況を見る
+</a>
                     </div>
                 </div>
 
