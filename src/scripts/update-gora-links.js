@@ -23,7 +23,7 @@ if (!APP_ID || !ACCESS_KEY || !AFF_ID) {
   process.exit(1);
 }
 
-// APIから必要なデータ（URLとゴルフ場名）を抽出する関数
+// APIから必要なデータ（URL、ゴルフ場名、画像、評価）を抽出する関数
 async function fetchGoraData(courseId) {
   const url = `https://openapi.rakuten.co.jp/engine/api/Gora/GoraGolfCourseDetail/20170623?format=json&applicationId=${APP_ID}&accessKey=${ACCESS_KEY}&affiliateId=${AFF_ID}&golfCourseId=${courseId}`;
   
@@ -42,11 +42,12 @@ async function fetchGoraData(courseId) {
   
   const data = await res.json();
   
-  // URLとゴルフ場名の両方が取得できた場合のみ返す
   if (data?.Item?.reserveCalUrl && data?.Item?.golfCourseName) {
     return {
       name: data.Item.golfCourseName,
-      reserveUrl: data.Item.reserveCalUrl
+      reserveUrl: data.Item.reserveCalUrl,
+      imageUrl: data.Item.golfCourseImageUrl1, // ★追加：画像URL
+      rating: data.Item.evaluation             // ★追加：総合評価（星）
     };
   }
   
@@ -63,17 +64,17 @@ async function main() {
     for (const [key, id] of Object.entries(courses)) {
       console.log(`⏳ 取得中: ${key} (ID: ${id})`);
       
-      // 新しい関数でデータセットを取得
       const apiData = await fetchGoraData(id);
       
       // リッチなJSON構造を組み立てる
       richData[key] = {
         name: apiData.name,
         courseId: id,
-        reserveUrl: apiData.reserveUrl
+        reserveUrl: apiData.reserveUrl,
+        imageUrl: apiData.imageUrl,  // ★追加
+        rating: apiData.rating       // ★追加
       };
       
-      // API制限対策
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 

@@ -2,46 +2,148 @@
   "omi": {
     "name": "近江カントリー倶楽部",
     "courseId": "250005",
-    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250005&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951"
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250005&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250005/photo1.jpg",
+    "rating": 4.2
   },
   "ryuo": {
     "name": "竜王ゴルフコース【ＰＧＭ】",
     "courseId": "250041",
-    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250041&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951"
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250041&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250041/photo1.jpg",
+    "rating": 4.2
   },
   "hikone": {
     "name": "彦根カントリー倶楽部",
     "courseId": "250029",
-    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250029&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951"
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250029&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250029/photo1.jpg",
+    "rating": 4.7
   },
   "asahino": {
     "name": "朝日野カントリー倶楽部",
     "courseId": "250001",
-    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250001&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951"
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250001&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250001/photo1.jpg",
+    "rating": 4.5
   },
   "asamiya": {
     "name": "朝宮ゴルフコース【アコーディア・ゴルフ】",
     "courseId": "250002",
-    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250002&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951"
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250002&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250002/photo1.jpg",
+    "rating": 3.9
   },
   "diamond": {
     "name": "ダイヤモンド滋賀カントリークラブ",
     "courseId": "250003",
-    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250003&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951"
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250003&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250003/photo1.jpg",
+    "rating": 4.3
   },
   "ojiyama": {
     "name": "皇子山カントリークラブ",
     "courseId": "250004",
-    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250004&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951"
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250004&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250004/photo1.jpg",
+    "rating": 4.2
   },
   "omi_hills": {
     "name": "近江ヒルズゴルフ倶楽部【ＰＧＭ】",
     "courseId": "250006",
-    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250006&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951"
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250006&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250006/photo1.jpg",
+    "rating": 4
   },
   "otsu_nishi": {
     "name": "大津カントリークラブ 西コース【アコーディア・ゴルフ】",
     "courseId": "250007",
-    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250007&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951"
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250007&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250007/photo1.jpg",
+    "rating": 3.9
+  },
+  "otsu_higashi": {
+    "name": "大津カントリークラブ 東コース【アコーディア・ゴルフ】",
+    "courseId": "250008",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250008&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250008/photo1.jpg",
+    "rating": 3.9
+  },
+  "gamo": {
+    "name": "オレンジシガカントリークラブ",
+    "courseId": "250009",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250009&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250009/photo1.jpg",
+    "rating": 4
+  },
+  "shigaraki": {
+    "name": "朽木ゴルフ倶楽部",
+    "courseId": "250011",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250011&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250011/photo1.jpg",
+    "rating": 3.9
+  },
+  "koka": {
+    "name": "京阪カントリー倶楽部",
+    "courseId": "250012",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250012&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250012/photo1.jpg",
+    "rating": 3.7
+  },
+  "seta": {
+    "name": "コムウッドゴルフクラブ",
+    "courseId": "250014",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250014&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250014/photo1.jpg",
+    "rating": 4.3
+  },
+  "daily_shigaraki": {
+    "name": "ローズゴルフクラブ",
+    "courseId": "250021",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250021&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250021/photo1.jpg",
+    "rating": 4.2
+  },
+  "hino": {
+    "name": "タラオカントリークラブ",
+    "courseId": "250028",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250028&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250028/photo1.jpg",
+    "rating": 4.7
+  },
+  "kosei": {
+    "name": "比良ゴルフ倶楽部【アコーディア・ゴルフ】",
+    "courseId": "250032",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250032&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250032/photo1.jpg",
+    "rating": 4.1
+  },
+  "biwako": {
+    "name": "琵琶湖レークサイドゴルフコース",
+    "courseId": "250033",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250033&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250033/photo1.jpg",
+    "rating": 4.2
+  },
+  "fuji_stadium": {
+    "name": "琵琶湖カントリー倶楽部",
+    "courseId": "250034",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "",
+    "rating": 0
+  },
+  "meishin_yokaichi": {
+    "name": "富士スタジアムゴルフ倶楽部　南コース",
+    "courseId": "250036",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250036&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250036/photo1.jpg",
+    "rating": 4.6
+  },
+  "rose": {
+    "name": "メイプルヒルズゴルフ倶楽部",
+    "courseId": "250040",
+    "reserveUrl": "https://hb.afl.rakuten.co.jp/hgc/566adabe.3b86af3b.566adabf.086b0cca/?pc=https%3A%2F%2Fsearch.gora.golf.rakuten.co.jp%2Fcal%2Fdisp%2Fc_id%2F250040&rafcid=wsc_g_cd_7f7cdaf0-d86d-4960-8fbc-086dc6ee8951",
+    "imageUrl": "https://gora.golf.rakuten.co.jp/img/golf/250040/photo1.jpg",
+    "rating": 4.2
   }
 }
