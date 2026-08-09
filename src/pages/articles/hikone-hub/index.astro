@@ -71,9 +71,9 @@ const comparisonArticles = [
     { url: '/articles/hikone-shortgame/', title: '【彦根】ショートゲームの練習が出来るゴルフ練習場まとめ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/shortgame-aicatch.jpg' },
 ];
 // --- [6] 楽天GORA APIで5%アフィリエイトリンクを自動生成 ---
-const rakutenAppId = import.meta.env.RAKUTEN_APP_ID;
-const rakutenAccessKey = import.meta.env.RAKUTEN_ACCESS_KEY;
-const rakutenAffId = import.meta.env.RAKUTEN_AFFILIATE_ID;
+const rakutenAppId = import.meta.env.RAKUTEN_APP_ID || process.env.RAKUTEN_APP_ID;
+const rakutenAccessKey = import.meta.env.RAKUTEN_ACCESS_KEY || process.env.RAKUTEN_ACCESS_KEY;
+const rakutenAffId = import.meta.env.RAKUTEN_AFFILIATE_ID || process.env.RAKUTEN_AFFILIATE_ID;
 
 const courseIds = {
   omi: "250005",   // 近江カントリー倶楽部
@@ -82,7 +82,11 @@ const courseIds = {
 };
 
 async function getGoraLink(courseId) {
-  // 最新のオープンAPIエンドポイントとaccessKeyを使用
+  // 必須パラメータが空の場合はエラーにしてビルドを止める
+  if (!rakutenAppId || !rakutenAccessKey || !rakutenAffId) {
+    throw new Error(`[設定エラー] 楽天APIの環境変数(パスワード)が読み込めていません。Netlifyの設定を確認してください。`);
+  }
+
   const apiUrl = 
     `https://openapi.rakuten.co.jp/engine/api/Gora/GoraGolfCourseDetail/20170623` +
     `?format=json` +
@@ -92,9 +96,10 @@ async function getGoraLink(courseId) {
     `&golfCourseId=${courseId}`;
 
   try {
+    // 正しいドメイン（shigagolf.com）を身分証として提示する
     const response = await fetch(apiUrl, {
       headers: {
-        'Referer': 'https://shigolf.com/'
+        'Referer': 'https://shigagolf.com/'
       }
     });
 
@@ -112,8 +117,6 @@ async function getGoraLink(courseId) {
 
   } catch (error) {
     console.error(`楽天GORA APIエラー (対象ゴルフ場ID: ${courseId}):`, error);
-    
-    // 【重要】アフィリエイトリンクが生成できない状態での公開を防ぐため、ビルドを強制停止する
     throw new Error(`[致命的なエラー] 収益化リンクの生成に失敗したため、ビルドを中断します。ID: ${courseId}`);
   }
 }
@@ -123,14 +126,6 @@ const goraLinks = {};
 for (const [name, courseId] of Object.entries(courseIds)) {
   goraLinks[name] = await getGoraLink(courseId);
 }
-
-// テスト用のログ出力（ターミナルで生成されたURLを確認できます）
-console.log("=== 生成されたアフィリエイトリンク ===");
-console.log("近江:", goraLinks.omi);
-console.log("竜王:", goraLinks.ryuo);
-console.log("彦根:", goraLinks.hikone);
-console.log("======================================");
-// ----------------------------------------------------
 ---
 
 <BaseLayout title={title} description={description} pubDate={pubDate} ogImage={ogImageUrl}>
