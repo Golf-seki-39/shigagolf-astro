@@ -72,6 +72,7 @@ const comparisonArticles = [
 ];
 // --- [6] 楽天GORA APIで5%アフィリエイトリンクを自動生成 ---
 const rakutenAppId = import.meta.env.RAKUTEN_APP_ID;
+const rakutenAccessKey = import.meta.env.RAKUTEN_ACCESS_KEY;
 const rakutenAffId = import.meta.env.RAKUTEN_AFFILIATE_ID;
 
 const courseIds = {
@@ -81,10 +82,12 @@ const courseIds = {
 };
 
 async function getGoraLink(courseId) {
+  // 最新のオープンAPIエンドポイントとaccessKeyを使用
   const apiUrl = 
-    `https://app.rakuten.co.jp/services/api/Gora/GoraGolfCourseDetail/20170623` +
+    `https://openapi.rakuten.co.jp/engine/api/Gora/GoraGolfCourseDetail/20170623` +
     `?format=json` +
     `&applicationId=${rakutenAppId}` +
+    `&accessKey=${rakutenAccessKey}` +
     `&affiliateId=${rakutenAffId}` +
     `&golfCourseId=${courseId}`;
 
@@ -92,7 +95,7 @@ async function getGoraLink(courseId) {
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      throw new Error(`HTTP Error: ${response.status}`);
     }
 
     const data = await response.json();
@@ -101,13 +104,13 @@ async function getGoraLink(courseId) {
       return data.Item.reserveCalUrl;
     }
 
-    throw new Error("reserveCalUrlが取得できませんでした");
+    throw new Error("APIレスポンス内に reserveCalUrl が見つかりませんでした。");
 
   } catch (error) {
-    console.error(`楽天GORA APIエラー (ID: ${courseId}):`, error);
-
-    // API障害時は通常の楽天GORAページへフォールバック
-    return `https://booking.gora.golf.rakuten.co.jp/guide/disp/c_id/${courseId}`;
+    console.error(`楽天GORA APIエラー (対象ゴルフ場ID: ${courseId}):`, error);
+    
+    // 【重要】アフィリエイトリンクが生成できない状態での公開を防ぐため、ビルドを強制停止する
+    throw new Error(`[致命的なエラー] 収益化リンクの生成に失敗したため、ビルドを中断します。ID: ${courseId}`);
   }
 }
 
@@ -116,6 +119,13 @@ const goraLinks = {};
 for (const [name, courseId] of Object.entries(courseIds)) {
   goraLinks[name] = await getGoraLink(courseId);
 }
+
+// テスト用のログ出力（ターミナルで生成されたURLを確認できます）
+console.log("=== 生成されたアフィリエイトリンク ===");
+console.log("近江:", goraLinks.omi);
+console.log("竜王:", goraLinks.ryuo);
+console.log("彦根:", goraLinks.hikone);
+console.log("======================================");
 // ----------------------------------------------------
 ---
 
