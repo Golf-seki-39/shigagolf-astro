@@ -81,10 +81,18 @@ const courseIds = {
   hikone: "250029" // 彦根カントリー倶楽部
 };
 
-async function getGoraLink(courseId) {
-  // 必須パラメータが空の場合はエラーにしてビルドを止める
-  if (!rakutenAppId || !rakutenAccessKey || !rakutenAffId) {
-    throw new Error(`[設定エラー] 楽天APIの環境変数(パスワード)が読み込めていません。Netlifyの設定を確認してください。`);
+async function getGoraLink(golfCourseId) {
+  try {
+    const res = await fetch(`...`);
+    if (!res.ok) {
+      console.warn(`[警告] 楽天GORA APIエラー (ID: ${golfCourseId}): ${res.status}`);
+      return null; // ✅ 致命的エラーにせず、nullやデフォルトのURLを返す
+    }
+    const data = await res.json();
+    return data.link; // 正常な場合の処理
+  } catch (error) {
+    console.error(`[エラー] getGoraLink処理中にエラーが発生:`, error);
+    return null; // ✅ 例外発生時もnullを返す
   }
 
   const apiUrl = 
