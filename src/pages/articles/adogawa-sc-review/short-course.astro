@@ -14,11 +14,12 @@ import Sidebar from '../../../components/Sidebar.astro';
 
 
 // --- [3] この記事固有の情報 ---
-const title = "【安曇川スポーツセンター】ショートコース3000円で回り放題！ジュニア500円・手ぶらOK | シガゴル";
-const description = "滋賀県高島市「安曇川スポーツセンター」のショートコース体験記。一日回り放題で3,000円、ジュニア500円という破格の料金や、無料レンタルクラブ情報を紹介。「グリーンは公園並み」というリアルな実態も含め、アプローチ練習や家族利用での活用法をレビューします。";const category = "体験談";
+const title = "【安曇川スポーツセンター】ショートコース平日3000円で回り放題！ジュニア500円・手ぶらOK | シガゴル";
+const description = "滋賀県高島市「安曇川スポーツセンター」のショートコース体験記。一日回り放題で平日3,000円（土日祝3,500円）、ジュニア500円という破格の料金や、無料レンタルクラブ情報を紹介。「グリーンは公園並み」というリアルな実態も含め、アプローチ練習や家族利用での活用法をレビューします。";
+const category = "体験談";
 const pubDate = "2025-10-09";
 const pubDateISO = "2025-10-09T18:00:00+09:00";
-const updatedDate = null;
+const updatedDate = "2026-08-20";
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/001111img.jpg";
 const rangeId = "adogawa_sc";
 const docPath = `artifacts/${import.meta.env.PUBLIC_FIREBASE_APP_ID}/public/data/practice_ranges/${rangeId}`;
@@ -28,7 +29,7 @@ const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/adogawa-sc-review/short-course/`;
 const headlineLines = [
     "【安曇川スポーツセンター】",
-    "ショートコース3000円で回り放題！",
+    "ショートコース平日3000円で回り放題！", // ★「平日」を追記
     "ジュニア500円・手ぶらOK",
 ];
 const headline = headlineLines.join("");
@@ -192,6 +193,17 @@ const comparisonArticles = [
                 快晴の空の下、家族の笑い声を聞きながら、私の心は躍っていました。「今日は楽しむぞ！」そんな期待に満ちた一日は、しかし、最初のホールのグリーンに立った瞬間、予想だにしなかった方向へと舵を切ることになります。
             </p>
             <div class="not-prose bg-green-50 p-4 my-6 rounded-lg border border-l-4 border-green-500">
+
+                <div class="my-8 p-5 bg-red-50 border-l-4 border-red-500 rounded-r-lg shadow-sm not-prose">
+    <p class="font-bold text-red-800 mb-2 flex items-center text-lg">
+        <span class="text-2xl mr-2">📢</span>【2026年8月 最新情報】土日祝の料金・営業時間が改定！
+    </p>
+    <p class="text-sm text-slate-700 m-0 leading-relaxed">
+        2026年8月8日より、<strong>土日祝のプレー料金が3,500円に改定（＋500円）</strong>されました。（平日3,000円、ジュニア500円は据え置きです）。<br>
+        また、期間限定で<strong>土日祝は早朝6時から営業</strong>しています。本記事内の表記はすべて最新価格に更新済みです！
+    </p>
+</div>
+
   <p class="text-slate-700 m-0">
     この記事は、滋賀に2つしかない「ショートコース」の1つです。<br>
     <a href="/articles/shiga-short-courses/" class="text-green-700 font-bold hover:underline">
@@ -206,9 +218,7 @@ const comparisonArticles = [
                     安曇川SC ショートコースの要点
                 </h2>
                 <ul class="space-y-2 list-disc list-inside">
-                    <li>
-                        <strong>料金:</strong> 一般 3,000円 / ジュニア 500円
-                    </li>
+                    <li><strong>料金:</strong> 一般 平日3,000円（土日祝3,500円） / ジュニア 500円</li>
                     <li>
                         <strong>特徴:</strong> 1日回り放題、アプローチ練習に最適
                     </li>
@@ -415,10 +425,8 @@ const comparisonArticles = [
                 私が練習に没頭している間、妻は涼しいクラブハウスで読書をしながらリラックス。子どもたちは、支配人から見える1番ホールを使い、「お客さんが来たらどいてね」というお許しのもと、何時間もゴルフを楽しんでいました。
             </p>
             <p>
-                午前中はコースで遊び、昼は併設のレストランで食事をし、午後はまたコースに戻る。父親は本気の練習ができ、子どもたちは大自然の中で思い切り遊べます。レンタルクラブも無料だから、手ぶらで来ても大丈夫。<strong
-                    >一般（3,000円）とジュニア2人（500円×2）のご家族なら4,000円で一日中遊べます。</strong
-                >これは最高の休日の過ごし方ではないでしょうか。
-            </p>
+    午前中はコースで遊び、昼は併設のレストランで食事をし、午後はまたコースに戻る。父親は本気の練習ができ、子どもたちは大自然の中で思い切り遊べます。レンタルクラブも無料だから、手ぶらで来ても大丈夫。<strong>平日なら一般（3,000円）とジュニア2人（500円×2）で合計4,000円。土日祝に行っても4,500円で一日中遊べます。</strong>これは最高の休日の過ごし方ではないでしょうか。
+</p>
             <div
                 class="not-prose my-6 p-4 bg-gray-100 border border-gray-200 rounded-lg text-center"
             >
@@ -434,8 +442,8 @@ const comparisonArticles = [
                 </a>
             </div>
             <p>
-                正直に申し上げます。「整備されたショートコース」を期待して行くと、3,000円は高いと感じるでしょう。あなたもきっと、私のように最初のグリーンで絶望するはずです。
-            </p>
+    正直に申し上げます。「整備されたショートコース」を期待して行くと、この料金でも高いと感じるでしょう。あなたもきっと、私のように最初のグリーンで絶望するはずです。
+</p>
             <p>
                 しかし、もしあなたがこの記事を読んで、「なるほど、そういう場所か」と理解した上で訪れるなら、話は全く別です。
             </p>
@@ -605,8 +613,8 @@ const comparisonArticles = [
                                         料金
                                     </th>
                                     <td class="py-3 px-4">
-                                        一般 3,000円 / ジュニア 500円
-                                        <br />
+    平日 3,000円 / 土日祝 3,500円 / ジュニア 500円
+    <br />
                                         <a
                                             href="/articles/adogawa-sc-review/range/#price-summary"
                                             class="text-sm text-green-700 hover:underline"

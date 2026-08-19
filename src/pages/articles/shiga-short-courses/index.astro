@@ -15,12 +15,13 @@ import Sidebar from '../../../components/Sidebar.astro';
 // --- [3] 記事の基本情報 ---
 const baseUrl = "https://shigolf.com";
 const articleUrl = `${baseUrl}/articles/shiga-short-courses/`; 
-const title = "【滋賀のショートコース】2ヶ所を徹底比較！3000円で回り放題 vs 1280円〜の本格派 | シガゴル";
-const description = "滋賀県の練習場併設ショートコースは「安曇川」と「365長浜」の2ヶ所のみ。「一日中3,000円で回り放題」の安曇川か、「1,280円〜でナイター・一人利用OK」の長浜か。料金、グリーンの質、練習目的別の「正解」を断言します。";
+const title = "【滋賀のショートコース】2ヶ所を徹底比較！平日3000円で回り放題 vs 1280円〜の本格派 | シガゴル";
+const description = "滋賀県の練習場併設ショートコースは「安曇川」と「365長浜」の2ヶ所のみ。「一日中回り放題（平日3,000円/土日祝3,500円）」の安曇川か、「1,280円〜でナイター・一人利用OK」の長浜か。料金、グリーンの質、練習目的別の「正解」を断言します。";
 const headline = "滋賀のショートコースは“2ヶ所だけ”！【安曇川 vs 365長浜】遠くても行く価値あるか徹底比較";
 const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg"; 
 const pubDate = "2025-11-15";
 const lastModified = new Date(); 
+const updateDateStr = `${lastModified.getFullYear()}-${String(lastModified.getMonth() + 1).padStart(2, '0')}-${String(lastModified.getDate()).padStart(2, '0')}`;
 
 // --- [4] Firebaseから施設データを取得（成功パターン） ---
 const rangeIds = ['365_nagahama', 'adogawa_sc'];
@@ -62,7 +63,7 @@ const comparisonConfig = [
         url: "/articles/adogawa-sc-review/short-course/",
         img: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_9119.JPG",
         location: "湖西（高島市）",
-        price_display: "ビジター 3,000円",
+        price_display: "平日3,000円 / 土日祝3,500円",
         price_detail: "回り放題",
         plan: "◎ (全日回り放題)",
         green: "△ (ほぼ公園の芝)",
@@ -207,9 +208,17 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             <article class="prose lg:prose-xl max-w-none">
 
             <header>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
-                <p class="text-sm text-slate-500 mt-2">公開日：{pubDate}</p>
-            </header>
+    <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+    <div class="text-sm text-slate-500 mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <span>公開日：{pubDate}</span>
+        <span class="flex items-center gap-1 text-slate-600 font-semibold bg-slate-100 px-2 py-1 rounded">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            更新日：{updateDateStr}
+        </span>
+    </div>
+</header>
 
             <p>「滋賀でショートコースを探している」<br/>
             「いきなりゴルフ場デビューは怖いから、まずは安いショートコースで練習したい」</p>
@@ -244,7 +253,16 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             </ul>
             <p><br/>この記事では、滋賀に“2つしかない”この貴重なショートコースを、僕が<strong>両方とも実際に体験</strong>した上で、<strong>「あなたが今、遠出してでも行くべきなのはどっちか？」</strong>に完璧な答えを出します。</p>
 
-            
+            <div class="my-8 p-5 bg-red-50 border-l-4 border-red-500 rounded-r-lg shadow-sm not-prose">
+    <p class="font-bold text-red-800 mb-2 flex items-center text-lg">
+        <span class="text-2xl mr-2">📢</span>【2026年8月 最新情報】安曇川の土日祝料金・営業時間が改定
+    </p>
+    <p class="text-sm text-slate-700 m-0 leading-relaxed">
+        2026年8月8日より、安曇川スポーツセンター・ショートコースの<strong>土日祝プレー料金が改定（＋500円）</strong>されました。また、期間限定で<strong>土日祝は早朝6時から営業</strong>しています。<br>
+        本記事内の料金はすべて公式発表に基づく<strong>最新価格に更新済み</strong>です！
+    </p>
+</div>
+
            <div class="summary-box bg-green-50 p-6 rounded-lg border border-green-200 my-8 not-prose">
                  <h2 class="text-xl font-bold mb-4 text-green-800 break-keep">
                     先に結論：「どっちへ行くべき？」
@@ -263,7 +281,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
                         <a href="#adogawa-sc" class="text-2xl font-bold text-green-700 mb-2 block hover:underline decoration-green-700 underline-offset-4">
                             安曇川スポーツセンター ▾
                         </a>
-                        <p class="text-sm text-slate-600 m-0">グリーンは「公園並み」ですが、全日3,000円で回り放題。<br class="md:hidden" />家族連れのアクティビティや、コスパ重視で「ゴルフを楽しむ」ならこちら。<strong>併設の300Y練習場（別料金）</strong>も圧巻です。</p>
+                        <p class="text-sm text-slate-600 m-0">グリーンは「公園並み」ですが、平日3,000円（土日祝3,500円）で回り放題。<br class="md:hidden" />家族連れのアクティビティや、コスパ重視で「ゴルフを楽しむ」ならこちら。<strong>併設の300Y練習場（別料金）</strong>も圧巻です。</p>
                     </div>
                  </div>
             </div>
@@ -357,7 +375,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
 </div>
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">💰 Q2. 料金と予約は？</h3>
             <p><strong>A. 圧倒的に安く、予約も不要です。</strong></p>
-            <p>本コースの薄暮ハーフは安くても3,500円〜8,000円で、予約も必須です。一方、この2施設は<strong>1,000円台〜3,000円</strong>で、<strong>予約不要</strong>です。<br class="md:hidden" />「今から行こう」ができます。<br/>
+            <p>本コースの薄暮ハーフは安くても3,500円〜8,000円で、予約も必須です。一方、この2施設は<strong>1,000円台〜3,500円</strong>で、<strong>予約不要</strong>です。<br class="md:hidden" />「今から行こう」ができます。<br/>
             <small>（※心配な方は、念のため施設に電話確認すると確実です）</small></p>
             
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">🤯 Q3. 「プレッシャー」と練習環境</h3>
@@ -455,7 +473,7 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             </figure>
             
             <p>「楽しさ」と「コスパ」で選ぶなら、間違いなく安曇川スポーツセンターです。
-            <br class="md:hidden" />最大の特徴は、<strong>ビジターでも全日3,000円で<br class="md:hidden" />「1日中回り放題」</strong>なこと。</p>
+            <br class="md:hidden" />最大の特徴は、<strong>ビジターでも平日3,000円（土日祝3,500円）で<br class="md:hidden" />「1日中回り放題」</strong>なこと。</p>
 
             <figure class="my-6">
                 <Image 
