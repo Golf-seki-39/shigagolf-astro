@@ -1,0 +1,355 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネント ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import Sidebar from '../../../components/Sidebar.astro'; 
+
+// --- [3] 記事固有の情報 ---
+const baseUrl = "https://shigagolf.com"; 
+const articleUrl = `${baseUrl}/articles/short-course-belongings/`; 
+const title = "滋賀でショートコースデビュー！初心者の持ち物リスト｜クラブは買わなくてOK | シガゴル";
+const description = "滋賀県でショートコースデビューを控える初心者向けに、本当に必要な持ち物と服装を厳選。「クラブは買わなくてOK」な理由や、ボールの個数、スパイクレスシューズの汚れ対策などを実体験ベースで解説します。";
+const headline = "滋賀でショートコースデビュー！初心者の持ち物リスト｜クラブは買わなくてOK";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/short-course-list.jpeg"; // ★適切なOGP画像に変更してください
+const pubDate = "2026-08-22";
+
+// --- [4] JSON-LD構造化データ ---
+const mainEntity = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline,
+    "description": description,
+    "image": [ imageUrl ],
+    "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+    "publisher": { 
+        "@type": "Organization", 
+        "name": "シガゴル", 
+        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+    },
+    "datePublished": new Date(pubDate).toISOString(),
+    "dateModified": new Date(pubDate).toISOString(),
+};
+
+// --- [5] 関連記事リスト（ショートコース専用クラスター） ---
+const experienceReports = [
+    { url: '/articles/shiga-short-courses/', title: '【徹底比較】滋賀のショートコースは2ヶ所だけ！安曇川 vs 365長浜', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg' },
+    { url: '/articles/adogawa-sc-review/short-course/', title: '【体験談】安曇川ショートコース（グリーンは公園並み!?）', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/001111img.jpg' }, 
+    { url: '/articles/365-nagahama/short-course/', title: '【体験談②】365ながはま ショートコース徹底攻略法', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg' },
+];
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(mainEntity)} />
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
+        
+        {/* ▼ 左側のメイン記事エリア ▼ */}
+        <main id="article-view" class="w-full lg:flex-1 bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg text-slate-700 leading-7 md:leading-relaxed text-[15px] md:text-base overflow-hidden">
+            
+            <a href="/articles/" class="nav-link back-button mb-6 inline-block text-green-700 font-semibold hover:underline">
+                ‹ お役立ち記事一覧に戻る
+            </a>
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800">{headline}</h1>
+                <div class="text-sm text-slate-500 mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <span>公開日：{pubDate}</span>
+                </div>
+            </header>
+
+            <article class="prose lg:prose-xl max-w-none mt-8">
+                <!-- 導入文 -->
+                <p>
+                    「いきなり本コースに出る前に、まずはショートコースで練習したい」<br/>
+                    「でも、クラブや服とか全部揃えたら何万円もかかるんじゃ…？」
+                </p>
+                <p>
+                    と悩んでいる初心者の方へ。<strong>結論から言います。クラブセットは買わなくてOKです！</strong>
+                </p>
+
+                <!-- ★★★ 超簡単まとめ ★★★ -->
+                <div class="my-8 p-5 bg-slate-50 border-l-4 border-slate-400 rounded-r-lg shadow-sm not-prose">
+                    <h3 class="text-lg font-bold text-slate-800 mt-0 mb-3">💡 初めてなら、まずこれだけでOK！</h3>
+                    <ul class="list-disc list-inside space-y-1 text-slate-700 mb-3 font-semibold">
+                        <li>ゴルフボール（6〜12個程度）</li>
+                        <li>グローブ</li>
+                        <li>動きやすい服</li>
+                        <li>飲み物</li>
+                        <li>タオル</li>
+                    </ul>
+                   <p class="text-sm text-slate-600 m-0 leading-relaxed">
+                        滋賀県にある2ヶ所のショートコースは両方ともクラブのレンタルが可能なため、事前に買わなくてOKです。ゴルフシューズも最初はスニーカーで大丈夫です。<br/>
+                        （※滋賀の2施設については、実際に私が何度もスニーカーやスパイクレスで回って確認済みですが、服装・シューズのルールは変更される可能性があります。利用前に各施設へご確認ください。）
+                    </p>
+                </div>
+
+                <!-- ★★★ ショートコースとは？ ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    「ショートコース」は普通のゴルフ場と何が違う？
+                </h2>
+                <p>
+                    ショートコースは、本コースより短い距離で気軽にラウンドできる施設です。<br/>
+                    「ゴルフを始めたばかりだけど、本コースはまだちょっと不安」という人の練習にも向いています。
+                </p>
+                <p>
+                    ただし、ショートコースだからといって何でも自由というわけではありません。施設によってクラブのレンタル可否、服装、シューズなどのルールが異なるため、初めて行く場合は事前確認がおすすめです。
+                </p>
+
+                <p>
+                    滋賀県のショートコースへ実際に何度も足を運んでいる筆者が、無駄な出費を抑えつつ、当日絶対に後悔しない「本当に必要なもの」だけを厳選して解説します。
+                </p>
+
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    結論：ショートコースデビューに必要なもの一覧
+                </h2>
+                <p>
+                    「結局、何を持っていけばいいの？」という疑問に答えるため、必要度別に一覧表にまとめました。
+                </p>
+
+                <div class="overflow-x-auto my-6 not-prose">
+                    <table class="w-full text-left border-collapse border border-slate-300">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="py-3 px-4 font-semibold border border-slate-300">持ち物</th>
+                                <th class="py-3 px-4 font-semibold border border-slate-300 text-center whitespace-nowrap">必要度</th>
+                                <th class="py-3 px-4 font-semibold border border-slate-300">買う必要・備考</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white">
+                                <td class="py-3 px-4 border border-slate-300 font-semibold">クラブセット</td>
+                                <td class="py-3 px-4 border border-slate-300 text-center text-slate-400">△</td>
+                                <td class="py-3 px-4 border border-slate-300"><strong>レンタル可（買わなくて良し）</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="py-3 px-4 border border-slate-300 font-semibold">ゴルフボール</td>
+                                <td class="py-3 px-4 border border-slate-300 text-center text-red-500 font-bold">◎</td>
+                                <td class="py-3 px-4 border border-slate-300">必須（6〜12個程度。新品がおすすめ）</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="py-3 px-4 border border-slate-300 font-semibold">グローブ</td>
+                                <td class="py-3 px-4 border border-slate-300 text-center text-red-500 font-bold">◎</td>
+                                <td class="py-3 px-4 border border-slate-300">必須</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="py-3 px-4 border border-slate-300 font-semibold">ゴルフウェア</td>
+                                <td class="py-3 px-4 border border-slate-300 text-center text-red-500 font-bold">◎</td>
+                                <td class="py-3 px-4 border border-slate-300">動きやすい服でOK。ただし施設の服装ルールを確認</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="py-3 px-4 border border-slate-300 font-semibold">飲み物</td>
+                                <td class="py-3 px-4 border border-slate-300 text-center text-red-500 font-bold">◎</td>
+                                <td class="py-3 px-4 border border-slate-300">必須。現地で買えるが持参がおすすめ</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="py-3 px-4 border border-slate-300 font-semibold">タオル</td>
+                                <td class="py-3 px-4 border border-slate-300 text-center text-blue-500 font-bold">○</td>
+                                <td class="py-3 px-4 border border-slate-300">汗拭きやクラブ・ボール拭きにあると便利</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="py-3 px-4 border border-slate-300 font-semibold">ゴルフシューズ</td>
+                                <td class="py-3 px-4 border border-slate-300 text-center text-blue-500 font-bold">○</td>
+                                <td class="py-3 px-4 border border-slate-300">施設ルール次第。スニーカー可でも汚れ対策でスパイクレス推奨</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="py-3 px-4 border border-slate-300 font-semibold">ボールポーチ</td>
+                                <td class="py-3 px-4 border border-slate-300 text-center text-blue-500 font-bold">○</td>
+                                <td class="py-3 px-4 border border-slate-300">あると圧倒的に便利</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="py-3 px-4 border border-slate-300 font-semibold">距離計</td>
+                                <td class="py-3 px-4 border border-slate-300 text-center text-slate-400">△</td>
+                                <td class="py-3 px-4 border border-slate-300">最初はなくてもOK。必要性を感じてからで十分</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="my-6 p-5 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg shadow-sm not-prose">
+                    <p class="font-bold text-yellow-800 mb-2">💡 クラブを持っていなくても大丈夫！</p>
+                    <p class="text-sm text-slate-700 m-0 mb-3">
+                        滋賀の2施設では、どちらもクラブのレンタルが可能です。<br/>
+                        <br/>
+                        ・<strong>安曇川スポーツセンター：</strong>ショートコース利用者は無料で一式（ジュニア用含む）レンタル可能！<br/>
+                        ・<strong>365ゴルフクラブながはま：</strong>1本100円、セット（パター・ウェッジ・アイアン等）500円でレンタル可能！<br/>
+                        <br/>
+                        私自身も実際に利用しましたが、どちらも初心者でも手ぶらで気軽に楽しめます。最初から何万円もするクラブを買う必要はありません！
+                    </p>
+                    <p class="text-sm text-slate-700 m-0 border-t border-yellow-200 pt-3">
+                        実際に安曇川と365ながはまを比較すると、料金やコースの雰囲気にも違いがあります。<br/>
+                        <a href="/articles/shiga-short-courses/" class="text-green-700 font-bold hover:underline inline-flex items-center mt-1">
+                            → 滋賀のショートコース2ヶ所 徹底比較はこちら
+                        </a>
+                    </p>
+                </div>
+
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    【体験談】ボールは何個？私がロストボールではなく「新品」を勧める理由
+                </h2>
+                <p>
+                    初心者が一番悩むのが「ボールは何個持っていけばいいの？」という疑問ですよね。<br/>
+                    初めてなら、まずは<strong>6〜12個程度</strong>用意しておくと安心です。池や茂みに入って見つからないことは初心者ならよくあることです。
+                </p>
+                <p>
+                    ゴルフボールは事前に用意しておくと安心です。現地で購入できる場合もありますが、ネットでまとめて購入した方が安く済むことがあります。
+                </p>
+                <p>
+                    そして、初心者には「安い中古のロストボールで十分」と勧める人が多いですが、私は少し違う意見を持っています。
+                </p>
+
+                <figure class="my-6">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/oSc3r9aDSWKuKofrzDwZew.jpg" alt="実際に使っている飛衛門のボール" class="w-full h-auto object-cover rounded-lg border border-slate-200" width={800} height={600} format="webp" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">私がいつも持参している新品の飛衛門（とびえもん）</figcaption>
+                </figure>
+
+                <div class="voice-box flex items-start my-6">
+                    <div class="voice-icon mr-4 shrink-0">
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png" alt="筆者アイコン" class="w-16 h-16 rounded-full" width={64} height={64} format="webp" />
+                    </div>
+                    <div class="voice-text bg-green-50 border-2 border-green-300 rounded-xl p-4 relative w-full">
+                        <p class="m-0 text-slate-700">
+                            僕はロストボールより<strong>「新品」</strong>をおすすめしています。<br/>
+                            理由は性能差よりも<strong>「このボールを無くしたくない！」という意識が生まれるから</strong>です。<br/>
+                            実際、僕自身は新品ボールを使うようになってから、1打ごとの意識が変わり、プレーが丁寧になったと実感しています。
+                        </p>
+                    </div>
+                </div>
+                <p>
+                    初心者でも使いやすく、価格も抑えやすい新品ボールとして、私は<strong>「飛衛門（とびえもん）」</strong>を愛用しています。<br/>
+                    「まずは新品ボールを使ってみたいけど、高いボールはもったいない」という人には、ちょうどいい選択肢だと思います。
+                </p>
+                
+                <div class="my-6 text-center">
+                    <a href="https://a.r10.to/hFxXca" target="_blank" rel="sponsored noopener" class="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 no-underline">
+                        楽天市場で「飛衛門」をチェックする
+                    </a>
+                </div>
+
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    あると「圧倒的に便利」な小物2選
+                </h2>
+                <p>
+                    絶対ではありませんが、ショートコースを回る上で「買っておいてよかった…」と心から思えるアイテムを紹介します。
+                </p>
+
+                <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+                    ① スパイクレスのゴルフシューズ（スニーカー汚れ対策）
+                </h3>
+                <p>
+                    「最初はスニーカーでもOK」とお伝えしましたが、実は私自身は専用のゴルフシューズを使用しています。理由は非常にシンプルで、<strong>「お気に入りのスニーカーがドロドロに汚れるのが嫌だから」</strong>です。
+                </p>
+                <p>
+                    ショートコースは朝露や前日の雨で芝が濡れていることが多く、普通のスニーカーで行くと一発で汚れます。「本格的なスパイクまではちょっと…」という方でも、最近の<strong>「スパイクレスシューズ」</strong>は普段使いできるくらいオシャレでスニーカーに近いデザインが豊富です。
+                </p>
+                <p>
+                    実際に、私も汚れるストレスを無くすために、プーマのスパイクレスシューズを新しく買い直して愛用しています！
+                </p>
+
+                <div class="my-6 p-4 border-l-4 border-blue-400 bg-blue-50 rounded-r-lg not-prose">
+                    <p class="font-bold text-blue-800 mb-2">💡 もしゴルフにハマらなくても無駄になりません</p>
+                    <p class="text-sm text-slate-700 m-0 leading-relaxed">
+                        本格的なスパイクと違い、最近のスパイクレスは普通のスニーカーと同じ感覚で履けます。<br/>
+                        もしこの先ゴルフにハマらなくても、<strong>防水仕様の歩きやすい靴として普段使いやアウトドアでそのまま使える</strong>ので、絶対に無駄にはなりません。
+                    </p>
+                </div>
+
+                <figure class="my-6">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/IMG_2836-2.jpg" alt="実際に買ったプーマ スパイクレスシューズ" class="w-full h-auto object-cover rounded-lg border border-slate-200" width={800} height={600} format="webp" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">実際に私が最近買い直したプーマのスパイクレス。防水で普段使いもできそうなデザインです。</figcaption>
+                </figure>
+
+                <div class="my-6 text-center">
+                    <a href="https://a.r10.to/h8TgZq" target="_blank" rel="sponsored noopener" class="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 no-underline">
+                        楽天市場でプーマのスパイクレスシューズを見る
+                    </a>
+                </div>
+
+                <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">
+                    ② ボールポーチ（腰に下げるタイプ）
+                </h3>
+                <p>
+                    新品ボールを大切に扱うとはいえ、初心者はボールを無くします。すぐ予備を出せるようにと、ポケットにボールを3〜4個入れていると、パンパンでスイングの邪魔になります。<br/>
+                    腰に2個だけぶら下げられるポーチがあると、プレー中のストレスが全く違います。
+                </p>
+                
+                <figure class="my-6">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/IMG_1421.png" alt="愛用しているボールポーチ" class="w-full h-auto object-cover rounded-lg border border-slate-200" width={800} height={600} format="webp" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">私が愛用しているボールポーチ。腰につけておくと本当にラクです。</figcaption>
+                </figure>
+
+                <div class="my-6 text-center">
+                    <a href="https://a.r10.to/TLhNw6" target="_blank" rel="sponsored noopener" class="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 no-underline">
+                        楽天市場でボールポーチを見る
+                    </a>
+                </div>
+
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    家にあるものでOK！持っていくべき小物
+                </h2>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>虫除けスプレー</strong>：自然の中なので、夏場などは虫対策があると安心です。</li>
+                    <li><strong>小さめのトートバッグ</strong>：スマホ、飲み物、タオル、予備ボールを入れて持ち歩く用。専用のラウンドバッグじゃなくてOKです。</li>
+                    <li><strong>小銭</strong>：自販機などで使うため。</li>
+                    <li><strong>予備のグローブ</strong>：自分でティーペグを刺したり、泥がついたボールを拭いたりと、想像以上に汚れます。気軽に洗えるタイプを予備で持っておくと便利です。</li>
+                </ul>
+
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    まとめ：準備ができたら滋賀のショートコースへ！
+                </h2>
+               <p>
+                    自分に合うかどうかわからないうちから、いきなり高額なクラブセットを揃える必要はありません。まずはレンタルクラブと今日紹介した最低限の持ち物で、ショートコースを体験してみてください。<br/>
+                    何度かショートコースを体験して「もっと続けたい！」と思えたら、その時に初めて自分用のクラブ購入を検討しましょう。
+                </p>
+                <p class="text-sm text-slate-600 mt-2">
+                    ※もし「どうしても最初から自分のクラブが欲しい！」という場合でも、いきなり高額な新品フルセットを買うのはNGです。まずは数千円〜1万円台の中古クラブセットから始めるのが絶対におすすめです！
+                </p>
+
+                <div class="not-prose my-12 p-6 bg-green-50 border border-green-200 rounded-lg text-center">
+                    <h3 class="text-xl font-bold text-green-800 mb-3">実際に滋賀でショートコースに行くなら？</h3>
+                    <p class="text-green-900 mb-4">
+                        滋賀県内で、現在シガゴルが確認している「練習場併設のショートコース」は、<strong>安曇川スポーツセンター</strong>と<strong>365ゴルフクラブながはま</strong>の2ヶ所です。
+                    </p>
+                    <a href="/articles/shiga-short-courses/" class="inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 no-underline">
+                        滋賀のショートコース2ヶ所 徹底比較を読む →
+                    </a>
+                </div>
+            </article>
+
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={experienceReports} title="あわせて読みたい・体験談"/>
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+        </main>
+
+        {/* ▼ 右側のサイドバー ▼ */}
+        <Sidebar />
+        
+    </div>
+</BaseLayout>
+
+<style>
+    .voice-box {
+        display: flex;
+        align-items: flex-start;
+    }
+    .voice-text::before {
+        content: "";
+        position: absolute;
+        top: 20px;
+        left: -12px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 10px 12px 10px 0;
+        border-color: transparent #86efac transparent transparent;
+    }
+</style>
