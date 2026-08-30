@@ -136,12 +136,20 @@ const faqElements = {
 };
 
 // --- [7] 関連記事リスト ---
+
+// 【ジャンル1：体験談】（元のまま）
 const experienceReports = [
     { url: '/articles/365-nagahama/short-course/', title: '【体験談②】365ながはま ショートコース徹底攻略法', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg' },
     { url: '/articles/adogawa-sc-review/short-course/', title: '【体験談】安曇川ショートコース（グリーンは公園並み!?）', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/001111img.jpg' }, 
-    { url: '/articles/365-nagahama/range/', title: '365ゴルフクラブながはま　体験レポート　', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000ai.jpg' },
-    { url: '/articles/adogawa-sc-review/range/', title: '安曇川スポーツセンター　体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg' },
-    { url: '/articles/shiga-short-courses/', title: '滋賀県ショートコース比較　体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg' },
+    { url: '/articles/365-nagahama/range/', title: '365ゴルフクラブながはま 体験レポート ', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000ai.jpg' },
+    { url: '/articles/adogawa-sc-review/range/', title: '安曇川スポーツセンター 体験レポート', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/000000img.jpg' },
+];
+
+// 【ジャンル2：初心者向け】（今回作ったもの＋本コース向け）
+const beginnerGuides = [
+    { url: '/articles/short-course-belongings/', title: '初心者の持ち物リスト｜クラブは買わなくてOK', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/short-course-list.jpeg' },
+    { url: '/articles/short-course-guide/', title: '【初心者向け】ショートコースの回り方完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/short-course-guide-ogp.jpeg' },
+    { url: '/articles/beginner-guide/', title: '【滋賀のゴルフデビュー】服装マナーと3つのバッグ仕分け術', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/biginner-guide.aikyatti.png' }, // ※アイキャッチURLは適宜合わせてください
 ];
 
 // マップ用APIキー
@@ -363,14 +371,24 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             </h2>
             <p>「安いゴルフ場（薄暮ハーフ）と何が違うの？」という疑問に、両方体験した僕がお答えします。</p>
             
-           <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">👕 Q1. 服装は？</h3>
+           <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">👕 Q1. 服装や持ち物は？</h3>
 <p><strong>A. まったく違います。</strong></p>
 <p>本コースは襟付きシャツやドレスコードが必須ですが、<strong>「365ながはま」「安曇川」ともにTシャツ、スニーカーでOK</strong>です。ゴルフウェアは一切不要で、練習場に行く感覚で回れます。</p>
 
-<div class="not-prose bg-green-50 p-4 rounded border-l-4 border-green-500 mt-4 text-sm md:text-base">
-    <p class="font-bold text-green-800 mb-1">💡 滋賀のゴルフ場デビューを控えている方へ</p>
-    <p class="m-0 text-slate-700">
-        ショートコースはラフでOKですが、いよいよ本番のゴルフ場へ！という時の「失敗しない服装と3つのバッグ仕分け術」は、<a href="/articles/beginner-guide/" class="text-green-700 font-bold underline hover:no-underline">こちらの初心者ガイド</a>で僕の失敗談を交えて解説しています。
+<div class="not-prose bg-green-50 p-4 md:p-5 rounded-lg border-l-4 border-green-500 mt-4 text-sm md:text-base shadow-sm">
+    <p class="font-bold text-green-800 mb-3 border-b border-green-200 pb-2">💡 デビューを控えている初心者の方へ</p>
+    
+    <!-- ▼ 新記事（ショートコース向け）への導線 ▼ -->
+    <p class="font-bold text-slate-700 mb-1 mt-3">⛳ まずはショートコースで練習する方</p>
+    <ul class="list-disc list-inside space-y-1 m-0 mb-4 text-slate-600">
+        <li><a href="/articles/short-course-belongings/" class="text-green-700 font-bold underline hover:no-underline">初心者の持ち物リスト｜クラブは買わなくてOK</a></li>
+        <li><a href="/articles/short-course-guide/" class="text-green-700 font-bold underline hover:no-underline">到着から帰るまでの「回り方・ルール」完全ガイド</a></li>
+    </ul>
+
+    <!-- ▼ 元のリンク（本コース向け）を復活 ▼ -->
+    <p class="font-bold text-slate-700 mb-1">⛳ いよいよ本番のゴルフ場へ行く方</p>
+    <p class="m-0 text-slate-600 pl-5">
+        <a href="/articles/beginner-guide/" class="text-green-700 font-bold underline hover:no-underline">失敗しない服装と3つのバッグ仕分け術</a>（僕の失敗談あり）
     </p>
 </div>
             <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-3">💰 Q2. 料金と予約は？</h3>
@@ -558,8 +576,13 @@ const gmapsApiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY;
             <GoraCampaignBanner />
 
             <div class="not-prose my-12 space-y-12">
-                <MySlider articles={experienceReports} title="あわせて読みたい「体験談」"/>
+                <!-- 初心者向けスライダー -->
+                <MySlider articles={beginnerGuides} title="🔰 初心者向けガイド"/>
+                
+                <!-- 体験談スライダー -->
+                <MySlider articles={experienceReports} title="⛳ あわせて読みたい「体験談」"/>
             </div>
+
 
             <ShareButtons articleUrl={articleUrl} headline={headline} />
             <AuthorProfile />
