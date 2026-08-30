@@ -1,0 +1,481 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネント ---
+import MySlider from '../../../components/MySlider.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import Sidebar from '../../../components/Sidebar.astro'; 
+
+// --- [3] 記事固有の情報 ---
+const baseUrl = "https://shigagolf.com"; 
+const articleUrl = `${baseUrl}/articles/short-course-guide/`; 
+const title = "【初心者向け】ショートコースの回り方・ルール完全ガイド｜到着から帰るまでの流れを徹底解説 | シガゴル";
+const description = "「ショートコースに着いたらまず何をすればいい？」初心者の不安を解消するため、受付からラウンド、片付けまでの流れを完全シミュレーション。滋賀の安曇川スポーツセンターと365ゴルフクラブながはまのリアルなローカルルールも交えて徹底解説します。";
+const headline = "【初心者向け】ショートコースの回り方・ルール完全ガイド｜到着から帰るまでの流れを徹底解説";
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/short-course-guide-ogp.jpeg"; // ★適切なOGP画像に変更してください
+const pubDate = "2026-08-25"; // ★公開日
+
+// --- [4] JSON-LD構造化データ ---
+const mainEntity = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+    "headline": headline,
+    "description": description,
+    "image": [ imageUrl ],
+    "author": { "@type": "Person", "name": "関（シガゴル運営者）", "url": `${baseUrl}/about/` },
+    "publisher": { 
+        "@type": "Organization", 
+        "name": "シガゴル", 
+        "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" }
+    },
+    "datePublished": new Date(pubDate).toISOString(),
+    "dateModified": new Date(pubDate).toISOString(),
+};
+
+// --- [5] 関連記事リスト（ショートコース専用クラスター） ---
+const experienceReports = [
+    { url: '/articles/365-nagahama/short-course/', title: '【体験談】365ながはま ショートコース徹底攻略法', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/0000aishort.jpg' },
+    { url: '/articles/adogawa-sc-review/short-course/', title: '【体験談】安曇川ショートコース（グリーンは公園並み!?）', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/001111img.jpg' },
+];
+const comparisonArticles = [
+    { url: '/articles/shiga-short-courses/', title: '【徹底比較】滋賀のショートコースは2ヶ所だけ！安曇川 vs 365長浜', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/01010010002.jpg' },   
+    { url: '/articles/short-course-belongings/', title: 'ショートコースの持ち物リスト｜クラブは買わなくてOK', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/short-course-list.jpeg' },
+    { url: '/articles/short-course-guide/', title: 'ショートコースの回り方、ルール完全ガイド', img: 'https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/short-course-guide-ogp.jpeg' },
+   ];
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(mainEntity)} />
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
+        
+        {/* ▼ 左側のメイン記事エリア ▼ */}
+        <main id="article-view" class="w-full lg:flex-1 bg-white p-4 sm:p-6 md:p-8 rounded-lg shadow-lg text-slate-700 leading-7 md:leading-relaxed text-[15px] md:text-base overflow-hidden">
+            
+            <a href="/articles/" class="nav-link back-button mb-6 inline-block text-green-700 font-semibold hover:underline">
+                ‹ お役立ち記事一覧に戻る
+            </a>
+            
+            <header>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                <div class="text-sm text-slate-500 mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                    <span>公開日：{pubDate}</span>
+                </div>
+            </header>
+
+            <article class="prose lg:prose-xl max-w-none mt-8">
+                <!-- 導入文 -->
+                <p>
+                    「持ち物はなんとなく分かった。でも、<strong>実際にゴルフ場に着いたらまず何をすればいいの？</strong>」<br/>
+                    「誰から打つの？後ろから人が来たらどうしよう…」
+                </p>
+                <p>
+                    初めてのショートコース、不安ですよね。でも大丈夫です。<br/>
+                    滋賀県のショートコースを何度も回っている僕が、駐車場に到着してから家に帰るまでの「リアルな流れ」を完全にシミュレーションします！
+                </p>
+
+                <!-- ★★★ 5分で分かる全体の流れ ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    ショートコースはこんな流れ！まず全体を確認
+                </h2>
+                <div class="my-6 p-5 bg-slate-50 border border-slate-300 rounded-lg shadow-sm not-prose">
+                    <p class="text-slate-700 m-0 leading-relaxed font-semibold mb-4">
+                        複雑なルールを覚える必要はありません。当日はこの7ステップだけでOKです！
+                    </p>
+                    <ol class="list-decimal list-inside space-y-3 text-slate-700 font-medium">
+                        <li><strong>到着：</strong> 駐車場で靴を履き替える</li>
+                        <li><strong>受付・支払い：</strong> フロントで名前を書いて料金を払う</li>
+                        <li><strong>クラブを準備：</strong> 必要な数本だけを「サブバッグ」に入れる</li>
+                        <li><strong>1番ホールへ：</strong> 前の組が安全な場所まで進んだらスタート</li>
+                        <li><strong>プレー：</strong> 順番に打ってホールを回る</li>
+                        <li><strong>終了・返却：</strong> 終わったらクラブとバッグを返す</li>
+                        <li><strong>片付け：</strong> 靴の泥を落として終了！</li>
+                    </ol>
+                </div>
+                <p>
+                    たったこれだけです。ここからは、滋賀県にある2つの施設（安曇川スポーツセンター・365ゴルフクラブながはま）のリアルな違いも交えながら、ステップごとに詳しく解説していきます。
+                </p>
+
+                <!-- ★★★ ① 到着〜受付・支払い ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    ① 到着〜受付・支払い｜ゴルフ場に着いたらまずやること
+                </h2>
+                <p>
+                    駐車場に着いたら、まずはゴルフシューズ（スパイクレスなど）に履き替えます。<br/>
+                    ※もちろん、家からそのまま履いてきても全く問題ありません。僕の場合、自分が運転する時はスリッパで運転して現地で履き替えますが、友達の車に乗せてもらう時は家から履いていくことが多いです。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">各施設の受付の流れ</h3>
+                <p>
+                    施設によって受付の場所や支払い方法が異なります。滋賀の2施設はこんな感じです。
+                </p>
+
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-6 not-prose">
+                    <!-- 安曇川セット（テキスト＋写真） -->
+                    <div class="flex flex-col gap-4">
+                        <div class="p-5 bg-green-50 border border-green-200 rounded-lg flex-grow">
+                            <h4 class="font-bold text-green-800 mb-2 border-b border-green-200 pb-1">⛳ 安曇川スポーツセンターの場合</h4>
+                            <ul class="space-y-2 text-sm text-slate-700 m-0">
+                                <li>駐車場に車を停めたら、目の前にある<strong>「受付ハウス」</strong>へ。</li>
+                                <li>受付票に名前などを記入し、<strong>前払い（現金など）</strong>で料金を払います。</li>
+                                <li>クラブをレンタルする場合は、このタイミングで店員さんに伝えます。</li>
+                            </ul>
+                        </div>
+                        <figure class="m-0">
+                            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8683.png" alt="安曇川スポーツセンター 受付ハウス" class="w-full h-48 object-cover rounded-lg border border-slate-200" width={600} height={400} format="webp" />
+                            <figcaption class="text-center text-sm text-slate-500 mt-2">安曇川の受付ハウス。駐車場からすぐなので迷いません。</figcaption>
+                        </figure>
+                    </div>
+
+                    <!-- 365ながはまセット（テキスト＋写真） -->
+                    <div class="flex flex-col gap-4">
+                        <div class="p-5 bg-blue-50 border border-blue-200 rounded-lg flex-grow">
+                            <h4 class="font-bold text-blue-800 mb-2 border-b border-blue-200 pb-1">⛳ 365ながはまの場合</h4>
+                            <ul class="space-y-2 text-sm text-slate-700 m-0">
+                                <li>建物に入ってすぐ右側にある<strong>「練習場フロント」</strong>へ。</li>
+                                <li>受付用紙に記入して支払いをします。</li>
+                                <li>練習場は現金不可ですが、<strong>ショートコースは現金OK！</strong>クレカやプリカも使えます（※女性はプリカ払いがいつでも20%オフでお得！）。</li>
+                            </ul>
+                        </div>
+                        <figure class="m-0">
+                            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6092.jpg" alt="365ゴルフクラブながはまの外観" class="w-full h-48 object-cover rounded-lg border border-slate-200" width={600} height={400} format="webp" />
+                            <figcaption class="text-center text-sm text-slate-500 mt-2">365ながはまの入口。この建物に入ってすぐ右で受付します。</figcaption>
+                        </figure>
+                    </div>
+                </div>
+
+               
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">★最重要：キャディバッグは持ち込まない！</h3>
+                <p>
+                    ショートコースでは、本コースのように大きくて重たいキャディバッグを担いで歩く必要はありません。ショートコースで使うクラブは4〜5本程度です（アイアン、ウェッジ、パターなど）。極端な話、初心者なら「ピッチングウェッジ・サンドウェッジ・パター」の3本だけでも十分回れます！
+                </p>
+                <p>
+                    自分のクラブを持っている人は、受付でキャディバッグを預けて（または車に置いて）、<strong>必要なクラブだけを無料の「サブバッグ」に入れ替えて持っていく</strong>と劇的にラクになります。<br/>
+                    安曇川も365ながはまも、受付周りに無料のサブバッグがズラッと並んでいるので、自由に使ってOKです！
+                </p>
+
+                <figure class="my-8">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6582.png" alt="サブバッグと人工芝のティーイングエリア" class="w-full h-auto object-cover rounded-lg border border-slate-200 shadow-sm" width={800} height={600} format="webp" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">実際に僕が回る時のスタイル。無料のサブバッグに数本だけ入れます。足元のマットに直接ボールを置いて打つので、ティーも不要です！</figcaption>
+                </figure>
+
+
+                <!-- ★★★ ② いざ1番ホールへ！最初の1打 ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    ② いざ1番ホールへ！最初の1打はどうする？
+                </h2>
+                <p>
+                    クラブの準備ができたら、いざ1番ホールの「ティーイングエリア（1打目を打つ場所）」へ向かいます。<br/>
+                    ここで初心者が安心するポイントがあります。
+                </p>
+                <p>
+                    安曇川も365ながはまも、ティーイングエリアは<strong>打ちっぱなし（練習場）と同じような人工芝のマット</strong>です。実際に僕がプレーした際は、ボールをマット上の平らな場所に直接ポンと置いて、そのまま打っています。ティーの高さで悩む必要がないのは嬉しいですよね。
+                </p>
+
+                <figure class="my-6">
+                    <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/365nagahama-teeingarea.jpeg" alt="ショートコースのティーイングエリア" class="w-full h-auto object-cover rounded-lg border border-slate-200 shadow-sm" width={800} height={600} format="webp" />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">ショートコースのティーイングエリア。人工芝のマットから打つため、初心者でもスタート位置が分かりやすいのが特徴です。</figcaption>
+                </figure>
+
+                <p>
+                    ※施設によってティー（ボールを乗せるピン）の使用ルールが異なる場合があるので、初めての場合は受付で確認しておくと安心です。
+                </p>
+                <p>
+                    前の組がグリーンを離れて安全な場所まで進んだことを確認したら、いよいよスタートです！
+                </p>
+
+
+                <!-- ★★★ ③ ラウンド中のルール・マナー ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    ③ ラウンド中のルール・マナー｜ミスしても焦らなくてOK
+                </h2>
+                <p>
+                    ラウンド中に初心者がパニックになりやすいポイントと、その対処法をまとめました。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">打つ順番はどう決める？</h3>
+                <p>
+                    最初の1番ホールでのティーショットは、初めてならジャンケンなどで順番を決めればOKです。<br/>
+                    2打目以降は、基本的にはボールがピン（カップ）から遠い人から打つ「遠球先打（えんきゅうせんだ）」のルールがありますが、ショートコース初心者の場合は<strong>「安全確認を最優先に、準備ができた人（打てる人）からテンポよく打つ」</strong>ことを意識しておけば大丈夫です。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">初心者が一番気になる「ボールが変なところ（OBや池）に飛んだら？」</h3>
+                <p>
+                    これが一番の不安ですよね。実は、施設によって対応が全く違います！シガゴルだからお伝えできるリアルな違いがこちらです。
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-6 not-prose">
+                    <!-- 安曇川セット（テキスト＋写真） -->
+                    <div class="flex flex-col gap-4">
+                        <div class="p-5 bg-green-50 border border-green-200 rounded-lg flex-grow">
+                            <h4 class="font-bold text-green-800 mb-2 border-b border-green-200 pb-1">【安曇川】OBを気にせずプレーしやすい！</h4>
+                            <p class="text-sm text-slate-700 m-0 leading-relaxed">
+                                安曇川は全体的に平坦で、基本的にOBや池はありません。<br/>もしボールが隣のコースへ飛んでしまっても、周囲の安全をしっかり確認し、「すみませーん！」と声をかけながらプレーを続ければ大丈夫です。
+                            </p>
+                        </div>
+                        <figure class="m-0">
+                            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8702.png" alt="安曇川のコース風景" class="w-full h-48 object-cover rounded-lg border border-slate-200" width={600} height={400} format="webp" />
+                            <figcaption class="text-center text-sm text-slate-500 mt-2">【安曇川】平坦で広く、OBがないのでのびのび打てます。</figcaption>
+                        </figure>
+                    </div>
+
+                    <!-- 365ながはまセット（テキスト＋写真） -->
+                    <div class="flex flex-col gap-4">
+                        <div class="p-5 bg-blue-50 border border-blue-200 rounded-lg flex-grow">
+                            <h4 class="font-bold text-blue-800 mb-2 border-b border-blue-200 pb-1">【365】本コースさながらのルールあり！</h4>
+                            <p class="text-sm text-slate-700 m-0 leading-relaxed">
+                                365には池やOBがあります。入った場合は、その場所に応じた<strong>施設のローカルルール（特設ティーなど）</strong>に従います。日本のゴルフ場でよくある「プレ4」のような実践的な体験ができるので、本番への良い予行演習になります！
+                            </p>
+                        </div>
+                        <figure class="m-0">
+                            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6583.jpeg" alt="365ながはまの池越え" class="w-full h-48 object-cover rounded-lg border border-slate-200" width={600} height={400} format="webp" />
+                            <figcaption class="text-center text-sm text-slate-500 mt-2">【365ながはま】1番から池越え！本番さながらの緊張感があります。</figcaption>
+                        </figure>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">安全確認は絶対に徹底！</h3>
+                <p>
+                    ルールよりも何よりも大切なのが安全です。<br/>
+                    人が打つ時は、絶対にその人の<strong>「前（飛球線上の前方）」に立たない</strong>こと。斜め前も危険です。必ず打つ人の「背中側」や「斜め後ろ」に立つようにしましょう。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">ボールを探す時間と、後ろの組が来たときの対応</h3>
+                <p>
+                    ボールを探す時間にも目安があります。現在のゴルフ規則では、紛失球を探せる時間は<strong>「3分」</strong>です。ショートコースでも、長時間探さずプレーを進めることを優先しましょう。
+                </p>
+                <p>
+                    もし自分たちの進行が遅れて後ろの組が待っている場合、<strong>無理に急ぐ必要はありません。必要なら「お先にどうぞ」と先に行ってもらう（パスする）</strong>のが一番賢い方法です。初心者が一番やってはいけないのは、焦ってプレーすることです。
+                </p>
+
+
+                <!-- ★★★ ④ グリーン上での振る舞いとスコア ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    ④ グリーン上での振る舞いとスコア
+                </h2>
+                
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">最低限のグリーンマナー</h3>
+                <ul class="list-disc list-inside space-y-2 mb-6">
+                    <li><strong>走らない：</strong> グリーン上の芝はデリケートなので、走ったり足を引きずったりしない。</li>
+                    <li><strong>人のラインを踏まない：</strong> 他の人のボールとカップを結ぶ線（ボールが転がるルート）を踏まないように歩く。</li>
+                    <li><strong>ピン（旗）はどうする？：</strong> ショートコースでは施設の案内に従えばOKです。分からない場合は、挿したままにするか、前の組のやり方に合わせるのが簡単です。</li>
+                </ul>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">スコアは気にしなくていい？</h3>
+                <p>
+                    各施設のグリーンの状態によって、スコアに対する考え方は変えたほうが楽しめます！
+                </p>
+              
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-6 not-prose">
+                    <!-- 安曇川セット（テキスト＋写真） -->
+                    <div class="flex flex-col gap-4">
+                        <div class="p-5 bg-green-50 border border-green-200 rounded-lg flex-grow">
+                            <h4 class="font-bold text-green-800 mb-2 border-b border-green-200 pb-1">【安曇川】アプローチ練習と割り切る！</h4>
+                            <p class="text-sm text-slate-700 m-0 leading-relaxed">
+                                一般的なゴルフ場のように整備されたグリーンとは違うため、正直ラインを読むのがかなり難しいです（笑）。高麗芝が野性的に生え散らかしているので、最初はスコアを気にしすぎず、アプローチの練習場所くらいの感覚で楽しむのがおすすめです。
+                            </p>
+                        </div>
+                        <figure class="m-0">
+                            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8758.png" alt="安曇川のグリーン" class="w-full h-48 object-cover rounded-lg border border-slate-200" width={600} height={400} format="webp" />
+                            <figcaption class="text-center text-sm text-slate-500 mt-2">【安曇川】野性的な高麗芝。ラインを読むのは至難の業です（笑）</figcaption>
+                        </figure>
+                    </div>
+
+                    <!-- 365ながはまセット（テキスト＋写真） -->
+                    <div class="flex flex-col gap-4">
+                        <div class="p-5 bg-blue-50 border border-blue-200 rounded-lg flex-grow">
+                            <h4 class="font-bold text-blue-800 mb-2 border-b border-blue-200 pb-1">【365】本番さながらのパター練習！</h4>
+                            <p class="text-sm text-slate-700 m-0 leading-relaxed">
+                                365ながはまのグリーンは手入れされた人工芝です。特に5番ホールなどはかなり速く転がるので、本番さながらのパター練習になります。
+                            </p>
+                        </div>
+                        <figure class="m-0">
+                            <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/365_nagahama/gallery/IMG_6592.jpg" alt="365ながはまのグリーン" class="w-full h-48 object-cover rounded-lg border border-slate-200" width={600} height={400} format="webp" />
+                            <figcaption class="text-center text-sm text-slate-500 mt-2">【365ながはま】手入れされた人工芝。パターの練習に最適です。</figcaption>
+                        </figure>
+                    </div>
+                </div>
+
+
+                <!-- ★★★ ⑤ ラウンド終了〜片付け ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    ⑤ ラウンド終了〜片付け
+                </h2>
+                <p>
+                    すべてのホールを回り終えたら、レンタルしたクラブやサブバッグを、受付や元の場所へ返却します。
+                </p>
+                <p>
+                    帰る前に靴の裏の泥や芝を落とします。<br/>
+                    本コースにあるような風が出るエアーガン（コンプレッサー）はありませんが、<strong>安曇川には手動で擦る泥落としブラシと、クラブを洗う水道・ウエス（布）が完備</strong>されています。365ながはまには泥落としがないので、持参したタオルなどで軽く拭き取って帰りましょう。
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                    <!-- 泥落とし -->
+                    <figure class="m-0">
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8790.png" alt="安曇川の泥落とし" class="w-full h-48 object-cover rounded-lg border border-slate-200" width={600} height={400} format="webp" />
+                        <figcaption class="text-center text-sm text-slate-500 mt-2">安曇川にある泥落としブラシ。ラウンド後はここで靴裏の汚れを落としてから帰ります。</figcaption>
+                    </figure>
+                    <!-- おしぼり -->
+                    <figure class="m-0">
+                        <Image src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/adogawa_sc/gallery/IMG_8708.png" alt="キンキンに冷えたおしぼり" class="w-full h-48 object-cover rounded-lg border border-slate-200" width={600} height={400} format="webp" />
+                        <figcaption class="text-center text-sm text-slate-500 mt-2">安曇川の受付ハウスには冷たいおしぼりも。暑い日のラウンド後にはありがたいサービスです。</figcaption>
+                    </figure>
+                </div>
+                
+                <div class="my-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg not-prose">
+                    <p class="font-bold text-yellow-800 mb-2">💡 休憩も忘れずに！</p>
+                    <p class="text-sm text-slate-700 m-0">
+                        安曇川のように「回り放題」の施設の場合、夢中になって熱中症になる危険があります。夏場（6〜9月）はハーフ（9H）終わったら必ず受付ハウスで休憩しましょう。<br/>
+                        安曇川の受付ハウスには<strong>ウォーターサーバー</strong>も用意してくれているので、しっかり涼んでから次のラウンドへ向かってくださいね。
+                    </p>
+                </div>
+
+                <!-- ★★★ 新設：初心者の疑問Q&A（アコーディオン版） ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    初心者の「よくある疑問」Q&A
+                </h2>
+                <div class="my-6">
+                    <!-- Q1 -->
+                    <details class="group border border-slate-200 rounded-lg bg-white mb-4 [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                        <summary class="flex items-center justify-between cursor-pointer p-4 font-bold text-slate-800 hover:bg-slate-50 transition-colors">
+                            <div class="flex items-center">
+                                <span class="text-green-600 mr-2 text-xl font-black">Q.</span>
+                                <span>一人でも回れるの？</span>
+                            </div>
+                            <span class="transition-transform duration-200 group-open:rotate-180 text-slate-400">
+                                <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                            </span>
+                        </summary>
+                        <div class="p-4 border-t border-slate-200 bg-slate-50 text-sm text-slate-700 leading-relaxed">
+                            <p class="m-0">回れます！特にショートコースは一人で黙々と練習している人も多いです。初めてで不安な場合は、平日の空いている時間帯を狙うのがおすすめです。</p>
+                        </div>
+                    </details>
+
+                    <!-- Q2 -->
+                    <details class="group border border-slate-200 rounded-lg bg-white mb-4 [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                        <summary class="flex items-center justify-between cursor-pointer p-4 font-bold text-slate-800 hover:bg-slate-50 transition-colors">
+                            <div class="flex items-center">
+                                <span class="text-green-600 mr-2 text-xl font-black">Q.</span>
+                                <span>スコアカードは必要？</span>
+                            </div>
+                            <span class="transition-transform duration-200 group-open:rotate-180 text-slate-400">
+                                <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                            </span>
+                        </summary>
+                        <div class="p-4 border-t border-slate-200 bg-slate-50 text-sm text-slate-700 leading-relaxed">
+                            <p class="m-0">受付に置いてあることが多いですが、初心者のうちは無理にスコアをつける必要はありません。「芝の上から打つ感覚」を楽しむことを最優先にしましょう。</p>
+                        </div>
+                    </details>
+
+                    <!-- Q3 -->
+                    <details class="group border border-slate-200 rounded-lg bg-white mb-4 [&_summary::-webkit-details-marker]:hidden shadow-sm">
+                        <summary class="flex items-center justify-between cursor-pointer p-4 font-bold text-slate-800 hover:bg-slate-50 transition-colors">
+                            <div class="flex items-center">
+                                <span class="text-green-600 mr-2 text-xl font-black">Q.</span>
+                                <span>途中でトイレには行ける？</span>
+                            </div>
+                            <span class="transition-transform duration-200 group-open:rotate-180 text-slate-400">
+                                <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                            </span>
+                        </summary>
+                        <div class="p-4 border-t border-slate-200 bg-slate-50 text-sm text-slate-700 leading-relaxed">
+                            <p class="m-0">本コースと違い、コースの途中にトイレがないことが多いです（受付ハウスのみなど）。スタート前に必ず済ませておきましょう。</p>
+                        </div>
+                    </details>
+                </div>
+
+
+                <!-- ★★★ 初心者がショートコースでやりがちな5つの失敗 ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2 text-red-600">
+                    ⚠️ 初心者がやりがちな5つの失敗
+                </h2>
+                <p>
+                    最後に、ショートコースデビューでよくある「あるある失敗」をまとめました。これだけ気を付けておけば、当日は完璧です！
+                </p>
+                <div class="space-y-4 my-6">
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <strong class="text-red-700">① ボールを持っていくのを忘れる</strong>
+                        <p class="text-sm text-slate-700 mt-1 mb-0">「クラブはレンタルでOK」という情報だけで手ぶらで行き、ボールがなくて焦るパターン。最低でも6個は持参しましょう。</p>
+                    </div>
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <strong class="text-red-700">② クラブを持ちすぎる</strong>
+                        <p class="text-sm text-slate-700 mt-1 mb-0">自分のクラブを持参する人に多いミス。長い距離のクラブは使えないので、ウェッジ数本とパターだけで十分です。</p>
+                    </div>
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <strong class="text-red-700">③ 後ろの組を気にしすぎて自滅する</strong>
+                        <p class="text-sm text-slate-700 mt-1 mb-0">焦ると絶対にミスします。ヤバいと思ったら迷わず「お先にどうぞ」と道を譲りましょう。</p>
+                    </div>
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <strong class="text-red-700">④ ボールを探し続けて時間を使う</strong>
+                        <p class="text-sm text-slate-700 mt-1 mb-0">茂みに入ったボールを5分も10分も探すのは進行の妨げになります。3分探して無ければ潔く諦める勇気もマナーです。</p>
+                    </div>
+                    <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <strong class="text-red-700">⑤ スコアを気にしすぎる</strong>
+                        <p class="text-sm text-slate-700 mt-1 mb-0">初めてのショートコースは「芝の上から球を打つ楽しさ」を知る場所です。スコアカードなんて破り捨てて、とにかく楽しみましょう！</p>
+                    </div>
+                </div>
+
+
+                <!-- ★★★ まとめ＆内部リンク ★★★ -->
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4 border-b pb-2">
+                    まとめ｜流れが分かればショートコースは怖くない！
+                </h2>
+                <p>
+                    最初は誰でも緊張しますが、全体の流れと「ミスしても焦らなくていい」というルールさえ知っておけば、ショートコースは最高の遊び場になります。
+                </p>
+                <p>
+                    まだ持ち物の準備ができていない方は、こちらの記事で「本当に必要なもの」だけをチェックして準備を完了させましょう！<br/>
+                    <a href="/articles/short-course-belongings/" class="text-green-700 font-bold hover:underline">→ 初心者の持ち物リスト｜クラブは買わなくてOK</a>
+                </p>
+
+                <div class="not-prose my-12 p-6 bg-green-50 border border-green-200 rounded-lg text-center">
+                    <h3 class="text-xl font-bold text-green-800 mb-3">準備ができたら滋賀のショートコースへ！</h3>
+                    <p class="text-green-900 mb-4">
+                        当日の流れが分かったら、あとは行く施設を選ぶだけ！<br/>
+                        滋賀県にある2ヶ所のショートコース（安曇川・365ながはま）の特徴や料金を徹底比較した記事はこちらです。
+                    </p>
+                    <a href="/articles/shiga-short-courses/" class="inline-block bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors duration-200 no-underline">
+                        滋賀のショートコース2ヶ所 徹底比較を読む →
+                    </a>
+                </div>
+            </article>
+
+            <div class="not-prose my-12 space-y-12">
+                <MySlider articles={comparisonArticles} title="目的別・練習場比較まとめ" />
+                <MySlider articles={experienceReports} title="各施設の体験レポート" />
+            </div>
+
+            <ShareButtons articleUrl={articleUrl} headline={headline} />
+            <AuthorProfile />
+            
+        </main>
+
+        {/* ▼ 右側のサイドバー ▼ */}
+        <Sidebar />
+        
+    </div>
+</BaseLayout>
+
+<style>
+    .voice-box {
+        display: flex;
+        align-items: flex-start;
+    }
+    .voice-text::before {
+        content: "";
+        position: absolute;
+        top: 20px;
+        left: -12px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 10px 12px 10px 0;
+        border-color: transparent #86efac transparent transparent;
+    }
+</style>
