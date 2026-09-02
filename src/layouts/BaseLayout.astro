@@ -222,5 +222,29 @@ const imageToUse = ogImage || defaultOgImage;
                 });
             }
         </script>
+        <script is:inline>
+            document.addEventListener('DOMContentLoaded', () => {
+                // data-ga-event属性を持つすべてのリンクを取得
+                const trackableLinks = document.querySelectorAll('a[data-ga-event]');
+            
+                trackableLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        // gtagが読み込まれているか確認
+                        if (typeof gtag === 'function') {
+                            const eventName = this.getAttribute('data-ga-event');
+                            const linkUrl = this.getAttribute('data-ga-url') || this.href;
+                            const label = this.getAttribute('data-ga-label') || 'no_label';
+            
+                            // GA4へイベント送信
+                            gtag('event', eventName, {
+                                'link_url': linkUrl,
+                                'page_label': label,
+                                'page_location': window.location.pathname
+                            });
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
