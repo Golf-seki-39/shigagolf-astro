@@ -224,22 +224,28 @@ const imageToUse = ogImage || defaultOgImage;
         </script>
         <script is:inline>
             document.addEventListener('DOMContentLoaded', () => {
-                // data-ga-event属性を持つすべてのリンクを取得
-                const trackableLinks = document.querySelectorAll('a[data-ga-event]');
+                // ページ内のすべてのリンクを取得
+                const allLinks = document.querySelectorAll('a');
             
-                trackableLinks.forEach(link => {
+                allLinks.forEach(link => {
                     link.addEventListener('click', function() {
-                        // gtagが読み込まれているか確認
-                        if (typeof gtag === 'function') {
-                            const eventName = this.getAttribute('data-ga-event');
-                            const linkUrl = this.getAttribute('data-ga-url') || this.href;
-                            const label = this.getAttribute('data-ga-label') || 'no_label';
-            
-                            // GA4へイベント送信
-                            gtag('event', eventName, {
-                                'link_url': linkUrl,
-                                'page_label': label,
+                        if (typeof gtag !== 'function') return;
+
+                        // ① 手動で「data-ga-event」を付けた特別なボタンの場合（優先）
+                        if (this.hasAttribute('data-ga-event')) {
+                            gtag('event', this.getAttribute('data-ga-event'), {
+                                'link_url': this.getAttribute('data-ga-url') || this.href,
+                                'page_label': this.getAttribute('data-ga-label') || 'no_label',
                                 'page_location': window.location.pathname
+                            });
+                            return; // ここで処理を終了
+                        }
+
+                        // ② 楽天GORAのアフィリエイトリンクを「全自動」で検知
+                        if (this.href.includes('a.r10.to')) {
+                            gtag('event', 'click_gora_auto', {
+                                'link_url': this.href,
+                                'page_location': window.location.pathname // どの記事でクリックされたか自動取得
                             });
                         }
                     });
