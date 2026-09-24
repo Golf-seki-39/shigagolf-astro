@@ -1,0 +1,355 @@
+---
+// --- [1] AstroとFirebaseの基本設定 ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネントをインポート ---
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import Sidebar from '../../../components/Sidebar.astro'; 
+
+// --- [3] この記事固有の情報 ---
+const title = "【実体験】ゴルフは雨予報でもやる？初心者が知るべきキャンセル基準と雨天対策";
+const description = "ゴルフの予定日が雨予報…キャンセルすべきか迷っている初心者必見！1〜2ミリの雨なら決行するメリット（雨天割りなど）や、カッパの中はサウナ状態になる等のリアルな失敗談から学ぶ、必須の持ち物と服装を解説します。";
+const category = "お役立ちガイド";
+const pubDate = "2026-09-15"; 
+const pubDateISO = "2026-09-15T10:00:00+09:00"; 
+const updatedDate = null;
+const updatedDateISO = updatedDate ? `${updatedDate}T10:00:00+09:00` : pubDateISO;
+
+// ※アイキャッチ画像URL
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/rain-golf-guide.jpg"; 
+
+const baseUrl = "https://shigagolf.com";
+const articleUrl = `${baseUrl}/articles/rain-golf-guide/`; 
+const headline = "【実体験】ゴルフは雨予報でもやる？初心者が知るべきキャンセル基準と雨天対策";
+
+// --- [4] アフィリエイトリンク定義 ---
+const affiliateLinks = {
+  rainwear: "https://a.r10.to/hgYf6Z",
+  glove: "https://a.r10.to/h5OL3V",
+  rakutenGora: "https://hb.afl.rakuten.co.jp/hsc/496762d5.01960a92.49261532.6966636f/_RTLink145936?link_type=hybrid_url&ut=eyJwYWdlIjoic2hvcCIsInR5cGUiOiJoeWJyaWRfdXJsIiwiY29sIjoxLCJjYXQiOiI0IiwiYmFuIjo2OTk3MDIsImFtcCI6ZmFsc2V9"
+};
+
+// --- [5] JSON-LD構造化データ ---
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": articleUrl },
+  "headline": headline,
+  "description": description,
+  "image": [imageUrl],
+  "author": { "@type": "Person", "name": "関＠シガゴル管理人", "url": `${baseUrl}/about/` },
+  "publisher": { "@type": "Organization", "name": "シガゴル", "logo": { "@type": "ImageObject", "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png" } },
+  "datePublished": pubDateISO,
+  "dateModified": updatedDateISO
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} updatedDate={updatedDate} ogImage={imageUrl}>
+    
+    <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
+
+        {/* ▼ 左側のメイン記事エリア ▼ */}
+        <main id="article-view" class="w-full lg:flex-1 bg-white p-6 md:p-8 rounded-lg shadow-lg text-slate-700 leading-relaxed overflow-hidden">
+
+            <a href="/articles/" class="nav-link back-button mb-6 inline-block text-green-700 font-semibold hover:underline">
+                ‹ お役立ち記事一覧に戻る
+            </a>        
+            
+            <article class="prose lg:prose-xl max-w-none">
+                
+                <header>
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-800 leading-tight">{headline}</h1>
+                    <p class="text-sm text-slate-500 mt-2 mb-6">公開日：{pubDate}</p>
+                    
+                    <figure class="m-0 mb-8 flex justify-center bg-slate-50 rounded-lg overflow-hidden border border-slate-200">
+                        <Image 
+                            src={imageUrl} 
+                            alt="雨予報のゴルフラウンド対策" 
+                            class="max-w-full w-auto h-auto max-h-[500px] object-cover" 
+                            inferSize={true}
+                            format="webp" 
+                            loading="eager" 
+                            fetchpriority="high" 
+                        />
+                    </figure>
+                </header>
+
+                <p>
+                    楽しみにしていたゴルフの予定日が雨予報。初心者のうちは<strong>「ゴルフは雨でもやるの？」「中止した方がいい？」</strong>と判断基準が分からず悩んでしまいますよね。
+                </p>
+                <p>
+                    結論から言うと、私は<strong>「雨＝キャンセル」とは限らない</strong>と思っています。<br>
+                    小雨程度なら比較的プレーしやすいですし、実は雨の日だからこそ得られる初心者向けのメリットも存在します。
+                </p>
+                <p>
+                    この記事では、私が実際に雨の中でラウンドした実体験をもとに、ゴルフ場のキャンセル料のルールから、雨量（何ミリ）の目安、そして「カッパを着て走り回ったら熱中症になりかけた」というリアルな服装の失敗談までを徹底解説します。
+                </p>
+
+                <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                    <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                    <ul class="space-y-2 list-disc list-inside text-green-700 font-medium">
+                        <li><a href="#criteria" class="hover:underline">① そもそもゴルフは雨でキャンセルしていいの？【判断基準】</a></li>
+                        <li><a href="#benefits" class="hover:underline">② 【実例】雨の日のゴルフには「特大のメリット」もある！</a></li>
+                        <li><a href="#belongings" class="hover:underline">③ 初心者が雨の日ラウンドで絶対用意すべき持ち物・服装</a></li>
+                        <li><a href="#booking" class="hover:underline">④ お得に予約するなら「直予約」と「ポータルサイト」を使い分ける</a></li>
+                        <li><a href="#conclusion" class="hover:underline">⑤ まとめ：雨の日の経験があなたを確実に強くする</a></li>
+                    </ul>
+                </div>
+
+                <h2 id="criteria" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">① そもそもゴルフは雨でキャンセルしていいの？【判断基準】</h2>
+                
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">「普通キャンセルするで？」と言われた私の実体験</h3>
+                <p>
+                    経営者や自営業など、忙しい社会人4人で予定を合わせるラウンド。実は過去に一度リスケになっており、再調整した日の1週間前に、メンバーのガチゴルファーから「天気予報が雨やけど、どうする？」と連絡が来ました。
+                </p>
+                <p>
+                    私は「カッパも持ってるし、また全員の日程を合わせるのは大変やからそのままやろう！」と返答。すると彼からは<strong>「相当ゴルフ好きじゃないと雨の日とかやらんで？普通キャンセルするで？」</strong>と驚かれました。<br>
+                    当然キャンセルと言われると思っていたらしく、「やる言うてくれて嬉しいわ！」と喜んでくれたのです。
+                </p>
+                <p>
+                    （ちなみに、他の初心者のメンバーには余計な心配をさせないよう、この「雨の相談」のやり取りは伏せておきました 笑）<br>
+                    大人のスケジュール調整において、「雨だから即延期」とは簡単にいかないのがリアルなところです。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">雨でゴルフをキャンセルするなら、何を基準にする？</h3>
+                
+                <figure class="my-6">
+                    <Image 
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/omihills-rainmap.png" 
+                        alt="ゴルフ場の雨予報と判断基準" 
+                        class="rounded-lg shadow-sm w-full md:w-2/3 mx-auto object-cover" 
+                        inferSize={true} format="webp" loading="lazy" 
+                    />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">山の天気は変わりやすい。雨量だけでなく現地の風や気温もチェックしましょう。</figcaption>
+                </figure>
+
+                <p>
+                    では、実際に雨で中止するかどうかの判断ですが、雨量だけで一概にプレー可否は決められません。風や視界、コースコンディション（水捌け）なども大きく影響しますが、一般的な目安としては以下のように考えます。
+                </p>
+                <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500 my-4 not-prose">
+                    <ul class="space-y-3 text-slate-700">
+                        <li><strong>☔ 1〜2mmの雨：</strong><br>比較的プレーしやすい。カッパがあれば十分回れるレベルの小雨。</li>
+                        <li><strong>☔ 3mm以上の雨：</strong><br>雨を強く感じやすくなるため、初心者は慎重に判断。水溜まりでボールが打ちにくくなる。</li>
+                        <li><strong>⚡ 雷が鳴っている場合：</strong><br><strong>雨量に関係なく安全を最優先！</strong>ゴルフ場は開けた場所でクラブ（金属）を振るため非常に危険です。ゴルフ場の指示に従い、すぐに避難・中止してください。</li>
+                    </ul>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">キャンセル料はいつから発生する？ゴルフ場のルール</h3>
+                <p>
+                    「雨ならキャンセル料は無料になるのでは？」と思うかもしれませんが、<strong>ゴルフ場によっては通常通りキャンセル料が発生します。</strong><br>
+                    特に土日祝日や、コンペ（複数組）の予約の場合は、「プレー日の〇日前から〇〇円」と厳格に決まっていることが多いです。「雨天時は無料」と特記がない限り、予約時の規定が適用されるため、自己判断でギリギリにキャンセルするのは避け、まずは同伴者やゴルフ場と相談しましょう。
+                </p>
+
+                <h2 id="benefits" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">② 【実例】雨の日のゴルフには「特大のメリット」もある！</h2>
+                
+                <p>ネガティブなイメージが強い雨のラウンドですが、実は初心者にとって嬉しいメリットもあります。</p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">後ろの組がいない！初心者にはむしろ快適だった</h3>
+                
+                <figure class="my-6">
+                    <Image 
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/fairway.jpeg" 
+                        alt="後ろの組がいない雨の日のゴルフ場" 
+                        class="rounded-lg shadow-sm w-full md:w-3/4 mx-auto object-cover" 
+                        inferSize={true} format="webp" loading="lazy" 
+                    />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">晴れの日なら後ろの組が待っていることが多いですが、雨の日は空いていることも。</figcaption>
+                </figure>
+                
+                <p>
+                    私が雨の日にラウンドしたときは、キャンセルが多かったのかコースがかなり空いていました。<br>
+                    初心者が一番プレッシャーを感じる「後ろの組を待たせているから走らなきゃ！」という焦りがなく、<strong>貸切のように感じるほど空いていました。</strong>自分のプレーに集中できるのは、想像以上に大きなメリットです。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">【滋賀の実例】雨が降ったら3,000円引きになるプランも</h3>
+                
+                <figure class="my-6">
+                    <Image 
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/¥3,000-discount.oumihills.png" 
+                        alt="近江ヒルズゴルフ倶楽部の雨天割りプラン" 
+                        class="rounded-lg shadow-sm w-full md:w-2/3 mx-auto object-cover" 
+                        inferSize={true} format="webp" loading="lazy" 
+                    />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">実際に私が公式サイトで予約した「雨天割り」のプラン画面。</figcaption>
+                </figure>
+                
+                <p>
+                    滋賀県のゴルフ場（例えば近江ヒルズゴルフ倶楽部など）の公式サイトをよく見ると、こんな非常に魅力的なプランが存在することがあります。
+                </p>
+                <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg my-4 text-sm text-slate-700">
+                    <strong>【雨天割りプランの条件例】</strong><br>
+                    当日のプレー中『最寄の東近江観測所』で1ミリ以上の降雨が観測され、かつ18ホールプレーを完了された場合、ご精算金額から<strong>全員税込3,000円を割引</strong>いたします。
+                </div>
+                <p>
+                    通常プランと同じ料金で予約できるなら、あえてこのプランを選んでおき<strong>「雨が降ったら3,000円安くなってラッキー！」</strong>と前向きに捉えるのも、メンタルを保つ立派な戦略です。
+                </p>
+
+                <h2 id="belongings" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">③ 初心者が雨の日ラウンドで絶対用意すべき持ち物・服装</h2>
+                
+                <p>「カッパ着ればなんとかなるでしょ」と思っている方へ。私がやらかしたリアルな失敗談を聞いてください。</p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">カッパの中はサウナ状態！私には「半袖ポロシャツ」が正解だった</h3>
+                
+                <figure class="my-6">
+                    <Image 
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/000010193885.png" 
+                        alt="ゴルフ用レインウェア（カッパ）" 
+                        class="rounded-lg shadow-sm w-full md:w-1/2 mx-auto object-cover" 
+                        inferSize={true} format="webp" loading="lazy" 
+                    />
+                    <figcaption class="text-center text-xs text-slate-500 mt-2">カッパは風を通さないため、想像以上に体温が上がります。</figcaption>
+                </figure>
+
+                <p>
+                    あれは11月ごろのコンペでした。「11月だし雨も降ってるから寒いだろう」と、長袖のポロシャツにベストを着込み、その上からカッパを着てラウンドをスタートしました。
+                </p>
+                <p>
+                    初心者のうちは、スロープレーにならないよう「打っては走り、変なところに飛んでは走り」を繰り返します。そんな状況でカッパを着て走り回った結果……<strong>服の中は熱気でサウナスーツ状態になり、汗だくで熱中症になりかけました。</strong>
+                </p>
+                <p>
+                    ある程度上達して走らなくなれば別ですが、初心者は気を使って必ず走ります。<br>
+                    その時のラウンドではカッパを着たままプレーして熱中症になりかけたため、<strong>私には「半袖ポロシャツ」が正解でした。</strong>それ以来、私は雨ラウンドの際、長袖の上にカッパを着るのをやめ、キャディバッグの中に必ず半袖ポロシャツを忍ばせるようにしています。かさばる荷物ではないので絶対に入れておきましょう！
+                </p>
+
+                {/* --- カッパのアフィリエイト導線 --- */}
+                <div class="not-prose bg-slate-50 p-6 rounded-xl border border-slate-200 my-6">
+                    <p class="font-bold text-slate-800 text-lg mb-2 mt-0">
+                        💡 実体験からの本音：カッパは「絶対にネット購入一択」！
+                    </p>
+                    <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                        実は私、初めての雨ラウンドの直前に急遽カッパが必要になり、スポーツショップを何軒も回りました。でも、時期的な問題だったのか展示している在庫がすごく少なくて選択肢もない上に、どれも高すぎたんですよね…。<br>
+                        最終的にはアウトレットに駆け込んでなんとか購入しましたが、それでもネットで買う方が圧倒的に安いです。ネットなら種類も豊富に選べる上に安価に買えるので、カッパに関しては<strong>「絶対にネット購入一択」</strong>というのが私の本音です。焦って実店舗で高い買い物をしないよう、事前にネットで用意しておくことを強くおすすめします！
+                    </p>
+                    <div class="text-center">
+                        <a href={affiliateLinks.rainwear} target="_blank" rel="noopener sponsored" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm md:text-base py-3 px-6 rounded-lg shadow transition-colors">
+                            👉 楽天で「ゴルフ用レインウェア」を探す
+                        </a>
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">ちょっとした工夫：ヘッドカバーは「カートでお留守番」</h3>
+                <p>
+                    ティーイングエリアでドライバーを打つとき、普段はヘッドカバーを外してポンと地面に置きますよね。でも雨の日にそれをやると、カバーが泥水を含んでしまい、次に被せるときに大切なクラブまでドロドロになってしまいます。<br>
+                    雨の日のラウンド中は、<strong>ドライバーのヘッドカバーは外したまま、ずっとカートに乗せておく</strong>のが個人的にとてもおすすめです。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">カッパのフードはスイングの邪魔になる</h3>
+                <p>
+                    カッパには頭をすっぽり覆うフードが付いていますが、あれを被ってスイングすると、首回りがガサガサと擦れてとにかく邪魔です（笑）。私は「濡れたくないから」と我慢して被っていましたが、パターの時などは視界も狭くなりストレスでした。<br>
+                    どうしても頭を濡らしたくない場合は、ツバに雨水が逃げる「防水仕様のハット（帽子）」を別で用意することをおすすめします。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">革ベルトや時計など「濡れて困るもの」は外す</h3>
+                <p>
+                    雨の日は、カッパを着ていても袖口などから確実に雨が侵入します。<br>
+                    私は以前、気合を入れて革ベルトの時計を着けていったのですが、雨で濡れて痛むのが気になり、ラウンド中ずっと嫌な気持ちを引きずりました。<br>
+                    防水でない時計や革製品など、<strong>「濡れて劣化するもの」は必ずロッカーに置いてからコースに出る</strong>ようにしてください。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-12 mb-4">保存版！雨の日に持っていってよかった持ち物リスト</h3>
+                <p>実体験から導き出した、雨の日にマストで必要なアイテムのチェックリストです。スクショして準備に役立ててください。</p>
+
+                <div class="not-prose bg-slate-50 p-6 rounded-xl border border-slate-300 shadow-sm my-6">
+                    <h4 class="font-bold text-slate-800 border-b border-slate-300 pb-2 mb-4 text-lg">🌧️ 雨の日のゴルフ持ち物チェックリスト</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li class="flex items-center"><span class="text-2xl mr-3">✅</span> <strong>ゴルフ用レインウェア（カッパ）</strong><br>※スイングしやすいようにゴルフブランドが推奨</li>
+                        <li class="flex items-start"><span class="text-2xl mr-3">✅</span> 
+                            <div>
+                                <strong>替えのグローブ（最低3枚）</strong><br>
+                                <span class="text-sm">濡れると単純にめちゃくちゃ不快です。雨対策で他のグローブも色々試してはみたものの、結局使わなくなって友達にあげたりしています（笑）。<br>
+                                正直、「雨用だから滑らない！」といった特別な実感はあまりなくて、<strong>「なんかいつもの」という感じで、結局普段から愛用している『フットジョイ ナノロックツアー』をつけているだけ</strong>かもしれません。それでも、濡れたままのグローブは気持ち悪いので、いつもの予備を複数枚持っていくのが一番しっくりきています。</span>
+                                <div class="mt-2">
+                                    <a href={affiliateLinks.glove} target="_blank" rel="noopener sponsored" class="text-blue-600 font-bold hover:underline text-sm">
+                                        ▶︎ 楽天で「フットジョイ ナノロックツアー」を見る
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="flex items-center"><span class="text-2xl mr-3">✅</span> <strong>フェイスタオル（2〜3枚）</strong><br>※グリップや顔、クラブをこまめに拭く用</li>
+                        <li class="flex items-center"><span class="text-2xl mr-3">✅</span> <strong>半袖のポロシャツ（着替え用）</strong><br>※カッパの中のサウナ対策としてキャディバッグへ</li>
+                        <li class="flex items-center"><span class="text-2xl mr-3">✅</span> <strong>着替え一式・替えの靴下（多めに）</strong><br>※足元は絶対に濡れるため、ハーフ休憩で替えると快適です</li>
+                        <li class="flex items-center"><span class="text-2xl mr-3">✅</span> <strong>防水スプレー</strong><br>※前日にシューズや帽子にかけておくと劇的に違います</li>
+                    </ul>
+                    <div class="mt-4 p-3 bg-white border border-green-200 rounded-lg text-sm">
+                        <span class="font-bold text-green-700">💡 豆知識：ラウンド後は「乾燥機」を活用しよう！</span><br>
+                        ゴルフ場のお風呂場付近には専用の「乾燥機（乾燥室）」が設置されており、ハンガーも用意されています。お風呂に入っている間にカッパやグローブを干して帰るのが鉄則です！
+                    </div>
+                </div>
+
+                <h2 id="booking" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">④ お得に予約するなら「直予約」と「ポータルサイト」を使い分ける</h2>
+                
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">雨天割りなどの特殊プランは公式サイトにあることも</h3>
+                <p>
+                    先ほど紹介した近江ヒルズゴルフ倶楽部の「雨天割り3,000円引き」のような特殊なプランは、実は楽天GORAなどのポータルサイトで検索しても出てこないことがあります。<br>
+                    ゴルフ場が独自に行っている集客プロモーションのため、<strong>公式サイトからの直予約（ジカドリ）でのみ適用される</strong>ケースが多いのです。行くゴルフ場が決まったら、一度公式サイトのプラン一覧を覗いてみる癖をつけましょう。
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-8 mb-3">一方で初回予約は楽天GORAのキャンペーンが強い</h3>
+                <p>
+                    「じゃあ常に直予約が一番安いの？」というと、そうでもありません。<br>
+                    直予約で1,000円安くなるとしても、楽天GORAのクーポンやキャンペーンを利用すれば、ポイント還元を含めてトータルで数千円単位でお得になることも多々あります。
+                </p>
+                
+                <div class="not-prose my-12 p-8 bg-gradient-to-br from-amber-50 to-orange-100 border-2 border-amber-300 rounded-2xl shadow-lg text-center">
+                    <div class="inline-block bg-amber-600 text-white font-bold px-4 py-1 rounded-full text-sm mb-4">
+                        ポータルサイトの強みを活かす
+                    </div>
+                    <h3 class="text-xl font-black text-amber-900 mt-0 mb-4">初回予約や乗り換えで最大19,000ポイント還元！</h3>
+                    <p class="text-slate-700 mb-6 text-sm leading-relaxed">
+                        例えば、楽天モバイルへの乗り換えや初回予約などの条件を組み合わせると、楽天GORA経由の予約で<strong>最大19,000ポイントもの大還元</strong>を受けられるキャンペーンが実施されています。「直予約」と「ポータルサイト」、どちらが最終的に自分のお財布に優しいか、状況に合わせて賢く使い分けましょう！
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <a href="/articles/rakuten-gora-point-guide/" class="w-full sm:w-auto px-6 py-3 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 hover:shadow-xl transition-all duration-300 no-underline">
+                            最大19,000pt得する予約の裏ワザを読む ＞
+                        </a>
+                        <a href={affiliateLinks.rakutenGora} target="_blank" rel="noopener sponsored" class="w-full sm:w-auto px-6 py-3 bg-white text-amber-800 border-2 border-amber-600 font-bold rounded-xl hover:bg-amber-50 transition-all duration-300 no-underline">
+                            楽天GORAでコースを探す ▶︎
+                        </a>
+                    </div>
+                </div>
+
+                <h2 id="conclusion" class="text-2xl md:text-3xl font-bold text-slate-800 mt-16 mb-6 border-b-2 border-green-500 pb-2">⑤ まとめ：雨の日の経験があなたを確実に強くする</h2>
+                
+                <p>
+                    雨の日のゴルフは、決してデメリットばかりではありません。<br>
+                    「雨だから即キャンセル」と思考停止するのではなく、雨の強さや雷の有無、キャンセル規定、そして同行者とのコミュニケーションを通じて柔軟に判断することが大切です。
+                </p>
+                <p>
+                    そして何より、<strong>初心者こそ一度は雨のラウンドを経験しておくべき</strong>だと思います。<br>
+                    水を含んだ重い芝からのショットや、濡れたグリップの感覚を一度でも味わっておけば、今後のゴルフ人生で「天候にビビらない強いゴルファー」になれるはずです。しっかり準備を整えて、雨の日のコースを楽しんできてくださいね！
+                </p>
+
+                {/* --- 関連記事への回遊（持ち物・体験談へ誘導） --- */}
+                <div class="not-prose my-16 p-8 bg-slate-50 border border-slate-300 rounded-2xl shadow-sm text-center">
+                    <h3 class="text-xl font-bold text-slate-800 mt-0 mb-4">ラウンド当日の「荷物」で失敗したくない方へ</h3>
+                    <p class="text-slate-700 mb-6 text-sm leading-relaxed">
+                        雨の日の準備ができたら、次は「バッグの仕分け」を確認しましょう。ゴルフ場ではロッカー用とカート用で荷物を分ける独特のルールがあります。私が当日ロッカールームで冷や汗をかいた失敗談をベースに、恥をかかないための持ち物ガイドをまとめています。
+                    </p>
+                    <a href="/articles/beginner-guide/" class="inline-block text-green-700 font-bold hover:underline mb-4">
+                        ▶︎ 初心者のための「3つのバッグ」仕分け術・服装ガイド
+                    </a>
+                    
+                    <hr class="border-slate-200 my-4" />
+                    
+                    <h3 class="text-xl font-bold text-slate-800 mt-6 mb-4">滋賀のゴルフ場体験談・レビューを読む</h3>
+                    <p class="text-slate-700 mb-6 text-sm leading-relaxed">
+                        シガゴルでは、滋賀県内のゴルフ場や練習場に実際に足を運び、コースの難易度や設備、料金設定などを詳しくレビューしています。次のラウンドのコース選びにぜひお役立てください！
+                    </p>
+                    <a href="/articles/" class="inline-block text-blue-600 font-bold hover:underline">
+                        ▶︎ シガゴルのコース体験談・お役立ち記事一覧へ
+                    </a>
+                </div>
+
+                <AuthorProfile />
+                <ShareButtons articleUrl={articleUrl} headline={headline} />
+                
+            </article>
+        </main>
+
+        <Sidebar />
+    </div>
+</BaseLayout>
