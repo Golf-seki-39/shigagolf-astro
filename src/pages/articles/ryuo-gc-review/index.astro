@@ -1,5 +1,5 @@
 ---
-// --- [1] Astroの基本設定（ゴルフ場記事のためFirebase読み込みは不要） ---
+// --- [1] Astroの基本設定 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 
@@ -16,37 +16,18 @@ const pubDate = "2026-11-20";
 const pubDateISO = "2026-11-20T10:00:00+09:00";
 const updatedDate = null;
 
-// ★ アイキャッチ画像のURLに差し替えてください
-const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/eyecatch.jpg";
+// ★ 楽天GORAのアフィリエイトリンクURLに差し替えてください（全ボタンに自動反映されます）
+const goraReserveUrl = "https://a.r10.to/hPRKtq";
+
+// ★ upload_course.js でアップしたアイキャッチ画像のURLに差し替えてください
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/golf_courses/250041/gallery/eyecatch.webp";
 
 // --- [4] URLと構造化データ用の変数を定義 ---
 const baseUrl = "https://shigagolf.com";
-// ★ 実際のファイル配置パスに合わせてURLを調整してください
 const articleUrl = `${baseUrl}/articles/ryuo-gc-review/`;
 const headline = "【体験レビュー】竜王ゴルフコースはどんなコース？料金・ランチ・予約方法まで本音で紹介";
 
-// --- [5] ★ 記事末尾の「折りたたみギャラリー」用写真リスト ★ ---
-// ここにメニュー表（10枚）や練習場、乾燥機、ナビなどのURLを追加してください
-const galleryImages = [
-    {
-        src: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/menu_01.jpg",
-        alt: "竜王ゴルフコース ランチメニュー1",
-        caption: "ランチメニュー①"
-    },
-    {
-        src: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/range_01.jpg",
-        alt: "竜王ゴルフコース 併設の練習場",
-        caption: "併設の練習場（エントランス外から階段を降りて向かいます）"
-    },
-    {
-        src: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/dryer.jpg",
-        alt: "竜王ゴルフコース 乾燥機",
-        caption: "カッパ等を乾かす乾燥機（少しコンパクトなサイズでした）"
-    },
-    // ↓ 必要な分だけ同じ形式でコピーして増やしてください
-];
-
-// --- [6] 構造化データ（Article） ---
+// --- [5] 構造化データ（Article） ---
 const schemaData = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -146,7 +127,7 @@ const schemaData = {
                         <li><a href="#lunch" class="text-green-700 hover:underline">4. 同伴者が嫉妬した「石焼チーズカレー」とリアルなランチ事情</a></li>
                         <li><a href="#outlet" class="text-green-700 hover:underline">5. 帰りの「アウトレット渋滞」は？最大の敵はゴルフショップの誘惑</a></li>
                         <li><a href="#summary" class="text-green-700 hover:underline">まとめ：竜王ゴルフコースはこんな人におすすめ</a></li>
-                        <li><a href="#photo-gallery" class="text-green-700 hover:underline">📸 施設・ランチメニュー写真ギャラリー（タップで開く）</a></li>
+                        <li><a href="#course-gallery-cta" class="text-green-700 hover:underline">📸 施設・ランチメニュー写真＆周辺の朝練練習場を見る</a></li>
                     </ul>
                 </div>
 
@@ -156,9 +137,9 @@ const schemaData = {
                 </h2>
 
                 <figure class="my-6">
-                    {/* ★ IMG_2672.jpg のURLに差し替え */}
+                    {/* ★ upload_course.js でアップしたWebP画像のURLに差し替え */}
                     <Image
-                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2672.jpg"
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/golf_courses/250041/gallery/IMG_2672.webp"
                         alt="竜王ゴルフコースの屋根付きエントランス"
                         class="w-full h-auto object-cover rounded-lg shadow-sm"
                         loading="lazy"
@@ -184,9 +165,9 @@ const schemaData = {
                 </p>
 
                 <figure class="my-6">
-                    {/* ★ IMG_2681.jpg のURLに差し替え */}
+                    {/* ★ upload_course.js でアップしたWebP画像のURLに差し替え */}
                     <Image
-                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2681.jpg"
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/golf_courses/250041/gallery/IMG_2681.webp"
                         alt="竜王ゴルフコースのロッカールーム"
                         class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
                         loading="lazy"
@@ -229,37 +210,36 @@ const schemaData = {
                     今回のように、電話予約よりも公式サイト（ジカドリ）の方が安いプランが出ていることもあります。私も偶然気づかなければ、<strong>1人あたり1,400円高いままプレーするところでした</strong>（これには予約してくれた先輩も驚いていました）。
                 </p>
                 <p>
-                    予約前には一度、公式サイトを確認してみることを強くおすすめします。そのうえで、「楽天ポイントを貯めたい・使いたい」「GDOのクーポンがある」という方は、各ポータルサイトと比較して自分にとって一番お得な予約方法を選んでみてください。
+                    予約前には一度、公式サイトを確認してみることを強くおすすめします。そのうえで、「楽天ポイントを貯めたい・使いたい」「初回予約の特大ポイント還元を狙いたい」という方は、ポータルサイトと比較して自分にとって一番お得な予約方法を選んでみてください。
                 </p>
 
-                {/* ▼ 予約アフィリエイト導線ボックス ▼ */}
-                <div class="not-prose bg-slate-50 p-6 rounded-xl border-2 border-green-200 my-8 text-center shadow-sm">
-                    <p class="font-bold text-slate-800 text-lg mb-4">⛳ 竜王ゴルフコースの最新料金・空き状況をチェック</p>
-                    <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        {/* ★ 楽天GORAのアフィリエイトリンクURLに差し替えてください */}
+                {/* ▼ ポータルサイト＆初回最大19,000pt還元 導線ボックス ▼ */}
+                <div class="not-prose bg-amber-50/70 border-2 border-amber-300 rounded-2xl p-6 md:p-8 my-8 text-center shadow-sm">
+                    <span class="inline-block bg-amber-600 text-white text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full mb-3">
+                        ポータルサイトの強みを活かす
+                    </span>
+                    <h3 class="text-xl md:text-2xl font-bold text-amber-900 mb-3">
+                        初回予約や乗り換えで最大19,000ポイント還元！
+                    </h3>
+                    <p class="text-sm md:text-base text-slate-700 leading-relaxed mb-6 max-w-2xl mx-auto">
+                        例えば、楽天モバイルへの乗り換えや初回予約などの条件を組み合わせると、楽天GORA経由の予約で<strong>最大19,000ポイントもの大還元</strong>を受けられるキャンペーンが実施されています。「直予約」と「ポータルサイト」、どちらが最終的に自分のお財布に優しいか、状況に合わせて賢く使い分けましょう！
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-3">
                         <a
-                            href="【楽天GORAのリンクURL】"
-                            target="_blank"
-                            rel="noopener sponsored"
-                            class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow transition-transform transform hover:scale-105"
+                            href="/articles/rakuten-gora-point-guide/"
+                            class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-6 rounded-xl shadow transition text-sm md:text-base"
                         >
-                            楽天GORAで予約する
-                            <span class="block text-xs font-normal mt-0.5">楽天ポイントが貯まる・使える</span>
+                            最大19,000pt得する予約の裏ワザを読む &gt;
                         </a>
-                        {/* ★ GDOのアフィリエイトリンクURLに差し替えてください */}
                         <a
-                            href="【GDOのリンクURL】"
+                            href={goraReserveUrl}
                             target="_blank"
-                            rel="noopener sponsored"
-                            class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow transition-transform transform hover:scale-105"
+                            rel="noopener noreferrer sponsored"
+                            class="bg-white hover:bg-amber-50 text-amber-800 border-2 border-amber-500 font-bold py-3.5 px-6 rounded-xl shadow-sm transition text-sm md:text-base"
                         >
-                            GDOで予約する
-                            <span class="block text-xs font-normal mt-0.5">クーポン利用でお得に</span>
+                            楽天GORAで竜王ゴルフコースを見る ↗
                         </a>
                     </div>
-                    <p class="text-xs text-slate-500 mt-3">
-                        ※最安値を狙う場合は、PGM公式サイト（ジカドリ）の料金もあわせて比較するのがおすすめです。
-                    </p>
                 </div>
 
                 {/* --- セクション3 --- */}
@@ -272,9 +252,9 @@ const schemaData = {
                 </p>
 
                 <figure class="my-6">
-                    {/* ★ IMG_2709.jpg のURLに差し替え */}
+                    {/* ★ upload_course.js でアップしたWebP画像のURLに差し替え */}
                     <Image
-                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2709.jpg"
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/golf_courses/250041/gallery/IMG_2709.webp"
                         alt="竜王ゴルフコースのクールカート（送風機）"
                         class="w-full h-auto object-cover rounded-lg shadow-sm"
                         loading="lazy"
@@ -291,6 +271,9 @@ const schemaData = {
                 <p>
                     カートには「クールカート（送風機）」がついており、夏のラウンドの救世主として大活躍！フェアウェイ乗り入れはできませんが、必須となる「リモコン」も完備されており快適です。
                     ちなみに併設の練習場は、パター練習場とは真逆の方向（エントランスを出て階段を降りた先）にあるので、朝に打ち込みたい方は少し時間に余裕を持って行動してくださいね。
+                </p>
+                <p>
+                    ラウンド前にしっかり打ち込んでおきたい方は、竜王ゴルフコースから車で約10分の<a href="/courses/250041/" class="text-green-700 font-bold hover:underline">周辺練習場リスト（朝練・反省練習向け）</a>もあわせてチェックしてみてください。
                 </p>
 
                 <p>
@@ -326,9 +309,9 @@ const schemaData = {
                 </p>
 
                 <figure class="my-6">
-                    {/* ★ IMG_2739.jpg のURLに差し替え */}
+                    {/* ★ upload_course.js でアップしたWebP画像のURLに差し替え */}
                     <Image
-                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2739.jpg"
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/golf_courses/250041/gallery/IMG_2739.webp"
                         alt="竜王ゴルフコースの担々麺"
                         class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
                         loading="lazy"
@@ -343,9 +326,9 @@ const schemaData = {
                 </figure>
 
                 <figure class="my-6">
-                    {/* ★ IMG_2738.jpg のURLに差し替え */}
+                    {/* ★ upload_course.js でアップしたWebP画像のURLに差し替え */}
                     <Image
-                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2738.jpg"
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/golf_courses/250041/gallery/IMG_2738.webp"
                         alt="竜王ゴルフコースのからあげ定食"
                         class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
                         loading="lazy"
@@ -360,9 +343,9 @@ const schemaData = {
                 </figure>
 
                 <figure class="my-6">
-                    {/* ★ IMG_2737.jpg のURLに差し替え */}
+                    {/* ★ upload_course.js でアップしたWebP画像のURLに差し替え */}
                     <Image
-                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2737.jpg"
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/golf_courses/250041/gallery/IMG_2737.webp"
                         alt="竜王ゴルフコースの石焼チーズカレー"
                         class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
                         loading="lazy"
@@ -411,44 +394,38 @@ const schemaData = {
                     ラウンド後はアウトレットにも立ち寄れるので、一日を通して最高の休日を満喫できるゴルフ場だと感じました。気になっている方は、ぜひ一度（公式サイトの料金をチェックしてから！）足を運んでみてください。
                 </p>
 
-                {/* ▼▼▼ 折りたたみ式フォトギャラリー（メニューや細かい設備写真用） ▼▼▼ */}
-                <div id="photo-gallery" class="not-prose my-12 scroll-mt-24">
-                    <details class="group bg-slate-50 border border-slate-200 rounded-xl overflow-hidden shadow-sm">
-                        <summary class="flex items-center justify-between p-5 font-bold text-slate-800 cursor-pointer hover:bg-slate-100 transition-colors list-none">
-                            <span class="text-base md:text-lg flex items-center gap-2">
-                                📸 施設・ランチメニュー写真ギャラリーを見る（タップで開閉）
-                            </span>
-                            <span class="transition-transform duration-300 group-open:rotate-180 text-green-700 font-bold">
-                                ▼
-                            </span>
-                        </summary>
-                        <div class="p-5 border-t border-slate-200 bg-white">
-                            <p class="text-sm text-slate-600 mb-6">
-                                本文に載せきれなかったランチメニュー表や、併設の練習場、乾燥機などの細かい設備写真をまとめています。ラウンド前の予習にどうぞ！
-                            </p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {galleryImages.map((img) => (
-                                    <figure class="m-0 bg-slate-50 rounded-lg overflow-hidden border border-slate-200">
-                                        <Image
-                                            src={img.src}
-                                            alt={img.alt}
-                                            class="w-full h-56 object-cover"
-                                            loading="lazy"
-                                            width={800}
-                                            height={600}
-                                            format="webp"
-                                            quality={75}
-                                        />
-                                        <figcaption class="p-3 text-xs text-slate-600 text-center">
-                                            {img.caption}
-                                        </figcaption>
-                                    </figure>
-                                ))}
-                            </div>
-                        </div>
-                    </details>
+                {/* ▼▼▼ 記事末尾CTA（詳細・全写真 ＋ 楽天GORA予約） ▼▼▼ */}
+                <div id="course-gallery-cta" class="not-prose my-12 scroll-mt-24 bg-green-50 border-2 border-green-200 rounded-xl p-6 md:p-8 text-center shadow-sm">
+                    <p class="text-xs font-bold text-green-700 uppercase tracking-wider mb-2">
+                        PHOTO GALLERY &amp; RESERVATION
+                    </p>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 mb-3">
+                        📸 竜王ゴルフコースの全写真・周辺練習場・予約はこちら
+                    </h3>
+                    <p class="text-sm md:text-base text-slate-600 mb-6">
+                        本文に載せきれなかったランチメニュー表や併設練習場の写真、ラウンド前の朝練に使える周辺練習場もまとめています。
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-3">
+                        <a
+                            href="/courses/250041/#gallery"
+                            class="flex-1 bg-white hover:bg-green-100 text-green-800 border-2 border-green-700 font-bold px-6 py-4 rounded-xl shadow-sm transition text-sm md:text-base"
+                        >
+                            詳細・全写真・周辺練習場を見る →
+                        </a>
+                        <a
+                            href={goraReserveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer sponsored"
+                            class="flex-1 bg-green-700 hover:bg-green-800 text-white font-bold px-6 py-4 rounded-xl shadow-md transition text-sm md:text-base"
+                        >
+                            楽天GORAで空き枠・料金を見る ↗
+                        </a>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-4">
+                        💡 楽天GORAを初めて使う方は、予約前に<a href="/articles/rakuten-gora-point-guide/" class="text-amber-700 font-bold underline hover:text-amber-800">最大19,000pt還元の裏ワザ</a>もチェック！
+                    </p>
                 </div>
-                {/* ▲▲▲ フォトギャラリーここまで ▲▲▲ */}
+                {/* ▲▲▲ 記事末尾CTAここまで ▲▲▲ */}
 
                 <ShareButtons articleUrl={articleUrl} headline={headline} />
                 <AuthorProfile />
@@ -464,10 +441,6 @@ const schemaData = {
     <style>
         .scroll-mt-24 {
             scroll-margin-top: 6rem;
-        }
-        /* detailsのデフォルトの三角アイコンを消す */
-        summary::-webkit-details-marker {
-            display: none;
         }
     </style>
 

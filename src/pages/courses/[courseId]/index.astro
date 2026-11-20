@@ -145,7 +145,10 @@ const pageDescription = `${course.name}（${course.address}）のフォトギャ
                 href={getPublicUrl(img?.url)}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="block aspect-[4/3] bg-slate-100 overflow-hidden rounded-lg border border-slate-200 hover:opacity-85 transition"
+                class:list={[
+                  "block aspect-[4/3] bg-slate-100 overflow-hidden rounded-lg border border-slate-200 hover:opacity-85 transition",
+                  { "hidden extra-gallery-item": index >= 8 }
+                ]}
               >
                 {img?.url && (
                   <img
@@ -158,6 +161,18 @@ const pageDescription = `${course.name}（${course.address}）のフォトギャ
               </a>
             ))}
           </div>
+
+          {galleryImages.length > 8 && (
+            <div class="mt-6 text-center">
+              <button
+                type="button"
+                id="toggle-gallery-btn"
+                class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-3 px-8 rounded-lg transition text-base"
+              >
+                もっと見る（残り{galleryImages.length - 8}枚）
+              </button>
+            </div>
+          )}
         </section>
       )}
 
@@ -344,7 +359,7 @@ const pageDescription = `${course.name}（${course.address}）のフォトギャ
 </BaseLayout>
 
 <script>
-  // Googleマップの遅延読み込み（練習場ページと同じ仕組み）
+  // Googleマップの遅延読み込み
   const mapSection = document.getElementById("map-section");
   const mapIframe = document.getElementById("map-iframe");
   if (mapSection && mapIframe) {
@@ -360,5 +375,15 @@ const pageDescription = `${course.name}（${course.address}）のフォトギャ
       { rootMargin: "150px" }
     );
     observer.observe(mapSection);
+  }
+
+  // フォトギャラリーの「もっと見る」開閉
+  const toggleGalleryBtn = document.getElementById("toggle-gallery-btn");
+  if (toggleGalleryBtn) {
+    toggleGalleryBtn.addEventListener("click", () => {
+      const extraItems = document.querySelectorAll(".extra-gallery-item");
+      extraItems.forEach((item) => item.classList.remove("hidden"));
+      toggleGalleryBtn.remove();
+    });
   }
 </script>
