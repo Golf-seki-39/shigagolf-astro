@@ -58,24 +58,25 @@ const imageToUse = ogImage || defaultOgImage;
                     // すでにリンク済み、または小さな画像は対象外
                     if (img.parentElement.tagName === 'A' || img.width < 100) return;
 
-                    // 1. src または data-src から元のURLを抽出（Netlifyのパラメータを剥がす）
+                    // 1. src から元のURLを抽出（Netlifyのパラメータを剥がす）
                     const urlToAnalyze = img.src.includes('.netlify/images') 
                         ? new URLSearchParams(new URL(img.src).search).get('url') 
                         : img.src;
 
-                    // 2. 確実に抽出する
                     if (!urlToAnalyze) return;
                     
-                    const match = urlToAnalyze.match(/practice_ranges\/([a-zA-Z0-9_-]+)\//);
+                    const rangeMatch = urlToAnalyze.match(/practice_ranges\/([a-zA-Z0-9_-]+)\//);
+                    const courseMatch = urlToAnalyze.match(/golf_courses\/([a-zA-Z0-9_-]+)\//);
                     
                     const a = document.createElement('a');
-                    a.href = img.src; // 拡大表示は最適化後の画像で行う
+                    a.href = img.src;
                     a.dataset.fslightbox = "gallery";
 
-                    // 3. IDが取れたらリンクを生成
-                    if (match && match[1]) {
-                        const rangeId = match[1];
-                        a.dataset.caption = `<a href="/ranges/${rangeId}/#gallery" style="color:#4ade80; font-weight:bold; text-decoration:underline;">＞ この施設のフォトギャラリーを見る</a>`;
+                    // 練習場・ゴルフ場それぞれのギャラリーへ自動リンク
+                    if (rangeMatch && rangeMatch[1] && rangeMatch[1] !== 'image_archive') {
+                        a.dataset.caption = `<a href="/ranges/${rangeMatch[1]}/#gallery" style="color:#4ade80; font-weight:bold; text-decoration:underline;">＞ この施設のフォトギャラリーを見る</a>`;
+                    } else if (courseMatch && courseMatch[1]) {
+                        a.dataset.caption = `<a href="/courses/${courseMatch[1]}/#gallery" style="color:#4ade80; font-weight:bold; text-decoration:underline;">＞ このゴルフ場のフォトギャラリーを見る</a>`;
                     }
 
                     img.parentNode.insertBefore(a, img);
@@ -224,7 +225,6 @@ const imageToUse = ogImage || defaultOgImage;
         </script>
         <script is:inline>
             document.addEventListener('DOMContentLoaded', () => {
-                // ページ内のすべてのリンクを取得
                 const allLinks = document.querySelectorAll('a');
             
                 allLinks.forEach(link => {
@@ -238,14 +238,14 @@ const imageToUse = ogImage || defaultOgImage;
                                 'page_label': this.getAttribute('data-ga-label') || 'no_label',
                                 'page_location': window.location.pathname
                             });
-                            return; // ここで処理を終了
+                            return;
                         }
 
-                        // ② 楽天GORAのアフィリエイトリンクを「全自動」で検知
-                        if (this.href.includes('a.r10.to')) {
+                        // ② 楽天GORAのアフィリエイトリンクを「全自動」で検知（短縮URL・API経由の両対応）
+                        if (this.href.includes('a.r10.to') || this.href.includes('hb.afl.rakuten.co.jp')) {
                             gtag('event', 'click_gora_auto', {
                                 'link_url': this.href,
-                                'page_location': window.location.pathname // どの記事でクリックされたか自動取得
+                                'page_location': window.location.pathname
                             });
                         }
                     });

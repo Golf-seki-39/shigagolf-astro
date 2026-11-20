@@ -1,0 +1,364 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { db } from "../../../lib/firebase.js";
+import { collection, getDocs } from "firebase/firestore";
+import { findNearbySpots } from "../../../lib/distance.js";
+
+export async function getStaticPaths() {
+  const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+  const publicDataPath = `artifacts/${appId}/public/data`;
+
+  // ゴルフ場と練習場の両方を取得
+  const [coursesSnap, rangesSnap] = await Promise.all([
+    getDocs(collection(db, publicDataPath, "golf_courses")),
+    getDocs(collection(db, publicDataPath, "practice_ranges")),
+  ]);
+
+  const allRanges = rangesSnap.docs
+    .filter((doc) => doc.id !== "image_archive")
+    .map((doc) => ({ id: doc.id, ...doc.data() }));
+
+  // レッスン施設や住所が空の不完全データを除外した全ゴルフ場リスト
+  const validCourses = coursesSnap.docs
+    .map((doc) => ({ id: doc.id, ...doc.data() }))
+    .filter((c) => c.address && !c.name?.includes("レッスン"));
+
+  return validCourses.map((course) => {
+    // このゴルフ場から近い練習場トップ5
+    const nearbyRanges = findNearbySpots(course.latitude, course.longitude, allRanges, 5);
+    // このゴルフ場から近い他のゴルフ場トップ3（自分自身は除外）
+    const otherCourses = validCourses.filter((c) => c.id !== course.id);
+    const nearbyCourses = findNearbySpots(course.latitude, course.longitude, otherCourses, 3);
+
+    return {
+      params: { courseId: course.id },
+      props: { course, nearbyRanges, nearbyCourses },
+    };
+  });
+}
+
+const { course, nearbyRanges = [], nearbyCourses = [] } = Astro.props;
+const galleryImages = Array.isArray(course.galleryImages) ? course.galleryImages : [];
+
+// Firebase StorageのURLに ?alt=media を付与する関数
+function getPublicUrl(originalUrl) {
+  if (!originalUrl || typeof originalUrl !== "string") return "";
+  const urlParts = originalUrl.split("?");
+  const path = urlParts[0];
+  if (urlParts.length > 1 && urlParts[1].includes("alt=media")) {
+    return originalUrl;
+  }
+  return `${path}?alt=media`;
+}
+
+const mainImageUrl = course.goraImageUrl || (galleryImages[0]?.url ? getPublicUrl(galleryImages[0].url) : "");
+const nearestRange = nearbyRanges[0] || null;
+
+const pageTitle = `${course.name}のコース写真・周辺練習場・予約情報 | シガゴル`;
+const pageDescription = `${course.name}（${course.address}）のフォトギャラリー、ラウンド前の朝練や反省練習に使える周辺のゴルフ練習場、アクセスマップ、楽天GORA予約情報をまとめました。`;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <main class="container mx-auto p-4 md:p-6">
+    {/* 一覧へ戻るリンク */}
+    <div class="mb-4">
+      <a href="/courses/" class="text-green-700 font-semibold hover:underline">
+        ‹ ゴルフ場一覧に戻る
+      </a>
+    </div>
+
+    <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+      {/* ヘッダーセクション */}
+      <header>
+        {mainImageUrl && (
+          <img
+            src={mainImageUrl}
+            alt={course.name}
+            class="w-full h-64 md:h-80 object-cover rounded-lg mb-6"
+          />
+        )}
+        <div>
+          <p class="text-lg text-green-700 font-semibold">滋賀県のゴルフ場</p>
+          <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mt-1 mb-3">
+            {course.name}
+          </h1>
+          <p class="text-base text-slate-600 mb-4">📍 {course.address}</p>
+
+          {/* クイックサマリー（練習場ページのスペック枠と統一） */}
+          <div class="my-6 grid grid-cols-2 gap-px bg-slate-200 border border-slate-200 rounded-lg overflow-hidden text-center">
+            <div class="bg-white p-4">
+              <p class="text-sm text-slate-500">楽天GORA評価</p>
+              <p class="text-2xl font-bold text-amber-600">
+                {course.rating > 0 ? `★ ${Number(course.rating).toFixed(1)}` : "-"}
+              </p>
+            </div>
+            <div class="bg-white p-4">
+              <p class="text-sm text-slate-500">最寄りの練習場まで</p>
+              <p class="text-2xl font-bold text-green-700">
+                {nearestRange ? `車で約${nearestRange.driveMinutes}分` : "-"}
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            {course.reserveUrl && (
+              <a
+                href={course.reserveUrl}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                class="flex-1 sm:flex-none text-center bg-green-700 hover:bg-green-800 text-white font-bold px-8 py-4 rounded-lg shadow-md transition text-base"
+              >
+                楽天GORAで空き枠・料金を見る
+              </a>
+            )}
+            {course.reviewArticleUrl && (
+              <a
+                href={course.reviewArticleUrl}
+                class="flex-1 sm:flex-none text-center bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-4 rounded-lg shadow-md transition text-base"
+              >
+                管理人のガチ体験レビューを読む！
+              </a>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* 管理人のポイントまとめ（Firestoreに feature_summary がある時だけ表示） */}
+      {course.feature_summary && (
+        <div class="bg-green-50 border border-green-200 p-6 rounded-lg my-8 shadow-sm">
+          <h2 class="text-xl font-bold text-green-800 mb-3 flex items-center">
+            <span class="mr-2">💡</span>{course.name}のポイントまとめ
+          </h2>
+          <div class="text-slate-700 leading-relaxed" set:html={course.feature_summary} />
+        </div>
+      )}
+
+      {/* フォトギャラリー */}
+      {galleryImages.length > 0 && (
+        <section id="gallery" class="mt-10 pt-8 border-t border-slate-200">
+          <h2 class="text-2xl font-bold text-slate-900 mb-4">
+            フォトギャラリー（{galleryImages.length}枚）
+          </h2>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {galleryImages.map((img, index) => (
+              <a
+                href={getPublicUrl(img?.url)}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block aspect-[4/3] bg-slate-100 overflow-hidden rounded-lg border border-slate-200 hover:opacity-85 transition"
+              >
+                {img?.url && (
+                  <img
+                    src={getPublicUrl(img.url)}
+                    alt={img.description || `${course.name}のコース写真 ${index + 1}`}
+                    loading="lazy"
+                    class="w-full h-full object-contain"
+                  />
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 周辺のゴルフ練習場（朝練・反省練習用） */}
+      <section class="mt-10 pt-8 border-t border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">
+          {course.name}から近いゴルフ練習場（朝練・反省練習におすすめ）
+        </h2>
+        <p class="text-sm md:text-base text-slate-600 mb-5">
+          ラウンド前のウォーミングアップや、ホールアウト後の反省練習に立ち寄りやすい近隣の練習場です。
+        </p>
+
+        <div class="space-y-3">
+          {nearbyRanges.map((range, index) => (
+            <a
+              href={`/ranges/${range.id}/`}
+              class="block bg-slate-50 rounded-lg border border-slate-200 p-4 hover:border-green-600 hover:bg-white hover:shadow-sm transition"
+            >
+              <div class="flex justify-between items-center gap-4">
+                <div>
+                  <span class="inline-block text-xs font-bold bg-green-100 text-green-800 px-2.5 py-0.5 rounded mr-2">
+                    近い順 {index + 1}位
+                  </span>
+                  <span class="text-base font-bold text-slate-900">{range.name}</span>
+                  {range.address && (
+                    <p class="text-sm text-slate-500 mt-1">{range.address}</p>
+                  )}
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <p class="text-base font-bold text-green-700">約 {range.distance} km</p>
+                  <p class="text-xs text-slate-500">車で約 {range.driveMinutes} 分目安</p>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* 基本情報テーブル */}
+      <section class="mt-10 pt-8 border-t border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">基本情報</h2>
+        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+          <table class="min-w-full text-sm">
+            <tbody class="text-slate-600">
+              <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 text-left font-semibold bg-slate-50 w-1/3 sm:w-1/4 whitespace-nowrap">ゴルフ場名</th>
+                <td class="py-3 px-4 font-medium text-slate-900">{course.name}</td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">住所</th>
+                <td class="py-3 px-4">
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(course.name + " " + (course.address || ""))}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-green-700 hover:underline"
+                  >
+                    {course.address || "情報なし"}
+                  </a>
+                </td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">楽天GORA評価</th>
+                <td class="py-3 px-4">
+                  {course.rating > 0 ? `★ ${Number(course.rating).toFixed(1)}（楽天GORA基準）` : "情報なし"}
+                </td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">最寄りの練習場</th>
+                <td class="py-3 px-4">
+                  {nearestRange ? (
+                    <a href={`/ranges/${nearestRange.id}/`} class="text-green-700 hover:underline font-medium">
+                      {nearestRange.name}（約 {nearestRange.distance} km / 車で約 {nearestRange.driveMinutes} 分）
+                    </a>
+                  ) : "情報なし"}
+                </td>
+              </tr>
+              <tr>
+                <th class="py-3 px-4 text-left font-semibold bg-slate-50 whitespace-nowrap">予約・プラン詳細</th>
+                <td class="py-3 px-4">
+                  {course.reserveUrl ? (
+                    <a
+                      href={course.reserveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer sponsored"
+                      class="text-green-700 font-bold hover:underline"
+                    >
+                      楽天GORAで最新プラン・空き枠を確認する ↗
+                    </a>
+                  ) : "情報なし"}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* アクセスマップ（遅延読み込み） */}
+      <section id="map-section" class="mt-10 pt-8 border-t border-slate-200">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">アクセスマップ</h2>
+        <div class="aspect-video w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+          <iframe
+            id="map-iframe"
+            title={`${course.name}のアクセスマップ`}
+            width="100%"
+            height="100%"
+            style="border:0;"
+            loading="lazy"
+            allowfullscreen=""
+            referrerpolicy="no-referrer-when-downgrade"
+            data-src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(course.name + " " + (course.address || ""))}`}
+          ></iframe>
+        </div>
+      </section>
+
+      {/* 近くの他のゴルフ場（比較用） */}
+      {nearbyCourses.length > 0 && (
+        <section class="mt-10 pt-8 border-t border-slate-200">
+          <h2 class="text-2xl font-bold text-slate-900 mb-2">
+            {course.name}の近くにある他のゴルフ場
+          </h2>
+          <p class="text-sm text-slate-600 mb-4">
+            同じエリアでコースを比較したい場合や、空き枠が見つからないときの候補にどうぞ。
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {nearbyCourses.map((other) => (
+              <div class="bg-slate-50 rounded-lg border border-slate-200 p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between text-xs mb-1">
+                    <span class="font-bold text-green-700">約 {other.distance} km</span>
+                    {other.rating > 0 && (
+                      <span class="font-semibold text-amber-600">★ {Number(other.rating).toFixed(1)}</span>
+                    )}
+                  </div>
+                  <a
+                    href={`/courses/${other.id}/`}
+                    class="font-bold text-slate-900 hover:text-green-700 hover:underline block mb-3"
+                  >
+                    {other.name}
+                  </a>
+                </div>
+                <div class="flex gap-2">
+                  <a
+                    href={`/courses/${other.id}/`}
+                    class="flex-1 text-center text-xs font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 py-2 rounded transition"
+                  >
+                    詳細
+                  </a>
+                  {other.reserveUrl && (
+                    <a
+                      href={other.reserveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer sponsored"
+                      class="flex-1 text-center text-xs font-bold bg-green-700 hover:bg-green-800 text-white py-2 rounded transition"
+                    >
+                      GORA予約
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 下部CTA */}
+      {course.reserveUrl && (
+        <div class="mt-10 bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+          <p class="text-base md:text-lg font-bold text-green-900 mb-3">
+            {course.name}の最新プラン・空き枠をチェック
+          </p>
+          <a
+            href={course.reserveUrl}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            class="inline-block bg-green-700 hover:bg-green-800 text-white font-bold px-10 py-4 rounded-full shadow-lg transition text-base sm:text-lg"
+          >
+            楽天GORAで予約状況を見る ↗
+          </a>
+        </div>
+      )}
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  // Googleマップの遅延読み込み（練習場ページと同じ仕組み）
+  const mapSection = document.getElementById("map-section");
+  const mapIframe = document.getElementById("map-iframe");
+  if (mapSection && mapIframe) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && mapIframe.dataset.src) {
+            mapIframe.src = mapIframe.dataset.src;
+            observer.unobserve(mapSection);
+          }
+        });
+      },
+      { rootMargin: "150px" }
+    );
+    observer.observe(mapSection);
+  }
+</script>

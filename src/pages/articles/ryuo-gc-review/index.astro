@@ -1,0 +1,474 @@
+---
+// --- [1] Astroの基本設定（ゴルフ場記事のためFirebase読み込みは不要） ---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+
+// --- [2] 共通コンポーネントをインポート ---
+import ShareButtons from '../../../components/ShareButtons.astro';
+import AuthorProfile from '../../../components/AuthorProfile.astro';
+import Sidebar from '../../../components/Sidebar.astro';
+
+// --- [3] この記事固有の情報 ---
+const title = "【体験レビュー】竜王ゴルフコースはどんなコース？料金・ランチ・予約方法まで本音で紹介 | シガゴル";
+const description = "滋賀県竜王町の「竜王ゴルフコース（PGM）」を本音レビュー！接待コースと聞いていたけど実際はカジュアル？メンバーも驚いた1,400円安くなる予約の裏ワザ、フラットなコースの攻略法、絶品石焼チーズカレーまで体験談で徹底解説します。";
+const category = "体験談";
+const pubDate = "2026-11-20";
+const pubDateISO = "2026-11-20T10:00:00+09:00";
+const updatedDate = null;
+
+// ★ アイキャッチ画像のURLに差し替えてください
+const imageUrl = "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/eyecatch.jpg";
+
+// --- [4] URLと構造化データ用の変数を定義 ---
+const baseUrl = "https://shigagolf.com";
+// ★ 実際のファイル配置パスに合わせてURLを調整してください
+const articleUrl = `${baseUrl}/articles/ryuo-gc-review/`;
+const headline = "【体験レビュー】竜王ゴルフコースはどんなコース？料金・ランチ・予約方法まで本音で紹介";
+
+// --- [5] ★ 記事末尾の「折りたたみギャラリー」用写真リスト ★ ---
+// ここにメニュー表（10枚）や練習場、乾燥機、ナビなどのURLを追加してください
+const galleryImages = [
+    {
+        src: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/menu_01.jpg",
+        alt: "竜王ゴルフコース ランチメニュー1",
+        caption: "ランチメニュー①"
+    },
+    {
+        src: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/range_01.jpg",
+        alt: "竜王ゴルフコース 併設の練習場",
+        caption: "併設の練習場（エントランス外から階段を降りて向かいます）"
+    },
+    {
+        src: "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/dryer.jpg",
+        alt: "竜王ゴルフコース 乾燥機",
+        caption: "カッパ等を乾かす乾燥機（少しコンパクトなサイズでした）"
+    },
+    // ↓ 必要な分だけ同じ形式でコピーして増やしてください
+];
+
+// --- [6] 構造化データ（Article） ---
+const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": articleUrl
+    },
+    "headline": headline,
+    "description": description,
+    "image": [imageUrl],
+    "author": {
+        "@type": "Person",
+        "name": "関（せき）",
+        "url": "https://shigagolf.com/about/",
+        "image": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/author.png",
+        "sameAs": [
+            "https://x.com/Golf_Seki39",
+            "https://golf-medley.com/articles/authors/seki",
+            "https://note.com/seki_golf_39"
+        ]
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "シガゴル",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/practice_ranges/image_archive/gallery/logo.png"
+        }
+    },
+    "datePublished": pubDateISO,
+    "dateModified": new Date().toISOString()
+};
+---
+
+<BaseLayout title={title} description={description} pubDate={pubDate} ogImage={imageUrl}>
+
+    <script
+        slot="head"
+        type="application/ld+json"
+        set:html={JSON.stringify(schemaData)}
+    />
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col lg:flex-row gap-8 items-stretch my-8">
+
+        {/* ▼ 左側のメイン記事エリア ▼ */}
+        <main id="article-view" class="w-full lg:flex-1 bg-white p-6 md:p-8 rounded-lg shadow-lg text-slate-700 leading-relaxed overflow-hidden">
+
+            <a href="/articles/" class="nav-link back-button mb-6 inline-block text-green-700 font-semibold hover:underline">
+                ‹ お役立ち記事一覧に戻る
+            </a>
+
+            <article class="prose lg:prose-xl max-w-none">
+
+                <header>
+                    <h1 class="text-2xl md:text-4xl font-bold text-slate-800 leading-snug">{headline}</h1>
+                    <div class="text-sm text-slate-500 mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                        <span>公開日：{pubDate}</span>
+                        {updatedDate && (
+                            <span class="flex items-center gap-1 text-slate-600 font-semibold bg-slate-100 px-2 py-1 rounded">
+                                更新日：{updatedDate}
+                            </span>
+                        )}
+                    </div>
+                </header>
+
+                {/* ★ アイキャッチ画像 */}
+                <Image
+                    src={imageUrl}
+                    alt="竜王ゴルフコース 体験レビュー アイキャッチ"
+                    class="w-full h-auto object-cover rounded-lg my-6 shadow-sm"
+                    loading="eager"
+                    width={1600}
+                    height={900}
+                    format="webp"
+                    quality={80}
+                />
+
+                {/* 導入文 */}
+                <p>
+                    名神高速・竜王ICのすぐ横。車で走るたびに「いつかあそこでラウンドしたいな」と横目で見ていた『竜王ゴルフコース』。
+                    今回、大好きな先輩ゴルファー達とのプライベートラウンドで、ついにその念願が叶いました。
+                </p>
+                <p>
+                    「接待によく使われる良いコース」と教えられていたのですが、実際に竜王ゴルフコースへ足を運んでみると、そこには「ジャケットがいるのかな」といった不安を吹き飛ばすカジュアルさと、ベテラン会員すら知らなかった<strong>「予約料金のカラクリ」</strong>、そして初心者にも優しい極上のフェアウェイが待っていました。
+                </p>
+                <p>
+                    この記事では、竜王ゴルフコースのリアルな設備事情から、絶対に知っておくべき予約の裏ワザ、そして帰りの「アウトレットの誘惑」まで、体験したからこそ分かる本音を徹底レビューします！
+                </p>
+
+                {/* 目次 */}
+                <div class="toc-container bg-slate-50 p-6 rounded-lg border border-slate-200 my-8 not-prose">
+                    <h2 class="text-xl font-bold mb-4 text-slate-800">この記事の目次</h2>
+                    <ul class="space-y-2 list-disc list-inside text-sm md:text-base">
+                        <li><a href="#atmosphere" class="text-green-700 hover:underline">1. 接待コースの「リアル」。服装や設備のカジュアルな一面</a></li>
+                        <li><a href="#reservation" class="text-green-700 hover:underline">2. 【超重要】1,400円安くなる！予約前に絶対知るべき料金のカラクリ</a></li>
+                        <li><a href="#course" class="text-green-700 hover:underline">3. ドライバーが気持ちよく振れる！フラットなコースと「魔の13番」</a></li>
+                        <li><a href="#lunch" class="text-green-700 hover:underline">4. 同伴者が嫉妬した「石焼チーズカレー」とリアルなランチ事情</a></li>
+                        <li><a href="#outlet" class="text-green-700 hover:underline">5. 帰りの「アウトレット渋滞」は？最大の敵はゴルフショップの誘惑</a></li>
+                        <li><a href="#summary" class="text-green-700 hover:underline">まとめ：竜王ゴルフコースはこんな人におすすめ</a></li>
+                        <li><a href="#photo-gallery" class="text-green-700 hover:underline">📸 施設・ランチメニュー写真ギャラリー（タップで開く）</a></li>
+                    </ul>
+                </div>
+
+                {/* --- セクション1 --- */}
+                <h2 id="atmosphere" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                    1. 接待コースの「リアル」。服装や設備のカジュアルな一面
+                </h2>
+
+                <figure class="my-6">
+                    {/* ★ IMG_2672.jpg のURLに差し替え */}
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2672.jpg"
+                        alt="竜王ゴルフコースの屋根付きエントランス"
+                        class="w-full h-auto object-cover rounded-lg shadow-sm"
+                        loading="lazy"
+                        width={1200}
+                        height={900}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        大きな屋根付きのエントランス。到着するとポーターさんがテキパキとバッグを下ろしてくれました。
+                    </figcaption>
+                </figure>
+
+                <p>
+                    「接待コース」と聞いていたので、「初心者が行っても浮かないかな」「服装は厳格なのかな」と少し緊張して向かいました。
+                    しかし、到着してみると良い意味で拍子抜け。夏場のラウンドということもあり、半ズボンで来場し、そのまま帰宅するゴルファーの姿もチラホラ。
+                </p>
+                <p>
+                    <strong>「必要以上に身構える必要はない」</strong>と感じました。もちろん最低限のマナーは大切ですが、私が想像していたような堅苦しい雰囲気ではなく、女性のグループ客も多く、今の時代に合った通いやすい雰囲気が漂っていました。
+                </p>
+                <p>
+                    ただし、設備面で「高級感」を期待しすぎると少しギャップがあるかもしれません。
+                </p>
+
+                <figure class="my-6">
+                    {/* ★ IMG_2681.jpg のURLに差し替え */}
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2681.jpg"
+                        alt="竜王ゴルフコースのロッカールーム"
+                        class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
+                        loading="lazy"
+                        width={900}
+                        height={1200}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        ロッカールームは昔ながらのオーソドックスなスタイル。
+                    </figcaption>
+                </figure>
+
+                <p>
+                    お風呂はガラス張りで外の景色が見える素晴らしい造りでしたが、洗面台周りは名門コースによくある布タオルではなく、ペーパータオルとティッシュのみ。
+                    私も初ラウンドの時にベテランさんから「洗面台は使うたびに拭くのがマナー」と教わり普段から実践していますが、紙のタオルだと少し拭き取りにくさを感じました。このあたりは「大衆向けコース」のリアルを感じる部分です。
+                </p>
+
+                {/* --- セクション2 --- */}
+                <h2 id="reservation" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                    2. 【超重要】1,400円安くなる！予約前に絶対知るべき料金のカラクリ
+                </h2>
+
+                <p>
+                    今回、この記事で一番皆さんにお伝えしたいのが「竜王ゴルフコースの予約料金」についてです。
+                </p>
+                <p>
+                    今回は、ベテラン会員の先輩が気を利かせて、わざわざ電話でメンバー枠の予約を取ってくれました。その時の料金は「昼食付きで9,500円」。
+                    しかし、ラウンド前にふと「ビジターの自分がネットから直で予約したらいくらなんだろう？」とスマホで調べてみたのです。
+                </p>
+
+                <div class="not-prose bg-amber-50 border-l-4 border-amber-500 p-5 my-6 rounded-r-lg">
+                    <ul class="space-y-2 text-slate-800 font-bold text-base md:text-lg">
+                        <li>・先輩の電話予約（メンバー枠）：9,500円</li>
+                        <li class="text-red-600">・PGM公式サイト予約（ジカドリ）：8,100円</li>
+                    </ul>
+                </div>
+
+                <p>
+                    今回のように、電話予約よりも公式サイト（ジカドリ）の方が安いプランが出ていることもあります。私も偶然気づかなければ、<strong>1人あたり1,400円高いままプレーするところでした</strong>（これには予約してくれた先輩も驚いていました）。
+                </p>
+                <p>
+                    予約前には一度、公式サイトを確認してみることを強くおすすめします。そのうえで、「楽天ポイントを貯めたい・使いたい」「GDOのクーポンがある」という方は、各ポータルサイトと比較して自分にとって一番お得な予約方法を選んでみてください。
+                </p>
+
+                {/* ▼ 予約アフィリエイト導線ボックス ▼ */}
+                <div class="not-prose bg-slate-50 p-6 rounded-xl border-2 border-green-200 my-8 text-center shadow-sm">
+                    <p class="font-bold text-slate-800 text-lg mb-4">⛳ 竜王ゴルフコースの最新料金・空き状況をチェック</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        {/* ★ 楽天GORAのアフィリエイトリンクURLに差し替えてください */}
+                        <a
+                            href="【楽天GORAのリンクURL】"
+                            target="_blank"
+                            rel="noopener sponsored"
+                            class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg shadow transition-transform transform hover:scale-105"
+                        >
+                            楽天GORAで予約する
+                            <span class="block text-xs font-normal mt-0.5">楽天ポイントが貯まる・使える</span>
+                        </a>
+                        {/* ★ GDOのアフィリエイトリンクURLに差し替えてください */}
+                        <a
+                            href="【GDOのリンクURL】"
+                            target="_blank"
+                            rel="noopener sponsored"
+                            class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg shadow transition-transform transform hover:scale-105"
+                        >
+                            GDOで予約する
+                            <span class="block text-xs font-normal mt-0.5">クーポン利用でお得に</span>
+                        </a>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-3">
+                        ※最安値を狙う場合は、PGM公式サイト（ジカドリ）の料金もあわせて比較するのがおすすめです。
+                    </p>
+                </div>
+
+                {/* --- セクション3 --- */}
+                <h2 id="course" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                    3. ドライバーが気持ちよく振れる！フラットなコースと「魔の13番」
+                </h2>
+
+                <p>
+                    コースの最大の魅力は<strong>「フラットでOBになりにくい」</strong>こと。フェアウェイが広く精神的な余裕が生まれるため、この日は私のドライバーも絶好調でした。グリーンのコンディションは「8.8フィート（刈高4.6mm）」で、速すぎず初心者でも合わせやすいセッティングでした。
+                </p>
+
+                <figure class="my-6">
+                    {/* ★ IMG_2709.jpg のURLに差し替え */}
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2709.jpg"
+                        alt="竜王ゴルフコースのクールカート（送風機）"
+                        class="w-full h-auto object-cover rounded-lg shadow-sm"
+                        loading="lazy"
+                        width={1200}
+                        height={900}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        夏場の救世主「クールカート（送風機）」。乗り入れ不可ですがリモコン付きで快適でした！
+                    </figcaption>
+                </figure>
+
+                <p>
+                    カートには「クールカート（送風機）」がついており、夏のラウンドの救世主として大活躍！フェアウェイ乗り入れはできませんが、必須となる「リモコン」も完備されており快適です。
+                    ちなみに併設の練習場は、パター練習場とは真逆の方向（エントランスを出て階段を降りた先）にあるので、朝に打ち込みたい方は少し時間に余裕を持って行動してくださいね。
+                </p>
+
+                <p>
+                    また、竜王ゴルフコースの「HDCP（難易度指標）」は、実際に回ってみると少し不思議な感覚でした。
+                </p>
+
+                <ul class="space-y-3 my-4">
+                    <li>
+                        <strong>OUT 4番（PAR4 / HDCP 1）：</strong>
+                        一番難しいとされるホール。HDCP1という数字だけを見ると身構えてしまいますが、フェアウェイが真っすぐなのでティーショットの狙いどころが分かりやすく、私たちの組ではなんと全員がパーでした。数字ほど難しく感じなかったというのが率直な感想です。
+                    </li>
+                    <li>
+                        <strong>OUT 8番（PAR3 / HDCP 17）：</strong>
+                        コース内で2番目に簡単なはずですが、なんと「池越え」のショート。ただ、バーディーやパーも出ており、ラウンド2回目の初心者でもボギーで上がれていました。
+                    </li>
+                    <li>
+                        <strong>IN 16番（PAR3 / HDCP 18）：</strong>
+                        最も簡単な数字ですが、ここも池越え。ティーショットをミスすればダボ・トリのリスクが潜んでいます。
+                    </li>
+                </ul>
+
+                <p>
+                    そして先輩から強く言われたのが<strong>「13番ホールの鉄則」</strong>。ここは絶対にグリーンオーバーさせてはいけません。奥にこぼすと急な下り傾斜が待っており、大叩きが確定します。確実に手前から攻めること、これだけは覚えておいてください！
+                </p>
+
+                {/* --- セクション4 --- */}
+                <h2 id="lunch" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                    4. 同伴者が嫉妬した「石焼チーズカレー」とリアルなランチ事情
+                </h2>
+
+                <p>
+                    ラウンドの楽しみといえば、やっぱりお昼ご飯！今回は「担々麺」「からあげ定食」「石焼チーズカレー」を注文しました。
+                </p>
+
+                <figure class="my-6">
+                    {/* ★ IMG_2739.jpg のURLに差し替え */}
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2739.jpg"
+                        alt="竜王ゴルフコースの担々麺"
+                        class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
+                        loading="lazy"
+                        width={900}
+                        height={1200}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        ゴルフ場あるある（？）の白ご飯付きで、かなりボリューミーな担々麺。
+                    </figcaption>
+                </figure>
+
+                <figure class="my-6">
+                    {/* ★ IMG_2738.jpg のURLに差し替え */}
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2738.jpg"
+                        alt="竜王ゴルフコースのからあげ定食"
+                        class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
+                        loading="lazy"
+                        width={900}
+                        height={1200}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        からあげ定食。正直に言うと少し普通で「惜しいかな…？」といった印象。
+                    </figcaption>
+                </figure>
+
+                <figure class="my-6">
+                    {/* ★ IMG_2737.jpg のURLに差し替え */}
+                    <Image
+                        src="https://storage.googleapis.com/shigagolf-e31e6.firebasestorage.app/articles/ryuo-gc/IMG_2737.jpg"
+                        alt="竜王ゴルフコースの石焼チーズカレー"
+                        class="w-full md:w-2/3 mx-auto h-auto object-cover rounded-lg shadow-sm"
+                        loading="lazy"
+                        width={900}
+                        height={1200}
+                        format="webp"
+                        quality={80}
+                    />
+                    <figcaption class="text-center text-sm text-slate-500 mt-2">
+                        全員の視線を釘付けにした「石焼チーズカレー」。大きなエビフライが2本も乗っています！
+                    </figcaption>
+                </figure>
+
+                <p>
+                    この「石焼チーズカレー」、最後まで熱々でグツグツと音を立てるシズル感は反則級でした。猫舌の同伴者は、付属の空のお皿に移して冷ましながら食べていましたが、香りだけで「次は絶対これにしよう」と思ってしまいました（笑）。
+                </p>
+
+                {/* --- セクション5 --- */}
+                <h2 id="outlet" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                    5. 帰りの「アウトレット渋滞」は？最大の敵はゴルフショップの誘惑
+                </h2>
+
+                <p>
+                    竜王ゴルフコースといえば、すぐ隣が「三井アウトレットパーク 滋賀竜王」。
+                    「ゴルフ帰りの渋滞」を心配される方も多いですが、普段からよく通る道でも、ゴルフ帰りの時間帯にひどい渋滞に巻き込まれてイライラした経験はほとんどありません。
+                </p>
+                <p>
+                    しかし、渋滞よりも恐ろしい敵がいます。それは<strong>「ゴルフショップの誘惑」</strong>です。
+                </p>
+                <p>
+                    ラウンド終わりに立ち寄るなら、ここはゴルファーにとって天国です。クラブならTaylorMadeやCallaway、ウェアならadidas GOLFやDESCENTE STORE、PUMAなどが揃っており、「今日は買うつもりじゃなかったのに…」という誘惑が待っています。サイズ感を実際に試せるので、ネット購入前の下見にもぴったりです。（ちなみに私が初めてゴルフ用のレインウェアを買ったのも、ここのDESCENTE STOREでした！）
+                </p>
+                <p>
+                    気持ちよくラウンドした帰りに「ちょっとウェア見に行こうか」となると、<strong>財布の紐が緩みっぱなしになるのでご注意を！</strong>
+                </p>
+
+                {/* --- まとめ --- */}
+                <h2 id="summary" class="scroll-mt-24 text-2xl md:text-3xl font-bold text-slate-800 mt-12 mb-4">
+                    まとめ：竜王ゴルフコースはこんな人におすすめ
+                </h2>
+
+                <p>
+                    竜王ゴルフコースは、接待向けと聞いて身構えていましたが、実際は初心者からベテランまで楽しめる親しみやすいゴルフ場でした。広いフェアウェイで思い切りドライバーを振れ、食事のメニューも豊富。さらに予約方法を工夫すれば、お得にプレーできる可能性もあります。
+                </p>
+                <p>
+                    ラウンド後はアウトレットにも立ち寄れるので、一日を通して最高の休日を満喫できるゴルフ場だと感じました。気になっている方は、ぜひ一度（公式サイトの料金をチェックしてから！）足を運んでみてください。
+                </p>
+
+                {/* ▼▼▼ 折りたたみ式フォトギャラリー（メニューや細かい設備写真用） ▼▼▼ */}
+                <div id="photo-gallery" class="not-prose my-12 scroll-mt-24">
+                    <details class="group bg-slate-50 border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                        <summary class="flex items-center justify-between p-5 font-bold text-slate-800 cursor-pointer hover:bg-slate-100 transition-colors list-none">
+                            <span class="text-base md:text-lg flex items-center gap-2">
+                                📸 施設・ランチメニュー写真ギャラリーを見る（タップで開閉）
+                            </span>
+                            <span class="transition-transform duration-300 group-open:rotate-180 text-green-700 font-bold">
+                                ▼
+                            </span>
+                        </summary>
+                        <div class="p-5 border-t border-slate-200 bg-white">
+                            <p class="text-sm text-slate-600 mb-6">
+                                本文に載せきれなかったランチメニュー表や、併設の練習場、乾燥機などの細かい設備写真をまとめています。ラウンド前の予習にどうぞ！
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {galleryImages.map((img) => (
+                                    <figure class="m-0 bg-slate-50 rounded-lg overflow-hidden border border-slate-200">
+                                        <Image
+                                            src={img.src}
+                                            alt={img.alt}
+                                            class="w-full h-56 object-cover"
+                                            loading="lazy"
+                                            width={800}
+                                            height={600}
+                                            format="webp"
+                                            quality={75}
+                                        />
+                                        <figcaption class="p-3 text-xs text-slate-600 text-center">
+                                            {img.caption}
+                                        </figcaption>
+                                    </figure>
+                                ))}
+                            </div>
+                        </div>
+                    </details>
+                </div>
+                {/* ▲▲▲ フォトギャラリーここまで ▲▲▲ */}
+
+                <ShareButtons articleUrl={articleUrl} headline={headline} />
+                <AuthorProfile />
+
+            </article>
+        </main>
+
+        {/* ▼ 右側のサイドバー ▼ */}
+        <Sidebar />
+
+    </div>
+
+    <style>
+        .scroll-mt-24 {
+            scroll-margin-top: 6rem;
+        }
+        /* detailsのデフォルトの三角アイコンを消す */
+        summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+
+</BaseLayout>

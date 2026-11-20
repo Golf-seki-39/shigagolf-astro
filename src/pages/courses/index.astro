@@ -1,0 +1,226 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { db } from "../../lib/firebase.js";
+import { collection, getDocs } from "firebase/firestore";
+
+const appId = import.meta.env.PUBLIC_FIREBASE_APP_ID;
+const publicDataPath = `artifacts/${appId}/public/data`;
+
+// Firestoreから全ゴルフ場を取得（レッスン施設や住所が空の不完全データを除外）
+const coursesSnap = await getDocs(collection(db, publicDataPath, "golf_courses"));
+const courses = coursesSnap.docs
+  .map((doc) => {
+    const data = doc.data();
+    const gallery = Array.isArray(data.galleryImages) ? data.galleryImages : [];
+    const thumbnailUrl = data.goraImageUrl || (gallery[0]?.url ? `${gallery[0].url.split("?")[0]}?alt=media` : "");
+
+    return {
+      id: doc.id,
+      name: data.name || "",
+      kana: data.kana || "",
+      address: data.address || "",
+      rating: Number(data.rating) || 0,
+      thumbnailUrl,
+      reserveUrl: data.reserveUrl || "",
+      reviewArticleUrl: data.reviewArticleUrl || "",
+      photoCount: gallery.length,
+    };
+  })
+  .filter((course) => {
+    if (course.name.includes("レッスン")) return false;
+    if (!course.address) return false;
+    return true;
+  });
+
+// デフォルトは「写真・レビューあり優先 → 楽天GORA評価が高い順」
+courses.sort((a, b) => {
+  const aHasRich = a.photoCount > 0 || a.reviewArticleUrl ? 1 : 0;
+  const bHasRich = b.photoCount > 0 || b.reviewArticleUrl ? 1 : 0;
+  if (bHasRich !== aHasRich) return bHasRich - aHasRich;
+  return b.rating - a.rating;
+});
+
+const pageTitle = "滋賀県のゴルフ場一覧 | シガゴル";
+const pageDescription = `滋賀県内の全${courses.length}ゴルフ場を一覧で紹介。各コースの写真ギャラリー、ラウンド前の朝練・反省練習に使える近隣の練習場情報、楽天GORAの予約リンクをまとめています。`;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <main class="container mx-auto p-4 md:p-6">
+    {/* ページヘッダー */}
+    <header class="mb-8">
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-2">
+        滋賀県のゴルフ場一覧（全{courses.length}コース）
+      </h1>
+      <p class="text-sm md:text-base text-slate-600">
+        各ゴルフ場の詳細ページから、コース写真や「ラウンド前の朝練・反省練習に使える周辺の練習場」をチェックできます。
+      </p>
+    </header>
+
+    {/* 検索・並び替えバー */}
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-8 flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+      <div class="flex-1">
+        <input
+          type="text"
+          id="course-search-input"
+          placeholder="ゴルフ場名や市町村で検索（例：竜王、甲賀、東近江...）"
+          class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+        />
+      </div>
+      <div class="flex items-center gap-3">
+        <label for="course-sort-select" class="text-sm font-semibold text-slate-700 whitespace-nowrap">
+          並び替え:
+        </label>
+        <select
+          id="course-sort-select"
+          class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-600"
+        >
+          <option value="featured">おすすめ順（写真・レビュー優先）</option>
+          <option value="rating">楽天GORA評価が高い順</option>
+          <option value="kana">五十音順</option>
+        </select>
+      </div>
+    </div>
+
+    {/* 該当件数表示 */}
+    <p class="text-sm text-slate-600 mb-4">
+      表示中：<span id="visible-count" class="font-bold text-slate-900">{courses.length}</span> 件
+    </p>
+
+    {/* ゴルフ場カード一覧 */}
+    <div id="courses-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {courses.map((course) => (
+        <article
+          class="course-card bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col hover:shadow-md transition"
+          data-name={course.name.toLowerCase()}
+          data-kana={course.kana.toLowerCase()}
+          data-address={course.address.toLowerCase()}
+          data-rating={course.rating}
+          data-rich={course.photoCount > 0 || course.reviewArticleUrl ? "1" : "0"}
+        >
+          <a href={`/courses/${course.id}/`} class="block relative h-56 w-full bg-slate-100 overflow-hidden group flex-shrink-0">
+            {course.thumbnailUrl ? (
+              <img
+                src={course.thumbnailUrl}
+                alt={course.name}
+                loading="lazy"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            ) : (
+              <div class="w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400">
+                <span class="text-3xl mb-1">⛳️</span>
+                <span class="text-xs font-medium">写真準備中</span>
+              </div>
+            )}
+
+            {/* バッジ類 */}
+            <div class="absolute top-2 left-2 flex flex-wrap gap-1.5">
+              {course.reviewArticleUrl && (
+                <span class="bg-amber-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                  体験レビューあり
+                </span>
+              )}
+              {course.photoCount > 0 && (
+                <span class="bg-slate-900/75 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
+                  📷 写真 {course.photoCount}枚
+                </span>
+              )}
+            </div>
+          </a>
+
+          <div class="p-5 flex-1 flex flex-col">
+            <div class="flex items-center justify-between gap-2 mb-1.5">
+              {course.rating > 0 ? (
+                <span class="text-sm font-bold text-amber-600">
+                  ★ 楽天GORA {course.rating.toFixed(1)}
+                </span>
+              ) : (
+                <span class="text-sm text-slate-400">評価なし</span>
+              )}
+            </div>
+
+            <h2 class="text-xl font-bold text-slate-900 mb-1.5 leading-snug">
+              <a href={`/courses/${course.id}/`} class="hover:text-green-700 hover:underline">
+                {course.name}
+              </a>
+            </h2>
+
+            <p class="text-sm text-slate-500 mb-5 flex-1">
+              📍 {course.address}
+            </p>
+
+            {/* アクションボタン */}
+            <div class="grid grid-cols-2 gap-2.5 pt-3 border-t border-slate-100">
+              <a
+                href={`/courses/${course.id}/`}
+                class="text-center text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 py-2.5 px-2 rounded-lg transition"
+              >
+                詳細・周辺練習場
+              </a>
+              {course.reserveUrl ? (
+                <a
+                  href={course.reserveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  class="text-center text-sm font-bold bg-green-700 hover:bg-green-800 text-white py-2.5 px-2 rounded-lg transition"
+                >
+                  楽天GORA予約
+                </a>
+              ) : (
+                <span class="text-center text-sm font-bold bg-slate-200 text-slate-400 py-2.5 px-2 rounded-lg cursor-not-allowed">
+                  予約リンクなし
+                </span>
+              )}
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    {/* 検索結果ゼロのときのメッセージ */}
+    <div id="no-results-msg" class="hidden text-center py-12 bg-white rounded-xl border border-slate-200">
+      <p class="text-slate-500 font-medium">条件に一致するゴルフ場が見つかりませんでした。</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const searchInput = document.getElementById("course-search-input");
+  const sortSelect = document.getElementById("course-sort-select");
+  const grid = document.getElementById("courses-grid");
+  const visibleCountEl = document.getElementById("visible-count");
+  const noResultsMsg = document.getElementById("no-results-msg");
+
+  function updateCourses() {
+    if (!grid) return;
+    const keyword = (searchInput?.value || "").trim().toLowerCase();
+    const sortBy = sortSelect?.value || "featured";
+    const cards = Array.from(grid.querySelectorAll(".course-card"));
+
+    cards.sort((a, b) => {
+      if (sortBy === "rating") {
+        return Number(b.dataset.rating) - Number(a.dataset.rating);
+      }
+      if (sortBy === "kana") {
+        return (a.dataset.kana || "").localeCompare(b.dataset.kana || "", "ja");
+      }
+      const richDiff = Number(b.dataset.rich) - Number(a.dataset.rich);
+      if (richDiff !== 0) return richDiff;
+      return Number(b.dataset.rating) - Number(a.dataset.rating);
+    });
+
+    let visibleCount = 0;
+    cards.forEach((card) => {
+      const text = `${card.dataset.name} ${card.dataset.kana} ${card.dataset.address}`;
+      const isMatch = !keyword || text.includes(keyword);
+      card.classList.toggle("hidden", !isMatch);
+      if (isMatch) visibleCount++;
+      grid.appendChild(card);
+    });
+
+    if (visibleCountEl) visibleCountEl.textContent = String(visibleCount);
+    if (noResultsMsg) noResultsMsg.classList.toggle("hidden", visibleCount > 0);
+  }
+
+  searchInput?.addEventListener("input", updateCourses);
+  sortSelect?.addEventListener("change", updateCourses);
+</script>

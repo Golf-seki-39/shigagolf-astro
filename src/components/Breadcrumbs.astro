@@ -3,11 +3,11 @@
 
 // --- Props ---
 // BaseLayoutからページの <title> と、親ハブ記事の情報（あれば）を受け取ります
-// ★追加: parentHub を受け取る
 const { pageTitle, parentHub } = Astro.props;
 
 // --- 静的パス名の日本語マッピング ---
 const pathTranslations = new Map([
+    ["courses", "ゴルフ場一覧"],
     ["articles", "お役立ち記事"],
     ["category", "カテゴリ"],
     ["comparison", "比較記事"],
@@ -53,22 +53,20 @@ if (currentPath !== "/") {
         let name = "";
 
         if (isLast) {
-            // ▼▼▼【ここが最大の変更点！】▼▼▼
-            // もし現在のページが最後であり、かつ「親ハブ記事（parentHub）」の情報が渡されていれば、
-            // 現在のページを描画する【直前】に、親ハブ記事をパンくずの間に挟み込む
+            // 現在のページを描画する直前に、親ハブ記事があれば挟み込む
             if (parentHub) {
                 breadcrumbs.push({
                     name: parentHub.name,
                     href: parentHub.href
                 });
             }
-            // ▲▲▲--------------------▲▲▲
 
             if (pageTitle) {
                 const titlePart = pageTitle.split(" | ")[0];
                 name = titlePart
                     .replace("の口コミ・評判", "")
-                    .replace("のレビュー", "");
+                    .replace("のレビュー", "")
+                    .replace("のコース写真・周辺練習場・予約情報", "");
             } else {
                 name = pathTranslations.get(segment) || segment;
             }
@@ -84,7 +82,6 @@ if (currentPath !== "/") {
 }
 
 // --- SEO用 JSON-LD 構造化データの生成 ---
-// 間に挟み込んだ親ハブ記事も自動的に構造化データに反映されます！
 const jsonLdItems = breadcrumbs.map((item, index) => ({
     "@type": "ListItem",
     position: index + 1,
